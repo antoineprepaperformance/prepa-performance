@@ -29,7 +29,7 @@ function scoped(raw) {
   return { ...raw, logs: scopeMap(raw.logs, pre), checkins: scopeMap(raw.checkins, pre), tests: scopeMap(raw.tests, pre), replies: scopeMap(raw.replies, pre), cycle: cycOf(raw.plan),
     allLogs: raw.logs || {} };
 }
-function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, ready: false }; }
+function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, videos: {}, sante: {}, activites: {}, libres: {}, recettes: {}, ready: false }; }
 
 /* ---------- base partagée (capability db) ---------- */
 function dbSource(db, cid) {
@@ -37,7 +37,7 @@ function dbSource(db, cid) {
   let data = scoped(raw);
   const em = emitter();
   const unsubs = [];
-  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1 };
+  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1, videos: 1, sante: 1, activites: 1, libres: 1, recettes: 1 };
   const got = {};
   const push = (k, v) => { raw = { ...raw, [k]: v }; got[k] = 1; raw.ready = Object.keys(need).every((x) => got[x]); data = scoped(raw); em.emit(data); };
   const pre = () => cpre(raw.plan);
@@ -60,6 +60,7 @@ function dbSource(db, cid) {
   docSub("replies/" + cid, "replies", (d) => d || {});
   colSub(base + "/logs", "logs"); colSub(base + "/checkins", "checkins"); colSub(base + "/tests", "tests"); colSub(base + "/habits", "habits");
   colSub(base + "/food", "food", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -60)) : q)); colSub(base + "/nutri", "nutri"); colSub(base + "/ai", "ai"); colSub(base + "/chat", "chat"); colSub(base + "/media", "media"); colSub(base + "/orders", "orders");
+  colSub(base + "/videos", "videos"); colSub(base + "/sante", "sante", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -120)) : q)); colSub(base + "/activites", "activites"); colSub(base + "/libres", "libres"); colSub(base + "/recettes", "recettes");
 
   async function writeSummary(next) {
     const prof = next.profile || data.profile;
@@ -100,6 +101,11 @@ function dbSource(db, cid) {
       await writeSummary({ ...data, ai: { ...data.ai, [id]: a } });
     },
     async saveChat(month, doc) { await qwrite(base + "/chat/" + month, () => db.doc(base + "/chat/" + month).set(clone(doc))); },
+    async saveVideo(id, doc) { await qwrite(base + "/videos/" + id, () => (doc ? db.doc(base + "/videos/" + id).set(clone(doc)) : db.doc(base + "/videos/" + id).delete())); await writeSummary({ ...data, videos: { ...data.videos, [id]: doc || undefined } }); },
+    async saveSante(date, doc) { await qwrite(base + "/sante/" + date, () => (doc ? db.doc(base + "/sante/" + date).set(clone({ ...doc, d: date })) : db.doc(base + "/sante/" + date).delete())); },
+    async saveActivite(id, doc) { await qwrite(base + "/activites/" + id, () => (doc ? db.doc(base + "/activites/" + id).set(clone(doc)) : db.doc(base + "/activites/" + id).delete())); },
+    async saveLibre(id, doc) { await qwrite(base + "/libres/" + id, () => (doc ? db.doc(base + "/libres/" + id).set(clone(doc)) : db.doc(base + "/libres/" + id).delete())); },
+    async saveRecette(id, doc) { await qwrite(base + "/recettes/" + id, () => (doc ? db.doc(base + "/recettes/" + id).set(clone(doc)) : db.doc(base + "/recettes/" + id).delete())); },
     async setReply(w, text) {
       const next = { ...(raw.replies || {}), [pre() + "w" + w]: { text, at: nowISO() } };
       await qwrite("replies/" + cid, () => db.doc("replies/" + cid).set(next));
@@ -133,6 +139,11 @@ function localSource(initial) {
     async saveMedia(id, doc) { const m = { ...data.media }; if (doc) m[id] = clone(doc); else delete m[id]; set("media", m); },
     async saveAdjust(id, a) { set("ai", { ...data.ai, [id]: clone(a) }); },
     async saveChat(month, doc) { set("chat", { ...data.chat, [month]: clone(doc) }); },
+    async saveVideo(id, doc) { const m = { ...(data.videos || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("videos", m); },
+    async saveSante(date, doc) { const m = { ...(data.sante || {}) }; if (doc) m[date] = clone({ ...doc, d: date }); else delete m[date]; set("sante", m); },
+    async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
+    async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
+    async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
     async setReply() {},
     applyCode(code) {
       data = { ...data, cid: code.cid || data.cid, plan: code.plan || data.plan, lib: { ...(data.lib || {}), ...(code.lib || {}) },
@@ -144,7 +155,7 @@ function localSource(initial) {
     reset() { lsDel(LS_KEY); data = { ...emptyData(), ready: true }; view = scoped(data); em.emit(view); },
     package() {
       return "APP1." + b64enc({ v: 1, kind: "client", cid: data.cid || null, profile: data.profile, logs: data.logs, checkins: data.checkins,
-        tests: data.tests, habits: data.habits, food: data.food, nutri: data.nutri, ai: data.ai, chat: data.chat, at: nowISO() });
+        tests: data.tests, habits: data.habits, food: data.food, nutri: data.nutri, ai: data.ai, chat: data.chat, sante: data.sante, activites: data.activites, libres: data.libres, recettes: data.recettes, at: nowISO() });
     },
   };
 }
@@ -173,6 +184,11 @@ function memSource(seed, mode) {
     async saveMedia(id, doc) { const m = { ...data.media }; if (doc) m[id] = clone(doc); else delete m[id]; set("media", m); },
     async saveAdjust(id, a) { const ai = { ...data.ai, [id]: clone(a) }; data = { ...data, ai }; data = { ...data, profile: { ...data.profile, sum: summarize(scoped(data)) } }; emit(); },
     async saveChat(month, doc) { set("chat", { ...data.chat, [month]: clone(doc) }); },
+    async saveVideo(id, doc) { const m = { ...(data.videos || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; data = { ...data, videos: m }; data = { ...data, profile: { ...data.profile, sum: summarize(scoped(data)) } }; emit(); },
+    async saveSante(date, doc) { const m = { ...(data.sante || {}) }; if (doc) m[date] = clone({ ...doc, d: date }); else delete m[date]; set("sante", m); },
+    async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
+    async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
+    async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
     async setReply(w, text) { set("replies", { ...(data.replies || {}), [pre() + "w" + w]: { text, at: nowISO() } }); },
   };
 }
@@ -213,7 +229,7 @@ async function dbDel(db, path) { return qwrite(path, () => db.doc(path).delete()
 /* droit à l'effacement : supprime toutes les données d'un client */
 async function deleteClient(db, cid) {
   const base = "clients/" + cid;
-  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders"]) {
+  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders", "videos", "sante", "activites", "libres", "recettes"]) {
     try { const s = await db.collection(base + "/" + sub).get(); for (const doc of s.docs) await dbDel(db, base + "/" + sub + "/" + doc.id); } catch (e) {}
   }
   for (const p of ["plans/" + cid, "replies/" + cid, "coachnotes/" + cid, base]) { try { await dbDel(db, p); } catch (e) {} }
@@ -231,12 +247,12 @@ async function importPackage(db, text) {
   const prev = await db.doc(base).get();
   const prof = { ...(prev.exists ? prev.data() : {}), ...(pkg.profile || {}), local: true };
   const all = { logs: pkg.logs || {}, checkins: pkg.checkins || {}, tests: pkg.tests || {}, habits: pkg.habits || {} };
-  const extra = { food: pkg.food || {}, nutri: pkg.nutri || {}, ai: pkg.ai || {}, chat: pkg.chat || {} };
+  const extra = { food: pkg.food || {}, nutri: pkg.nutri || {}, ai: pkg.ai || {}, chat: pkg.chat || {}, sante: pkg.sante || {}, activites: pkg.activites || {}, libres: pkg.libres || {}, recettes: pkg.recettes || {} };
   for (const [k, v] of Object.entries(all.logs)) await dbSet(db, base + "/logs/" + k, v);
   for (const [k, v] of Object.entries(all.checkins)) await dbSet(db, base + "/checkins/" + k, v);
   for (const [k, v] of Object.entries(all.tests)) await dbSet(db, base + "/tests/" + k, v);
   for (const [k, v] of Object.entries(all.habits)) await dbSet(db, base + "/habits/" + k, v);
-  for (const sub of ["food", "nutri", "chat"]) for (const [k, v] of Object.entries(extra[sub])) if (v) await dbSet(db, base + "/" + sub + "/" + k, v);
+  for (const sub of ["food", "nutri", "chat", "sante", "activites", "libres", "recettes"]) for (const [k, v] of Object.entries(extra[sub])) if (v) await dbSet(db, base + "/" + sub + "/" + k, v);
   for (const [k, v] of Object.entries(extra.ai)) {
     if (!v) continue;
     let prev = null;

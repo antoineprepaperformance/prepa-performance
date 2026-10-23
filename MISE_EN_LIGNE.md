@@ -1,11 +1,11 @@
 # Mettre le site en ligne gratuitement
 
-Compte 45 minutes à 1 heure, une seule fois (plus 20 minutes si tu installes le paiement automatique). L'hébergement est gratuit : GitHub Pages pour le site, Firebase (Google) pour les comptes et la base de données, Stripe pour encaisser (aucun abonnement, une commission par paiement).
+Compte 45 minutes à 1 heure, une seule fois (plus 20 minutes si tu installes le paiement automatique, et 15 minutes pour le forfait Lite). L'hébergement est gratuit : GitHub Pages pour le site, Firebase (Google) pour les comptes et la base de données, Stripe pour encaisser (pas de frais fixes : une commission sur chaque paiement).
 
 À la fin, tu as :
 - une adresse du type `https://ton-pseudo.github.io/prepa-performance/` à mettre dans ta bio Instagram ;
 - un site qui marche sur téléphone et sur ordinateur, installable comme une application ;
-- des clients qui choisissent leur programme, leur profil et leur durée, paient en ligne ou utilisent ton code d'essai, et n'ont accès aux séances que pendant la période achetée ;
+- des clients qui choisissent leur programme, leur profil et leur durée, paient en ligne (ou s'abonnent au forfait Lite) ou utilisent ton code d'essai, et n'ont accès aux séances que pendant la période achetée ;
 - ton espace coach, protégé par ton adresse e-mail.
 
 Avant d'ouvrir les ventes, lis aussi [CONFORMITE.md](CONFORMITE.md) : ce qu'il te reste à faire côté légal (carte professionnelle, assurance, médiateur…).
@@ -110,6 +110,25 @@ Dès qu'un client paie, sa commande apparaît dans « À traiter » : vérifie l
 
 > Si tu changes un prix dans l'application, change aussi le lien Stripe correspondant.
 
+### Forfait Lite (abonnement ou paiement d'avance)
+
+1. **Catalogue de produits › Ajouter un produit** « Lite » avec **quatre prix** :
+   - 9,90 € **récurrent, mensuel** ;
+   - 89 € **récurrent, annuel** ;
+   - 9,90 € **paiement unique** (un mois d'avance) ;
+   - 89 € **paiement unique** (un an d'avance).
+2. **Liens de paiement › Nouveau** : un lien par prix, avec la même redirection qu'au point 4 ci-dessus.
+3. Colle les 4 liens dans **Offres & réglages › Forfait Lite** (Mensuel · abonnement, Annuel · abonnement, Mensuel · paiement d'avance, Annuel · paiement d'avance). Tu y changes aussi les prix et tu peux masquer le forfait.
+4. **Paramètres › Billing › Portail client** : active le lien de connexion, autorise l'annulation **à la fin de la période de facturation** et la mise à jour du moyen de paiement. Copie le lien (`https://billing.stripe.com/p/login/…`) dans **Forfait Lite › Portail client** : le client y gère sa carte et télécharge ses factures.
+5. **Paramètres › Billing › Abonnements et e-mails** : active les relances automatiques des paiements refusés et, à la fin des relances, l'annulation de l'abonnement.
+
+Ce qui se passe ensuite :
+- chaque prélèvement repousse la date de fin d'accès du client (tout seul avec le relais de l'étape 6 ; sinon, prolonge toi-même : fiche › Plan › « Prolonger d'un mois ») ;
+- pour un abonnement **annuel**, une alerte « Reconduction annuelle » apparaît 90 jours avant l'échéance : clique sur **Préparer l'e-mail** (le message dédié avec la date limite dans un encadré est prêt), envoie-le, puis **E-mail envoyé**. C'est une obligation légale (voir [CONFORMITE.md](CONFORMITE.md)) ;
+- un client résilie en 3 clics dans **Mes commandes**, ou sans se connecter par le lien **Résilier votre contrat** en bas de la page d'accueil. Si le relais n'a pas de clé Stripe, une alerte te demande d'annuler l'abonnement dans Stripe (Abonnements › ⋯ › Annuler › à la fin de la période) ; elle disparaît dès que Stripe confirme.
+
+> Commission Stripe en France : 1,5 % + 0,25 € par paiement par carte européenne, plus 0,7 % sur les abonnements (Stripe Billing). Sur 9,90 €, compte environ 0,47 € par mois.
+
 ---
 
 ## Étape 6 · Activation automatique après paiement (facultatif, 20 min)
@@ -119,11 +138,12 @@ Un petit relais gratuit (Cloudflare Workers : 100 000 requêtes par jour sans fr
 1. **Compte du relais** : Firebase › Authentication › Utilisateurs › **Ajouter un utilisateur** : une adresse (par exemple `relais@ton-domaine.fr`, elle n'a pas besoin d'exister) et un long mot de passe. Copie l'**UID** affiché dans la liste.
 2. **Règles** : Firestore › Règles › remplace `RELAIS_UID` par cet UID › **Publier**.
 3. **Cloudflare** : crée un compte gratuit sur **dash.cloudflare.com** › **Workers & Pages › Créer › Worker** › nom `relais-paiement` › **Déployer**, puis **Modifier le code** › remplace tout par le contenu du fichier `relais/worker.js` › **Déployer**. Note l'adresse du relais (`https://relais-paiement.….workers.dev`).
-4. **Stripe** › Développeurs › **Webhooks** › **Ajouter une destination** : l'adresse du relais, événements `checkout.session.completed` et `checkout.session.async_payment_succeeded`. Copie le **secret de signature** (`whsec_…`).
+4. **Stripe** › Développeurs › **Webhooks** › **Ajouter une destination** : l'adresse du relais, événements `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`, `customer.subscription.updated` et `customer.subscription.deleted` (les trois derniers servent au forfait Lite). Copie le **secret de signature** (`whsec_…`).
 5. **Cloudflare** › ton relais › **Settings › Variables and Secrets** › ajoute, en type **Secret** :
    `STRIPE_WEBHOOK_SECRET` (le `whsec_…`), `FIREBASE_API_KEY` et `FIREBASE_PROJECT_ID` (ceux de `config.js`), `RELAIS_EMAIL` et `RELAIS_PASSWORD` (le compte du point 1) › **Déployer**.
-6. Espace coach › **Offres & réglages › Paiement en ligne** › **Automatique (relais installé)** › Enregistrer.
-7. **Teste en mode test Stripe** avant d'ouvrir : crée un lien de test, colle-le dans la grille, paie avec la carte `4242 4242 4242 4242` (date future, n'importe quel code) et vérifie que l'accès s'ouvre. Remets ensuite tes vrais liens.
+6. Espace coach › **Offres & réglages › Paiement en ligne** › **Automatique (relais installé)**, et colle l'adresse du relais dans **Adresse du relais** › Enregistrer.
+7. **Résiliation automatique (facultatif, recommandé pour le forfait Lite)** : Stripe › Développeurs › Clés API › **Créer une clé restreinte** › autorisation **Subscriptions : Écriture** uniquement. Dans Cloudflare, ajoute le secret `STRIPE_SECRET_KEY` (cette clé `rk_…`) et la variable `SITE_ORIGIN` (`https://ton-pseudo.github.io`) › Déployer. Quand un client résilie dans l'application, ses prélèvements s'arrêtent aussitôt.
+8. **Teste en mode test Stripe** avant d'ouvrir : crée un lien de test, colle-le dans la grille, paie avec la carte `4242 4242 4242 4242` (date future, n'importe quel code) et vérifie que l'accès s'ouvre. Pour un abonnement de test, Stripe › Abonnements › l'abonnement › **Simulation** permet d'avancer le temps et de vérifier le renouvellement. Remets ensuite tes vrais liens.
 
 Si un montant ne correspond pas à ta grille (code promo Stripe, prix modifié d'un seul côté), le paiement n'ouvre pas l'accès : il apparaît dans « À traiter » pour que tu le confirmes.
 
@@ -131,7 +151,7 @@ Si un montant ne correspond pas à ta grille (code promo Stripe, prix modifié d
 
 ## Étape 7 · Codes d'essai et accès offerts
 
-Espace coach › **Codes & essais** : choisis le type (essai ou offert), la formule, la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
+Espace coach › **Codes & essais** : choisis le type (essai ou offert), la formule (y compris Lite), la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
 
 ---
 
@@ -142,6 +162,8 @@ Espace coach › **Codes & essais** : choisis le type (essai ou offert), la form
 - **Ordinateur** : Chrome ou Edge › icône d'installation dans la barre d'adresse.
 
 L'application s'ouvre en plein écran, avec ton logo. Les séances restent consultables sans réseau (salle en sous-sol) et se synchronisent au retour du réseau.
+
+**Santé au quotidien avec un iPhone** : rien à installer de ton côté. Le client suit le mode d'emploi « Connecter ma montre » de son écran Santé : un Raccourci iPhone ouvre l'adresse de ton site avec ses valeurs du jour (pas, sommeil, FC au repos, VFC, poids). Il doit s'être connecté une fois au site dans Safari. Android, Garmin, Polar, Suunto, Strava : saisie rapide ou import d'un fichier GPX/TCX.
 
 Teste enfin le parcours complet avec une autre adresse e-mail : inscription, profil, code d'essai, séance, bilan. Supprime ensuite ce client de test (fiche › Notes › Supprimer).
 
@@ -156,9 +178,9 @@ Teste enfin le parcours complet avec une autre adresse e-mail : inscription, pro
 ## Limites de l'offre gratuite
 
 - Firebase Spark : 50 000 lectures et 20 000 écritures par jour. Un client qui ouvre l'application lit son dossier complet, soit environ 100 à 150 lectures : de quoi suivre environ 100 clients actifs. Au-delà, il faudra passer à l'offre Blaze (paiement à l'usage) ; tu le verras venir dans Firebase › Firestore › Utilisation.
-- Stripe : pas d'abonnement, une commission sur chaque paiement (voir stripe.com/fr/pricing).
+- Stripe : pas de frais fixes, une commission sur chaque paiement, plus 0,7 % sur les abonnements Lite (voir stripe.com/fr/pricing).
 - Pas de coach IA sur le site (il demande un compte Claude). La version Claude de l'application garde le coach IA ; les deux versions ont des bases de données séparées.
-- Sur le site, la nutrition fonctionne avec le scan de code-barres (base Open Food Facts), une liste d'aliments courants et la saisie manuelle, sans photo de repas.
+- Sur le site, la nutrition fonctionne avec le scan de code-barres (base Open Food Facts), une liste d'aliments courants, la saisie manuelle et le livre de recettes, sans photo de repas ni recette créée par l'IA. La correction vidéo fonctionne (images, mesures, envoi au coach) sans l'analyse par l'IA.
 - Le contenu des programmes est dans le code de la page : un client ne voit ses séances qu'après paiement ou code, mais une personne qui s'y connaît peut lire ce contenu en fouillant le code.
 
 ## En cas de souci
@@ -173,4 +195,8 @@ Teste enfin le parcours complet avec une autre adresse e-mail : inscription, pro
 | « Activation refusée : ce code n'est plus valable » | Code expiré, désactivé ou déjà utilisé : crée un nouveau code. |
 | Le site affiche une ancienne version | Recharge la page une seconde fois : la nouvelle version s'installe en arrière-plan. |
 | Un client se rétracte | Alerte dans « À traiter » avec le montant au prorata : rembourse dans Stripe (Paiements › ⋯ › Rembourser, montant partiel), puis **Remboursement effectué · clôturer l'accès**. |
+| Un client Lite résilie | Alerte « Résiliation : arrêter l'abonnement dans Stripe » : Stripe › Abonnements › le client › Annuler (à la fin de la période, sauf mention « immédiat ») ; l'alerte disparaît quand Stripe confirme, sinon clique sur **Abonnement arrêté dans Stripe**. S'il y a un remboursement indiqué, fais-le puis **Remboursement effectué**. |
+| « Résiliation reçue depuis le site » | Demande envoyée sans connexion : ouvre la fiche, annule l'abonnement dans Stripe, confirme par e-mail la date de fin au client, puis **Traitée**. |
+| Le prélèvement Lite est passé mais l'accès n'avance pas | Vérifie que les événements `invoice.paid` et `customer.subscription.*` sont cochés dans le webhook (étape 6.4). Sans relais : fiche › Plan › **Prolonger d'un mois** (ou d'un an). |
+| Les valeurs du Raccourci iPhone n'arrivent pas | Le client doit être connecté au site dans Safari ; l'adresse du raccourci doit commencer par l'adresse exacte du site et contenir `?sante=1`. |
 | Supprimer définitivement le compte d'un client | Fiche du client › Notes › Supprimer, puis Firebase › Authentication › Utilisateurs › supprimer l'adresse. |

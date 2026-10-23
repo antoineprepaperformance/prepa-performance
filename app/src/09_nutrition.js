@@ -545,7 +545,7 @@ function NutriSetup({ data, plan, prog, onSave, onCancel }) {
         <div className="tile"><b>${sessions || "—"}</b><span>séances par semaine</span></div>
       </div>
       <p className="small">Glucides ${fmtN(calc.targets.c, 0)} g · lipides ${fmtN(calc.targets.f, 0)} g · eau ${fmtN(calc.targets.water, 1)} L · dépense estimée ${fmtN(calc.tdee, 0)} kcal par jour.</p>
-      ${f.goal !== "maintien" ? html`<p className="small">Rythme : ${fmtN(Math.abs(calc.rate), 2)} kg par semaine → ${fmtN(calc.target, 1)} kg vers le ${fmtD(addDays(todayISO(), Math.round((calc.weeksReal || weeks) * 7)))}.</p>` : null}
+      ${f.goal !== "maintien" ? html`<p className="small">Rythme : ${fmtN(Math.abs(calc.rate), 2)} kg par semaine → ${fmtN(calc.target, 1)} kg vers le ${fmtDY(addDays(todayISO(), Math.round((calc.weeksReal || weeks) * 7)))}.</p>` : null}
       ${calc.status === "rapide" ? html`<div className="alert warn"><div><b>Objectif trop rapide pour être tenu sans perdre de muscle</b><p>Je te propose ${plural(Math.ceil(calc.suggestWeeks / 4.33), "mois")} : même résultat, sans régime extrême.</p></div><${Btn} small onClick=${() => set("months", String(Math.min(12, Math.ceil(calc.suggestWeeks / 4.33))))}>Appliquer</${Btn}></div>` : null}
       ${calc.targets.kcal <= calc.floor ? html`<p className="small warn-t">Calories au plancher de sécurité (${fmtN(calc.floor, 0)} kcal) : l'objectif prendra plus de temps.</p>` : null}
     </${Card}>` : null}
@@ -612,7 +612,7 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
   const eq = np && np.mode === "equilibre";
   const isToday = date === todayISO();
   const v = dayVerdict(np, tot, (day.meals || []).length, isToday);
-  const canAI = conf.on && ai.sample;
+  const canAI = conf.on && ai.sample && !(plan && plan.offer === "lite");
   const addMeal = async (meal) => {
     const cur = src.get().food[date] || { meals: [] };
     try { await src.saveFood(date, { meals: [...(cur.meals || []), meal], updatedAt: nowISO() }); toast("Repas ajouté.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); }
@@ -623,7 +623,8 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
   const bySlot = SLOTS.map((s) => ({ ...s, meals: (day.meals || []).filter((m) => m.slot === s.id) })).filter((s) => s.meals.length);
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Nutrition</div><h1>${np ? (eq ? "Des repas équilibrés, sans compter." : nutriGoalText(np).replace(/^./, (c) => c.toUpperCase()).replace(/, départ.*$/, "") + ".") : "Fixe ton objectif en 1 minute."}</h1></div>
-    ${np ? html`<div className="tabs-scroll"><${Seg} options=${[{ v: "journal", n: "Mon journal" }, { v: "objectif", n: "Mon objectif" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>` : null}
+    <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
+    ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
     ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />` : null}
     ${sub === "journal" && np ? html`
@@ -661,6 +662,7 @@ function NutriToday({ data, go }) {
   const n = ((data.food[todayISO()] || {}).meals || []).length;
   return html`<button type="button" className="nutri-mini" onClick=${() => go("nutrition")}>
     <div className="nm-h"><b>Nutrition du jour</b><span className="muted small">${plural(n, "repas", "repas")} noté${n > 1 ? "s" : ""}</span></div>
+    ${typeof weekRecipe === "function" && weekRecipe(data, np) ? html`<span className="small">Recette de la semaine : <b>${weekRecipe(data, np).n}</b></span>` : null}
     ${np.mode === "equilibre" ? html`<span className="small">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>` : html`<${Bar} value=${tot.kcal / (np.targets.kcal || 1)} /><span className="small">${fmtN(tot.kcal, 0)} / ${fmtN(np.targets.kcal, 0)} kcal · protéines ${fmtN(tot.p, 0)} / ${fmtN(np.targets.p, 0)} g</span>`}
   </button>`;
 }

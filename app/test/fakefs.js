@@ -18,13 +18,24 @@
   function changedKeys(a, b) { a = a || {}; b = b || {}; var ks = {}; Object.keys(a).concat(Object.keys(b)).forEach(function (k) { if (!same(a[k], b[k])) ks[k] = 1; }); return Object.keys(ks); }
   function getf(o, k, d) { return o && o[k] !== undefined ? o[k] : d; }
   /* ---- règles (miroir de firestore.rules) ---- */
-  var OFFERS = ["essentiel", "suivi", "hybride"], NIVS = ["reprise", "sportif", "perf", "elite"];
-  var PLAN_KEYS = ["programId", "offer", "weeks", "start", "equipment", "status", "niveau", "medicalHold", "compDate", "message", "extra", "validatedAt", "cycle", "source", "grantWeeks", "updatedAt", "reviewedAt"];
+  var OFFERS = ["essentiel", "suivi", "hybride", "lite"], NIVS = ["reprise", "sportif", "perf", "elite"];
+  var PLAN_KEYS = ["programId", "offer", "weeks", "start", "equipment", "status", "niveau", "medicalHold", "compDate", "message", "extra", "validatedAt", "cycle", "source", "grantWeeks", "updatedAt", "reviewedAt", "aiNote", "startMs", "untilMs", "until", "lite"];
+  var DAY = 86400000;
+  function nowMs() { return Date.now() + (window.__CLOCK_SKEW || 0); }
+  function perMax(per) { return per === "an" ? 367 * DAY : 32 * DAY; }
+  function liteShapeOk(p) { return p.offer === "lite" && p.lite && typeof p.lite === "object" && isInt(p.startMs) && isInt(p.untilMs) && typeof p.until === "string" && p.grantWeeks === 0 && p.weeks === 12 && p.untilMs > p.startMs; }
+  function liteNewOk(p, maxMs, prev) { return p.untilMs - p.startMs <= maxMs && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + 61 * DAY && ((!prev && p.cycle === 1) || (!!prev && p.cycle === getf(prev, "cycle", 1) + 1)); }
+  function liteExtOk(p, maxMs, d) { return !!d && getf(d, "offer", "") === "lite" && d.untilMs > nowMs() && p.programId === d.programId && p.startMs === d.startMs && p.start === d.start && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle === getf(d, "cycle", 1); }
+  function liteCycleOk(p, d) {
+    if (!d || getf(d, "offer", "") !== "lite" || d.status !== "active" || !(d.untilMs > nowMs())) return false;
+    var allowedK = ["programId", "weeks", "start", "niveau", "equipment", "compDate", "extra", "message", "cycle", "updatedAt"];
+    return changedKeys(d, p).every(function (k) { return allowedK.indexOf(k) >= 0; }) && p.cycle === getf(d, "cycle", 1) + 1 && p.weeks === 12;
+  }
   function isInt(x) { return typeof x === "number" && Math.floor(x) === x; }
   function planKeysOk(p) {
     return Object.keys(p).every(function (k) { return PLAN_KEYS.indexOf(k) >= 0; }) && p.status === "active" && typeof p.programId === "string" && OFFERS.indexOf(p.offer) >= 0
       && isInt(p.weeks) && p.weeks >= 1 && p.weeks <= 12 && isInt(p.grantWeeks) && typeof p.start === "string" && /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(p.start)
-      && NIVS.indexOf(p.niveau) >= 0 && isInt(p.cycle) && p.source && typeof p.source === "object";
+      && NIVS.indexOf(p.niveau) >= 0 && isInt(p.cycle);
   }
   function weeksOk(p, g, prev) {
     if (!prev) return p.weeks === g && p.cycle === 1;
@@ -35,6 +46,26 @@
   function planGrantOk(cid, p, B, A) {
     if (!planKeysOk(p)) return false;
     var prev = B["plans/" + cid], s = p.source;
+    if (prev && liteCycleOk(p, prev)) return true;
+    if (!s || typeof s !== "object") return false;
+    if (p.offer === "lite") {
+      if (s.kind === "code") {
+        var cb = B["codes/" + s.id], ca = A["codes/" + s.id];
+        if (!cb || !ca) return false;
+        var mx = cb.weeks * 7 * DAY + 2 * 3600000;
+        return !(cid in (cb.usedBy || {})) && (cid in (ca.usedBy || {})) && cb.offer === "lite" && liteShapeOk(p) && p.lite.mode === "code" && (cb.programId == null || p.programId === cb.programId)
+          && (liteNewOk(p, mx, prev) || liteExtOk(p, mx, prev));
+      }
+      if (s.kind === "paiement") {
+        var lb = B["payments/" + s.id], la = A["payments/" + s.id];
+        if (!lb || !la || lb.uid !== cid || lb.ok !== true || lb.used !== false || la.used !== true || lb.offer !== "lite") return false;
+        if (lb.renewal === true) return !!prev && getf(prev, "offer", "") === "lite" && prev.lite && prev.lite.sub === lb.sub
+          && changedKeys(prev, p).every(function (k) { return ["untilMs", "until", "source", "updatedAt"].indexOf(k) >= 0; }) && p.untilMs === lb.untilMs && p.untilMs > prev.untilMs;
+        return liteShapeOk(p) && p.lite.period === lb.period && p.lite.mode === lb.mode && (lb.mode !== "abo" || p.lite.sub === lb.sub)
+          && (liteNewOk(p, perMax(lb.period), prev) || liteExtOk(p, perMax(lb.period), prev));
+      }
+      return false;
+    }
     if (s.kind === "code") {
       var b = B["codes/" + s.id], a = A["codes/" + s.id];
       if (!b || !a) return false;
@@ -93,6 +124,17 @@
         if (read) return coach || self(seg[1]);
         if (coach) return true;
         return self(seg[1]) && data !== null && planGrantOk(seg[1], data, B, A);
+      case "subs":
+        if (read) return coach || (signed && u.uid === window.__RELAY_UID) || (signed && B[path] && B[path].uid === u.uid);
+        if (data === null) return coach;
+        return signed && u.uid === window.__RELAY_UID && data && typeof data.uid === "string";
+      case "resiliations":
+        if (read || data === null) return coach;
+        if (existed) return coach;
+        var rk = Object.keys(data || {});
+        return /^r[a-z0-9]{6,20}$/.test(seg[1] || "") && rk.every(function (k) { return ["at", "name", "email", "ref", "msg", "done"].indexOf(k) >= 0; })
+          && typeof data.name === "string" && data.name.length >= 2 && data.name.length <= 100 && typeof data.email === "string" && data.email.length <= 200 && /^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(data.email)
+          && typeof data.ref === "string" && data.ref.length <= 60 && typeof data.msg === "string" && data.msg.length <= 500 && typeof data.at === "string" && data.at.length <= 40 && data.done === false;
       case "replies": return read ? (coach || self(seg[1])) : coach;
       case "coachnotes": return coach;
       default: return false;
@@ -250,5 +292,6 @@
     /* écriture « serveur » (simule le relais de paiement authentifié) en passant par les règles avec l'identité du relais */
     relayCreate: function (path, data) { var B = load(); if (B[path]) return "exists"; var A = plain(B); A[path] = plain(data); var u = { uid: window.__RELAY_UID };
       var seg = path.split("/"); if (seg[0] !== "payments" || data.used !== false || !u.uid) return "denied"; save(A); notify(); return "ok"; },
+    relaySet: function (path, data) { var B = load(); var seg = path.split("/"); if (seg[0] !== "subs" || !window.__RELAY_UID || typeof data.uid !== "string") return "denied"; B[path] = plain(data); save(B); notify(); return "ok"; },
   };
 })();

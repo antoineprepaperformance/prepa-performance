@@ -75,7 +75,7 @@ async def run():
         await home.goto(URL); await home.evaluate("window.__fakefs.reset()"); await home.reload()
         ok(await has(home, "Comment ça marche"), "accueil : section « Comment ça marche »")
         ok(await home.locator(".l-sec .pcard").count() == 8, "accueil : 8 programmes")
-        ok(await home.locator(".l-offer").count() == 3, "accueil : 3 formules")
+        ok(await home.locator(".l-offer").count() == 4 and await home.locator(".l-offer.lite").count() == 1, "accueil : 3 formules + forfait Lite")
         ok(await home.locator(".l-card svg").count() >= 1, "accueil : carte athlète d'exemple")
         ok(await overflow(home) == 0, "accueil ordinateur : pas de défilement horizontal")
         await shot(home, "accueil_ordinateur")

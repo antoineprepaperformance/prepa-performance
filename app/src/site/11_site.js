@@ -95,6 +95,42 @@ function LegalModal({ open, onClose, settings, kind0 }) {
     <div className="stack-s"><${Seg} options=${[{ v: "cgv", n: "Conditions de vente" }, { v: "confidentialite", n: "Confidentialité" }, { v: "mentions", n: "Mentions légales" }]} value=${kind} onChange=${setKind} />
       <${LegalDoc} kind=${kind} settings=${settings} /></div></${Modal}>`;
 }
+/* résiliation sans connexion (article L215-1-1) : formulaire public, accusé de réception immédiat */
+function PublicCancel({ settings, onLogin }) {
+  const [f, setF] = useState({ name: "", email: "", ref: "", msg: "" });
+  const [step, setStep] = useState(1);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(null);
+  const L = legalInfo(settings);
+  const ok = f.name.trim().length >= 2 && /^\S+@\S+\.\S+$/.test(f.email.trim());
+  const text = (d) => ["ACCUSÉ DE RÉCEPTION DE RÉSILIATION", "", L.marque + " — " + L.editeur + (L.siret ? " — SIRET " + L.siret : ""), L.adresse, L.email, "",
+    "Nous confirmons la réception de ta résiliation.", "Notification reçue le : " + new Date(d.at).toLocaleString("fr-FR"), "Nom : " + d.name, "E-mail du compte : " + d.email, "Référence : " + (d.ref || "—"),
+    "Contrat : abonnement Lite.", "Fin du contrat : à la fin de la période déjà payée, sans nouveau prélèvement. " + L.editeur + " te confirme par e-mail la date exacte de fin et l'arrêt des prélèvements."].join("\n");
+  const send = async () => {
+    setBusy(true); setErr("");
+    try {
+      const id = "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      const d = { at: nowISO(), name: f.name.trim().slice(0, 100), email: f.email.trim().toLowerCase().slice(0, 200), ref: f.ref.trim().slice(0, 60), msg: f.msg.trim().slice(0, 500), done: false };
+      await window.SITE.fs.doc("resiliations/" + id).set(d);
+      setDone(d); setStep(3); saveText("accuse-resiliation.txt", text(d));
+    } catch (e) { setErr("Envoi impossible : vérifie ta connexion, ou écris à " + (L.email || "Antoine") + "."); } finally { setBusy(false); }
+  };
+  if (step === 3 && done) return html`<div className="stack"><div className="alert okb" role="status"><div><b>Résiliation reçue</b><p>Reçue le ${new Date(done.at).toLocaleString("fr-FR")}. Ton abonnement s'arrête à la fin de la période déjà payée, sans nouveau prélèvement. ${L.editeur} te confirme la date exacte par e-mail. L'accusé de réception est téléchargé.</p></div></div>
+    <button type="button" className="linkbtn" onClick=${() => saveText("accuse-resiliation.txt", text(done))}>Télécharger à nouveau l'accusé de réception</button></div>`;
+  return html`<div className="stack form">
+    <p className="small">Pour un abonnement Lite. Avec ton compte, tu peux aussi résilier dans Profil › Mes commandes : la date de fin s'affiche tout de suite. <button type="button" className="linkbtn" onClick=${onLogin}>Me connecter</button></p>
+    ${step === 1 ? html`
+      <${Field} label="Nom et prénom" id="pc-n"><input id="pc-n" value=${f.name} onChange=${(e) => setF({ ...f, name: e.target.value })} /></${Field}>
+      <${Field} label="E-mail de ton compte" id="pc-e"><input id="pc-e" type="email" value=${f.email} onChange=${(e) => setF({ ...f, email: e.target.value })} /></${Field}>
+      <${Field} label="Numéro de commande (facultatif)" id="pc-r" hint="Il figure sur ton récapitulatif de commande."><input id="pc-r" value=${f.ref} onChange=${(e) => setF({ ...f, ref: e.target.value })} /></${Field}>
+      <${Field} label="Message (facultatif)" id="pc-m"><textarea id="pc-m" rows="2" value=${f.msg} onChange=${(e) => setF({ ...f, msg: e.target.value })}></textarea></${Field}>
+      <${Btn} block onClick=${() => setStep(2)} disabled=${!ok}>Continuer</${Btn}>`
+    : html`<dl className="dl"><dt>Nom</dt><dd>${f.name}</dd><dt>E-mail</dt><dd>${f.email}</dd><dt>Commande</dt><dd>${f.ref || "—"}</dd><dt>Contrat</dt><dd>Abonnement Lite</dd><dt>Fin</dt><dd>À la fin de la période déjà payée</dd></dl>
+      ${err ? html`<p className="small warn-t" role="alert">${err}</p>` : null}
+      <div className="actions"><${Btn} kind="danger" onClick=${send} disabled=${busy}>${busy ? "Envoi…" : "Confirmer la résiliation"}</${Btn}><${Btn} kind="quiet" onClick=${() => setStep(1)}>Modifier</${Btn}></div>`}
+  </div>`;
+}
 /* lien d'offre : ?code=XXXX est gardé jusqu'à la fin de l'inscription */
 function pendingCodeFromUrl() {
   try {
@@ -110,14 +146,15 @@ function Landing() {
   const [legal, setLegal] = useState(hashLegal);
   const [pcode] = useState(pendingCodeFromUrl);
   const [settings, setSettings] = useState(null);
+  const [cancel, setCancel] = useState(() => (location.hash || "") === "#resilier");
   useEffect(() => { let a = true; (async () => { try { const s = await window.SITE.fs.doc("settings/app").get(); if (a && s.exists) setSettings(s.data()); } catch (e) {} })(); return () => { a = false; }; }, []);
   const demo = useMemo(() => demoWorld().demo_lucas, []);
   const dprog = PB.vitesse;
   const offers = OFFERS.map((o) => ({ ...o, prix: (settings && settings.offers && settings.offers[o.id]) || o.prix }));
   const coach = (settings && settings.coach) || {};
   const steps = [["Choisis ton objectif", "8 programmes : perte de poids, muscle, force, vitesse, sports collectifs, remise en forme, course, retour après blessure."],
-    ["Ton plan sur mesure", "Profil Reprise, Sportif, Performance ou Haut niveau : charges, tempo, récupération et prévention adaptés. Accès de 1 à 3 mois, payé une fois, sans abonnement."],
-    ["Tes séances, guidées", "La dose de la semaine, les consignes, tes charges de la dernière fois. Un bilan de 2 minutes chaque dimanche."],
+    ["Ton plan sur mesure", "Profil Reprise, Sportif, Performance ou Haut niveau : charges, tempo, récupération et prévention adaptés. Accès de 1 à 3 mois payé une fois, ou forfait Lite au mois ou à l'année."],
+    ["Tes séances, guidées", "La dose de la semaine, chaque mouvement animé, tes charges de la dernière fois. En plus : séances flash à la maison, récupération, recettes et santé au quotidien."],
     ["Tes progrès, visibles", "Tests toutes les 4 semaines, courbes, nutrition, badges et ta carte athlète qui évolue."]];
   return html`<div className="landing">
     <header className="l-top"><${Brand} sub="Préparation physique en ligne" /><div className="btnrow"><${Btn} kind="quiet" small onClick=${() => setAuth("login")}>Connexion</${Btn}><span className="l-top-cta"><${Btn} small onClick=${() => setAuth("signup")}>Commencer</${Btn}></span></div></header>
@@ -135,12 +172,16 @@ function Landing() {
     <section className="l-sec"><h2>Comment ça marche</h2><div className="l-steps">${steps.map(([t, d], i) => html`<div key=${i} className="l-step"><span className="l-n">${i + 1}</span><b>${t}</b><p className="small muted">${d}</p></div>`)}</div></section>
     <section className="l-sec"><h2>Les programmes</h2><div className="pgrid wide">${PROGS.map((p) => html`<div key=${p.id} className="pcard"><b>${p.n}</b><span>${p.short}</span><small>${p.lieu} · 12 semaines</small></div>`)}</div></section>
     <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className="card l-offer"><h3>${o.n}</h3><p className="small">${o.desc}</p>
-      <div className="l-prices">${DURS.map((d, i) => html`<div key=${d.w}><b>${eur(o.prix[i])}</b><small>${d.n}</small></div>`)}</div></div>`)}</div>
-      <p className="muted small">${tvaLine(settings)}. Paiement unique, sans abonnement ni renouvellement automatique. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
+      <div className="l-prices">${DURS.map((d, i) => html`<div key=${d.w}><b>${eur(o.prix[i])}</b><small>${d.n}</small></div>`)}</div></div>`)}
+      ${liteOn(settings) ? html`<div className="card l-offer lite"><h3>Lite</h3><p className="small">${liteDesc()}</p>
+        <div className="l-prices"><div><b>${eur2(litePrice(settings, "mois"))}</b><small>par mois</small></div><div><b>${eur2(litePrice(settings, "an"))}</b><small>par an</small></div></div>
+        <p className="muted small">En abonnement (résiliable en quelques clics) ou en paiement d'avance.</p></div>` : null}</div>
+      <p className="muted small">${tvaLine(settings)}. Essentiel, Suivi et Hybride : paiement unique, sans abonnement. Lite : abonnement mensuel sans engagement, abonnement annuel ou paiement d'avance sans renouvellement. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       <div className="small muted">${[coach.phone, coach.email, coach.instagram].filter(Boolean).join(" · ")}</div>
-      <div className="btnrow"><button type="button" className="linkbtn" onClick=${() => setLegal("cgv")}>Conditions de vente</button><button type="button" className="linkbtn" onClick=${() => setLegal("confidentialite")}>Confidentialité</button><button type="button" className="linkbtn" onClick=${() => setLegal("mentions")}>Mentions légales</button></div></footer>
+      <div className="btnrow"><button type="button" className="linkbtn" onClick=${() => setLegal("cgv")}>Conditions de vente</button><button type="button" className="linkbtn" onClick=${() => setLegal("confidentialite")}>Confidentialité</button><button type="button" className="linkbtn" onClick=${() => setLegal("mentions")}>Mentions légales</button><button type="button" className="linkbtn" onClick=${() => setCancel(true)}>Résilier votre contrat</button></div></footer>
+    <${Modal} open=${cancel} title="Résilier votre contrat" onClose=${() => setCancel(false)}>${cancel ? html`<${PublicCancel} settings=${settings} onLogin=${() => { setCancel(false); setAuth("login"); }} />` : null}</${Modal}>
     <${Modal} open=${!!auth} title=${auth === "login" ? "Connexion" : "Créer mon compte"} onClose=${() => setAuth(null)}>${auth ? html`<${AuthPanel} mode0=${auth} onClose=${() => setAuth(null)} />` : null}</${Modal}>
     <${LegalModal} open=${!!legal} kind0=${legal || "cgv"} settings=${settings} onClose=${() => { setLegal(null); try { if (location.hash) history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }} />
   </div>`;

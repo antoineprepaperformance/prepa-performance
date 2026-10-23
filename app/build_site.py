@@ -18,11 +18,13 @@ sys.path.insert(0, str(ROOT))
 from content_exercises import LIB
 from content_programs import PROGRAMS, T, TESTS, CHECKIN, SCREENING, OFFERS
 from content_niveaux import NIVEAU_CONTENT
+from content_extras import EXTRAS_CONTENT
+from content_recettes import RECETTES_CONTENT
 
-content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT}
+content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ORDER = ["site/00_platform.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js",
-         "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "site/11_site.js", "07_main.js"]
+         "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "site/11_site.js", "07_main.js"]
 js = "\n".join((SRC / f).read_text() for f in ORDER)
 assert "</script" not in js
 css = (SRC / "styles.css").read_text()
@@ -239,8 +241,8 @@ service cloud.firestore {
     // ---- accès au programme : créé par le coach, ou par le client avec un code ou un paiement valide ----
     function planKeysOk(p) {
       return p.keys().hasOnly(['programId', 'offer', 'weeks', 'start', 'equipment', 'status', 'niveau', 'medicalHold', 'compDate', 'message', 'extra',
-          'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt'])
-        && p.status == 'active' && p.programId is string && p.offer in ['essentiel', 'suivi', 'hybride']
+          'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite'])
+        && p.status == 'active' && p.programId is string && p.offer in ['essentiel', 'suivi', 'hybride', 'lite']
         && p.weeks is int && p.weeks >= 1 && p.weeks <= 12 && p.grantWeeks is int
         && p.start is string && p.start.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && p.niveau in ['reprise', 'sportif', 'perf', 'elite'] && p.cycle is int;
@@ -264,10 +266,62 @@ service cloud.firestore {
       return before.uid == cid && before.ok == true && before.used == false && after.used == true
         && p.offer == before.offer && p.grantWeeks == before.weeks && weeksOk(p, before.weeks);
     }
+    // ---- forfait Lite : accès daté (startMs → untilMs), mensuel ou annuel, abonnement ou paiement d'avance ----
+    function dayMs() { return 86400000; }
+    function nowMs() { return request.time.toMillis(); }
+    function perMax(per) { return per == 'an' ? 367 * 86400000 : 32 * 86400000; }
+    function liteShapeOk(p) {
+      return p.offer == 'lite' && p.lite is map && p.startMs is int && p.untilMs is int && p.until is string
+        && p.grantWeeks == 0 && p.weeks == 12 && p.untilMs > p.startMs;
+    }
+    function liteNewOk(p, maxMs) {
+      return p.untilMs - p.startMs <= maxMs && p.startMs >= nowMs() - 2 * dayMs() && p.startMs <= nowMs() + 61 * dayMs()
+        && ((resource == null && p.cycle == 1) || (resource != null && p.cycle == resource.data.get('cycle', 1) + 1));
+    }
+    function liteExtOk(p, maxMs) {
+      let d = resource.data;
+      return d.get('offer', '') == 'lite' && d.untilMs > nowMs() && p.programId == d.programId && p.startMs == d.startMs && p.start == d.start
+        && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle == d.get('cycle', 1);
+    }
+    function litePayGrant(pid, cid, p) {
+      let before = get(/databases/$(database)/documents/payments/$(pid)).data;
+      let after = getAfter(/databases/$(database)/documents/payments/$(pid)).data;
+      return before.uid == cid && before.ok == true && before.used == false && after.used == true
+        && before.offer == 'lite' && before.get('renewal', false) == false && liteShapeOk(p)
+        && p.lite.period == before.period && p.lite.mode == before.mode && (before.mode != 'abo' || p.lite.sub == before.sub)
+        && (liteNewOk(p, perMax(before.period)) || (resource != null && liteExtOk(p, perMax(before.period))));
+    }
+    // renouvellement d'abonnement confirmé par le relais : seule la date de fin avance, à la date payée
+    function liteRenew(pid, cid, p) {
+      let before = get(/databases/$(database)/documents/payments/$(pid)).data;
+      let after = getAfter(/databases/$(database)/documents/payments/$(pid)).data;
+      return resource != null && before.uid == cid && before.ok == true && before.used == false && after.used == true
+        && before.offer == 'lite' && before.renewal == true && resource.data.get('offer', '') == 'lite' && resource.data.lite.sub == before.sub
+        && p.diff(resource.data).affectedKeys().hasOnly(['untilMs', 'until', 'source', 'updatedAt'])
+        && p.untilMs == before.untilMs && p.untilMs > resource.data.untilMs;
+    }
+    function liteCodeGrant(code, cid, p) {
+      let before = get(/databases/$(database)/documents/codes/$(code)).data;
+      let after = getAfter(/databases/$(database)/documents/codes/$(code)).data;
+      return !(cid in before.usedBy) && (cid in after.usedBy) && before.offer == 'lite' && liteShapeOk(p) && p.lite.mode == 'code'
+        && (before.programId == null || p.programId == before.programId)
+        && (liteNewOk(p, before.weeks * 7 * dayMs() + 2 * 3600000) || (resource != null && liteExtOk(p, before.weeks * 7 * dayMs() + 2 * 3600000)));
+    }
+    // programme suivant choisi par le client pendant son accès Lite (accès, paiement et avis médical inchangés)
+    function liteCycle() {
+      let p = request.resource.data;
+      let d = resource.data;
+      return d.get('offer', '') == 'lite' && d.status == 'active' && d.untilMs > nowMs()
+        && p.diff(d).affectedKeys().hasOnly(['programId', 'weeks', 'start', 'niveau', 'equipment', 'compDate', 'extra', 'message', 'cycle', 'updatedAt'])
+        && p.cycle == d.get('cycle', 1) + 1 && p.weeks == 12;
+    }
     function grantOk(cid) {
       let p = request.resource.data;
-      return planKeysOk(p) && ((p.source.kind == 'code' && codeGrant(p.source.id, cid, p))
-        || (p.source.kind == 'paiement' && payGrant(p.source.id, cid, p)));
+      return planKeysOk(p) && (
+        (p.offer != 'lite' && ((p.source.kind == 'code' && codeGrant(p.source.id, cid, p)) || (p.source.kind == 'paiement' && payGrant(p.source.id, cid, p))))
+        || (p.offer == 'lite' && ((p.source.kind == 'code' && liteCodeGrant(p.source.id, cid, p))
+          || (p.source.kind == 'paiement' && (litePayGrant(p.source.id, cid, p) || liteRenew(p.source.id, cid, p)))))
+        || (resource != null && liteCycle()));
     }
     // ---- utilisation d'un code : +1 utilisation, une seule fois par personne, dans la même écriture que l'accès ----
     function redeemOk(code) {
@@ -312,6 +366,23 @@ service cloud.firestore {
       allow get: if signedIn();
       allow list, create, delete: if isCoach();
       allow update: if isCoach() || (signedIn() && redeemOk(code));
+    }
+    // abonnements Stripe (forfait Lite) : correspondance abonnement → client, tenue par le relais
+    match /subs/{sid} {
+      allow read: if isCoach() || isRelay() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create, update: if isRelay() && request.resource.data.uid is string;
+      allow delete: if isCoach();
+    }
+    // résiliation sans connexion (article L215-1-1) : envoi libre et limité, lecture et suivi par le coach
+    match /resiliations/{rid} {
+      allow create: if rid.matches('^r[a-z0-9]{6,20}$')
+        && request.resource.data.keys().hasOnly(['at', 'name', 'email', 'ref', 'msg', 'done'])
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200 && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && request.resource.data.ref is string && request.resource.data.ref.size() <= 60
+        && request.resource.data.msg is string && request.resource.data.msg.size() <= 500
+        && request.resource.data.at is string && request.resource.data.at.size() <= 40 && request.resource.data.done == false;
+      allow read, update, delete: if isCoach();
     }
     // paiements confirmés par le relais Stripe
     match /payments/{pid} {

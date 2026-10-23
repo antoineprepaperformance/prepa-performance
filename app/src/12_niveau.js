@@ -139,8 +139,12 @@ function readinessOf(r, data) {
   let lvl = "ok";
   if (score < 2.5 || (ratio !== null && ratio < 0.9)) lvl = "leger";
   else if (score < 3.5 || (ratio !== null && ratio < 0.95)) lvl = "prudence";
+  /* montre ou saisie du matin : FC au repos, VFC, nuit courte (Plews 2013, Buchheit 2014) */
+  const w = typeof santeFlag === "function" && data ? santeFlag(data) : null;
+  if (w && w.lvl === "leger" && lvl !== "leger") lvl = "leger";
+  else if (w && w.lvl === "prudence" && lvl === "ok") lvl = "prudence";
   const txt = { ok: "Feu vert : séance prévue, intensité normale.", prudence: "Prudence : une série de moins sur la force et la puissance, intensité gardée.", leger: "Séance allégée : une série de moins partout, 2 répétitions en réserve de plus, sauts et sprints à 80-90 %." }[lvl];
-  return { score: Math.round(score * 10) / 10, ratio, lvl, txt };
+  return { score: Math.round(score * 10) / 10, ratio, lvl, txt, watch: w && w.notes.length ? w.notes : null };
 }
 
 /* ---------- affûtage ---------- */
@@ -297,12 +301,16 @@ function NiveauCards({ value, onChange, recommended }) {
 }
 function ReadinessCheck({ value, onChange, data }) {
   const v = value || {};
+  /* sommeil pré-rempli depuis la nuit enregistrée (montre ou saisie) */
+  const sl = typeof santeVal === "function" ? santeVal(data, todayISO(), "sommeil") : null;
+  useEffect(() => { if (sl !== null && v.sommeil === undefined) onChange({ ...v, sommeil: sleepScore(sl) }); }, [sl]);
   const res = readinessOf(v, data);
   const base = cmjBase(data);
   return html`<div className="ready card">
     <div className="card-h"><div><h3>Contrôle de forme</h3><p className="muted small">30 secondes avant l'échauffement : la séance s'ajuste à ta forme du jour.</p></div></div>
     ${READY_ITEMS.map(([k, n, lo, hi]) => html`<${Field} key=${k} label=${n}><${Scale} id=${"rd-" + k} min=${1} max=${5} value=${num(v[k])} lo=${lo} hi=${hi} onChange=${(x) => onChange({ ...v, [k]: x })} /></${Field}>`)}
     <${Field} label="Détente verticale du jour (facultatif, cm)" id="rd-cmj" hint=${base ? "Ton meilleur test : " + fmtN(base, 1) + " cm" : "Fais 3 sauts mains sur les hanches et note le meilleur."}><input id="rd-cmj" inputMode="decimal" value=${v.cmj || ""} onChange=${(e) => onChange({ ...v, cmj: e.target.value })} /></${Field}>
-    ${res ? html`<div className=${"alert " + (res.lvl === "ok" ? "okb" : res.lvl === "prudence" ? "gold" : "warn")}><div><b>Forme ${fmtN(res.score, 1)}/5${res.ratio ? " · détente " + Math.round(res.ratio * 100) + " %" : ""}</b><p>${res.txt}</p></div></div>` : null}
+    ${res ? html`<div className=${"alert " + (res.lvl === "ok" ? "okb" : res.lvl === "prudence" ? "gold" : "warn")}><div><b>Forme ${fmtN(res.score, 1)}/5${res.ratio ? " · détente " + Math.round(res.ratio * 100) + " %" : ""}</b><p>${res.txt}</p>${res.watch ? html`<p className="small">Ta montre : ${res.watch.join(" · ")}.</p>` : null}</div></div>` : null}
+    ${sl !== null ? html`<p className="muted small">Sommeil pré-rempli depuis ta nuit enregistrée (${fmtN(sl, 1)} h).</p>` : null}
   </div>`;
 }

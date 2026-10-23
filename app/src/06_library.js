@@ -149,7 +149,7 @@ function ExercisesView({ exo, db }) {
     <div className="filters"><input id="q-ex" className="search" placeholder="Rechercher" value=${q} onChange=${(e) => setQ(e.target.value)} />
       <select id="cat-ex" value=${cat} onChange=${(e) => setCat(e.target.value)}>${cats.map((c) => html`<option key=${c} value=${c}>${c}</option>`)}</select></div>
     <div className="exgrid">${list.map((e) => html`<button key=${e.id} type="button" className="exitem" onClick=${() => setSel(e)}>
-      <b>${e.n}</b><span className="muted small">${e.c} · ${e.eq}</span>${exo && exo[e.id] && exo[e.id].video ? html`<${Pill} tone="gold">vidéo</${Pill}>` : null}${e.custom ? html`<${Pill}>perso</${Pill}>` : null}</button>`)}</div>
+      ${hasMotion(e.id, e) ? html`<span className="exi-anim"><${MoveAnim} id=${e.id} ex=${e} compact=${true} autoplay=${false} /></span>` : null}<b>${e.n}</b><span className="muted small">${e.c} · ${e.eq}</span>${exo && exo[e.id] && exo[e.id].video ? html`<${Pill} tone="gold">vidéo</${Pill}>` : null}${e.custom ? html`<${Pill}>perso</${Pill}>` : null}</button>`)}</div>
     <${Modal} open=${!!sel} title=${sel ? sel.n : ""} onClose=${() => setSel(null)}>${sel ? html`<${ExerciseEdit} e=${sel} ov=${exo && exo[sel.id]} db=${db} onDone=${() => setSel(null)} />` : null}</${Modal}>
     <${Modal} open=${newOpen} title="Nouvel exercice" onClose=${() => setNewOpen(false)}>${newOpen ? html`<${ExerciseEdit} e=${{ id: rid("x_"), n: "", c: "Bas du corps", eq: "", cues: [], custom: true, isNew: true }} db=${db} onDone=${() => setNewOpen(false)} />` : null}</${Modal}>
   </div>`;
@@ -157,15 +157,18 @@ function ExercisesView({ exo, db }) {
 function ExerciseEdit({ e, ov, db, onDone }) {
   const toast = useToast();
   const isCustom = !!e.custom;
-  const [f, setF] = useState({ n: e.n, c: e.c, eq: e.eq, cues: (e.cues || []).join("\n"), video: (ov && ov.video) || e.video || "", note: (ov && ov.note) || "" });
+  const [f, setF] = useState({ n: e.n, c: e.c, eq: e.eq, cues: (e.cues || []).join("\n"), video: (ov && ov.video) || e.video || "", note: (ov && ov.note) || "", anim: e.anim || "" });
   const save = async () => {
     if (!db) { toast("Ouvre l'application depuis claude.ai pour enregistrer.", "warn"); return; }
     if (f.video && !/^https:\/\//.test(f.video.trim())) { toast("Le lien de la vidéo doit commencer par https://", "warn"); return; }
-    const out = isCustom ? { custom: true, id: e.id, n: f.n.trim() || "Exercice", c: f.c, eq: f.eq, cues: f.cues.split("\n").map((x) => x.trim()).filter(Boolean), video: f.video.trim(), note: f.note.trim() }
+    const out = isCustom ? { custom: true, id: e.id, n: f.n.trim() || "Exercice", c: f.c, eq: f.eq, cues: f.cues.split("\n").map((x) => x.trim()).filter(Boolean), video: f.video.trim(), note: f.note.trim(), anim: f.anim || null }
       : { video: f.video.trim(), note: f.note.trim() };
     try { await dbSet(db, "exercises/" + e.id, out); toast("Exercice enregistré.", "ok"); onDone(); } catch (err) { toast("Enregistrement impossible.", "bad"); }
   };
   return html`<div className="form">
+    ${hasMotion(e.id, { ...e, anim: f.anim }) ? html`<${MoveAnim} key=${f.anim || e.id} id=${e.id} ex=${{ ...e, anim: f.anim || e.anim }} />` : null}
+    ${isCustom ? html`<${Field} label="Animation" id="xe-an" hint="Le mouvement montré à tes clients pour cet exercice."><select id="xe-an" value=${f.anim} onChange=${(x) => setF({ ...f, anim: x.target.value })}>
+      <option value="">Aucune</option>${Object.keys(MOVES).sort((a, b) => (MOVES[a].n || a).localeCompare(MOVES[b].n || b)).map((k) => html`<option key=${k} value=${k}>${MOVES[k].n || k}</option>`)}</select></${Field}>` : null}
     ${isCustom ? html`<${Field} label="Nom" id="xe-n"><input id="xe-n" value=${f.n} onChange=${(x) => setF({ ...f, n: x.target.value })} /></${Field}>
       <div className="row2"><${Field} label="Catégorie" id="xe-c"><select id="xe-c" value=${f.c} onChange=${(x) => setF({ ...f, c: x.target.value })}>${CATS.map((c) => html`<option key=${c} value=${c}>${c}</option>`)}</select></${Field}>
         <${Field} label="Matériel" id="xe-eq"><input id="xe-eq" value=${f.eq} onChange=${(x) => setF({ ...f, eq: x.target.value })} /></${Field}></div>
@@ -191,15 +194,22 @@ function SettingsView({ settings, db, dl, rows }) {
   const payInit = () => ({ mode: "manuel", info: "", links: {}, ...(s0.pay || {}) });
   const [pay, setPay] = useState(payInit);
   const legInit = () => ({ ...legalInfo({}), ...(s0.legal || {}) });
+  const liteInit = () => ({ on: true, mois: LITE.prix.mois, an: LITE.prix.an, portail: "", ...(s0.lite || {}) });
+  const [lite, setLite] = useState(liteInit);
+  const [vid, setVid] = useState((s0.video && s0.video.coach) || "suivi");
   const [leg, setLeg] = useState(legInit);
-  useEffect(() => { if (settings) { setCoach({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(settings.coach || {}) }); if (settings.offers) setOffers({ ...offers, ...settings.offers }); setAiS(aiInit()); setPay(payInit()); setLeg(legInit()); } }, [settings && settings.updatedAt]);
+  useEffect(() => { if (settings) { setCoach({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(settings.coach || {}) }); if (settings.offers) setOffers({ ...offers, ...settings.offers }); setAiS(aiInit()); setPay(payInit()); setLeg(legInit()); setLite(liteInit()); setVid((settings.video && settings.video.coach) || "suivi"); } }, [settings && settings.updatedAt]);
   const badLinks = Object.entries(pay.links || {}).filter(([, v]) => v && !/^https:\/\/(buy\.stripe\.com|checkout\.stripe\.com|[a-z0-9.-]+)\//.test(v.trim()));
+  const badUrl = [pay.relay, lite.portail].some((v) => v && !/^https:\/\/[a-z0-9.-]+/i.test(String(v).trim()));
+  const LITE_LINKS = [["mois_abo", "Mensuel · abonnement"], ["an_abo", "Annuel · abonnement"], ["mois_avance", "Mensuel · paiement d'avance"], ["an_avance", "Annuel · paiement d'avance"]];
+  const setLink = (k, v) => setPay({ ...pay, links: { ...(pay.links || {}), [k]: v } });
   const save = async () => {
     if (!db) { toast("Ouvre l'application depuis claude.ai pour enregistrer.", "warn"); return; }
     if (badLinks.length) { toast("Lien de paiement invalide : il doit commencer par https://", "warn"); return; }
+    if (badUrl) { toast("Adresse invalide : elle doit commencer par https://", "warn"); return; }
     const links = Object.fromEntries(Object.entries(pay.links || {}).map(([k, v]) => [k, String(v || "").trim()]).filter(([, v]) => v));
-    try { await dbSet(db, "settings/app", { coach, offers: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, v.map((x) => num(x) || 0)])), ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow },
-      pay: { mode: pay.mode, info: String(pay.info || "").trim(), links }, legal: Object.fromEntries(Object.entries(leg).map(([k, v]) => [k, String(v || "").trim()])), updatedAt: nowISO() }); toast("Réglages enregistrés.", "ok"); }
+    try { await dbSet(db, "settings/app", { ...(settings || {}), video: { coach: vid }, coach, offers: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, v.map((x) => num(x) || 0)])), ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow },
+      pay: { mode: pay.mode, info: String(pay.info || "").trim(), links, relay: String(pay.relay || "").trim() }, lite: { on: lite.on !== false, mois: num(lite.mois) || LITE.prix.mois, an: num(lite.an) || LITE.prix.an, portail: String(lite.portail || "").trim() }, legal: Object.fromEntries(Object.entries(leg).map(([k, v]) => [k, String(v || "").trim()])), updatedAt: nowISO() }); toast("Réglages enregistrés.", "ok"); }
     catch (e) { toast("Enregistrement impossible.", "bad"); }
   };
   const lf = (k, n, ph, hint) => html`<${Field} label=${n} id=${"lg-" + k} hint=${hint}><input id=${"lg-" + k} value=${leg[k] || ""} placeholder=${ph || ""} onChange=${(e) => setLeg({ ...leg, [k]: e.target.value })} /></${Field}>`;
@@ -235,7 +245,22 @@ function SettingsView({ settings, db, dl, rows }) {
           <tbody>${OFFERS.map((o) => html`<tr key=${o.id}><th>${o.n}</th>${DURS.map((d) => html`<td key=${d.w}><input id=${"pl-" + o.id + d.w} aria-label=${"Lien " + o.n + " " + d.n} placeholder="https://buy.stripe.com/…" value=${(pay.links || {})[o.id + "_" + d.w] || ""} onChange=${(e) => setPay({ ...pay, links: { ...(pay.links || {}), [o.id + "_" + d.w]: e.target.value } })} /></td>`)}</tr>`)}</tbody></table></div>
         ${badLinks.length ? html`<p className="small warn-t">Un lien doit commencer par https://</p>` : null}
         <p className="muted small">Dans Stripe, crée un lien de paiement par formule et par durée, au prix de la grille ci-dessous. Dans « Après le paiement », choisis « Rediriger vers votre site » : <span className="mono">${siteBase}?paiement=ok&session_id={CHECKOUT_SESSION_ID}</span>. Sans lien, le client commande et tu encaisses à ta façon.</p>
+        ${window.IS_SITE ? html`<${Field} label="Adresse du relais (facultatif)" id="pay-relay" hint="Avec la clé Stripe du relais, la résiliation d'un abonnement Lite arrête aussitôt les prélèvements (voir MISE_EN_LIGNE.md)."><input id="pay-relay" value=${pay.relay || ""} placeholder="https://relais-paiement.ton-compte.workers.dev" onChange=${(e) => setPay({ ...pay, relay: e.target.value })} /></${Field}>` : null}
         <${Field} label="Consignes de paiement sans lien Stripe (facultatif)" id="pay-info"><textarea id="pay-info" rows="2" value=${pay.info || ""} onChange=${(e) => setPay({ ...pay, info: e.target.value })} placeholder="Ex. Je t'envoie un lien de paiement ou un RIB par e-mail sous 24 h."></textarea></${Field}>
+      </div></${Card}>
+    <${Card} title="Correction vidéo" sub="Le client filme son mouvement, garde 3 images et te les envoie avec ses repères">
+      <${Field} label="Envoi à toi possible pour"><${Seg} options=${[{ v: "suivi", n: "Formule Suivi" }, { v: "toutes", n: "Essentiel, Suivi et Hybride" }]} value=${vid} onChange=${setVid} /></${Field}>
+      <p className="muted small">Le forfait Lite garde la fiche animée et l'autocontrôle vidéo, sans envoi au coach.</p></${Card}>
+    <${Card} title="Forfait Lite" sub=${"En autonomie : programmes, séances flash, récup, recettes et santé au quotidien, sans réponse aux bilans" + (window.IS_SITE ? " et sans correction vidéo par toi" : ", sans correction vidéo par toi et sans coach IA")}>
+      <div className="form">
+        <${Field} label="Proposé à l'inscription"><${Seg} options=${[{ v: true, n: "Oui" }, { v: false, n: "Non" }]} value=${lite.on !== false} onChange=${(v) => setLite({ ...lite, on: v })} /></${Field}>
+        <div className="row2"><${Field} label="Prix mensuel (€)" id="lt-m"><input id="lt-m" inputMode="decimal" value=${lite.mois} onChange=${(e) => setLite({ ...lite, mois: e.target.value })} /></${Field}>
+          <${Field} label="Prix annuel (€)" id="lt-a"><input id="lt-a" inputMode="decimal" value=${lite.an} onChange=${(e) => setLite({ ...lite, an: e.target.value })} /></${Field}></div>
+        <div className="tscroll"><table className="ptable linktable"><thead><tr><th>Lien Stripe Lite</th><th>Lien</th></tr></thead>
+          <tbody>${LITE_LINKS.map(([k, n]) => html`<tr key=${k}><th>${n}</th><td><input id=${"pl-lite-" + k} aria-label=${"Lien Lite " + n} placeholder="https://buy.stripe.com/…" value=${(pay.links || {})["lite_" + k] || ""} onChange=${(e) => setLink("lite_" + k, e.target.value)} /></td></tr>`)}</tbody></table></div>
+        <p className="muted small">Abonnement : dans Stripe, crée un produit « Lite » avec un prix récurrent (mensuel et annuel) puis un lien de paiement pour chacun. Paiement d'avance : un prix unique. Même redirection après paiement que ci-dessus.</p>
+        <${Field} label="Portail client Stripe (facultatif)" id="lt-portail" hint="Lien de connexion du portail client Stripe : le client y gère sa carte et ses factures."><input id="lt-portail" value=${lite.portail || ""} placeholder="https://billing.stripe.com/p/login/…" onChange=${(e) => setLite({ ...lite, portail: e.target.value })} /></${Field}>
+        ${badUrl ? html`<p className="small warn-t">Une adresse doit commencer par https://</p>` : null}
       </div></${Card}>
     <${Card} title="Informations légales" sub="Obligatoires pour vendre en ligne : elles alimentent les conditions de vente, la confidentialité et les mentions légales">
       <div className="form">

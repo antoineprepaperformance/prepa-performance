@@ -388,4 +388,90 @@ ex("spanish_squat", "Spanish squat (isométrie quadriceps)", "Prévention", "Él
    ["Élastique derrière les genoux, fixé devant", "Descendre en gardant les tibias verticaux", "Tenir la position"],
    prog="Plus bas, plus long")
 
+# ---------------- Récupération, étirements et yoga ----------------
+ex("chien_tete_bas", "Chien tête en bas", "Récupération", "Tapis",
+   ["Mains à plat largeur d'épaules, pousse le sol", "Hanches hautes, dos long", "Talons vers le sol sans forcer, genoux souples si besoin"],
+   reg="Genoux fléchis", prog="Pédaler doucement des talons")
+ex("posture_enfant", "Posture de l'enfant", "Récupération", "Tapis",
+   ["Assis sur les talons, genoux écartés", "Front au sol, bras allongés devant", "Respire lentement dans le bas du dos"],
+   reg="Coussin sous les fesses")
+ex("cobra", "Cobra", "Récupération", "Tapis",
+   ["Allongé sur le ventre, mains sous les épaules", "Pousse doucement pour ouvrir la poitrine", "Épaules basses, bassin au sol, sans douleur lombaire"],
+   reg="Sur les avant-bras (sphinx)")
+ex("chat_vache", "Chat-vache", "Récupération", "Tapis",
+   ["À quatre pattes, mains sous les épaules", "Inspire : creuse le dos, regarde devant", "Expire : arrondis le dos, menton vers la poitrine"])
+ex("pigeon", "Pigeon", "Récupération", "Tapis",
+   ["Tibia avant en travers, jambe arrière allongée", "Bassin face au sol", "Penche-toi doucement au-dessus de la jambe avant"],
+   reg="Coussin sous la hanche avant", prog="Buste au sol")
+ex("ischios_assis", "Étirement des ischios assis", "Récupération", "Tapis",
+   ["Assis, jambes tendues", "Penche-toi en gardant le dos long", "Avance un peu à chaque expiration, sans à-coups"],
+   reg="Genoux légèrement fléchis")
+ex("quadriceps_debout", "Étirement des quadriceps debout", "Récupération", "Mur ou appui",
+   ["Debout sur une jambe, main sur un appui si besoin", "Talon vers la fesse, genoux serrés", "Bassin légèrement basculé vers l'avant"])
+ex("mollets_mur", "Étirement des mollets au mur", "Récupération", "Mur",
+   ["Mains au mur, jambe arrière tendue", "Talon arrière au sol", "Avance le bassin jusqu'à sentir l'étirement"],
+   prog="Genou arrière fléchi pour le soléaire")
+ex("papillon", "Papillon", "Récupération", "Tapis",
+   ["Assis, plantes de pied jointes", "Dos droit, mains sur les pieds", "Laisse descendre les genoux sans appuyer"])
+ex("genoux_poitrine", "Genoux à la poitrine", "Récupération", "Tapis",
+   ["Allongé sur le dos", "Ramène les genoux et serre doucement", "Berce-toi lentement pour masser le bas du dos"])
+ex("jambes_mur", "Jambes au mur", "Récupération", "Mur",
+   ["Fesses contre le mur, jambes à la verticale", "Bras relâchés, respire lentement", "Idéal le soir ou après un match"])
+ex("flexion_avant", "Flexion avant debout", "Récupération", "Sol",
+   ["Pieds largeur de bassin, genoux souples", "Plie-toi depuis les hanches", "Laisse pendre la tête, déroule le dos pour remonter"])
+ex("guerrier_2", "Guerrier II", "Récupération", "Tapis",
+   ["Grand écart des pieds, pied avant tourné vers l'extérieur", "Genou avant au-dessus de la cheville", "Bras à l'horizontale, regard au-dessus de la main avant"])
+ex("coherence", "Cohérence cardiaque", "Récupération", "Assis",
+   ["Assis, dos droit, épaules relâchées", "Inspire 5 secondes par le nez", "Expire 5 secondes, 6 respirations par minute"])
+ex("rouleau_mollets", "Rouleau de massage : mollets", "Récupération", "Rouleau",
+   ["Mollets sur le rouleau, mains au sol derrière", "Soulève les fesses et roule du talon au genou", "Lentement, 30 à 60 s par zone, sans douleur vive"])
+ex("rouleau_quadriceps", "Rouleau de massage : quadriceps", "Récupération", "Rouleau",
+   ["Appui sur les avant-bras, rouleau sous les cuisses", "Roule de la hanche au-dessus du genou", "Gainage léger, respire"])
+ex("rouleau_dos", "Rouleau de massage : haut du dos", "Récupération", "Rouleau",
+   ["Rouleau sous les omoplates, mains derrière la tête", "Fesses légèrement décollées", "Roule le haut du dos, jamais les lombaires"])
+
+# ---------------- Séances flash à la maison ----------------
+ex("mountain_climbers", "Mountain climbers", "Conditionnement", "Poids du corps",
+   ["Planche bras tendus, épaules au-dessus des mains", "Ramène les genoux vers la poitrine en alternance", "Bassin stable, rythme soutenu"],
+   reg="Plus lent, un pied après l'autre", prog="Plus rapide")
+ex("squat_saute", "Squat sauté", "Pliométrie", "Poids du corps",
+   ["Descends en squat, bras en arrière", "Saute en poussant le sol", "Réception souple, genoux dans l'axe"],
+   reg="Squat sans saut", prog="Squat sauté avec pause en bas")
+ex("fentes_sautees", "Fentes sautées", "Pliométrie", "Poids du corps",
+   ["Fente basse, buste droit", "Saute et change de jambe en l'air", "Réception contrôlée, genou arrière proche du sol"],
+   reg="Fentes alternées sans saut")
+ex("superman", "Superman", "Tronc", "Tapis",
+   ["Allongé sur le ventre, bras devant", "Décolle bras, buste et jambes", "Regard vers le sol, tiens 2 secondes"],
+   reg="Bras ou jambes seulement")
+ex("crunch", "Crunch", "Tronc", "Tapis",
+   ["Allongé, genoux pliés, mains derrière la tête", "Enroule le haut du dos sans tirer sur la nuque", "Redescends lentement"],
+   prog="Pieds décollés")
+ex("talons_fesses", "Talons-fesses", "Conditionnement", "Poids du corps",
+   ["Course sur place", "Talons vers les fesses", "Appuis légers sur l'avant du pied"])
+ex("montees_genoux", "Montées de genoux", "Conditionnement", "Poids du corps",
+   ["Course sur place, genoux à hauteur de hanches", "Bras actifs", "Reste grand, appuis rapides"],
+   reg="Marche genoux hauts")
+ex("planche_epaules", "Planche, touchers d'épaule", "Tronc", "Poids du corps",
+   ["Planche bras tendus, pieds écartés", "Touche l'épaule opposée en alternance", "Bassin immobile"],
+   reg="Sur les genoux")
+ex("pompes_genoux", "Pompes sur les genoux", "Haut du corps", "Poids du corps",
+   ["Genoux au sol, corps aligné des genoux à la tête", "Descends la poitrine entre les mains", "Pousse le sol, coudes à 45°"],
+   prog="Pompes")
+ex("dips_chaise", "Dips sur une chaise", "Haut du corps", "Chaise stable",
+   ["Mains sur le bord de la chaise, doigts vers l'avant", "Descends en pliant les coudes vers l'arrière", "Épaules basses, remonte en poussant"],
+   reg="Genoux pliés", prog="Jambes tendues")
+ex("thruster", "Thruster", "Conditionnement", "Haltères",
+   ["Haltères aux épaules", "Squat complet", "Remonte et pousse au-dessus de la tête d'un seul mouvement"],
+   reg="Sans charge")
+ex("chenille", "Chenille (inchworm)", "Mobilité", "Poids du corps",
+   ["Debout, plie-toi et pose les mains au sol", "Marche avec les mains jusqu'à la planche", "Reviens et redresse-toi"])
+ex("fente_laterale", "Fente latérale", "Bas du corps", "Poids du corps",
+   ["Pieds écartés, assieds-toi sur une jambe", "L'autre jambe reste tendue, pied à plat", "Pousse pour revenir au centre"],
+   prog="Avec haltère")
+ex("pont_unipodal", "Pont fessier unipodal", "Chaîne postérieure", "Poids du corps",
+   ["Allongé, un pied au sol, l'autre jambe tendue", "Monte les hanches sans tourner le bassin", "Serre le fessier en haut"],
+   reg="Pont fessier")
+ex("marche_place", "Marche active sur place", "Conditionnement", "Poids du corps",
+   ["Marche sur place en balançant les bras", "Monte un peu les genoux", "Respire calmement"])
+
 LIB = E

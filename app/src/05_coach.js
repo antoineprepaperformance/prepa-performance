@@ -17,14 +17,22 @@ function rowInfo(row, lib, today, settings) {
   else if (ps && ps.phase === "avant") status = { tone: "muted", n: "Démarre le " + fmtD(plan.start) };
   else if (ps && ps.phase === "en_cours") status = { tone: "ok", n: "Semaine " + ps.week + "/" + ps.weeks };
   else if (ps && ps.phase === "fini") status = { tone: "muted", n: "Terminé" };
+  const lite = plan && plan.offer === "lite" && plan.status === "active";
+  const lo0 = p.access && p.access.lastOrder;
+  const liteOk = lite && Date.now() < liteEndMs(plan, lo0 && lo0.id ? { orders: { [lo0.id]: lo0 } } : null);
+  if (lite) status = liteOk ? { tone: "ok", n: (ps && ps.phase === "en_cours" ? "S" + ps.week + "/" + ps.weeks + " · " : "") + "Lite jusqu'au " + fmtD(liteEnd(plan)) } : { tone: "muted", n: "Lite terminé" };
   if (p.screeningFlag && (!plan || plan.medicalHold !== false)) alerts.push({ tone: "warn", n: plan && plan.medicalHold ? "Avis médical à recevoir (séances en Reprise)" : "Questionnaire santé : avis médical", k: "plan" });
   const lo = p.access && p.access.lastOrder;
   const recentAuto = lo && lo.kind === "paiement" && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
-  if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : lo.kind === "paiement" ? "Paiement Stripe à vérifier · " + eur(lo.price || 0) : "Commande à encaisser · " + eur(lo.price || 0), k: "plan" });
+  if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : lo.kind === "paiement" ? "Paiement Stripe à vérifier · " + eur2(lo.price || 0) : "Commande à encaisser · " + eur2(lo.price || 0), k: "plan" });
   if (lo && lo.withdrawal && !lo.withdrawal.refundedAt) alerts.push({ tone: "bad", n: "Rétractation : rembourser " + eur2(lo.withdrawal.refund || 0), k: "plan" });
+  if (lo && lo.cancel && lo.cancel.stripe !== "ok" && !lo.cancel.doneAt) alerts.push({ tone: "bad", n: "Résiliation : arrêter l'abonnement dans Stripe", k: "plan" });
+  if (lo && lo.cancel && lo.cancel.refund > 0 && !lo.cancel.refundedAt) alerts.push({ tone: "bad", n: "Résiliation : rembourser " + eur2(lo.cancel.refund), k: "plan" });
+  if (lite && liteNoticeDue(plan)) alerts.push({ tone: "warn", n: "Reconduction annuelle le " + fmtD(isoOf(new Date(plan.untilMs))) + " : envoyer l'information au client", k: "plan" });
   if (plan && plan.source && ["code", "paiement"].includes(plan.source.kind) && !plan.reviewedAt && plan.status === "active") alerts.push({ tone: "gold", n: "Nouvel accès (" + (plan.source.kind === "code" ? "code" : "paiement") + ") : vérifier le plan", k: "plan" });
   if ((sum.lastPain || 0) >= 4) alerts.push({ tone: "bad", n: "Douleur " + sum.lastPain + "/10", k: "seances" });
   if (sum.aiAlert) alerts.push({ tone: "bad", n: "Alerte du coach IA", k: "ia" });
+  if ((sum.videoPending || 0) > 0) alerts.push({ tone: "gold", n: plural(sum.videoPending, "vidéo", "vidéos") + " à corriger", k: "videos" });
   if ((sum.aiPending || 0) > 0 && !sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending, "ajustement IA", "ajustements IA") + " à vérifier", k: "ia" });
   else if ((sum.aiPending || 0) > 1 && sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending - 1, "autre point IA", "autres points IA") + " à vérifier", k: "ia" });
   let adherence = null, weekDone = 0, weekPlanned = 0;
@@ -34,7 +42,7 @@ function rowInfo(row, lib, today, settings) {
       const last = sum.lastLogAt ? diffDays(sum.lastLogAt, today) : sinceStart;
       if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
       const left = diffDays(today, ps.end);
-      if (left <= 7) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
+      if (left <= 7 && !lite) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
       weekPlanned = plannedCount(prog, plan, ps.week, lib);
       weekDone = (sum.weeksDone && sum.weeksDone[ps.week]) || 0;
       if (ps.week > 1) {
@@ -42,14 +50,16 @@ function rowInfo(row, lib, today, settings) {
         for (let w = 1; w < ps.week; w++) { const n = plannedCount(prog, plan, w, lib); pl += n; dn += Math.min(n, (sum.weeksDone && sum.weeksDone[w]) || 0); }
         adherence = pl ? dn / pl : null;
         if (adherence !== null && adherence < 0.6) alerts.push({ tone: "warn", n: "Régularité faible (" + Math.round(adherence * 100) + " %)", k: "vue" });
-        if ((sum.lastCheckinW || 0) < ps.week - 1 && ps.day >= 2) alerts.push({ tone: "muted", n: "Bilan S" + (ps.week - 1) + " non reçu : relancer", k: "bilans" });
+        if ((sum.lastCheckinW || 0) < ps.week - 1 && ps.day >= 2 && !lite) alerts.push({ tone: "muted", n: "Bilan S" + (ps.week - 1) + " non reçu : relancer", k: "bilans" });
       }
     }
-    if (ps.phase === "fini") alerts.push({ tone: "muted", n: "Programme terminé : renouveler ou archiver", k: "plan" });
+    if (ps.phase === "fini" && !lite) alerts.push({ tone: "muted", n: "Programme terminé : renouveler ou archiver", k: "plan" });
   }
-  if (sum.lastCheckinW && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : ""), k: "bilans" });
-  const price = plan && plan.status === "active" ? offerPrice(settings, plan.offer, plan.weeks) : null;
-  return { p, plan, prog, ps, sum, alerts, status, adherence, weekDone, weekPlanned, price };
+  if (sum.lastCheckinW && !lite && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : ""), k: "bilans" });
+  const price = plan && plan.status === "active" ? (lite ? litePrice(settings, (plan.lite && plan.lite.period) || "mois") : offerPrice(settings, plan.offer, plan.weeks)) : null;
+  /* revenu mensuel moyen : prix ramené à 4 semaines (Lite annuel : prix / 12 ; accès offert : 0) */
+  const mrr = !price ? 0 : lite ? (plan.lite && plan.lite.mode === "code" ? 0 : liteOk ? (plan.lite && plan.lite.period === "an" ? price / 12 : price) : 0) : price / (plan.weeks / 4);
+  return { p, plan, prog, ps, sum, alerts, status, adherence, weekDone, weekPlanned, price, mrr, lite, liteOk };
 }
 
 function CoachApp({ db, settings, lib, exo, dl }) {
@@ -76,6 +86,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
     return r.map((x) => ({ ...x, info: rowInfo(x, lib, today, settings) }));
   }, [clients.items, plans.items, replies.items, demoOn, lib, today, settings]);
   useAutoActivate(db, rows, codes);
+  useLiteSync(db, rows);
   const go = (v) => { setView(v); setSel(null); setProgSel(null); setEditDoc(null); try { window.scrollTo(0, 0); } catch (e) {} };
   const openClient = (cid, tab) => { setSel({ cid, tab: tab || "vue" }); setView("client"); try { window.scrollTo(0, 0); } catch (e) {} };
 
@@ -94,7 +105,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
     <main className="c-content">
       ${!db ? html`<div className="alert warn"><div><b>Enregistrement indisponible ici</b><p>Ouvre l'application depuis claude.ai pour enregistrer tes clients et tes programmes. Les exemples restent consultables.</p></div></div>` : null}
       ${view === "dash" ? html`<${Dashboard} rows=${rows} demoOn=${demoOn} realCount=${realIds.length} setShowDemo=${setShowDemo} openClient=${openClient}
-          onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} />` : null}
+          onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
       ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
           settings=${settings} note=${notes.items[selRow.cid]} tab0=${sel.tab} onBack=${() => go("clients")} />` : null}
@@ -111,19 +122,37 @@ function CoachApp({ db, settings, lib, exo, dl }) {
   </div>`;
 }
 
+/* résiliations envoyées depuis le formulaire public du site */
+function PublicCancels({ db, rows, openClient }) {
+  const toast = useToast();
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    let u = null;
+    try { u = db.collection("resiliations").onSnapshot((s) => setList(s.docs.map((d) => ({ id: d.id, ...d.data() })).filter((x) => !x.done).sort((a, b) => String(a.at).localeCompare(String(b.at)))), () => {}); } catch (e) {}
+    return () => { try { u && u(); } catch (e) {} };
+  }, [db]);
+  if (!list.length) return null;
+  const byMail = (m) => rows.find((r) => !r.demo && String((r.profile && r.profile.email) || "").toLowerCase() === m);
+  const done = async (x) => { try { await db.doc("resiliations/" + x.id).update({ done: true, doneAt: nowISO() }); toast("Résiliation traitée.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } };
+  return html`<div className="alert bad"><div><b>${plural(list.length, "résiliation reçue", "résiliations reçues")} depuis le site</b>
+    ${list.map((x) => { const r = byMail(x.email); return html`<p key=${x.id}>${new Date(x.at).toLocaleString("fr-FR")} · ${x.name} · ${x.email}${x.ref ? " · commande " + x.ref : ""}${x.msg ? " · « " + x.msg + " »" : ""}
+      ${r ? html` · <button type="button" className="linkbtn" onClick=${() => openClient(r.cid)}>Ouvrir la fiche</button>` : " · compte introuvable"} · <button type="button" className="linkbtn" onClick=${() => done(x)}>Traitée</button></p>`; })}
+    <p className="small">À faire : arrêter l'abonnement dans Stripe (fin de période), puis confirmer par e-mail au client la date de fin et l'arrêt des prélèvements.</p></div></div>`;
+}
 /* ---------- Tableau de bord ---------- */
-function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings }) {
-  const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && r.info.ps && r.info.ps.phase !== "fini");
+function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings, db }) {
+  const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && (r.info.lite ? r.info.liteOk : r.info.ps && r.info.ps.phase !== "fini"));
   const alerts = rows.flatMap((r) => r.info.alerts.map((a) => ({ ...a, r })));
   const order = { bad: 0, warn: 1, gold: 2, muted: 3 };
   alerts.sort((a, b) => order[a.tone] - order[b.tone]);
   const wkDone = active.reduce((s, r) => s + Math.min(r.info.weekDone, r.info.weekPlanned), 0), wkPl = active.reduce((s, r) => s + r.info.weekPlanned, 0);
-  const mrr = active.reduce((s, r) => s + (r.info.price ? r.info.price / (r.info.plan.weeks / 4) : 0), 0);
+  const mrr = active.reduce((s, r) => s + (r.info.mrr || 0), 0);
   const now = new Date();
   const name = (settings && settings.coach && settings.coach.name) || COACH_NAME_DEFAULT;
   return html`<div className="stack">
     <header className="page-h"><div><div className="eyebrow">${JOURS[now.getDay()]} ${fmtD(todayISO())}</div><h1>Bonjour ${name}</h1></div>
       <div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}</div></header>
+    ${window.IS_SITE && db ? html`<${PublicCancels} db=${db} rows=${rows} openClient=${openClient} />` : null}
     ${legalMissing(settings).length ? html`<div className="alert warn"><div><b>Informations légales à compléter</b><p>${legalMissing(settings).join(", ")} : elles s'affichent dans tes conditions de vente et tes mentions légales.</p></div></div>` : null}
     ${demoOn ? html`<div className="alert gold"><div><b>${realCount ? "Exemples affichés" : "Exemples affichés en attendant tes premiers clients"}</b><p>Les clients marqués EXEMPLE ne sont pas enregistrés : ils montrent ce que tu verras.</p></div><${Btn} small kind="ghost" onClick=${() => setShowDemo(false)}>Masquer</${Btn}></div>`
       : html`<div className="right"><button type="button" className="linkbtn" onClick=${() => setShowDemo(true)}>Afficher les exemples</button></div>`}
@@ -134,7 +163,7 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
       <${Stat} n=${eur(mrr)} label="Revenu mensuel estimé" sub="formules actives" />
     </div>
     <${Card} title="À traiter" sub=${alerts.length ? plural(alerts.length, "point") : "Rien d'urgent"}>
-      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia"].includes(a.k) ? a.k : "vue")}>
+      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia", "videos", "sante"].includes(a.k) ? a.k : "vue")}>
         <${Pill} tone=${a.tone}>${a.n}</${Pill}><b>${a.r.profile.name || "Client"}</b><span className="muted small">${a.r.info.prog ? a.r.info.prog.n : ""}</span></button></li>`)}</ul>`
         : html`<p className="muted small">Tous les bilans ont une réponse et aucun client n'a d'alerte.</p>`}
     </${Card}>
@@ -157,7 +186,7 @@ function ClientTable({ rows, openClient }) {
       const i = r.info;
       return html`<tr key=${r.cid} onClick=${() => openClient(r.cid)} tabIndex="0" onKeyDown=${(e) => e.key === "Enter" && openClient(r.cid)}>
         <th><span className="who"><${Avatar} profile=${r.profile} size=${30} /><span><b>${r.profile.name || "Client"}</b><span className="chips">${r.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}${r.profile.local ? html`<${Pill}>sans compte</${Pill}>` : null}</span><small>${r.profile.sport || ""}</small></span></span></th>
-        <td>${i.prog ? i.prog.n : "—"}<small>${i.plan ? offerName(i.plan.offer) + " · " + durName(i.plan.weeks) : (i.p.request ? "demandé : " + durName(i.p.request.weeks) : "")}</small></td>
+        <td>${i.prog ? i.prog.n : "—"}<small>${i.plan ? offerName(i.plan.offer) + " · " + planDur(i.plan) : (i.p.request ? "demandé : " + (i.p.request.offer === "lite" ? "Lite" : durName(i.p.request.weeks)) : "")}</small></td>
         <td>${i.ps && i.ps.phase === "en_cours" ? html`<div className="mini"><${Bar} value=${i.ps.week / i.ps.weeks} /><small>S${i.ps.week}/${i.ps.weeks} · ${i.weekDone}/${i.weekPlanned} cette semaine</small></div>` : "—"}</td>
         <td>${i.adherence === null ? "—" : html`<span className=${i.adherence >= 0.8 ? "ok-t" : i.adherence >= 0.6 ? "warn-t" : "bad-t"}>${Math.round(i.adherence * 100)} %</span>`}</td>
         <td>${i.sum.lastLogAt ? fmtD(i.sum.lastLogAt) : "—"}</td>
@@ -196,12 +225,12 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, tab0, onBac
   const stats = useMemo(() => computeStats(data, plan, prog, lib, today), [data, plan, prog, lib, today]);
   const p = data.profile || row.profile || {};
   const info = rowInfo({ profile: p, plan: data.plan, replies: data.replies }, lib, today, settings);
-  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "tests", n: "Tests" }, { v: "nutrition", n: "Nutrition" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
+  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "tests", n: "Tests" }, { v: "videos", n: "Vidéos" + ((info.sum.videoPending || 0) ? " (" + info.sum.videoPending + ")" : "") }, { v: "nutrition", n: "Nutrition" }, { v: "sante", n: "Santé" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
     .filter((t) => !(t.v === "ia" && window.IS_SITE && !row.demo && !Object.keys(data.ai || {}).length));
   if (!src) return html`<${Empty} title="Données indisponibles" text="Ouvre l'application depuis claude.ai." />`;
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Tous les clients</button>
-    <header className="page-h"><div><div className="eyebrow">${prog ? prog.n : "Sans programme"}${plan ? " · " + offerName(plan.offer) + " · " + durName(plan.weeks) : ""}</div>
+    <header className="page-h"><div><div className="eyebrow">${prog ? prog.n : "Sans programme"}${plan ? " · " + offerName(plan.offer) + " · " + planDur(plan) : ""}</div>
       <h1 className="who"><${Avatar} profile=${p} photo=${data.media && data.media.photo && data.media.photo.data} size=${48} /><span>${p.name || "Client"}</span>${row.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}</h1>
       <div className="chips"><${Pill} tone=${info.status.tone}>${info.status.n}</${Pill}>${info.alerts.map((a, i) => html`<${Pill} key=${i} tone=${a.tone}>${a.n}</${Pill}>`)}</div></div>
       <div className="contactcol">${p.email ? html`<div className="contact"><span>${p.email}</span><${CopyBtn} text=${p.email} /></div>` : null}${p.phone ? html`<div className="contact"><span>${p.phone}</span><${CopyBtn} text=${p.phone} /></div>` : null}</div></header>
@@ -213,13 +242,15 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, tab0, onBac
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
     ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
+    ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
+    ${tab === "sante" ? html`<${CoachSante} data=${data} />` : null}
     ${tab === "plan" ? html`<${PlanEditor} data=${data} src=${src} lib=${lib} settings=${settings} cid=${row.cid} exo=${exo} demo=${row.demo} />` : null}
     ${tab === "notes" ? html`<${CoachNotes} db=${db} cid=${row.cid} note=${note} demo=${row.demo} name=${p.name} onDeleted=${onBack} />` : null}
   </div>`;
 }
 function ClientOverview({ data, plan, prog, stats, info, lib }) {
   if (!plan || !prog) return html`<${Card} title="Pas encore de programme actif"><p className="small">Valide la demande dans l'onglet Plan pour activer le programme.</p>
-    ${data.profile && data.profile.request ? html`<dl className="dl"><dt>Demande</dt><dd>${progOf(data.profile.request.programId, {}) ? progOf(data.profile.request.programId, {}).n : "—"}</dd><dt>Formule</dt><dd>${offerName(data.profile.request.offer)} · ${durName(data.profile.request.weeks)}</dd><dt>Départ souhaité</dt><dd>${fmtDY(data.profile.request.start)}</dd>
+    ${data.profile && data.profile.request ? html`<dl className="dl"><dt>Demande</dt><dd>${progOf(data.profile.request.programId, {}) ? progOf(data.profile.request.programId, {}).n : "—"}</dd><dt>Formule</dt><dd>${offerName(data.profile.request.offer)} · ${durOf({ offer: data.profile.request.offer, weeks: data.profile.request.weeks, period: data.profile.request.period, mode: data.profile.request.lmode })}</dd><dt>Départ souhaité</dt><dd>${fmtDY(data.profile.request.start)}</dd>
       <dt>Questionnaire santé</dt><dd>${data.profile.screeningFlag ? "Au moins un « oui » : avis médical à demander" : "Rien à signaler"}</dd></dl>` : null}</${Card}>`;
   const ps = stats.ps;
   const upto = ps.phase === "fini" ? plan.weeks : Math.max(1, ps.week);
@@ -305,6 +336,9 @@ function CoachLogs({ data, src, plan, prog, exo }) {
       <${Field} label="Effort ressenti"><${Scale} id="pl-rpe" min=${0} max=${10} value=${f.rpe} onChange=${(v) => setF({ ...f, rpe: v })} /></${Field}>
       <${Field} label="Notes" id="pl-c"><textarea id="pl-c" rows="2" value=${f.comment} onChange=${(e) => setF({ ...f, comment: e.target.value })}></textarea></${Field}>
       <${Btn} onClick=${add}>Ajouter</${Btn}></div></${Card}>` : null}
+    ${(() => { const xs = [...Object.values(data.libres || {}), ...Object.values(data.activites || {}).map((a) => ({ ...a, n: a.n || "Activité importée", act: true }))].filter(Boolean).sort((a, b) => String(b.d).localeCompare(String(a.d)));
+      return xs.length ? html`<${Card} title="Séances en plus et activités" sub="Flash, récup, montre ou fichier importé : comptées dans la charge de la semaine">${xs.slice(0, 12).map((x) => html`<div key=${x.id} className="hist"><div className="hist-h"><b>${x.n}</b><span className="muted small">${fmtD(x.d)}</span></div>
+        <span className="muted small">${x.act ? (x.type || "activité") + (x.dist ? " · " + fmtN(x.dist, 1) + " km" : "") + (x.fcMoy ? " · FC moy. " + x.fcMoy : "") + " · " : (x.kind === "flash" ? "flash · " : "récup · ")}${x.duree || 0} min${x.rpe !== undefined && x.rpe !== null ? " · effort " + x.rpe + "/10" : ""}${x.load ? " · " + fmtN(x.load, 0) + " UA" : ""}</span></div>`)}</${Card}>` : null; })()}
     ${logs.length ? logs.map((l) => html`<${Card} key=${l.key} title=${l.title || "Séance"} sub=${fmtDY(l.date) + " · semaine " + l.w + (l.kind === "presentiel" ? " · en présentiel" : "")}
       action=${html`<div className="chips">${l.rpe !== undefined ? html`<${Pill}>Effort ${l.rpe}/10</${Pill}>` : null}${l.duree ? html`<${Pill}>${l.duree} min</${Pill}>` : null}${l.douleur ? html`<${Pill} tone=${l.douleur >= 4 ? "bad" : "warn"}>Douleur ${l.douleur}/10${l.zone ? " · " + l.zone : ""}</${Pill}>` : null}</div>`}>
       ${(l.items || []).length ? html`<details><summary>${plural(l.items.length, "exercice")}</summary><ul className="loglist">${l.items.map((it, i) => {
@@ -367,8 +401,17 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
   const prog = progOf(f.programId, lib);
   const sessions = Object.entries(lib || {}).filter(([, d]) => d.kind === "session");
   const maxWeeks = prog ? prog.blocks.length * 4 : 12;
+  const isLite = f.offer === "lite";
+  const untilISO = isLite ? (f.untilMs ? isoOf(new Date(f.untilMs - 1)) : isoOf(new Date(addPeriodMs(msOfISO(f.start || todayISO()), "mois") - 1))) : null;
+  const setUntil = (iso) => setF((o) => ({ ...o, untilMs: msOfISO(iso) + 86400000, until: iso }));
+  const extendLite = (per) => setF((o) => { const base = o.untilMs && o.untilMs > Date.now() ? o.untilMs : msOfISO(todayISO()); const u = addPeriodMs(base, per); return { ...o, untilMs: u, until: isoOf(new Date(u - 1)) }; });
   const save = async (status) => {
-    const out = { ...f, weeks: Math.min(Number(f.weeks), maxWeeks), status: status || f.status, updatedAt: nowISO(), reviewedAt: nowISO(), niveau: f.niveau || "sportif", cycle: cycOf(f) };
+    let out = { ...f, weeks: Math.min(Number(f.weeks), maxWeeks), status: status || f.status, updatedAt: nowISO(), reviewedAt: nowISO(), niveau: f.niveau || "sportif", cycle: cycOf(f) };
+    if (isLite) {
+      const startMs = f.startMs || msOfISO(f.start || todayISO());
+      const untilMs = f.untilMs || addPeriodMs(startMs, "mois");
+      out = { ...out, weeks: maxWeeks, grantWeeks: 0, startMs, untilMs, until: isoOf(new Date(untilMs - 1)), lite: { mode: "manuel", period: "mois", sub: null, ...(f.lite || {}) } };
+    } else { delete out.lite; delete out.startMs; delete out.untilMs; delete out.until; }
     if (status === "active" && !f.validatedAt) out.validatedAt = nowISO();
     try { await src.setPlan(out); toast(status === "active" ? "Programme activé." : "Plan enregistré.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); }
   };
@@ -380,8 +423,12 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
     <${Card} title=${data.plan && data.plan.status !== "pending" ? "Plan du client" : "Valider la demande"} sub=${req.programId ? "Demande : " + (progOf(req.programId, lib) || {}).n + " · " + offerName(req.offer) + " · " + durName(req.weeks) : null}>
       <div className="form">
         <${Field} label="Programme" id="pe-prog"><select id="pe-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}>${programOptions(lib).map((o) => html`<option key=${o.v} value=${o.v}>${o.n}</option>`)}</select></${Field}>
-        <div className="row2"><${Field} label="Formule"><${Seg} options=${OFFERS.map((o) => ({ v: o.id, n: o.n }))} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
-          <${Field} label="Durée"><${Seg} options=${DURS.filter((d) => d.w <= maxWeeks).map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}></div>
+        <div className="row2"><${Field} label="Formule"><${Seg} options=${[...OFFERS.map((o) => ({ v: o.id, n: o.n })), { v: "lite", n: "Lite" }]} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
+          ${isLite ? html`<${Field} label="Accès Lite jusqu'au (inclus)" id="pe-until"><input id="pe-until" type="date" value=${untilISO} onChange=${(e) => e.target.value && setUntil(e.target.value)} /></${Field}>`
+            : html`<${Field} label="Durée"><${Seg} options=${DURS.filter((d) => d.w <= maxWeeks).map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>`}</div>
+        ${isLite ? html`<div className="btnrow"><${Btn} small kind="ghost" onClick=${() => extendLite("mois")}>Prolonger d'un mois</${Btn}><${Btn} small kind="ghost" onClick=${() => extendLite("an")}>Prolonger d'un an</${Btn}></div>
+          <p className="muted small">${f.lite && f.lite.mode === "abo" ? "Abonnement Stripe : la date de fin avance toute seule à chaque prélèvement." : "Paiement encaissé à ta façon : prolonge l'accès à chaque paiement, puis enregistre."} Programme de ${maxWeeks} semaines ; le client choisit lui-même le suivant tant que son accès court.</p>
+          ${data.plan && liteNoticeDue(data.plan) ? html`<${LiteNotice} plan=${data.plan} data=${data} settings=${settings} src=${src} demo=${demo} />` : null}` : null}
         <div className="row2"><${Field} label="Début (de préférence un lundi)" id="pe-start"><input id="pe-start" type="date" value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
           <${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "Salle" }, { v: "maison", n: "Maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}></div>
         ${prog && !prog.maison && f.equipment === "maison" ? html`<p className="small warn-t">Ce programme n'a pas de version maison : les exercices resteront ceux de la salle.</p>` : null}
@@ -391,7 +438,7 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
         ${req.answers ? html`<p className="muted small">Réponses du client : ${[["compet", "pratique"], ["xp", "musculation"], ["freq", "séances"]].map(([k, n]) => { const o = (NIVQ[k] && NIVQ[k].o || []).find((x) => x[0] === req.answers[k]); return n + " « " + (o ? o[1] : "—") + " »"; }).join(" · ")}. Profil conseillé : ${nivName(recommendNiveau(req.answers, ageOf(p), p.screeningFlag).id)}.</p>` : null}
         <${Field} label="Message affiché au client" id="pe-msg"><textarea id="pe-msg" rows="3" value=${f.message || ""} onChange=${(e) => set("message", e.target.value)} placeholder="Consigne de la semaine, encouragement…"></textarea></${Field}>
         <${Field} label="Statut"><${Seg} options=${[{ v: "pending", n: "En attente" }, { v: "active", n: "Actif" }, { v: "paused", n: "En pause" }, { v: "archived", n: "Archivé" }]} value=${f.status} onChange=${(v) => set("status", v)} /></${Field}>
-        <p className="muted small">Prix : ${eur(offerPrice(settings, f.offer, f.weeks))} · fin le ${fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
+        <p className="muted small">${isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance") + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
       </div>
       <div className="actions">${f.status === "pending" ? html`<${Btn} onClick=${() => save("active")}>Valider et activer</${Btn}>` : null}<${Btn} kind=${f.status === "pending" ? "ghost" : "primary"} onClick=${() => save()}>Enregistrer</${Btn}></div>
     </${Card}>
@@ -440,6 +487,12 @@ function CoachOrders({ data, src, cid, demo, settings }) {
       toast("Accès activé.", "ok");
     } catch (e) { toast("Activation impossible.", "bad"); } finally { setBusy(false); }
   };
+  const patch = async (o, cancel, msg) => {
+    if (demo) { toast("Exemple : rien n'est enregistré.", "warn"); return; }
+    setBusy(true);
+    try { const done = { ...o, cancel: { ...o.cancel, ...cancel } }; await src.saveOrder(o.id, done); await src.setProfile({ ...p, access: accessSummary(done) }); toast(msg, "ok"); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
   const refunded = async (o) => {
     setBusy(true);
     try {
@@ -452,12 +505,15 @@ function CoachOrders({ data, src, cid, demo, settings }) {
   };
   return html`<${Card} title="Commandes" sub="Paiements, codes et rétractations du client">
     ${orders.map((o) => html`<div key=${o.id} className="order">
-      <div className="meal-h"><b>${PB[o.programId] ? PB[o.programId].n : "Programme"} · ${offerName(o.offer)} · ${durName(o.weeks)}${o.ext ? " (prolongation)" : ""}</b><${Pill} tone=${(ORDER_ST[o.status] || ORDER_ST.en_attente)[0]}>${(ORDER_ST[o.status] || ORDER_ST.en_attente)[1]}</${Pill}></div>
-      <p className="muted small">${fmtDY(String(o.at).slice(0, 10))} · ${o.kind === "code" ? "code " + (o.code || "") : o.kind === "paiement" ? "Stripe · " + eur(Number(o.paidAmount ?? o.price) || 0) + (o.paymentId ? " · " + o.paymentId.slice(0, 14) + "…" : "") : "hors ligne · " + eur(Number(o.price) || 0)} · profil ${nivName(o.niveau)} · CGV ${o.cgv ? o.cgv.v : "—"}${o.early ? " · début anticipé demandé" : ""}${o.parent ? " · commande parent : " + (o.parent.name || "oui") : ""}</p>
+      <div className="meal-h"><b>${o.kind === "renouvellement" ? "Renouvellement · " + durOf(o) + " · jusqu'au " + fmtD(isoOf(new Date(o.untilMs - 1))) : (PB[o.programId] ? PB[o.programId].n : "Programme") + " · " + (o.offer === "lite" ? durOf(o) : offerName(o.offer) + " · " + durName(o.weeks)) + (o.ext ? " (prolongation)" : "")}</b><${Pill} tone=${(ORDER_ST[o.status] || ORDER_ST.en_attente)[0]}>${(ORDER_ST[o.status] || ORDER_ST.en_attente)[1]}</${Pill}></div>
+      <p className="muted small">${fmtDY(String(o.at).slice(0, 10))} · ${o.kind === "code" ? "code " + (o.code || "") : o.kind === "paiement" ? "Stripe · " + eur2(Number(o.paidAmount ?? o.price) || 0) + (o.paymentId ? " · " + o.paymentId.slice(0, 14) + "…" : "") : "hors ligne · " + eur2(Number(o.price) || 0)} · profil ${nivName(o.niveau)} · CGV ${o.cgv ? o.cgv.v : "—"}${o.early ? " · début anticipé demandé" : ""}${o.parent ? " · commande parent : " + (o.parent.name || "oui") : ""}</p>
+      ${o.cancel ? html`<p className="small warn-t">Résiliation le ${new Date(o.cancel.at).toLocaleString("fr-FR")} par ${o.cancel.name} · effet ${o.cancel.immediate ? "immédiat" : "le " + fmtD(isoOf(new Date(o.cancel.effectMs - 1)))} · Stripe : ${o.cancel.stripe === "ok" ? "abonnement arrêté automatiquement" : o.cancel.doneAt ? "arrêté le " + fmtD(o.cancel.doneAt) : "à arrêter dans Stripe (Abonnements › Annuler" + (o.cancel.immediate ? " immédiatement" : " à la fin de la période") + ")"}${o.cancel.refund > 0 ? " · à rembourser : " + eur2(o.cancel.refund) + (o.cancel.refundedAt ? " (remboursé le " + fmtD(o.cancel.refundedAt) + ")" : "") : ""}</p>` : null}
       ${o.withdrawal ? html`<p className="small warn-t">Rétractation le ${new Date(o.withdrawal.at).toLocaleString("fr-FR")} par ${o.withdrawal.name} · à rembourser : ${eur2(o.withdrawal.refund || 0)} (prorata)${o.withdrawal.refundedAt ? " · remboursé le " + fmtD(o.withdrawal.refundedAt) : ""}</p>` : null}
       <div className="btnrow">
         ${o.status === "en_attente" && !o.withdrawal ? html`<${Btn} small onClick=${() => activate(o)} disabled=${busy}>${o.kind === "code" ? "Activer le code" : "Paiement reçu · activer"}</${Btn}>` : null}
         ${o.withdrawal && !o.withdrawal.refundedAt ? html`<${Btn} small kind="danger" onClick=${() => refunded(o)} disabled=${busy}>Remboursement effectué · clôturer l'accès</${Btn}>` : null}
+        ${o.cancel && o.cancel.stripe !== "ok" && !o.cancel.doneAt ? html`<${Btn} small kind="danger" onClick=${() => patch(o, { doneAt: todayISO() }, "Arrêt de l'abonnement noté.")} disabled=${busy}>Abonnement arrêté dans Stripe</${Btn}>` : null}
+        ${o.cancel && o.cancel.refund > 0 && !o.cancel.refundedAt ? html`<${Btn} small kind="ghost" onClick=${() => patch(o, { refundedAt: todayISO() }, "Remboursement noté.")} disabled=${busy}>Remboursement effectué</${Btn}>` : null}
       </div></div>`)}
     <p className="muted small">Stripe : rembourse depuis le tableau de bord Stripe (Paiements › Rembourser), au montant indiqué. Les codes sont vérifiés et activés automatiquement à l'ouverture de ton espace.</p>
   </${Card}>`;
@@ -489,6 +545,63 @@ function useAutoActivate(db, rows, codes) {
     });
   }, [db, rows, codes.ready, codes.items]);
 }
+/* forfait Lite côté coach : programme suivant choisi par le client (version sans règles client) et renouvellements Stripe pas encore appliqués */
+function useLiteSync(db, rows) {
+  const doneRef = useRef({});
+  useEffect(() => {
+    if (!db) return;
+    rows.forEach(async (r) => {
+      if (r.demo || !r.plan || r.plan.offer !== "lite") return;
+      const nc = r.profile && r.profile.nextCycle;
+      if (!nc || nc.cycle !== cycOf(r.plan) + 1 || doneRef.current["nc" + r.cid + nc.cycle]) return;
+      doneRef.current["nc" + r.cid + nc.cycle] = 1;
+      try {
+        await dbSet(db, "plans/" + r.cid, liteNextCycle(r.plan, nc));
+        await qwrite("clients/" + r.cid, () => db.doc("clients/" + r.cid).update({ nextCycle: null }));
+      } catch (e) { doneRef.current["nc" + r.cid + nc.cycle] = 0; }
+    });
+  }, [db, rows]);
+  useEffect(() => {
+    if (!window.IS_SITE || !db) return undefined;
+    let u = null;
+    try {
+      u = db.collection("payments").where("renewal", "==", true).onSnapshot((snap) => {
+        snap.docs.forEach(async (d) => {
+          const pay = d.data();
+          if (!pay || pay.used || !pay.ok || doneRef.current["p" + d.id]) return;
+          const r = rows.find((x) => x.cid === pay.uid);
+          if (!r || !r.plan || r.plan.offer !== "lite" || !r.plan.lite || r.plan.lite.sub !== pay.sub || !(pay.untilMs > (r.plan.untilMs || 0))) return;
+          doneRef.current["p" + d.id] = 1;
+          try { await redeemPayment(db, r.cid, d.id, pay, { plan: r.plan, profile: r.profile, orders: {} }); } catch (e) { doneRef.current["p" + d.id] = 0; }
+        });
+      }, () => {});
+    } catch (e) {}
+    return () => { try { u && u(); } catch (e) {} };
+  }, [db, rows]);
+  /* abonnement arrêté dans Stripe (relais) : l'alerte « arrêter l'abonnement » disparaît d'elle-même */
+  useEffect(() => {
+    if (!window.IS_SITE || !db) return undefined;
+    let u = null;
+    try {
+      u = db.collection("subs").onSnapshot((snap) => {
+        const subs = Object.fromEntries(snap.docs.map((d) => [d.id, d.data()]));
+        rows.forEach(async (r) => {
+          const lo = r.profile && r.profile.access && r.profile.access.lastOrder;
+          const sub = r.plan && r.plan.lite && r.plan.lite.sub;
+          const sd = sub && subs[sub];
+          if (!lo || !lo.cancel || lo.cancel.stripe === "ok" || lo.cancel.doneAt || !sd || !(sd.cancelAt > 0 || sd.status === "canceled") || doneRef.current["s" + lo.id]) return;
+          doneRef.current["s" + lo.id] = 1;
+          try {
+            const done = { ...lo, cancel: { ...lo.cancel, stripe: "ok", stripeAt: nowISO() } };
+            await dbSet(db, "clients/" + r.cid + "/orders/" + lo.id, done);
+            await qwrite("clients/" + r.cid, () => db.doc("clients/" + r.cid).update({ access: clone(accessSummary(done)) }));
+          } catch (e) { doneRef.current["s" + lo.id] = 0; }
+        });
+      }, () => {});
+    } catch (e) {}
+    return () => { try { u && u(); } catch (e) {} };
+  }, [db, rows]);
+}
 /* ---------- codes d'essai et codes offerts ---------- */
 function CodesView({ db, codes, rows, lib }) {
   const toast = useToast();
@@ -518,8 +631,8 @@ function CodesView({ db, codes, rows, lib }) {
     <header className="page-h"><div><h1>Codes & essais</h1><p className="muted small">Offre un programme sans paiement : essai d'une semaine, joueurs d'un club, partenariat… Le client saisit le code (ou ouvre ton lien) à la dernière étape.</p></div></header>
     <${Card} title="Créer un code"><div className="form">
       <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : "OFFERT")); }} /></${Field}>
-        <${Field} label="Formule"><${Seg} options=${OFFERS.map((o) => ({ v: o.id, n: o.n }))} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
-      <${Field} label="Durée offerte"><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
+        <${Field} label="Formule"><${Seg} options=${[...OFFERS.map((o) => ({ v: o.id, n: o.n })), { v: "lite", n: "Lite" }]} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
+      <${Field} label=${f.offer === "lite" ? "Durée d'accès Lite offerte" : "Durée offerte"}><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
       <div className="row2"><${Field} label="Programme" id="cd-prog"><select id="cd-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Au choix du client</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>
         <${Field} label="Nombre d'utilisations" id="cd-max" hint="1 pour une personne, plus pour un groupe ou un club"><input id="cd-max" inputMode="numeric" value=${f.max} onChange=${(e) => set("max", e.target.value.replace(/\D/g, ""))} /></${Field}></div>
       <div className="row2"><${Field} label="Valable jusqu'au (facultatif)" id="cd-exp"><input id="cd-exp" type="date" min=${todayISO()} value=${f.expires} onChange=${(e) => set("expires", e.target.value)} /></${Field}>

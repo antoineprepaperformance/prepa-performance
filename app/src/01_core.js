@@ -127,6 +127,15 @@ function computeStats(data, plan, prog, lib, today) {
     doneByWeek[w] = (doneByWeek[w] || 0) + 1;
     loadByWeek[w] = (loadByWeek[w] || 0) + (l.load || 0);
   });
+  if (plan && plan.start) {
+    [...Object.values(data.libres || {}), ...Object.values(data.activites || {})].filter(Boolean).forEach((x) => {
+      const d = diffDays(plan.start, x.d || String(x.at || "").slice(0, 10));
+      if (d < 0 || !Number.isFinite(d)) return;
+      const w = Math.floor(d / 7) + 1;
+      if (w > plan.weeks) return;
+      loadByWeek[w] = (loadByWeek[w] || 0) + (Number(x.load) || 0);
+    });
+  }
   const plannedByWeek = {};
   if (prog && plan) for (let w = 1; w <= plan.weeks; w++) plannedByWeek[w] = plannedCount(prog, plan, w, lib);
   let adherence = null;
@@ -171,6 +180,7 @@ function summarize(data) {
     lastQuestion: lastC && lastC.question ? String(lastC.question).slice(0, 200) : "",
     aiPending: Object.values(data.ai || {}).filter((x) => x && !x.seen && x.status !== "annule").length,
     aiAlert: Object.values(data.ai || {}).some((x) => x && x.kind === "alerte" && !x.seen && x.status !== "annule" && x.urgence === "haute"),
+    videoPending: Object.values(data.videos || {}).filter((v) => v && v.toCoach && !v.reply).length,
     updatedAt: nowISO(),
   };
 }

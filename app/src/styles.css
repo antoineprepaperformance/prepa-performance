@@ -669,3 +669,108 @@ h1.who { display: flex; flex-wrap: wrap; }
 .chk.shop { padding: 4px 0; }
 
 .msgpre { white-space: pre-wrap; font-family: inherit; font-size: 13px; background: var(--bg2, rgba(255,255,255,.04)); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
+
+/* ===== séances terrain : schémas ===== */
+:root { --pitch: #17331f; --pitch-2: #1c3b25; --pitch-line: rgba(242, 238, 230, 0.55); --court: #2a3442; --court-2: #212a35; --tartan: #5a2c24; --water: #123a4f; --deck: #23211d;
+  --lat: #6fb7e8; --cone: #f08a24; --ground: #3a2f22; --sky: #191815; --ice: #4f6575; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --pitch: #7fb069; --pitch-2: #74a55f; --pitch-line: rgba(255, 255, 255, 0.85); --court: #6f86a3; --court-2: #8ea2bb; --tartan: #b9573f; --water: #8fd0ea; --deck: #e4ddcf;
+  --lat: #1f6fa5; --cone: #e07510; --ground: #b89b74; --sky: #f1ede4; --ice: #e9f2f7; } }
+:root[data-theme="light"] { --pitch: #7fb069; --pitch-2: #74a55f; --pitch-line: rgba(255, 255, 255, 0.85); --court: #6f86a3; --court-2: #8ea2bb; --tartan: #b9573f; --water: #8fd0ea; --deck: #e4ddcf;
+  --lat: #1f6fa5; --cone: #e07510; --ground: #b89b74; --sky: #f1ede4; --ice: #e9f2f7; }
+.ts { display: grid; gap: 8px; }
+.ts-stage { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--pitch); }
+.ts.compact .ts-stage { border-radius: 9px; }
+.ts-f-hand, .ts-f-basket, .ts-f-volley, .ts-f-tennis, .ts-f-padel, .ts-f-bad, .ts-f-bassin, .ts-f-ring, .ts-f-bob { background: var(--deck); }
+.ts-f-cote { background: var(--sky); }
+.ts-svg { display: block; width: 100%; height: auto; max-height: 420px; }
+.ts.compact .ts-svg { max-height: none; }
+.ts-surr { fill: var(--deck); }
+.ts-grass { fill: var(--pitch); }
+.ts-grass2 { fill: var(--pitch-2); }
+.ts-stripe { fill: var(--pitch-2); opacity: 0.55; }
+.ts-court { fill: var(--court); }
+.ts-court2 { fill: var(--court-2); }
+.ts-track { fill: var(--tartan); }
+.ts-water { fill: var(--water); }
+.ts-deck { fill: var(--deck); }
+.ts-ice { fill: var(--ice); }
+.ts-block { fill: var(--muted); opacity: 0.5; }
+.ts-mat { fill: #4a3b2a; } .ts-mat2 { fill: var(--deck); }
+.ts-dirt { fill: #8a6a45; }
+.ts-sky { fill: var(--sky); }
+.ts-ground { fill: var(--ground); }
+.ts-l { stroke: var(--pitch-line); fill: none; }
+.ts-grid .ts-l { opacity: 0.22; }
+.ts-post { stroke: #f2eee6; stroke-linecap: round; }
+.ts-net { stroke: #f2eee6; stroke-linecap: round; }
+.ts-wall { stroke: rgba(242, 238, 230, 0.75); }
+.ts-rope { stroke: #e9524b; fill: none; }
+.ts-goal { fill: #f2eee6; opacity: 0.85; }
+.ts-dot { fill: var(--pitch-line); }
+.ts-fl { fill: var(--pitch-line); font-family: var(--f-display); font-weight: 600; letter-spacing: 0.04em; }
+.ts-zone { fill: rgba(212, 173, 63, 0.08); stroke: var(--gold); }
+.ts-zl { fill: var(--gold); font-family: var(--f-display); font-weight: 600; }
+.ts-cone { fill: var(--cone); stroke: #1a1208; }
+.ts-flag { fill: var(--gold); } .ts-flagp { stroke: #f2eee6; }
+.ts-x { stroke: #f2eee6; stroke-linecap: round; }
+.ts-pa { fill: var(--gold); stroke: #15130f; }
+.ts-pb { fill: #f2eee6; stroke: #15130f; }
+.ts-ball { fill: #fff; stroke: #15130f; }
+.ts-sled { fill: #9aa7b3; stroke: #15130f; }
+.ts-wk { stroke: #f2eee6; stroke-linecap: round; }
+.ts-base { fill: #fff; stroke: #15130f; }
+.ts-shield { fill: #3d7bd9; stroke: #15130f; }
+.ts-ol { fill: #f2eee6; font-weight: 600; paint-order: stroke; stroke: rgba(0, 0, 0, 0.55); stroke-width: 0.12em; }
+.ts-tx { fill: #f2eee6; font-weight: 600; paint-order: stroke; stroke: rgba(0, 0, 0, 0.5); stroke-width: 0.12em; }
+.ts-pl { fill: #fff; font-family: var(--f-display); font-weight: 700; letter-spacing: 0.02em; paint-order: stroke; stroke: rgba(0, 0, 0, 0.65); stroke-width: 0.16em; }
+.ts-p { stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.2s; }
+.ts-sprint { stroke: var(--gold); } .ts-ah.ts-sprint { fill: var(--gold); stroke: none; }
+.ts-jog { stroke: #f2eee6; } .ts-ah.ts-jog { fill: #f2eee6; stroke: none; }
+.ts-back { stroke: #f7d77a; } .ts-ah.ts-back { fill: #f7d77a; stroke: none; }
+.ts-lat { stroke: var(--lat); } .ts-ah.ts-lat { fill: var(--lat); stroke: none; }
+.ts-walk { stroke: rgba(242, 238, 230, 0.6); } .ts-ah.ts-walk { fill: rgba(242, 238, 230, 0.6); stroke: none; }
+.ts-p.ts-ball { stroke: #fff; } .ts-ah.ts-ball { fill: #fff; stroke: none; }
+.ts-later { opacity: 0.42; }
+.ts-p.cur { filter: drop-shadow(0 0 3px rgba(212, 173, 63, 0.7)); }
+.ts-mk { stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+.ts-turn { fill: none; stroke: #fff; }
+.ts-num { fill: #15130f; stroke: var(--gold); stroke-width: 0.12; }
+.ts-numt { fill: var(--gold); font-family: var(--f-display); font-weight: 700; }
+.ts-run { fill: #fff; stroke: var(--gold); filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); }
+.ts-run.r2 { fill: var(--lat); stroke: #fff; }
+.ts-run.down { fill: var(--gold); }
+.ts-ctl { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.ts-leg { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); }
+.ts-leg li { display: flex; align-items: center; gap: 6px; }
+.ts-leg svg { width: 24px; height: 6px; overflow: visible; background: #1f2a20; border-radius: 3px; }
+/* profil d'intensité */
+.ic { border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); padding: 10px 10px 4px; }
+.ic.compact { padding: 6px 6px 2px; border-radius: 9px; }
+.ic-svg { display: block; width: 100%; height: 130px; }
+.ic.compact .ic-svg { height: 84px; }
+.tc-vis .ic-svg { height: 80px; }
+.ic-cap { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); padding: 4px 2px 2px; }
+.ic-kw { color: var(--gold); } .ic-kr { color: var(--muted); }
+.ic-grid { stroke: var(--grid); stroke-width: 1; }
+.ic-axis { stroke: var(--line); stroke-width: 1; }
+.ic-w { fill: var(--gold); }
+.ic-r { fill: var(--muted); opacity: 0.55; }
+.ic-cur { stroke: var(--fg); stroke-width: 1.5; opacity: 0.7; }
+.ic-t { fill: var(--muted); font-size: 10px; font-family: var(--f-body); }
+/* cartes et écrans */
+.tcard { grid-template-columns: 120px minmax(0, 1fr); }
+.tc-vis .ts-svg, .tc-vis .ic-svg { max-height: 96px; }
+.tweek { display: grid; grid-template-columns: minmax(120px, 42%) minmax(0, 1fr); gap: 14px; align-items: center; }
+.tw-t { display: grid; gap: 4px; min-width: 0; }
+.tw-t b { font-family: var(--f-display); font-size: 20px; line-height: 1.1; }
+@media (max-width: 420px) { .tweek { grid-template-columns: 1fr; } }
+.exc-drill { width: 92px; }
+.sport-note { font-size: 12px; color: var(--gold); margin-top: 2px; }
+.spchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.spchip { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 6px 12px; font-size: 13px; line-height: 1.2; }
+.spchip.on { border-color: var(--gold); background: var(--gold-tint); color: var(--gold); font-weight: 600; }
+.spchip:hover { border-color: var(--gold-soft); }
+.steps-l { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.tm-reps-big { font: 700 64px/1 var(--f-display); color: var(--gold); padding: 18px 0; }
+.center { text-align: center; }
+.kv + .kv { margin-top: 4px; }

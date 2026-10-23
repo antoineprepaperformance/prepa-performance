@@ -49,9 +49,10 @@ function aiConf(settings, data) {
 
 /* ---------- ajustements actifs ---------- */
 function activeAdj(data, kind) { return Object.entries(data.ai || {}).map(([id, a]) => ({ id, ...a })).filter((a) => a && a.status !== "annule" && (!kind || a.kind === kind)).sort((a, b) => String(a.at).localeCompare(String(b.at))); }
-function adjItems(entry, data) {
+function adjItems(entry, data, prog) {
   const subs = activeAdj(data, "subst"), charges = activeAdj(data, "charge");
-  return entry.s.items.map((it) => {
+  const base = typeof sportItems === "function" ? sportItems(entry, data, prog) : entry.s.items;
+  return base.map((it) => {
     let out = it;
     subs.forEach((s) => { if (out.e === s.from && entry.w >= (s.fromW || 1) && (!s.sid || s.sid === "*" || s.sid === entry.sid)) out = { ...out, e: s.to, adj: "Remplacé par le coach IA" + (s.reason ? " : " + s.reason : "") }; });
     charges.forEach((c) => { if (out.e === c.e && entry.w >= (c.fromW || 1) && entry.w <= (c.toW || 99)) out = { ...out, adjNote: c.text }; });
@@ -64,6 +65,7 @@ function adjLabel(a) {
   if (a.kind === "subst") return "Remplacement : " + nm(a.from) + " → " + nm(a.to) + (a.sid && a.sid !== "*" ? " (séance " + a.sid + ")" : "") + ", dès la semaine " + a.fromW;
   if (a.kind === "charge") return "Consigne de charge : " + nm(a.e) + " — " + a.text + " (S" + a.fromW + (a.toW && a.toW !== a.fromW ? " à S" + a.toW : "") + ")";
   if (a.kind === "note") return "Mot pour la semaine " + a.fromW + " : " + a.text;
+  if (a.kind === "terrain") return "Séance terrain conseillée (S" + a.fromW + (a.toW && a.toW !== a.fromW ? " à S" + a.toW : "") + ") : " + (typeof DRB !== "undefined" && DRB[a.drill] ? DRB[a.drill].n : a.drill) + (a.text ? " — " + a.text : "");
   if (a.kind === "alerte") return (a.urgence === "haute" ? "Alerte : " : "Signalement : ") + a.text;
   return a.kind;
 }
@@ -77,6 +79,13 @@ function clientContext({ data, plan, prog, stats, lib }) {
   const age = p.birthYear ? now.getFullYear() - p.birthYear : (np && np.age) || null;
   L.push("CONTEXTE DU CLIENT — données lues à l'instant (" + JOURS[now.getDay()] + " " + fmtDY(todayISO()) + ", " + pad(now.getHours()) + " h " + pad(now.getMinutes()) + ")");
   L.push("Client : " + ((p.name || "").split(" ")[0] || "client") + (age ? " · " + age + " ans" : "") + (np && np.sex ? " · " + (np.sex === "F" ? "femme" : "homme") : "") + (p.sport ? " · sport : " + p.sport : "") + (p.level ? " · niveau " + p.level : "") + " · profil " + nivName(effNiveau(plan, p)) + (plan && plan.medicalHold ? " (avis médical en attente : rester en mode Reprise)" : "") + (plan && plan.compDate ? " · compétition le " + plan.compDate : "") + (p.side ? " · côté blessé : " + p.side : ""));
+  const spo = typeof sportOf === "function" ? sportOf(p) : null;
+  if (spo) {
+    L.push("Sport : " + sportLabel(p) + " · qualités clés : " + spo.focus + (p.sportAdapt === false ? " · adaptation au sport désactivée par le client" : " · séances adaptées au sport (exercices spécifiques en salle, séances terrain du sport)"));
+    L.push("Séances terrain de son sport (identifiant : nom, type, dose pour son profil) : " + drillsFor(spo).map((d) => d.id + " : " + d.n + ", " + d.type + ", " + drillDose(d, effNiveau(plan, p)).t).join(" ; "));
+    const tdone = Object.values(data.libres || {}).filter((l) => l && l.kind === "terrain").sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 5);
+    if (tdone.length) L.push("Dernières séances terrain : " + tdone.map((l) => fmtD(l.d) + " « " + l.n + " » effort " + l.rpe + "/10" + (l.res ? ", résultat " + fmtRes(l.res.t, l.res.v) : "")).join(" ; "));
+  } else if (p.sport) L.push("Sport déclaré mais non reconnu dans la liste : « " + p.sport + " ».");
   const ps = stats && stats.ps;
   if (plan && prog && ps) {
     const b = blockOf(prog, Math.max(1, ps.week));
@@ -87,7 +96,7 @@ function clientContext({ data, plan, prog, stats, lib }) {
     const ses = weekSessions(prog, plan, w, lib);
     L.push("Séances de la semaine " + w + " (faites " + (stats.doneByWeek[w] || 0) + "/" + ses.length + ") :");
     ses.forEach((e) => {
-      const items = adjItems(e, data);
+      const items = adjItems(e, data, prog);
       const dn = data.logs[e.key];
       L.push("  " + e.sid + " « " + e.s.t + " »" + (dn ? " ✓ faite le " + fmtD(dn.date) : " à faire") + " : " + items.map((it) => it.e + " (" + (EXB[it.e] ? EXB[it.e].n : it.e) + ", " + doseOf(it, ps.wib || 1).text + ")" + (it.adjNote ? " [consigne IA : " + it.adjNote + "]" : "")).join(" ; "));
     });
@@ -172,6 +181,7 @@ function aiRules(conf, data, plan, ai) {
     "1. Relis le contexte ci-dessous (séances, charges, douleurs, bilans, tests, repas, objectif) et appuie ta réponse sur ces données, en citant les chiffres utiles.",
     canDo.length ? "2. Si les données ou la demande du client justifient un changement, tu peux " + canDo.join(", ") + ". Fais au plus deux ajustements à la fois, toujours avec une raison tirée des données, puis explique au client ce que tu as changé." : "2. Tu ne peux rien modifier toi-même : propose les changements utiles et préviens Antoine avec signaler_coach si c'est important.",
     "3. Si la question dépasse ton rôle ou si la situation est préoccupante, préviens Antoine avec signaler_coach" + (ai.tools ? "" : " (indique au client d'en parler à Antoine)") + ".",
+    "4. Adapte toujours tes conseils au sport et au poste du client : exercices spécifiques de la bibliothèque, séances terrain de son sport (avec distances, récupérations et dose de son profil), calendrier de compétition. Pour une séance terrain, propose une séance de la liste fournie" + (ai.tools && conf.allow.charge ? " et affiche-la avec conseiller_seance_terrain" : "") + ".",
     "",
     "Règles de sécurité, non négociables :",
     "- Douleur à 4/10 ou plus, douleur qui augmente, gonflement, douleur dans la poitrine, malaise ou essoufflement anormal : conseille d'arrêter l'exercice en cause, remplace-le ou allège, préviens Antoine (urgence haute) et conseille de consulter un médecin ou un kiné si ça persiste plus de 48 h. Jamais de diagnostic.",
@@ -197,7 +207,7 @@ function makeTools({ data, src, plan, prog, stats, conf, onEvent }) {
   const ev = (label) => { try { onEvent && onEvent(label); } catch (e) {} };
   const save = async (a) => { const id = rid("ia_"); const doc = { ...a, at: nowISO(), by: "ia", seen: false, status: "active" }; await src.saveAdjust(id, doc); ev(adjLabel(doc)); return doc; };
   const reason = (x) => String(x || "").slice(0, 240);
-  const blockIds = () => { if (!prog) return []; const b = blockOf(prog, curW); const ids = new Set(); b.sessions.forEach((s) => adjItems({ s, w: curW, sid: s.id }, data).forEach((it) => ids.add(it.e))); return [...ids]; };
+  const blockIds = () => { if (!prog) return []; const b = blockOf(prog, curW); const ids = new Set(); b.sessions.forEach((s) => adjItems({ s, w: curW, sid: s.id }, data, prog).forEach((it) => ids.add(it.e))); return [...ids]; };
   const tools = [];
   tools.push({ name: "signaler_coach", description: "Prévient Antoine (le coach humain) avec un message court : douleur, question médicale, demande hors de ton rôle, baisse de motivation, changement à valider. Renvoie une confirmation.",
     inputSchema: { type: "object", properties: { message: { type: "string", description: "Ce qu'Antoine doit savoir, en une ou deux phrases" }, urgence: { type: "string", enum: ["normale", "haute"] } }, required: ["message"] },
@@ -236,6 +246,16 @@ function makeTools({ data, src, plan, prog, stats, conf, onEvent }) {
         const text = String(i.consigne || "").trim().slice(0, 80); if (!text) throw new Error("consigne vide");
         await save({ kind: "charge", e, text, fromW: curW, toW: curW + n - 1, reason: reason(i.raison) });
         return "Consigne ajoutée sur " + EXB[e].n + " pour " + plural(n, "semaine") + ".";
+      } });
+    if (typeof DRB !== "undefined") tools.push({ name: "conseiller_seance_terrain", description: "Conseille au client une séance terrain de son sport (schéma, distances, minuteur), affichée sur son écran Aujourd'hui pendant 1 à 4 semaines. Utilise un identifiant de la liste des séances terrain du contexte.",
+      inputSchema: { type: "object", properties: { seance: { type: "string", description: "Identifiant de la séance terrain (ex. r_malcolm)" }, message: { type: "string", description: "Quand et comment la faire, 160 caractères maximum" }, semaines: { type: "number", description: "1 à 4" }, raison: { type: "string" } }, required: ["seance", "raison"] },
+      async execute(i) {
+        const id = String(i.seance || "").trim(); const d = DRB[id];
+        const spo = sportOf(data.profile);
+        if (!d) throw new Error("Identifiant inconnu. Séances disponibles : " + (spo ? spo.drills.join(", ") : Object.keys(DRB).join(", ")));
+        const n = clamp(Math.round(num(i.semaines) || 1), 1, 4);
+        await save({ kind: "terrain", drill: id, text: String(i.message || "").trim().slice(0, 160), fromW: curW, toW: curW + n - 1, reason: reason(i.raison) });
+        return "Séance « " + d.n + " » conseillée pour " + plural(n, "semaine") + ".";
       } });
     tools.push({ name: "note_seance", description: "Affiche un mot du coach IA sur l'écran d'accueil du client pendant la semaine en cours (priorité de la semaine, rappel d'échauffement, conseil de récupération).",
       inputSchema: { type: "object", properties: { texte: { type: "string", description: "200 caractères maximum" }, raison: { type: "string" } }, required: ["texte"] },

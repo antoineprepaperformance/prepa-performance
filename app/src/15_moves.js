@@ -428,6 +428,13 @@ MOVES.balance = { n: "Équilibre unipodal",
   keys: [K(1.5, "Sur une jambe, genou souple", { ...STAND, hip: [0, 0.92], L1: [0.02, 0.08], L2: { th: 55, sh: -15 }, ...BOTH({ ua: 25, fa: 30 }) }), K(1.5, "Reste stable", { ...STAND, hip: [0.015, 0.92], t: 4, L1: [0.02, 0.08], L2: { th: 58, sh: -12 }, ...BOTH({ ua: 30, fa: 35 }) })] };
 MOVES.ext_rot = { n: "Rotation externe d'épaule", view: "front", props: [{ k: "band", from: [-0.7, 1.15], to: "h1" }],
   keys: [K(0.6, "Coude collé au corps", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], A1: { ua: 4, fa: -70 }, A2: { ua: 8, fa: 10 } }), K(1, "Tourne l'avant-bras vers l'extérieur", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], A1: { ua: 6, fa: 80 }, A2: { ua: 8, fa: 10 } }), K(1.3, "Reviens lentement", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], A1: { ua: 4, fa: -70 }, A2: { ua: 8, fa: 10 } })] };
+MOVES.neck_iso = { n: "Isométrie du cou",
+  keys: [K(0.6, "Debout, tête neutre", { ...STAND, ...LEGS([0.06, 0.08]), ...BOTH({ ua: 5, fa: 10 }) }),
+    K(1.6, "Main sur le front : pousse sans bouger la tête", { ...STAND, ...LEGS([0.06, 0.08]), A1: { rel: "head", d: [0.12, 0.03] }, A2: { ua: 5, fa: 10 } }),
+    K(0.6, "", { ...STAND, ...LEGS([0.06, 0.08]), ...BOTH({ ua: 5, fa: 10 }) }),
+    K(1.6, "Mains derrière la tête : pousse vers l'arrière", { ...STAND, ...LEGS([0.06, 0.08]), A1: { rel: "head", d: [-0.12, 0.04] }, A2: { rel: "head", d: [-0.13, 0.02] } }),
+    K(0.6, "", { ...STAND, ...LEGS([0.06, 0.08]), ...BOTH({ ua: 5, fa: 10 }) }),
+    K(1.6, "Main sur la tempe : pousse sur le côté", { ...STAND, ...LEGS([0.06, 0.08]), A1: { rel: "head", d: [0.02, 0.1] }, A2: { ua: 5, fa: 10 } })] };
 MOVES.ytw = { n: "Y-T-W", view: "front",
   keys: [K(0.6, "Bras le long du corps", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], ...BOTH({ ua: 10, fa: 10 }) }), K(1, "Y : bras en V", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], ...BOTH({ ua: 145, fa: 148 }) }), K(0.6, "", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], ...BOTH({ ua: 145, fa: 148 }) }),
     K(1, "T : bras à l'horizontale", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], ...BOTH({ ua: 90, fa: 90 }) }), K(0.6, "", { ...STAND, L1: [0.13, 0.08], L2: [-0.13, 0.08], ...BOTH({ ua: 90, fa: 90 }) }),

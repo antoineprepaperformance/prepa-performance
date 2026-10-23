@@ -71,7 +71,7 @@ function TimerPlayer({ title, seq, kind, onFinish, onClose }) {
   const wake = useRef(null);
   const speed = window.__TIMER_SPEED || 1;
   const cur = seq[i], next = seq[i + 1];
-  const announce = (k) => { const s = seq[k]; if (!s) return; if (voice) say((s.kind === "rest" || s.kind === "switch" ? "Récupère. Ensuite : " : "") + exName(s.e) + (s.label && s.kind !== "rest" ? ", " + s.label : "")); if (sound) beep(s.kind === "work" || s.kind === "hold" || s.kind === "emom" ? 990 : 660, 0.18); };
+  const announce = (k) => { const s = seq[k]; if (!s) return; if (voice) say((s.kind === "rest" || s.kind === "switch" ? "Récupère. Ensuite : " : "") + (s.n || exName(s.e)) + (s.label && s.kind !== "rest" ? ", " + s.label : "")); if (sound) beep(s.kind === "work" || s.kind === "hold" || s.kind === "emom" ? 990 : 660, 0.18); };
   useEffect(() => {
     if (!run) { try { wake.current && wake.current.release(); } catch (e) {} wake.current = null; return undefined; }
     try { navigator.wakeLock && navigator.wakeLock.request("screen").then((w) => { wake.current = w; }, () => {}); } catch (e) {}
@@ -102,18 +102,18 @@ function TimerPlayer({ title, seq, kind, onFinish, onClose }) {
   const breath = cur.breath ? (Math.floor((cur.secs - left) / cur.breath[0]) % 2 === 0 ? "Inspire" : "Expire") : null;
   return html`<div className="player timer">
     <header className="p-top"><button type="button" className="back" onClick=${onClose} aria-label="Quitter">‹</button>
-      <div><div className="eyebrow">${kind === "recup" ? "Récup et bien-être" : "Séance flash"} · ${fmtClock(total - done)} restant</div><h2>${title}</h2></div></header>
+      <div><div className="eyebrow">${{ recup: "Récup et bien-être", terrain: "Séance terrain" }[kind] || "Séance flash"} · ${fmtClock(total - done)} restant</div><h2>${title}</h2></div></header>
     <div className="tm-bar"><span style=${{ width: Math.min(100, (100 * done) / total) + "%" }}></span></div>
     <section className=${"tm-main " + tone}>
-      <div className="tm-k">${{ prep: "Prépare-toi", work: "Effort", rest: "Récupère", hold: "Tiens", switch: cur.label === "Change de côté" ? "Change de côté" : "Ensuite", emom: "Cette minute", amrap: "AMRAP" }[cur.kind]}${cur.round && FLASH.length ? " · tour " + cur.round : ""}</div>
+      <div className="tm-k">${{ prep: "Prépare-toi", work: "Effort", rest: "Récupère", hold: "Tiens", switch: cur.label === "Change de côté" ? "Change de côté" : "Ensuite", emom: "Cette minute", amrap: "AMRAP" }[cur.kind]}${kind === "terrain" ? (cur.sets > 1 && cur.round ? " · série " + cur.round + "/" + cur.sets : "") : cur.round && FLASH.length ? " · tour " + cur.round : ""}</div>
       <div className="tm-clock" aria-live="off">${fmtClock(left)}</div>
       ${breath ? html`<div className=${"tm-breath " + (breath === "Inspire" ? "in" : "out")}><span></span><b>${breath}</b></div>` : null}
-      <div className="tm-ex"><b>${exName(showE)}</b>${cur.reps ? html` <span className="tm-reps">${cur.reps} rép.</span>` : null}${cur.label && !["rest", "switch", "prep"].includes(cur.kind) ? html`<span className="muted small"> · ${cur.label}</span>` : null}</div>
+      <div className="tm-ex"><b>${cur.n || exName(showE)}</b>${cur.reps ? html` <span className="tm-reps">${cur.reps} rép.</span>` : null}${cur.label && !["rest", "switch", "prep"].includes(cur.kind) ? html`<span className="muted small"> · ${cur.label}</span>` : null}</div>
       ${cur.kind === "amrap" ? html`<ul className="tm-amrap">${cur.items.map((it, k) => html`<li key=${k}><b>${it.reps}</b> ${exName(it.use)}</li>`)}</ul>
         <div className="btnrow center"><${Btn} kind="ghost" onClick=${() => setRounds(rounds + 1)}>+1 tour</${Btn}><span className="tm-rounds">${plural(rounds, "tour")}</span></div>` : null}
-      <div className="tm-anim"><${MoveAnim} key=${(anim || showE) + "-" + i} id=${anim || showE} ex=${ex} compact=${true} /></div>
+      <div className="tm-anim">${cur.sc ? html`<${TerrainSchema} key=${"sc-" + (cur.kind === "work")} sc=${cur.sc} compact=${true} autoplay=${run && cur.kind === "work"} />` : kind === "terrain" ? html`<div className="tm-reps-big">${cur.rep ? cur.rep + " / " + cur.reps : "—"}</div>` : html`<${MoveAnim} key=${(anim || showE) + "-" + i} id=${anim || showE} ex=${ex} compact=${true} />`}</div>
       ${ex && ex.cues && ex.cues[0] ? html`<p className="muted small center">${ex.cues[0]}</p>` : null}
-      ${next ? html`<p className="tm-next">Ensuite : <b>${next.kind === "rest" || next.kind === "switch" ? (next.label === "Change de côté" ? "change de côté" : "récupération " + next.secs + " s") : exName(next.e)}</b></p>` : html`<p className="tm-next">Dernier effort !</p>`}
+      ${next ? html`<p className="tm-next">Ensuite : <b>${next.kind === "rest" || next.kind === "switch" ? (next.label === "Change de côté" ? "change de côté" : "récupération " + fmtClock(next.secs)) : (next.n || exName(next.e)) + (next.rep ? " (" + next.rep + "/" + next.reps + ")" : "")}</b></p>` : html`<p className="tm-next">Dernier effort !</p>`}
     </section>
     <div className="tm-ctl">
       <${Btn} kind="ghost" small onClick=${() => jump(i - 1)} disabled=${i === 0}>Précédent</${Btn}>
@@ -127,7 +127,7 @@ function TimerPlayer({ title, seq, kind, onFinish, onClose }) {
 }
 
 /* ---------- fin de séance libre ---------- */
-function FreeFinish({ title, kind, sid, secs, rounds, early, src, niveau, onDone }) {
+function FreeFinish({ title, kind, sid, secs, rounds, early, src, niveau, onDone, res }) {
   const toast = useToast();
   const [rpe, setRpe] = useState(kind === "recup" ? 2 : null);
   const [duree, setDuree] = useState(Math.max(1, Math.round((secs || 0) / 60)));
@@ -137,12 +137,12 @@ function FreeFinish({ title, kind, sid, secs, rounds, early, src, niveau, onDone
     if (rpe === null) { toast("Indique ton effort ressenti (0 à 10).", "warn"); return; }
     setBusy(true);
     const id = rid("l");
-    try { await src.saveLibre(id, { id, d: todayISO(), at: nowISO(), kind, sid, n: title, duree: num(duree) || 0, rpe, load: rpe * (num(duree) || 0), rounds: rounds || undefined, comment: comment.trim() || undefined, niveau, early: early || undefined }); toast("Séance enregistrée.", "ok"); onDone(); }
+    try { await src.saveLibre(id, { id, d: todayISO(), at: nowISO(), kind, sid, n: title, duree: num(duree) || 0, rpe, load: rpe * (num(duree) || 0), rounds: rounds || undefined, comment: comment.trim() || undefined, niveau, early: early || undefined, res: res && num(res.v) !== null ? { t: res.t, v: num(res.v), tries: res.tries || undefined } : undefined }); toast("Séance enregistrée.", "ok"); onDone(); }
     catch (e) { toast("Enregistrement impossible. Réessaie.", "bad"); } finally { setBusy(false); }
   };
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">${early ? "Séance arrêtée" : "Séance terminée"}</div><h1>${early ? "C'est noté, chaque minute compte." : "Bravo, séance bouclée !"}</h1>
-      <p className="muted">${title}${rounds ? " · " + plural(rounds, "tour") : ""}</p></div>
+      <p className="muted">${title}${rounds ? " · " + plural(rounds, "tour") : ""}${res && num(res.v) !== null ? " · résultat : " + fmtRes(res.t, num(res.v)) : ""}</p></div>
     <${Card} title="Ton ressenti">
       <${Field} label="Effort ressenti (0 à 10)" hint=${rpe !== null ? RPE_LABELS[rpe] : "0 = repos, 10 = maximal"}><${Scale} id="fx-rpe" min=${0} max=${10} value=${rpe} onChange=${setRpe} /></${Field}>
       <div className="row2"><${Field} label="Durée (minutes)" id="fx-duree"><input id="fx-duree" inputMode="numeric" value=${duree} onChange=${(e) => setDuree(e.target.value)} /></${Field}></div>
@@ -201,7 +201,7 @@ function ExtrasScreen({ data, plan, src, tab0, onClose, locked, onLocked }) {
   </div>`;
 }
 /* raccourci sur l'écran Aujourd'hui */
-function ExtrasTeaser({ open }) {
-  return html`<div className="xteaser"><div><b>Séances en plus</b><span className="muted small">Flash à la maison en 10 à 20 min, récup, yoga et respiration</span></div>
-    <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => open("flash")}>Flash</${Btn}><${Btn} small kind="ghost" onClick=${() => open("recup")}>Récup</${Btn}></div></div>`;
+function ExtrasTeaser({ open, openTerrain }) {
+  return html`<div className="xteaser"><div><b>Séances en plus</b><span className="muted small">${openTerrain ? "Terrain de ton sport, flash à la maison, récup, yoga et respiration" : "Flash à la maison en 10 à 20 min, récup, yoga et respiration"}</span></div>
+    <div className="btnrow">${openTerrain ? html`<${Btn} small kind="ghost" onClick=${() => openTerrain(true)}>Terrain</${Btn}>` : null}<${Btn} small kind="ghost" onClick=${() => open("flash")}>Flash</${Btn}><${Btn} small kind="ghost" onClick=${() => open("recup")}>Récup</${Btn}></div></div>`;
 }

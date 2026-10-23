@@ -1,6 +1,6 @@
 # Antoine Prépa Performance · site et application
 
-Préparation physique en ligne par Antoine Limousi : page d'accueil publique, comptes clients, espace coach, programmes de 1 à 3 mois adaptés au profil (Reprise, Sportif, Performance, Haut niveau), séances guidées et dosées avec chaque mouvement animé, correction vidéo, séances flash à la maison et récup/bien-être avec minuteur, santé au quotidien (montre, iPhone, fichiers GPX/TCX), livre de recettes, bilans hebdomadaires, tests, nutrition, carte athlète évolutive et badges. L'accès est payant (Stripe : formules Essentiel, Suivi, Hybride en paiement unique, forfait Lite au mois ou à l'année) ou offert par un code d'essai.
+Préparation physique en ligne par Antoine Limousi : page d'accueil publique, comptes clients, espace coach, programmes de 1 à 3 mois adaptés au profil (Reprise, Sportif, Performance, Haut niveau), séances guidées et dosées avec chaque mouvement animé, adaptation au sport et au poste (exercices spécifiques en salle, 50 séances terrain pour 23 sports avec schémas animés, distances, minuteur et chrono), correction vidéo, séances flash à la maison et récup/bien-être avec minuteur, santé au quotidien (montre, iPhone, fichiers GPX/TCX), livre de recettes, bilans hebdomadaires, tests, nutrition, carte athlète évolutive et badges. L'accès est payant (Stripe : formules Essentiel, Suivi, Hybride en paiement unique, forfait Lite au mois ou à l'année) ou offert par un code d'essai.
 
 - **Mettre en ligne** : suis [MISE_EN_LIGNE.md](MISE_EN_LIGNE.md) (environ 1 heure, gratuit hors frais Stripe).
 - **Juridique** : [CONFORMITE.md](CONFORMITE.md) liste ce qui est intégré et ce qu'il te reste à faire (carte pro, assurance, médiateur…).
@@ -36,8 +36,9 @@ app/
     14_motion.js      moteur d'animation des mouvements (squelette 2D) ; 15_moves.js : les mouvements
     16_video.js       fiche mouvement, correction vidéo (images, angles, envoi au coach)
     17_extras.js      séances flash et récup avec minuteur ; 18_sante.js : santé au quotidien ; 19_recettes.js : recettes
+    20_terrain.js     sport et poste du client, adaptation des séances, séances terrain (schémas animés, dose, minuteur, chrono)
   src/site/           spécifique au site : Firebase, page d'accueil, connexion
-  content_*.py        programmes, exercices, profils, tests, questionnaire santé, formules
+  content_*.py        programmes, exercices, profils, tests, questionnaire santé, formules ; content_sports.py : sports et séances terrain
   build_site.py       reconstruit docs/
   build.py            reconstruit la version Claude (avec coach IA)
   relay/              tests du relais
@@ -58,7 +59,7 @@ Tests :
 
 - `python3 unit_niveau.py` : profils, recommandations, dosages, accès (sans navigateur).
 - `node relay/test_worker.mjs` : signature Stripe, montants, écriture Firebase du relais.
-- Site : lancer l'émulateur Auth (`firebase emulators:start --only auth --project demo-prepa`), servir `app/site_test` sur `127.0.0.1:8123`, puis `python3 e2e_site.py`, `e2e_site2.py`, `e2e_pay.py`, `e2e_lite.py`, `e2e_features_site.py` et `e2e_pwa.py`.
-- Version Claude : `python3 e2e.py`, `e2e_nutri.py`, `e2e_claude_acces.py`, `e2e_lite_claude.py`, `e2e_features.py`, `vis.py`.
+- Site : lancer l'émulateur Auth (`firebase emulators:start --only auth --project demo-prepa`), servir `app/site_test` sur `127.0.0.1:8123`, puis `python3 e2e_site.py`, `e2e_site2.py`, `e2e_pay.py`, `e2e_lite.py`, `e2e_features_site.py`, `e2e_terrain_site.py` et `e2e_pwa.py`.
+- Version Claude : `python3 e2e.py`, `e2e_nutri.py`, `e2e_claude_acces.py`, `e2e_lite_claude.py`, `e2e_features.py`, `e2e_terrain.py`, `vis.py`.
 
 Les bibliothèques nécessaires aux tests se récupèrent avec `app/vendor/LISEZMOI.md`.

@@ -77,7 +77,12 @@
         if (t) { try { r = await t.execute({ kcal: 1200, proteines_g: 140, pas: 9000, raison: "Poids stable deux semaines" }, sig()); } catch (e) { r = "Error: " + e.message; } }
         text = "Bonne semaine de reprise.\n\nAjustement : " + r + "\n\nAntoine lira aussi ton bilan.";
       } else {
-        if (/genou/i.test(last)) {
+        if (/terrain/i.test(last)) {
+          const t = (opts.tools || []).find((x) => x.name === "conseiller_seance_terrain");
+          let r = "";
+          if (t) { try { r = await t.execute({ seance: "r_malcolm", message: "Mercredi, à la place de la séance C", semaines: 1, raison: "Travail des efforts répétés avant le match" }, sig()); } catch (e) { r = "Error: " + e.message; } }
+          text = "Cette semaine, fais les Malcolms : 3 séries de 6, départ toutes les 25 s.\n\n" + r;
+        } else if (/genou/i.test(last)) {
           const ts = opts.tools || []; const out = [];
           const rep = ts.find((x) => x.name === "remplacer_exercice"), sg = ts.find((x) => x.name === "signaler_coach");
           if (rep) { try { out.push(await rep.execute({ exercice_actuel: "squat_goblet", nouvel_exercice: "pont_fessier", seance: "toutes", raison: "Gêne au genou signalée" }, sig())); } catch (e) { out.push("Error: " + e.message); } }

@@ -86,18 +86,20 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   const [chat, setChat] = useState(false);
   const [extra, setExtra] = useState(null);
   const [sante, setSante] = useState(false);
+  const [terrain, setTerrain] = useState(null);
   useSanteImport(demo ? null : src, data.ready);
   const wide = useWide();
   const today = todayISO();
   const libAll = useMemo(() => ({ ...(lib || {}), ...(data.lib || {}) }), [lib, data.lib]);
   const exoAll = useMemo(() => ({ ...(exo || {}), ...(data.exo || {}) }), [exo, data.exo]);
   const plan = data.plan && data.plan.status !== "pending" ? data.plan : null;
-  const prog = plan ? progOf(plan.programId, libAll) : null;
+  const prog = useMemo(() => (plan ? sportProg(progOf(plan.programId, libAll), data.profile) : null), [plan, libAll, data.profile]);
   const stats = useMemo(() => computeStats(data, plan, prog, libAll, today), [data, plan, prog, libAll, today]);
   const profile = data.profile || {};
   const coach = (settings && settings.coach) || data.coach || null;
+  const openTerrain = (x) => setTerrain(x || true);
   const scrollTop = () => { try { window.scrollTo(0, 0); } catch (e) {} };
-  useEffect(scrollTop, [tab, open, chat, extra, sante]);
+  useEffect(scrollTop, [tab, open, chat, extra, sante, terrain]);
   const conf = aiConf(settings, data);
   const showAI = conf.on && ai.ready && !!ai.sample && !(data.plan && data.plan.offer === "lite");
 
@@ -116,13 +118,14 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   const renewModal = html`<${Modal} open=${renew} wide title=${access === "pause" ? "Suivi en pause" : "Prolonger ou changer de programme"} onClose=${() => setRenew(false)}>
     ${renew ? (access === "pause" ? html`<p className="small">Ton suivi est en pause : contacte ${coach && coach.name || COACH_NAME_DEFAULT} pour le reprendre.</p>` : html`<${Purchase} data=${data} src=${src} settings=${settings} db=${db} uid=${uid} lib=${libAll} mode="renew" onDone=${() => setRenew(false)} />`) : null}</${Modal}>`;
   if (sante) return html`<div className="client">${banner}<${SanteScreen} data=${data} src=${src} plan=${plan} onClose=${() => setSante(false)} /></div>`;
+  if (terrain) return html`<div className="client">${banner}<${TerrainScreen} data=${data} plan=${plan} src=${src} open0=${typeof terrain === "string" ? terrain : null} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setTerrain(null)} />${renewModal}</div>`;
   if (extra) return html`<div className="client">${banner}<${ExtrasScreen} data=${data} plan=${plan} src=${src} tab0=${extra} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setExtra(null)} />${renewModal}</div>`;
   if (chat) return html`<div className="client">${banner}<${CoachChat} data=${data} src=${src} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} settings=${settings} onClose=${() => setChat(false)} /></div>`;
   if (open) {
     const ps = stats.ps;
     const w = open.w;
     const entry0 = weekSessions(prog, plan, w, libAll).find((x) => x.key === open.key);
-    const entry = entry0 ? { ...entry0, s: { ...entry0.s, items: adjItems(entry0, data) } } : null;
+    const entry = entry0 ? { ...entry0, s: { ...entry0.s, items: adjItems(entry0, data, prog) } } : null;
     if (entry) return html`<div className="client">${banner}<${SessionPlayer} entry=${entry} prog=${prog} plan=${plan} exo=${exoAll} data=${data} src=${src} settings=${settings} ai=${conf.on && plan.offer !== "lite" ? ai : null}
       onClose=${() => setOpen(null)} isCurrent=${ps && ps.week === w} /></div>`;
   }
@@ -132,9 +135,9 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
       <button type="button" className=${"avbtn" + (tab === "profil" ? " on" : "")} aria-label="Mon profil" onClick=${() => setTab("profil")}><${Avatar} profile=${profile} photo=${data.media && data.media.photo && data.media.photo.data} size=${38} /></button></div></header>
     <main className="c-main">
       ${tab === "today" ? html`<${Today} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} src=${src} profile=${profile} coach=${coach}
-          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openSante=${() => setSante(true)} db=${db} uid=${uid} />` : null}
+          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} />` : null}
       ${tab === "programme" ? html`<${ClientProgram} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} exo=${exoAll}
-          openSession=${openSession} locked=${locked} openExtra=${setExtra} />` : null}
+          openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} />` : null}
       ${tab === "bilan" ? html`<${Bilans} data=${data} plan=${plan} prog=${prog} stats=${stats} src=${src} lib=${libAll} settings=${settings} ai=${showAI ? ai : null} openChat=${showAI ? () => setChat(true) : null} />` : null}
       ${tab === "nutrition" ? html`<${NutritionTab} data=${data} src=${src} plan=${plan} prog=${prog} settings=${settings} db=${db} />` : null}
       ${tab === "progres" ? html`<${Progress} data=${data} plan=${plan} prog=${prog} stats=${stats} openTests=${(w) => setTestOpen(w)} src=${src} coach=${coach} openSante=${() => setSante(true)} />` : null}
@@ -170,7 +173,7 @@ function useWide() {
   useEffect(() => { let m; try { m = window.matchMedia(q); const f = () => setW(m.matches); m.addEventListener ? m.addEventListener("change", f) : m.addListener(f); return () => { m.removeEventListener ? m.removeEventListener("change", f) : m.removeListener(f); }; } catch (e) { return undefined; } }, []);
   return w;
 }
-function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openSante, db, uid }) {
+function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid }) {
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   const liteOk = isLite && access === "actif";
@@ -197,7 +200,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       ${liteBan}
       <${Card} title="Choisir mon prochain programme"><${LiteNextCycle} data=${data} src=${src} db=${db} uid=${uid} plan=${plan} /></${Card}>
       <div className="btnrow"><${Btn} kind="ghost" onClick=${() => go("progres")}>Voir mes progrès</${Btn}>${!data.tests["t" + plan.weeks] ? html`<${Btn} kind="ghost" onClick=${() => openTests(plan.weeks)}>Saisir mes tests finaux</${Btn}>` : null}</div>
-      ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} />` : null}
+      ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null}
     </div>`;
   }
   if (ps.phase === "fini") {
@@ -249,15 +252,16 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const ainotes = html`<${AINotes} data=${data} w=${w} openChat=${openChat} />`;
   const vReply = Object.values(data.videos || {}).filter((v) => v && v.reply && !v.seen).sort((a, b) => String(b.reply.at).localeCompare(String(a.reply.at)))[0];
   const vnote = vReply ? html`<button type="button" className="alert gold btnlike" onClick=${() => go("progres")}><div><b>${(coach && coach.name) || COACH_NAME_DEFAULT} a corrigé ta vidéo</b><p>${vReply.exName} : ${String(vReply.reply.text).slice(0, 110)}${String(vReply.reply.text).length > 110 ? "…" : ""}</p></div></button>` : null;
-  const extras = openExtra ? html`<${ExtrasTeaser} open=${openExtra} />` : null;
+  const extras = openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null;
+  const tweek = openTerrain ? html`<${TerrainWeek} data=${data} plan=${plan} w=${w} wib=${ps.wib} open=${openTerrain} />` : null;
   const cardMini = html`<${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} compact=${true} onOpen=${() => go("profil")} />`;
   const nutri = html`<${NutriToday} data=${data} go=${go} />${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}`;
   const habits = prog.habits && prog.habits.length ? html`<${Habits} prog=${prog} data=${data} src=${src} block=${ps.block} />` : null;
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
   const week = html`<${Card} title=${"Semaine " + w}>${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} onOpen=${() => openSession(e)} />`)}</${Card}>`;
-  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${nextB}${alerts}${vnote}${week}${extras}${msgs}</div><div className="stack">${ring}${cardMini}${ainotes}${nutri}${habits}</div></div></div>`;
-  return html`<div className="stack">${hero}${ring}${nextB}${alerts}${vnote}${ainotes}${cardMini}${nutri}${extras}${habits}${msgs}${week}</div>`;
+  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${nextB}${alerts}${vnote}${tweek}${week}${extras}${msgs}</div><div className="stack">${ring}${cardMini}${ainotes}${nutri}${habits}</div></div></div>`;
+  return html`<div className="stack">${hero}${ring}${nextB}${alerts}${vnote}${ainotes}${tweek}${cardMini}${nutri}${extras}${habits}${msgs}${week}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
   return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p>${text}</p></div></div>`;
@@ -300,7 +304,7 @@ function Habits({ prog, data, src, block }) {
 }
 
 /* ---------- Programme ---------- */
-function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, openExtra }) {
+function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, openExtra, openTerrain }) {
   const ps = stats.ps;
   const [w, setW] = useState(ps.phase === "en_cours" ? ps.week : ps.phase === "fini" ? plan.weeks : 1);
   const block = blockOf(prog, w);
@@ -318,7 +322,8 @@ function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, open
       ${((w - 1) % 4) + 1 === 4 ? html`<p className="note">Semaine ${w} : allègement (moins de séries, charges plus légères) puis tests de fin de bloc.</p>` : null}
       ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} locked=${locked} onOpen=${() => openSession(e)} />`)}
     </${Card}>
-    ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} />` : null}
+    ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null}
+    ${sportAdaptOn(data.profile) ? html`<${Card} title=${"Adapté à ton sport : " + sportLabel(data.profile)} sub=${sportOf(data.profile).focus}><p className="small">${sportAdaptText(sportOf(data.profile), data.profile)}</p></${Card}>` : null}
     <${Card} title=${"Mon profil : " + nivName(effNiveau(plan, data.profile))} sub=${(NIVB[effNiveau(plan, data.profile)] || {}).short}>
       <ul className="small">${((NIVB[effNiveau(plan, data.profile)] || {}).what || []).map((x, k) => html`<li key=${k}>${x}</li>`)}</ul>
       ${nivRank(effNiveau(plan, data.profile)) >= 2 ? html`<details><summary>La science des profils Performance et Haut niveau</summary><p className="small">${CONTENT.NIVSCI}</p><ol className="refs">${(CONTENT.NIVREFS || []).map((r, i) => html`<li key=${i}>${r}</li>`)}</ol></details>` : null}</${Card}>
@@ -349,6 +354,8 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
   const niv = effNiveau(plan, data.profile);
   const detailed = nivRank(niv) >= 2;
   const items = useMemo(() => [...entry.s.items, ...preventionFor(entry, prog, plan, niv, data.profile && data.profile.sport)], [entry.key, niv]);
+  const [drillView, setDrillView] = useState(null);
+  const spN = (sportOf(data.profile) || {}).n || "";
   const [ready, setReady] = useState(existing && existing.readiness ? existing.readiness.values : null);
   const rd = detailed ? readinessOf(ready, data) : null;
   const taper = detailed ? taperFor(plan, entry.w) : null;
@@ -402,6 +409,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
   const del = async () => { setBusy(true); try { await src.deleteLog(entry.key); toast("Séance supprimée.", "ok"); onClose(); } finally { setBusy(false); } };
   const wu = warmupFor(entry, prog, plan, niv);
   const nPrev = items.filter((x) => x.prev).length;
+  const nSpec = items.filter((x) => x.spec).length;
   return html`<div className="player">
     <header className="p-top"><button type="button" className="back" onClick=${onClose} aria-label="Retour">‹</button>
       <div><div className="eyebrow">Semaine ${entry.w} · séance ${entry.extra ? "supplémentaire" : entry.sid}${entry.opt ? " (optionnelle)" : ""}${entry.s.lieu ? " · " + entry.s.lieu : ""} · profil ${nivName(niv)}</div><h2>${entry.s.t}</h2></div></header>
@@ -415,10 +423,13 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
       const d = doses[i];
       const v = vals[i];
       return html`<li key=${i} className=${"exc" + (it.prev ? " prev" : "")}>
+        ${it.spec && (i === 0 || !items[i - 1].spec) ? html`<div className="eyebrow prev-h">Spécifique ${spLow(spN)} · ${plural(nSpec, "exercice")}</div>` : null}
         ${it.prev && (i === 0 || !items[i - 1].prev) ? html`<div className="eyebrow prev-h">Prévention · ${plural(nPrev, "exercice")} adapté${nPrev > 1 ? "s" : ""} à ton sport</div>` : null}
-        <div className="exc-h">${hasMotion(ex.id, ex) ? html`<button type="button" className="exc-anim" aria-label=${"Voir le mouvement : " + ex.n} onClick=${() => setSheet(ex)}><${MoveAnim} id=${ex.id} ex=${ex} compact=${true} autoplay=${false} /><span className="exc-n">${i + 1}</span></button>` : html`<span className="exc-n">${i + 1}</span>`}<div className="exc-t"><b>${ex.n}</b>${ex.subst ? html` <${Pill} tone="gold">version maison</${Pill}>` : null}
+        <div className="exc-h">${ex.drill && DRB[ex.drill] ? html`<button type="button" className="exc-anim exc-drill" aria-label=${"Voir le schéma : " + ex.n} onClick=${() => setDrillView(DRB[ex.drill])}><${DrillVisual} d=${DRB[ex.drill]} niveau=${niv} data=${data} compact=${true} autoplay=${false} /><span className="exc-n">${i + 1}</span></button>` : hasMotion(ex.id, ex) ? html`<button type="button" className="exc-anim" aria-label=${"Voir le mouvement : " + ex.n} onClick=${() => setSheet(ex)}><${MoveAnim} id=${ex.id} ex=${ex} compact=${true} autoplay=${false} /><span className="exc-n">${i + 1}</span></button>` : html`<span className="exc-n">${i + 1}</span>`}<div className="exc-t"><b>${ex.n}</b>${ex.subst ? html` <${Pill} tone="gold">version maison</${Pill}>` : null}
           <div className="dose">${d.text}</div>${(d.lines || []).length ? html`<ul className="dose-l">${d.lines.map((l, k) => html`<li key=${k}>${l}</li>`)}</ul>` : null}
           ${it.n ? html`<div className="muted small">${it.n}</div>` : null}${ex.cnote ? html`<div className="muted small">${ex.cnote}</div>` : null}
+          ${it.from ? html`<div className="sport-note">Version ${spLow(spN)} : remplace « ${EXB[it.from] ? EXB[it.from].n : it.from} »</div>` : null}
+          ${ex.drill && DRB[ex.drill] ? html`<button type="button" className="linkbtn" onClick=${() => setDrillView(DRB[ex.drill])}>Voir le schéma et le minuteur</button>` : null}
           ${it.adj ? html`<div className="ai-note">✦ ${it.adj}</div>` : null}${it.adjNote ? html`<div className="ai-note">✦ Consigne du coach IA : ${it.adjNote}</div>` : null}</div></div>
         <details className="cues"><summary>Consignes${ex.video ? " et vidéo" : ""}</summary>
           <ul>${(ex.cues || []).map((c, k) => html`<li key=${k}>${c}</li>`)}</ul>
@@ -452,6 +463,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
         : html`<button type="button" className="linkbtn" onClick=${() => setConfirmDel(true)}>Supprimer cette séance</button>`}</div>` : null}
     </section>
     <${Modal} open=${!!sheet} wide title=${sheet ? sheet.n : ""} onClose=${() => setSheet(null)}>${sheet ? html`<${ExerciseSheet} e=${sheet.id} ex=${sheet} onFilm=${() => { setFilm(sheet); setSheet(null); }} />` : null}</${Modal}>
+    <${Modal} open=${!!drillView} wide title=${drillView ? drillView.n : ""} onClose=${() => setDrillView(null)}>${drillView ? html`<${DrillSheet} d=${drillView} niveau=${niv} data=${data} profile=${data.profile} />` : null}</${Modal}>
     <${Modal} open=${!!film} wide title=${film ? "Correction vidéo · " + film.n : ""} onClose=${() => setFilm(null)}>${film ? html`<${VideoCheck} e=${film.id} ex=${film} data=${data} src=${src} plan=${plan} settings=${settings} ai=${ai} onClose=${() => setFilm(null)} />` : null}</${Modal}>
   </div>`;
 }
@@ -560,7 +572,9 @@ function TestsForm({ prog, plan, data, src, point, onDone }) {
         <input id=${"t-" + tid + "-kg"} inputMode="decimal" placeholder="Charge (kg)" aria-label="Charge" value=${(v && v.kg) ?? ""} onChange=${(e) => set(tid, { ...(v || {}), kg: e.target.value })} />
         <input id=${"t-" + tid + "-r"} inputMode="numeric" placeholder="Répétitions" aria-label="Répétitions" value=${(v && v.reps) ?? ""} onChange=${(e) => set(tid, { ...(v || {}), reps: e.target.value })} /></div>
         ${v && epley(num(v.kg), num(v.reps)) ? html`<span className="small">Maximum estimé : <b>${fmtN(epley(num(v.kg), num(v.reps)))} kg</b></span>` : null}</${Field}>`;
+      const tb = typeof terrainBest === "function" ? terrainBest(data, tid) : null;
       return html`<${Field} key=${tid} label=${t.n + " (" + t.u + ")"} hint=${t.help} id=${"t-" + tid}><input id=${"t-" + tid} inputMode="decimal" value=${v ?? ""} onChange=${(e) => set(tid, e.target.value)} />
+        ${tb ? html`<span className="small">Meilleur chrono terrain : <b>${fmtRes(tid, tb.v)}</b> (${fmtD(tb.d)}) <button type="button" className="linkbtn" onClick=${() => set(tid, String(tb.v))}>Utiliser</button></span>` : null}
         ${tid === "vma" && num(v) ? html`<span className="small">VMA estimée : <b>${fmtN(num(v) / 100)} km/h</b></span>` : null}</${Field}>`;
     })}
     <div className="actions"><${Btn} block onClick=${save}>Enregistrer les tests</${Btn}></div>
@@ -633,7 +647,8 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib }) {
       <dt>Lieu</dt><dd>${plan && plan.equipment === "maison" ? "À la maison" : "En salle / sur terrain"}</dd>
       <dt>Profil</dt><dd>${nivName(effNiveau(plan, p))}${plan && plan.medicalHold ? " (Reprise en attendant l'avis médical)" : ""}</dd>
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
-      ${p.sport ? html`<dt>Sport</dt><dd>${p.sport}</dd>` : null}</dl></${Card}>
+      </dl></${Card}>
+    <${SportCard} data=${data} src=${src} plan=${plan} />
     <${OrdersCard} data=${data} src=${src} settings=${settings} />
     ${coach && (coach.phone || coach.email) ? html`<${Card} title=${"Contacter " + (coach.name || COACH_NAME_DEFAULT)}>
       ${coach.phone ? html`<div className="contact"><span>${coach.phone}</span><${CopyBtn} text=${coach.phone} /></div>` : null}
@@ -702,7 +717,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
   const au = window.IS_SITE && window.SITE.auth ? window.SITE.auth.currentUser : null;
   const pendingCode = (() => { try { return normCode(localStorage.getItem("pending_code") || ""); } catch (e) { return ""; } })();
   const [step, setStep] = useState(0);
-  const [f, setF] = useState({ name: (au && au.displayName) || "", email: (au && au.email) || "", phone: "", birthYear: "", sport: "", answers: { compet: null, xp: null, freq: 3 },
+  const [f, setF] = useState({ name: (au && au.displayName) || "", email: (au && au.email) || "", phone: "", birthYear: "", sport: "", sportId: "", poste: "", answers: { compet: null, xp: null, freq: 3 },
     programId: "", niveau: "", screening: SCREENING.map(() => null), prereq: [], side: "", consent: false, parentName: "", parentEmail: "", parentOk: false });
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -715,6 +730,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
   const rec = recommendNiveau(f.answers, age, flag);
   const niveau = f.niveau || rec.id;
   const cat = sportCat(f.sport);
+  const spo = SPB[f.sportId] || null;
   const recProgs = PROG_FOR_SPORT[cat] || [];
   const prereqOk = !prog || !prog.prereq || f.prereq.length === prog.prereq.length;
   const checks = prog ? assessPlan({ programId: f.programId, niveau, ans: f.answers, sport: f.sport, age, equipment: "salle", screeningFlag: flag, prereqOk }) : [];
@@ -731,7 +747,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
   const submit = async () => {
     setBusy(true);
     const consentTxt = window.IS_SITE ? CONSENT_SITE : "Accord pour l'enregistrement des données d'entraînement et de santé à des fins de suivi, et pour leur analyse par le coach IA (Claude, Anthropic) lors de son utilisation.";
-    const profile = { name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), birthYear: num(f.birthYear), sport: f.sport.trim(),
+    const profile = { name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), birthYear: num(f.birthYear), sport: f.sport.trim(), sportId: spo ? spo.id : null, poste: spo && (spo.postes || []).some((q) => q[0] === f.poste) ? f.poste : "", sportAdapt: true,
       level: { reprise: "Débutant", sportif: "Intermédiaire", perf: "Confirmé", elite: "Confirmé" }[niveau] || "Intermédiaire",
       side: f.side || "", prereq: f.prereq, request: { programId: f.programId, niveau, answers: f.answers, offer: "suivi", weeks: 4, equipment: "salle", start: nextMonday(), code: pendingCode || null },
       screening: f.screening, screeningFlag: flag, consent: { at: nowISO(), text: consentTxt, v: window.IS_SITE ? "site2" : 3 },
@@ -758,11 +774,13 @@ function Onboarding({ settings, onSubmit, onCode }) {
       <div className="row2"><${Field} label="E-mail" id="ob-email"><input id="ob-email" type="email" value=${f.email} onChange=${(e) => set("email", e.target.value)} autoComplete="email" /></${Field}>
         <${Field} label="Téléphone" id="ob-phone"><input id="ob-phone" type="tel" value=${f.phone} onChange=${(e) => set("phone", e.target.value)} autoComplete="tel" /></${Field}></div>
       <div className="row2"><${Field} label="Année de naissance" id="ob-by"><input id="ob-by" inputMode="numeric" value=${f.birthYear} onChange=${(e) => set("birthYear", e.target.value.replace(/\D/g, "").slice(0, 4))} /></${Field}>
-        <${Field} label="Sport pratiqué" id="ob-sport" hint=${f.sport ? "Reconnu : " + SPORT_LABEL[cat] : null}><input id="ob-sport" value=${f.sport} onChange=${(e) => set("sport", e.target.value)} placeholder="Rugby, course, aucun…" /></${Field}></div>
+        <${Field} label="Sport pratiqué" id="ob-sport" hint=${f.sport ? (spo ? "Reconnu : " + spo.n + " · exercices spécifiques et séances terrain" : "Reconnu : " + SPORT_LABEL[cat]) : null}><input id="ob-sport" value=${f.sport} onChange=${(e) => { const v = e.target.value; setF((o) => ({ ...o, sport: v, sportId: sportIdOf(v) || "", poste: "" })); }} placeholder="Rugby, course, aucun…" /></${Field}></div>
+      <div className="field"><span className="field-l">Ou choisis ton sport</span><${SportChips} value=${f.sportId} onPick=${(x) => setF((o) => ({ ...o, sport: x.n, sportId: x.id, poste: "" }))} /></div>
     </div>` : null}
     ${step === 2 ? html`<div className="stack form"><h2>Ton niveau</h2>
       <p className="muted small">Ces réponses règlent la précision de tes séances : charges, tempo, récupération, prévention.</p>
-      <${Field} label=${NIVQ.compet ? NIVQ.compet.n : "Niveau"}><${Seg} id="nq-compet" options=${opts("compet")} value=${f.answers.compet} onChange=${(v) => setA("compet", v)} /></${Field}>
+      <${Field} label=${(NIVQ.compet ? NIVQ.compet.n : "Niveau") + (spo ? " en " + spLow(spo.n) : "")}><${Seg} id="nq-compet" options=${opts("compet")} value=${f.answers.compet} onChange=${(v) => setA("compet", v)} /></${Field}>
+      ${spo && (spo.postes || []).length ? html`<${Field} label="Ton poste"><${Seg} id="nq-poste" options=${[...spo.postes.map((q) => ({ v: q[0], n: q[1] })), { v: "", n: "Sans préciser" }]} value=${f.poste} onChange=${(v) => set("poste", v)} /></${Field}>` : null}
       <${Field} label=${NIVQ.xp ? NIVQ.xp.n : "Expérience"}><${Seg} id="nq-xp" options=${opts("xp")} value=${f.answers.xp} onChange=${(v) => setA("xp", v)} /></${Field}>
       <${Field} label=${NIVQ.freq ? NIVQ.freq.n : "Séances"}><${Seg} id="nq-freq" options=${opts("freq")} value=${f.answers.freq} onChange=${(v) => setA("freq", v)} /></${Field}>
       ${f.answers.compet !== null && f.answers.xp !== null ? html`<div className="field"><span className="field-l">Ton profil</span><${NiveauCards} value=${niveau} onChange=${(v) => set("niveau", v)} recommended=${rec.id} />
@@ -788,14 +806,14 @@ function Onboarding({ settings, onSubmit, onCode }) {
         <p className="muted small">Pas de test de charge maximale avant 18 ans : les charges sont guidées par les répétitions en réserve.</p></${Card}>` : null}
     </div>` : null}
     ${step === 5 ? html`<div className="stack form"><h2>Validation</h2>
-      <${Card}><dl className="dl"><dt>Programme</dt><dd>${prog ? prog.n : "—"}</dd><dt>Profil</dt><dd>${nivName(niveau)}</dd><dt>Sport</dt><dd>${f.sport || "—"}</dd></dl>
+      <${Card}><dl className="dl"><dt>Programme</dt><dd>${prog ? prog.n : "—"}</dd><dt>Profil</dt><dd>${nivName(niveau)}</dd><dt>Sport</dt><dd>${spo ? spo.n + (posteName(spo, f.poste) ? " · " + posteName(spo, f.poste) : "") : f.sport || "—"}</dd></dl>
         <p className="muted small">À l'étape suivante : formule, durée, date de début et paiement${pendingCode ? " (ou ton code " + pendingCode + ")" : " ou code d'essai"}.</p></${Card}>
       <label className="chk"><input id="ob-consent" type="checkbox" checked=${f.consent} onChange=${(e) => set("consent", e.target.checked)} /><span>${window.IS_SITE ? CONSENT_SITE : "J'accepte que mes données d'entraînement et de santé soient enregistrées pour le suivi de mon programme par Antoine Limousi, et analysées par le coach IA (Claude, d'Anthropic) quand je l'utilise. Je peux retirer mon accord et demander leur suppression à tout moment. Je sais que ces conseils ne remplacent pas un avis médical."}</span></label>
       ${minor ? html`<label className="chk"><input id="ob-parent" type="checkbox" checked=${f.parentOk} onChange=${(e) => set("parentOk", e.target.checked)} /><span>Je suis ${f.parentName || "le parent ou tuteur légal"} et j'autorise l'inscription de ${f.name || "mon enfant"} ainsi que le traitement de ses données d'entraînement et de santé pour son suivi.</span></label>` : null}
     </div>` : null}
     ${step > 0 ? html`<div className="navbtns">
       <${Btn} kind="quiet" onClick=${() => setStep(step - 1)}>Retour</${Btn}>
-      ${step < 5 ? html`<${Btn} onClick=${() => setStep(step + 1)} disabled=${!can()}>Continuer</${Btn}>` : html`<${Btn} onClick=${submit} disabled=${!can() || busy}>"Continuer vers mon accès"</${Btn}>`}
+      ${step < 5 ? html`<${Btn} onClick=${() => setStep(step + 1)} disabled=${!can()}>Continuer</${Btn}>` : html`<${Btn} onClick=${submit} disabled=${!can() || busy}>Continuer vers mon accès</${Btn}>`}
     </div>` : null}
   </div>`;
 }

@@ -13,6 +13,8 @@ function sportCat(sport) {
   const s = " " + normTxt2(sport) + " ";
   if (!s.trim()) return "aucun";
   if (/\b(aucun|rien|non|pas de sport)\b/.test(s)) return "aucun";
+  const sid = typeof sportIdOf === "function" ? sportIdOf(sport) : null;
+  if (sid && SPB[sid] && SPB[sid].fam) return SPB[sid].fam;
   const K = CONTENT.SPORTKEYS || {};
   for (const c of SPORT_ORDER) if ((K[c] || []).some((k) => s.includes(k))) return c;
   return "autre";

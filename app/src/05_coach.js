@@ -185,7 +185,7 @@ function ClientTable({ rows, openClient }) {
     <tbody>${sorted.map((r) => {
       const i = r.info;
       return html`<tr key=${r.cid} onClick=${() => openClient(r.cid)} tabIndex="0" onKeyDown=${(e) => e.key === "Enter" && openClient(r.cid)}>
-        <th><span className="who"><${Avatar} profile=${r.profile} size=${30} /><span><b>${r.profile.name || "Client"}</b><span className="chips">${r.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}${r.profile.local ? html`<${Pill}>sans compte</${Pill}>` : null}</span><small>${r.profile.sport || ""}</small></span></span></th>
+        <th><span className="who"><${Avatar} profile=${r.profile} size=${30} /><span><b>${r.profile.name || "Client"}</b><span className="chips">${r.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}${r.profile.local ? html`<${Pill}>sans compte</${Pill}>` : null}</span><small>${sportLabel(r.profile) || r.profile.sport || ""}</small></span></span></th>
         <td>${i.prog ? i.prog.n : "—"}<small>${i.plan ? offerName(i.plan.offer) + " · " + planDur(i.plan) : (i.p.request ? "demandé : " + (i.p.request.offer === "lite" ? "Lite" : durName(i.p.request.weeks)) : "")}</small></td>
         <td>${i.ps && i.ps.phase === "en_cours" ? html`<div className="mini"><${Bar} value=${i.ps.week / i.ps.weeks} /><small>S${i.ps.week}/${i.ps.weeks} · ${i.weekDone}/${i.weekPlanned} cette semaine</small></div>` : "—"}</td>
         <td>${i.adherence === null ? "—" : html`<span className=${i.adherence >= 0.8 ? "ok-t" : i.adherence >= 0.6 ? "warn-t" : "bad-t"}>${Math.round(i.adherence * 100)} %</span>`}</td>
@@ -221,12 +221,12 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, tab0, onBac
   const [tab, setTab] = useState(tab0 || "vue");
   const today = todayISO();
   const plan = data.plan && data.plan.status !== "pending" ? data.plan : null;
-  const prog = progOf(plan ? plan.programId : (data.profile && data.profile.request && data.profile.request.programId), lib);
+  const prog = sportProg(progOf(plan ? plan.programId : (data.profile && data.profile.request && data.profile.request.programId), lib), data.profile);
   const stats = useMemo(() => computeStats(data, plan, prog, lib, today), [data, plan, prog, lib, today]);
   const p = data.profile || row.profile || {};
   const info = rowInfo({ profile: p, plan: data.plan, replies: data.replies }, lib, today, settings);
-  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "tests", n: "Tests" }, { v: "videos", n: "Vidéos" + ((info.sum.videoPending || 0) ? " (" + info.sum.videoPending + ")" : "") }, { v: "nutrition", n: "Nutrition" }, { v: "sante", n: "Santé" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
-    .filter((t) => !(t.v === "ia" && window.IS_SITE && !row.demo && !Object.keys(data.ai || {}).length));
+  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "terrain", n: "Sport & terrain" }, { v: "tests", n: "Tests" }, { v: "videos", n: "Vidéos" + ((info.sum.videoPending || 0) ? " (" + info.sum.videoPending + ")" : "") }, { v: "nutrition", n: "Nutrition" }, { v: "sante", n: "Santé" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
+    .filter((t) => !(t.v === "ia" && window.IS_SITE && !row.demo && !Object.values(data.ai || {}).some((a) => a && a.by !== "coach")));
   if (!src) return html`<${Empty} title="Données indisponibles" text="Ouvre l'application depuis claude.ai." />`;
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Tous les clients</button>
@@ -240,6 +240,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, tab0, onBac
     ${tab === "bilans" ? html`<${CoachBilans} data=${data} src=${src} plan=${plan} prog=${prog} lib=${lib} settings=${settings} />` : null}
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
+    ${tab === "terrain" ? html`<${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
@@ -338,7 +339,7 @@ function CoachLogs({ data, src, plan, prog, exo }) {
       <${Btn} onClick=${add}>Ajouter</${Btn}></div></${Card}>` : null}
     ${(() => { const xs = [...Object.values(data.libres || {}), ...Object.values(data.activites || {}).map((a) => ({ ...a, n: a.n || "Activité importée", act: true }))].filter(Boolean).sort((a, b) => String(b.d).localeCompare(String(a.d)));
       return xs.length ? html`<${Card} title="Séances en plus et activités" sub="Flash, récup, montre ou fichier importé : comptées dans la charge de la semaine">${xs.slice(0, 12).map((x) => html`<div key=${x.id} className="hist"><div className="hist-h"><b>${x.n}</b><span className="muted small">${fmtD(x.d)}</span></div>
-        <span className="muted small">${x.act ? (x.type || "activité") + (x.dist ? " · " + fmtN(x.dist, 1) + " km" : "") + (x.fcMoy ? " · FC moy. " + x.fcMoy : "") + " · " : (x.kind === "flash" ? "flash · " : "récup · ")}${x.duree || 0} min${x.rpe !== undefined && x.rpe !== null ? " · effort " + x.rpe + "/10" : ""}${x.load ? " · " + fmtN(x.load, 0) + " UA" : ""}</span></div>`)}</${Card}>` : null; })()}
+        <span className="muted small">${x.act ? (x.type || "activité") + (x.dist ? " · " + fmtN(x.dist, 1) + " km" : "") + (x.fcMoy ? " · FC moy. " + x.fcMoy : "") + " · " : (x.kind === "flash" ? "flash · " : x.kind === "terrain" ? "terrain · " : "récup · ")}${x.duree || 0} min${x.rpe !== undefined && x.rpe !== null ? " · effort " + x.rpe + "/10" : ""}${x.load ? " · " + fmtN(x.load, 0) + " UA" : ""}</span></div>`)}</${Card}>` : null; })()}
     ${logs.length ? logs.map((l) => html`<${Card} key=${l.key} title=${l.title || "Séance"} sub=${fmtDY(l.date) + " · semaine " + l.w + (l.kind === "presentiel" ? " · en présentiel" : "")}
       action=${html`<div className="chips">${l.rpe !== undefined ? html`<${Pill}>Effort ${l.rpe}/10</${Pill}>` : null}${l.duree ? html`<${Pill}>${l.duree} min</${Pill}>` : null}${l.douleur ? html`<${Pill} tone=${l.douleur >= 4 ? "bad" : "warn"}>Douleur ${l.douleur}/10${l.zone ? " · " + l.zone : ""}</${Pill}>` : null}</div>`}>
       ${(l.items || []).length ? html`<details><summary>${plural(l.items.length, "exercice")}</summary><ul className="loglist">${l.items.map((it, i) => {
@@ -665,7 +666,7 @@ function AddClient({ db, lib, settings, onDone }) {
     if (!db) { toast("Ouvre l'application depuis claude.ai pour créer un client.", "warn"); return; }
     const cid = rid("m_");
     try {
-      await dbSet(db, "clients/" + cid, { name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), sport: f.sport.trim(), manual: true, local: true, createdAt: nowISO(), consent: null, sum: summarize({}) });
+      await dbSet(db, "clients/" + cid, { name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), sport: f.sport.trim(), sportId: sportIdOf(f.sport) || null, manual: true, local: true, createdAt: nowISO(), consent: null, sum: summarize({}) });
       await dbSet(db, "plans/" + cid, { programId: f.programId, offer: f.offer, weeks: Number(f.weeks), start: f.start, equipment: f.equipment, status: "active", message: "", extra: [], validatedAt: nowISO() });
       toast(window.IS_SITE ? "Fiche client créée." : "Client créé. Copie son code d'accès dans l'onglet Plan.", "ok");
       onDone(cid);

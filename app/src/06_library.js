@@ -19,6 +19,8 @@ function Library({ lib, db, open, edit }) {
     ${sessions.length ? html`<div className="slist">${sessions.map(([id, s]) => html`<button key=${id} type="button" className="srow" onClick=${() => edit({ ...s, id })}>
       <span className="srow-id">+</span><span className="srow-t"><b>${s.t}</b><span className="muted small">${s.focus || ""} · ${plural((s.items || []).length, "exercice")}</span></span><span className="srow-s">›</span></button>`)}</div>`
       : html`<p className="muted small">Une séance perso peut être ajoutée au plan de n'importe quel client, sur la semaine de ton choix.</p>`}
+    <h2 className="sec">Séances terrain par sport</h2>
+    <${TerrainLibrary} />
   </div>`;
 }
 const WU_DEFAULT = "10 min : 5 min de cardio léger, mobilité des hanches et des chevilles, puis 2 séries progressives du premier exercice.";

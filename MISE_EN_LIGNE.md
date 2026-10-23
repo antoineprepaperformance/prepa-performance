@@ -183,6 +183,17 @@ Teste enfin le parcours complet avec une autre adresse e-mail : inscription, pro
 - Sur le site, la nutrition fonctionne avec le scan de code-barres (base Open Food Facts), une liste d'aliments courants, la saisie manuelle et le livre de recettes, sans photo de repas ni recette créée par l'IA. La correction vidéo fonctionne (images, mesures, envoi au coach) sans l'analyse par l'IA.
 - Le contenu des programmes est dans le code de la page : un client ne voit ses séances qu'après paiement ou code, mais une personne qui s'y connaît peut lire ce contenu en fouillant le code.
 
+## Mettre le site à jour (nouvelle version)
+
+Quand une nouvelle version du zip t'est envoyée :
+
+1. Décompresse le zip sur ton ordinateur.
+2. Sur ton dépôt GitHub, ouvre le dossier **`docs`**, puis **Add file › Upload files**.
+3. Glisse les fichiers du dossier `docs` du zip **sauf `config.js`** (le tien contient tes clés : ne le remplace jamais). En général, seuls `index.html` et `sw.js` changent. Clique sur **Commit changes**.
+4. Facultatif : fais de même pour le dossier `app` (le code source, utile pour les modifications futures, pas pour le fonctionnement du site).
+5. Attends 1 à 2 minutes, ouvre ton site et recharge-le deux fois.
+6. Si on t'indique que les règles Firestore ont changé : recopie `firestore.rules` dans Firebase › Firestore › Règles (avec ton adresse de coach) › **Publier**.
+
 ## En cas de souci
 
 | Ce que tu vois | Solution |

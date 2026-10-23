@@ -2,15 +2,15 @@
    Ces valeurs ne sont pas secrètes : la sécurité vient des règles Firestore. */
 window.SITE_CONFIG = {
   firebase: {
-    apiKey: "A_REMPLIR",
-    authDomain: "A_REMPLIR.firebaseapp.com",
-    projectId: "A_REMPLIR",
-    storageBucket: "A_REMPLIR.firebasestorage.app",
-    messagingSenderId: "A_REMPLIR",
-    appId: "A_REMPLIR"
+    apiKey: "AIzaSyCwjA5nsxXDo98K5oDcfVipGBqXu4-1V6Q",
+    authDomain: "prepa-performance.firebaseapp.com",
+    projectId: "prepa-performance",
+    storageBucket: "prepa-performance.firebasestorage.app",
+    messagingSenderId: "182693003527",
+    appId: "1:182693003527:web:0bc9df5cbaf3a7bc5105a2"
   },
   /* adresse(s) e-mail qui ouvrent l'espace coach : la même que dans les règles Firestore */
-  coachEmails: ["ton-email@exemple.fr"],
+  coachEmails: ["antoine.limousi@gmail.com"],
   /* mentions légales affichées en bas de la page d'accueil */
   legal: {
     editeur: "Antoine Limousi",

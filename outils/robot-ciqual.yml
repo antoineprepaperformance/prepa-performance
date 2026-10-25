@@ -1,0 +1,101 @@
+# Robot de mise à jour de la table Ciqual de l'ANSES (valeurs nutritionnelles des aliments).
+# Chaque mois, il regarde si l'ANSES a publié une nouvelle version de la table et, si oui, remplace docs/ciqual.json :
+# le site et l'application utilisent aussitôt les nouvelles valeurs (aliments, repas, recettes, coach IA).
+# Source : le fichier officiel de l'ANSES (CSV), dans la copie tenue à jour par Open Food Facts sur GitHub
+# (le site de l'ANSES bloque les robots). Gratuit : GitHub Actions est inclus pour les dépôts publics.
+# Lancer à la main : onglet Actions › « Table Ciqual (ANSES) » › Run workflow (on peut y coller l'adresse d'un fichier CSV).
+name: Table Ciqual (ANSES)
+on:
+  schedule:
+    - cron: "17 5 3 * *"   # le 3 de chaque mois vers 6 h
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Adresse d'un fichier CSV Ciqual de l'ANSES (facultatif)"
+        required: false
+        default: ""
+permissions:
+  contents: write
+  pages: write
+jobs:
+  maj:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chercher une nouvelle version
+        env:
+          CIQUAL_URL: ${{ github.event.inputs.url }}
+        run: |
+          python3 - <<'PY'
+          import csv, io, json, os, re, sys, urllib.request
+          BASE = "https://raw.githubusercontent.com/openfoodfacts/openfoodfacts-server/main/external-data/ciqual/ciqual/"
+          OUT = "docs/ciqual.json"
+          COLS = {"kcal": "Energie, Règlement UE N° 1169 2011 (kcal 100 g)", "p": "Protéines, N x facteur de Jones (g 100 g)",
+                  "c": "Glucides (g 100 g)", "f": "Lipides (g 100 g)", "s": "Sucres (g 100 g)", "fi": "Fibres alimentaires (g 100 g)",
+                  "sel": "Sel chlorure de sodium (g 100 g)"}
+          ORDER = ["kcal", "p", "c", "f", "s", "fi", "sel"]
+          def get(u):
+              with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "robot-ciqual"}), timeout=90) as r:
+                  return r.read()
+          def val(x):
+              x = (x or "").strip().replace(" ", " ")
+              if x in ("", "-"): return None
+              if x.lower().startswith("trace"): return 0
+              m = re.match(r"^<\s*([0-9]+(?:[.,][0-9]+)?)$", x)
+              if m: return round(float(m.group(1).replace(",", ".")) / 2, 3)
+              try: return float(x.replace(",", ".").replace(" ", ""))
+              except ValueError: return None
+          def rnd(v):
+              if v is None: return None
+              r = round(v, 1) if v >= 10 else round(v, 2)
+              return int(r) if r == int(r) else r
+          def build(text, version, date):
+              rows = list(csv.reader(io.StringIO(text), delimiter="\t"))
+              head = [" ".join(h.split()) for h in rows[0]]
+              idx = {k: head.index(v) for k, v in COLS.items()}
+              i_code, i_nom, i_grp, i_sg = head.index("alim_code"), head.index("alim_nom_fr"), head.index("alim_grp_nom_fr"), head.index("alim_ssgrp_nom_fr")
+              groups, foods, seen = [], [], set()
+              for r in rows[1:]:
+                  if len(r) < len(head) - 5 or not r[i_code].strip(): continue
+                  code = int(r[i_code])
+                  if code in seen: continue
+                  seen.add(code)
+                  g = (r[i_sg] or r[i_grp] or "aliments moyens").strip()
+                  if g not in groups: groups.append(g)
+                  v = {k: val(r[idx[k]]) for k in ORDER}
+                  if v["kcal"] is None and None not in (v["p"], v["c"], v["f"]):
+                      v["kcal"] = 4 * v["p"] + 4 * v["c"] + 9 * v["f"] + 2 * (v["fi"] or 0)
+                  foods.append([code, " ".join(r[i_nom].split()), groups.index(g)] + [rnd(v[k]) for k in ORDER])
+              if len(foods) < 2000 or not any(f[3] for f in foods):
+                  sys.exit("Table Ciqual inattendue (" + str(len(foods)) + " aliments) : rien n'est changé.")
+              return {"v": version, "date": date, "src": "Anses. Table de composition nutritionnelle des aliments Ciqual " + version + ". https://ciqual.anses.fr",
+                      "cols": ["code", "nom", "groupe"] + ORDER, "groupes": groups, "f": foods}
+          cur = {}
+          if os.path.exists(OUT):
+              try: cur = json.load(open(OUT, encoding="utf-8"))
+              except Exception: cur = {}
+          url = (os.environ.get("CIQUAL_URL") or "").strip()
+          if not url:
+              names = [l.split()[-1] for l in get(BASE + "CIQUAL_versions.csv").decode("utf-8").splitlines() if "_ENG_" in l]
+              if not names: sys.exit("Liste des versions illisible : rien n'est changé.")
+              url = BASE + max(names).replace("_ENG_", "_FR_")
+          m = re.search(r"CIQUAL(\d{4})_FR_(\d{4})_(\d{2})_(\d{2})", url)
+          version, date = (m.group(1), m.group(2) + "-" + m.group(3) + "-" + m.group(4)) if m else ("", "")
+          if m and cur.get("v") == version and cur.get("date") == date:
+              print("Déjà à jour : table Ciqual", version, "du", date); sys.exit(0)
+          out = build(get(url).decode("utf-8-sig"), version, date)
+          json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+          print("Nouvelle table Ciqual", version, "du", date, ":", len(out["f"]), "aliments")
+          PY
+      - name: Publier
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- docs/ciqual.json; then echo "Rien à publier."; exit 0; fi
+          git config user.name "robot-ciqual"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/ciqual.json
+          if [ -d app/data ]; then cp docs/ciqual.json app/data/ciqual.json; git add app/data/ciqual.json; fi
+          git commit -m "Table Ciqual de l'ANSES : nouvelle version"
+          git push
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null 2>&1 || true

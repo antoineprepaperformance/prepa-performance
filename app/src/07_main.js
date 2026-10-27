@@ -35,4 +35,8 @@ class Boundary extends React.Component {
   }
 }
 const Root = window.IS_SITE && typeof SiteRoot === "function" ? SiteRoot : App;
-ReactDOM.createRoot(document.getElementById("root")).render(html`<${Boundary}><${ToastHost}><${DbWatch} /><${Root} /></${ToastHost}></${Boundary}>`);
+/* langue autre que le français : on attend le dictionnaire (quelques centaines de millisecondes au plus) avant d'afficher */
+I18N_READY.finally(() => {
+  i18nStart();
+  ReactDOM.createRoot(document.getElementById("root")).render(html`<${Boundary}><${ToastHost}><${DbWatch} /><${Root} /></${ToastHost}></${Boundary}>`);
+});

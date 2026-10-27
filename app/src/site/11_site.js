@@ -116,7 +116,7 @@ function PublicCancel({ settings, onLogin }) {
       setDone(d); setStep(3); saveText("accuse-resiliation.txt", text(d));
     } catch (e) { setErr("Envoi impossible : vérifie ta connexion, ou écris à " + (L.email || "Antoine") + "."); } finally { setBusy(false); }
   };
-  if (step === 3 && done) return html`<div className="stack"><div className="alert okb" role="status"><div><b>Résiliation reçue</b><p>Reçue le ${new Date(done.at).toLocaleString("fr-FR")}. Ton abonnement s'arrête à la fin de la période déjà payée, sans nouveau prélèvement. ${L.editeur} te confirme la date exacte par e-mail. L'accusé de réception est téléchargé.</p></div></div>
+  if (step === 3 && done) return html`<div className="stack"><div className="alert okb" role="status"><div><b>Résiliation reçue</b><p>Reçue le ${new Date(done.at).toLocaleString(LOCALE)}. Ton abonnement s'arrête à la fin de la période déjà payée, sans nouveau prélèvement. ${L.editeur} te confirme la date exacte par e-mail. L'accusé de réception est téléchargé.</p></div></div>
     <button type="button" className="linkbtn" onClick=${() => saveText("accuse-resiliation.txt", text(done))}>Télécharger à nouveau l'accusé de réception</button></div>`;
   return html`<div className="stack form">
     <p className="small">Pour un abonnement Lite. Avec ton compte, tu peux aussi résilier dans Profil › Mes commandes : la date de fin s'affiche tout de suite. <button type="button" className="linkbtn" onClick=${onLogin}>Me connecter</button></p>
@@ -158,7 +158,8 @@ function Landing() {
     ["Tes séances, guidées", "La dose de la semaine, chaque mouvement animé, tes charges de la dernière fois. En plus : séances flash à la maison, récupération, recettes et santé au quotidien."],
     ["Tes progrès, visibles", "Tests toutes les 4 semaines, courbes, nutrition, badges et ta carte athlète qui évolue."]];
   return html`<div className="landing">
-    <header className="l-top"><${Brand} sub="Préparation physique en ligne" /><div className="btnrow"><${Btn} kind="quiet" small onClick=${() => setAuth("login")}>Connexion</${Btn}><span className="l-top-cta"><${Btn} small onClick=${() => setAuth("signup")}>Commencer</${Btn}></span></div></header>
+    <${LangSuggest} />
+    <header className="l-top"><${Brand} sub="Préparation physique en ligne" /><div className="btnrow"><${LangPicker} compact id="lang-accueil" /><${Btn} kind="quiet" small onClick=${() => setAuth("login")}>Connexion</${Btn}><span className="l-top-cta"><${Btn} small onClick=${() => setAuth("signup")}>Commencer</${Btn}></span></div></header>
     ${pcode ? html`<div className="alert okb"><div><b>Code ${pcode}</b><p>Crée ton compte : ton accès offert sera appliqué à la dernière étape.</p></div><${Btn} small onClick=${() => setAuth("signup")}>J'en profite</${Btn}></div>` : null}
     <section className="l-hero">
       <div className="stack">
@@ -172,12 +173,12 @@ function Landing() {
     </section>
     <section className="l-sec"><h2>Comment ça marche</h2><div className="l-steps">${steps.map(([t, d], i) => html`<div key=${i} className="l-step"><span className="l-n">${i + 1}</span><b>${t}</b><p className="small muted">${d}</p></div>`)}</div></section>
     <section className="l-sec"><h2>Les programmes</h2><div className="pgrid wide">${PROGS.map((p) => html`<div key=${p.id} className="pcard"><b>${p.n}</b><span>${p.short}</span><small>${p.lieu} · 12 semaines</small></div>`)}</div></section>
-    <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className="card l-offer"><h3>${o.n}</h3><p className="small">${o.desc}</p>
+    <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className="card l-offer"><h3>${o.n}</h3><p className="small">${o.desc}</p><p className="muted small">${aiLimitTxt(settings, o.id)}</p>
       <div className="l-prices">${DURS.map((d, i) => html`<div key=${d.w}><b>${eur(o.prix[i])}</b><small>${d.n}</small></div>`)}</div></div>`)}
       ${liteOn(settings) ? html`<div className="card l-offer lite"><h3>Lite</h3><p className="small">${liteDesc()}</p>
         <div className="l-prices"><div><b>${eur2(litePrice(settings, "mois"))}</b><small>par mois</small></div><div><b>${eur2(litePrice(settings, "an"))}</b><small>par an</small></div></div>
         <p className="muted small">En abonnement (résiliable en quelques clics) ou en paiement d'avance.</p></div>` : null}</div>
-      <p className="muted small">${tvaLine(settings)}. Essentiel, Suivi et Hybride : paiement unique, sans abonnement. Lite : abonnement mensuel sans engagement, abonnement annuel ou paiement d'avance sans renouvellement. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
+      <p className="muted small">${tvaLine(settings)}. ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique, sans abonnement. Lite : abonnement mensuel sans engagement, abonnement annuel ou paiement d'avance sans renouvellement. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><div className="btnrow center"><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}><${Btn} kind="ghost" onClick=${() => setContact(true)}>Une question ? Me contacter</${Btn}></div></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       ${coach.instagram ? html`<div className="small muted">Instagram : ${coach.instagram}</div>` : null}

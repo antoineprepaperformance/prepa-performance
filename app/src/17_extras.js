@@ -57,7 +57,7 @@ function beep(freq, dur) {
     o.connect(g); g.connect(_ac.destination); o.start(); o.stop(_ac.currentTime + (dur || 0.12));
   } catch (e) {}
 }
-function say(text) { try { if (!window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(text); u.lang = "fr-FR"; u.rate = 1.05; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } catch (e) {} }
+function say(text) { try { if (!window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(tr(text)); u.lang = LOCALE; u.rate = 1.05; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } catch (e) {} }
 
 /* ---------- lecteur minuté ---------- */
 function TimerPlayer({ title, seq, kind, onFinish, onClose }) {

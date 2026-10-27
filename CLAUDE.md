@@ -1,0 +1,34 @@
+# Règles pour Claude : site et application d'Antoine Prépa Performance
+
+Tu travailles sur le site de coaching en ligne d'Antoine Limousi, préparateur physique (micro-entreprise, région de Bordeaux).
+Le site est publié par GitHub Pages depuis `docs/` : son adresse ne change jamais, il suffit de remplacer les fichiers.
+Les sources sont dans `app/` (voir README.md pour l'organisation). Écris toujours en français, en tutoyant Antoine et ses clients.
+
+## Règles qui ne se discutent pas
+
+1. **Aucun secret dans le dépôt** : ni clé Stripe (`sk_…`, `rk_…`, `whsec_…`), ni mot de passe du relais, ni clé d'API d'aucune sorte. Ils vivent seulement dans les secrets Cloudflare. N'écris dans le dépôt aucune adresse e-mail ni aucun numéro d'Antoine autres que ceux qu'il a mis lui-même dans `docs/config.js`. Ce dépôt est **public** : rien de privé ici, et jamais de donnée d'un client.
+2. **`docs/config.js` appartient à Antoine** (ses clés Firebase et son e-mail de coach) : ne le modifie pas.
+3. **Gratuit** : pas de service payant, pas d'abonnement, rien qui puisse facturer Antoine (Firebase Spark, GitHub Pages, Cloudflare Workers Free, Workers AI gratuit).
+4. **Ne casse rien de ce qui marche.** L'application est fluide et Antoine y tient : change seulement ce qui apporte quelque chose de clair, garde le style (noir et or, sobre), et n'enlève jamais une fonction sans qu'il l'ait demandé.
+5. **Programmes des clients en cours** : ne modifie jamais le contenu d'un programme existant d'une façon qui changerait les séances d'un client en plein cycle (même identifiant, mêmes semaines). Un nouveau programme ou une nouvelle version porte un nouvel identifiant ; une correction d'erreur évidente est permise et notée dans JOURNAL.md.
+6. **Science** : tout contenu de préparation physique ou de nutrition s'appuie sur au moins une étude scientifique, citée dans l'application. Les valeurs nutritionnelles viennent de la table Ciqual de l'ANSES (`docs/ciqual.json`).
+7. **Titres et santé** : le coach IA n'est jamais présenté comme diététicien ni nutritionniste ; pas de diagnostic ; une douleur ou un « oui » au questionnaire santé renvoie vers le médecin ou le kiné.
+8. **Droit français et européen** : avant toute fonction qui touche aux ventes, aux données de santé, à l'IA ou aux mineurs, vérifie le droit en vigueur et mets à jour CONFORMITE.md et la politique de confidentialité (`app/src/13_acces.js`).
+9. **Formules et limites du coach IA** : Coach IA (25/47/67 €, conduite par l'IA), Essentiel et Suivi (Antoine répond, plus chères), Lite. La formule Hybride n'est plus vendue : ne la remets pas en vente. Chaque formule a une limite d'utilisation du coach IA par jour (réglée par Antoine dans ses réglages) : ne la supprime pas et ne la contourne pas, elle protège l'allocation gratuite.
+10. **Langues** : l'application est écrite en français, et chaque texte visible par les clients existe aussi en anglais et en espagnol (`app/i18n/en.json`, `app/i18n/es.json`). Quand tu ajoutes ou modifies un texte visible : `cd app && node tools/i18n_extract.mjs` (une fois `npm install --prefix tools`), puis `node tools/i18n_extract.mjs --manque` liste ce qui manque ; traduis dans un fichier `i18n/work/bNN.json` (`{"empreinte": ["anglais", "espagnol"]}`) et lance `python3 tools/i18n_merge.py` (le lot peut ensuite être supprimé : tout est dans `en.json` et `es.json`). Un texte composé à l'exécution et introuvable dans le code va dans `i18n/_extra.json` (`{}` = un morceau, `{#}` = un nombre). L'espace coach reste en français. Les textes juridiques traduits portent la mention « seule la version française fait foi ».
+
+## Comment livrer une mise à jour
+
+1. Travaille sur une branche `maj/AAAA-MM-JJ`, jamais directement sur `main`. Ne fusionne jamais toi-même : Antoine valide d'un clic.
+2. Avant de modifier quoi que ce soit, vérifie que `app/` est bien la source du site : `cd app && python3 build_site.py && git diff --stat ../docs`. Si le site reconstruit diffère beaucoup de `docs/` alors que tu n'as rien changé, `app/` n'est pas à jour : ne publie rien et signale-le à Antoine.
+3. Construis et teste : `bash app/tests.sh` (version Claude, site, relais ; environ 30 minutes). Tout doit être vert. Ajoute des tests pour ce que tu crées.
+4. Ouvre une pull request en français, lisible par quelqu'un qui n'est pas développeur : ce qui change pour les clients et pour lui, pourquoi, avec quelles sources, et **en gras ce qu'il doit faire à la main** (règles Firestore à recoller dans Firebase si `firestore.rules` change, nouveau `relais/worker.js` à coller dans Cloudflare s'il change). Sinon, écris « Rien à faire de ton côté : fusionne et c'est en ligne ».
+5. Ajoute une entrée à JOURNAL.md (date, ce qui a changé, pourquoi, sources) : c'est la mémoire d'un passage à l'autre.
+6. Ne remplace pas `docs/ciqual.json` par une version plus ancienne (le robot `.github/workflows/ciqual.yml` le tient à jour chaque mois).
+
+## Où trouver ce qu'Antoine veut
+
+- **Son dépôt privé `prepa-idees`** (fichier IDEES.md et issues ouvertes) : ses méthodes, ses idées, ses demandes. Elles passent avant tout le reste. Quand tu en traites une, réponds dans l'issue (ce que tu as fait, dans quelle pull request). Ne recopie jamais ses notes telles quelles dans ce dépôt public : seulement ce qui devient du contenu de l'application.
+- Les issues ouvertes de ce dépôt-ci (public) : demandes techniques ou signalements de bugs.
+- **JOURNAL.md** : ce qui a déjà été fait et ce qui a été écarté, pour ne pas refaire ni défaire.
+- Son métier : préparateur physique multisport, spécialiste de l'haltérophilie, de la force, de l'explosivité et de la vitesse, et du retour au sport après blessure (ligaments croisés, épaules). Quand tu crées de nouvelles séances à partir des précédentes, renouvelle les exercices au lieu de reprendre les mêmes, en les orientant vers la spécificité du sport.

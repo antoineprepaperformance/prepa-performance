@@ -825,3 +825,16 @@ h1.who { display: flex; flex-wrap: wrap; }
 .rec-h { grid-column: 1 / -1; text-align: right; }
 .rec-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
 @media (max-width: 520px) { .rec-row { grid-template-columns: 1fr; } .rec-other .rec-in input { flex: 1; width: auto; } .rec-h { text-align: left; } }
+
+/* choix de la langue */
+.langpick { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.langpick button { font: inherit; font-size: 13px; padding: 6px 10px; border-radius: 8px; color: var(--muted); background: transparent; border: 0; cursor: pointer; min-height: 32px; }
+.langpick button.on { color: var(--gold); background: var(--gold-tint); font-weight: 600; }
+.langpick.compact button { font-size: 12px; padding: 4px 8px; min-height: 28px; letter-spacing: .04em; }
+.langsug { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--gold-tint); font-size: 14px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+/* traduction pour le coach (clients étrangers) */
+.trsend { margin: -2px 0 10px; line-height: 1.5; }
+.trad { border-left: 2px solid var(--gold); padding-left: 8px; margin: 6px 0 0; }
+.msg .trbtn, .msg .trad { display: block; margin-top: 4px; }
+.legal-note { border: 1px solid var(--gold); border-radius: 8px; padding: 8px 12px; background: var(--gold-tint); }

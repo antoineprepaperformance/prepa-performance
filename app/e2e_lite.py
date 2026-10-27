@@ -143,7 +143,7 @@ async def run():
         ok(await has(cl, "prochaine séance", 10000), "retour de Stripe : accès Lite activé")
         plan = await db(cl, f"plans/{uL}")
         span = plan and (plan["untilMs"] - plan["startMs"]) / DAY
-        ok(plan and plan["offer"] == "lite" and plan["lite"]["mode"] == "abo" and plan["lite"]["sub"] == "sub_LEA001" and plan["weeks"] == 12 and plan["grantWeeks"] == 0 and 28 <= span <= 31.1 and plan["start"] == iso(TODAY), "plan Lite : 12 semaines de programme, accès d'un mois", plan)
+        ok(plan and plan["offer"] == "lite" and plan["lite"]["mode"] == "abo" and plan["lite"]["sub"] == "sub_LEA001" and plan["weeks"] == 12 and plan["grantWeeks"] == 0 and 27.9 <= span <= 31.1 and plan["start"] == iso(TODAY), "plan Lite : 12 semaines de programme, accès d'un mois", plan)
         ok(await has(cl, "accès jusqu'au"), "aujourd'hui : date de fin de l'accès affichée")
         await cl.get_by_role("button", name="Mon profil").click(); await cl.wait_for_timeout(400)
         ok(await has(cl, "abonnement mensuel, prochain prélèvement le") and await has(cl, "Gérer ma carte et mes factures"), "profil : abonnement en cours, lien vers le portail Stripe")
@@ -210,7 +210,7 @@ async def run():
         await relay_pay(co, "cs_lite_N1", {"uid": uN, "offer": "lite", "period": "an", "mode": "abo", "sub": "sub_NORA01", "weeks": 0, "orderId": ref[3], "amount": 8900, "expected": 8900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         await cn.goto(URL + "?paiement=ok&session_id=cs_lite_N1"); await cn.wait_for_timeout(2500)
         pN = await db(cn, f"plans/{uN}")
-        ok(pN and 365 <= (pN["untilMs"] - pN["startMs"]) / DAY <= 366.1, "accès annuel d'un an", pN and (pN["untilMs"] - pN["startMs"]) / DAY)
+        ok(pN and 364.95 <= (pN["untilMs"] - pN["startMs"]) / DAY <= 366.1, "accès annuel d'un an", pN and (pN["untilMs"] - pN["startMs"]) / DAY)  # 364,96 j quand le passage à l'heure d'été tombe dans l'année
         # le coach rapproche l'échéance (45 jours) : rappel L215-1
         await co.bring_to_front(); await btn(co, "Clients", exact=True)
         await co.locator("table.ctable tbody tr", has_text="Nora").click(); await co.wait_for_timeout(400)
@@ -283,7 +283,7 @@ async def run():
         await cp.goto(URL + "?paiement=ok&session_id=cs_lite_P1")
         ok(await has(cp, "ton programme commence dans 20 jours", 10000), "accès Lite d'avance : départ dans 20 jours")
         pP = await db(cp, f"plans/{uP}")
-        ok(pP["lite"]["mode"] == "avance" and pP["start"] == iso(TODAY + datetime.timedelta(days=20)) and 365 <= (pP["untilMs"] - pP["startMs"]) / DAY <= 366.1, "paiement d'avance : un an à partir du départ choisi", pP)
+        ok(pP["lite"]["mode"] == "avance" and pP["start"] == iso(TODAY + datetime.timedelta(days=20)) and 364.95 <= (pP["untilMs"] - pP["startMs"]) / DAY <= 366.1, "paiement d'avance : un an à partir du départ choisi", pP)
         await cp.get_by_role("button", name="Mon profil").click(); await cp.wait_for_timeout(400)
         ok(await cp.get_by_role("button", name="Résilier mon abonnement").count() == 0 and await has(cp, "Lite annuel (paiement d'avance)"), "paiement d'avance : rien à résilier")
 

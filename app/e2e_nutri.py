@@ -1,11 +1,13 @@
 """Parcours nutrition + coach IA (mock de claude.use("sample"))."""
+import pathlib
+HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os, datetime
 from playwright.async_api import async_playwright
 PORT = 8765
-OUT = "/home/claude/app/shots/nutri"
+OUT = HERE + "/shots/nutri"
 os.makedirs(OUT, exist_ok=True)
 URL = f"http://localhost:{PORT}/index.html"
-T = "/home/claude/app/test/"
+T = HERE + "/test/"
 errs, n = [], [0]
 def hook(page, tag):
     page.on("console", lambda m: errs.append(f"[{tag}] {m.type}: {m.text}") if m.type in ("error", "warning") and "Failed to load resource" not in m.text else None)
@@ -19,7 +21,7 @@ async def check(cond, msg):
     print(("OK   " if cond else "FAIL ") + msg)
 
 async def run():
-    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd="/home/claude/app/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd=HERE + "/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.8)
     try:
         async with async_playwright() as p:

@@ -1,11 +1,13 @@
+import pathlib
+HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os
 from playwright.async_api import async_playwright
 PORT = 8765
-OUT = "/home/claude/app/shots"
+OUT = HERE + "/shots"
 os.makedirs(OUT, exist_ok=True)
 
 async def main(urls, mobile=False, scheme="dark"):
-    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd="/home/claude/app/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd=HERE + "/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.8)
     try:
         async with async_playwright() as p:

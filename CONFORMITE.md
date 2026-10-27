@@ -1,6 +1,6 @@
 # Conformité juridique — Antoine Prépa Performance
 
-Point fait le 22 octobre 2026 et mis à jour le 24 octobre 2026 (forfait Lite, abonnements, montres, vidéos, recettes, messagerie, coach IA sur le site, profil sportif, envoi automatique des montres, valeurs nutritionnelles de l'ANSES) sur le droit français et européen (avec ce qui change si tu as des clients hors de France). Je ne suis pas avocat : ce document te dit ce qui est déjà en place dans le site et l'application, et ce qu'il te reste à faire. Fais relire tes conditions de vente par un professionnel (avocat, CCI, ta fédération) avant d'ouvrir les ventes.
+Point fait le 22 octobre 2026 et mis à jour le 27 octobre 2026 (formule Coach IA et ses limites par jour, langues anglaise et espagnole, forfait Lite, abonnements, montres, vidéos, recettes, messagerie, coach IA sur le site, profil sportif, envoi automatique des montres, valeurs nutritionnelles de l'ANSES) sur le droit français et européen (avec ce qui change si tu as des clients hors de France). Je ne suis pas avocat : ce document te dit ce qui est déjà en place dans le site et l'application, et ce qu'il te reste à faire. Fais relire tes conditions de vente par un professionnel (avocat, CCI, ta fédération) avant d'ouvrir les ventes.
 
 ---
 
@@ -16,7 +16,7 @@ Point fait le 22 octobre 2026 et mis à jour le 24 octobre 2026 (forfait Lite, a
 | Accompagnement commencé pendant le délai | L221-25 | Case « Je demande que mon accompagnement commence dès l'activation… » ; remboursement calculé au prorata |
 | Rétractation en ligne en deux clics (depuis le 19 juin 2026) | L221-21 modifié (ordonnance n° 2026-2) | « Renoncer au contrat ici » puis « Confirmer la rétractation », accusé de réception horodaté téléchargé aussitôt, alerte de remboursement chez toi |
 | Formulaire type de rétractation | R221-1 et annexe | Dans les CGV |
-| Formules Essentiel, Suivi, Hybride : pas d'abonnement | — | Paiement unique, aucun renouvellement automatique, écrit dans le récapitulatif et les CGV |
+| Formules Coach IA, Essentiel, Suivi : pas d'abonnement | — | Paiement unique, aucun renouvellement automatique, écrit dans le récapitulatif et les CGV |
 | Abonnement Lite : conditions données avant la souscription | L221-5, L111-1 | Prix par mois ou par an, renouvellement, date du prochain prélèvement, mode de résiliation : dans le récapitulatif, la commande téléchargeable et les CGV (article 7 bis) |
 | Abonnement annuel : information 1 à 3 mois avant la reconduction | L215-1 | Alerte chez toi 90 jours avant l'échéance, e-mail dédié prêt à envoyer avec la **date limite de non-reconduction dans un encadré**, bouton « E-mail envoyé » qui date la preuve ; rappel aussi dans l'application du client |
 | Sans cette information : résiliation à tout moment et remboursement | L215-1 (2e et 3e alinéas), L241-3 | L'application le détecte (reconduction non annoncée) : le client peut arrêter tout de suite, le reste de l'année est calculé et t'est signalé à rembourser sous 30 jours (à défaut, intérêts au taux légal) |
@@ -28,6 +28,8 @@ Point fait le 22 octobre 2026 et mis à jour le 24 octobre 2026 (forfait Lite, a
 | Médiateur de la consommation affiché | L612-1, L616-1 | Champ dans tes réglages, repris dans les CGV et les mentions légales |
 | Mentions légales | Loi pour la confiance dans l'économie numérique (LCEN) | Éditeur, SIRET, contact, carte professionnelle, assurance, hébergeurs |
 | Mention TVA en franchise | Code général des impôts, art. 293 B | « Prix nets : TVA non applicable, article 293 B du CGI » (modifiable si tu deviens assujetti) |
+| Langue française pour l'offre et le contrat, traductions en plus | Loi n° 94-665 du 4 août 1994 (loi Toubon), art. 2 | Tout existe en français (version par défaut, bouton FR toujours visible) ; l'anglais et l'espagnol s'ajoutent au choix du client. Les textes juridiques traduits portent la mention « traduction fournie pour information : seule la version française fait foi » |
+| Dire qu'on parle à une intelligence artificielle | Règlement (UE) 2024/1689 sur l'IA, art. 50 (applicable depuis le 2 août 2026) | Écran du coach IA, dans la langue du client : « Tu échanges avec une intelligence artificielle… pas avec Antoine » ; formule Coach IA décrite comme « conduite par une intelligence artificielle » avant l'achat ; limites d'utilisation par jour indiquées avant la commande et dans les CGV |
 | Données de santé : consentement explicite et séparé | RGPD, art. 9.2.a | Case dédiée à l'inscription, distincte des CGV, retirable |
 | Information sur les données | RGPD, art. 13 | Politique de confidentialité : finalités, bases légales, prestataires, transferts, durées, droits, CNIL |
 | Mineurs | RGPD art. 8 et loi Informatique et Libertés art. 45 (15 ans) ; capacité à contracter | Coordonnées et accord d'un parent avant 18 ans, commande passée par le parent, pas de test de charge maximale, profil plafonné |

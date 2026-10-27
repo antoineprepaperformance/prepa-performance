@@ -245,3 +245,19 @@ function DbWatch() {
   return html`<div className="dbwatch alert bad" role="alert"><div><b>La connexion à la base s'est interrompue</b><p>Ce navigateur ne peut plus enregistrer (cela arrive surtout avec Safari après une mise en veille, ou avec plusieurs onglets du site ouverts). Ferme les autres onglets du site, puis recharge la page : rien de ce qui était enregistré n'est perdu.${broken.code ? " (" + broken.code + ")" : ""}</p></div>
     <div className="btnrow"><${Btn} small onClick=${() => location.reload()}>Recharger la page</${Btn}><${Btn} small kind="ghost" onClick=${() => setBroken(null)}>Fermer</${Btn}></div></div>`;
 }
+
+/* ---------- choix de la langue (noms écrits dans chaque langue, jamais traduits) ---------- */
+function LangPicker({ onSaved, compact, id }) {
+  const pick = async (l) => { if (l === LANG) return; try { if (onSaved) await onSaved(l); } catch (e) {} setLang(l); };
+  return html`<div className=${"langpick" + (compact ? " compact" : "")} data-notr="1" role="group" aria-label="Langue · Language · Idioma" id=${id || null}>${LANGS.map((l) => html`<button key=${l.id} type="button" lang=${l.id} className=${l.id === LANG ? "on" : ""} aria-pressed=${l.id === LANG ? "true" : "false"} onClick=${() => pick(l.id)}>${compact ? l.id.toUpperCase() : l.n}</button>`)}</div>`;
+}
+function LangSuggest() {
+  const [hide, setHide] = useState(false);
+  const s = useMemo(() => langSuggest(), []);
+  if (!s || hide || LANG !== "fr") return null;
+  const t = s === "en" ? ["This app is also available in English.", "English"] : ["Esta aplicación también está disponible en español.", "Español"];
+  const no = () => { try { localStorage.setItem("lang_vu", "1"); } catch (e) {} setHide(true); };
+  return html`<div className="langsug" data-notr="1" role="note" lang=${s}><span>${t[0]}</span><span className="btnrow"><${Btn} small onClick=${() => setLang(s)}>${t[1]}</${Btn}><button type="button" className="linkbtn" lang="fr" onClick=${no}>Rester en français</button></span></div>`;
+}
+/* liste « A, B et C » : chaque nom reste un texte à part, pour être traduit tel quel dans les autres langues */
+function listeNoms(noms) { return noms.map((n, i) => html`<${React.Fragment} key=${i}>${i ? (i === noms.length - 1 ? " et " : ", ") : ""}${n}</${React.Fragment}>`); }

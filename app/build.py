@@ -18,7 +18,10 @@ content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECK
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ciqjson = json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 (ROOT / "content.json").write_text(json.dumps(content, ensure_ascii=False, indent=1))
-js = "\n".join((SRC / f).read_text() for f in ["01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "07_main.js"])
+from i18n_build import dictionaries
+I18N = dictionaries()
+i18njs = {l: json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c") for l, d in I18N.items()}
+js = "\n".join((SRC / f).read_text() for f in ["00_i18n.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "07_main.js"])
 css = (SRC / "styles.css").read_text()
 assert "</script" not in js
 
@@ -32,6 +35,7 @@ def page(libs):
     return (HEAD + "<style>\n" + css + "\n</style>\n<div id=\"root\"></div>\n"
             + "<script id=\"app-content\" type=\"application/json\">" + cjson + "</script>\n"
             + "<script id=\"ciqual-data\" type=\"application/json\">" + ciqjson + "</script>\n"
+            + "".join("<script id=\"i18n-%s\" type=\"application/json\">%s</script>\n" % (l, d) for l, d in i18njs.items())
             + "".join('<script src="%s"></script>\n' % u for u in libs)
             + "<script>\n" + js + "\n</script>\n")
 

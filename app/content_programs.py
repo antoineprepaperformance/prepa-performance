@@ -498,8 +498,10 @@ SCREENING = [
     "As-tu été opéré(e) au cours des 12 derniers mois ou es-tu enceinte ?",
 ]
 
+# Formules (par ordre de prix). « retired » : plus en vente, gardée pour les commandes déjà passées.
 OFFERS = [
-    {"id": "essentiel", "n": "Essentiel", "desc": "Programme standardisé dans l'application, bilan hebdomadaire, réponse courte du coach chaque semaine.", "prix": [49, 95, 135]},
-    {"id": "suivi", "n": "Suivi", "desc": "Essentiel + réponse détaillée à chaque bilan, ajustements du programme et analyse vidéo d'un exercice par semaine.", "prix": [99, 189, 269]},
-    {"id": "hybride", "n": "Hybride", "desc": "Essentiel + 2 séances d'1 h par mois en présentiel avec Antoine (Bordeaux Métropole) : technique, tests et corrections sur place.", "prix": [139, 265, 375]},
+    {"id": "ia", "n": "Coach IA", "desc": "Programme standardisé conduit par le coach IA (une intelligence artificielle) : il répond à tes questions, estime tes repas en photo, analyse ton bilan chaque semaine et ajuste ton programme dans des limites de sécurité. Sans réponse personnelle d'Antoine.", "prix": [25, 47, 67], "auto": True},
+    {"id": "essentiel", "n": "Essentiel", "desc": "Programme standardisé dans l'application, bilan hebdomadaire avec une réponse courte d'Antoine chaque semaine, et le coach IA au quotidien.", "prix": [49, 95, 135]},
+    {"id": "suivi", "n": "Suivi", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan, ajustements du programme et analyse vidéo d'un exercice par semaine.", "prix": [99, 189, 269]},
+    {"id": "hybride", "n": "Hybride", "desc": "Essentiel + 2 séances d'1 h par mois en présentiel avec Antoine (Bordeaux Métropole) : technique, tests et corrections sur place.", "prix": [139, 265, 375], "retired": True},
 ]

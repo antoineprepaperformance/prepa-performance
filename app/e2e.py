@@ -1,8 +1,10 @@
 """Parcours complet : coach + client synchronisé + client sans compte (mock claude.use)."""
+import pathlib
+HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os, datetime
 from playwright.async_api import async_playwright
 PORT = 8765
-OUT = "/home/claude/app/shots/e2e"
+OUT = HERE + "/shots/e2e"
 os.makedirs(OUT, exist_ok=True)
 URL = f"http://localhost:{PORT}/index.html"
 errs = []
@@ -23,7 +25,7 @@ async def btn(page, text, exact=False, nth=0):
     await page.wait_for_timeout(200)
 
 async def run():
-    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd="/home/claude/app/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd=HERE + "/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.8)
     try:
         async with async_playwright() as p:

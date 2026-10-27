@@ -10,10 +10,19 @@ const PROFILE_ICON = "M12 12a4 4 0 100-8 4 4 0 000 8zM4 20c1.5-4 5-5 8-5s6.5 1 8
 function Icon({ d }) { return html`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d=${d} style=${{ fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" }}></path></svg>`; }
 
 const CONSENT_SITE = "J'accepte que mes données d'entraînement et de santé (questionnaire santé, douleurs, taille, poids, records, tests, repas, pas et calories de ma montre si je les envoie) soient enregistrées pour le suivi de mon programme par Antoine Limousi, et analysées par le coach IA (une intelligence artificielle : Gemma, de Google, exécutée par Cloudflare) quand je l'utilise. Je peux retirer mon accord et demander leur suppression à tout moment. Je sais que ces conseils ne remplacent pas un avis médical.";
-function offerName(id) { if (id === "lite") return "Lite"; const o = OFFERS.find((x) => x.id === id); return o ? o.n : "—"; }
+function offerName(id) { if (id === "lite") return "Lite"; const o = OFFERS_ALL.find((x) => x.id === id); return o ? o.n : "—"; }
+/* formule « Coach IA » : le programme est conduit par l'IA, sans réponse personnelle du coach aux bilans */
+function offerAuto(offer) { return !!(OFFERS_ALL.find((x) => x.id === offer) || {}).auto; }
+/* choix de formule (coach) : formules en vente, + l'ancienne formule du client si elle n'est plus vendue */
+function offerOptions(cur, withLite) {
+  const old = OFFERS_ALL.find((x) => x.id === cur && x.retired);
+  return [...OFFERS.map((o) => ({ v: o.id, n: o.n })), ...(old ? [{ v: old.id, n: old.n + " (ancienne)" }] : []), ...(withLite ? [{ v: "lite", n: "Lite" }] : [])];
+}
+/* formules sans réponse du coach aux bilans : Lite et Coach IA */
+function noReply(plan) { return !!plan && (plan.offer === "lite" || offerAuto(plan.offer)); }
 function durName(w) { const d = DURS.find((x) => x.w === Number(w)); return d ? d.n : (w ? plural(Number(w), "semaine") : "—"); }
 function offerPrice(settings, offer, weeks) {
-  const o = (settings && settings.offers && settings.offers[offer]) || (OFFERS.find((x) => x.id === offer) || {}).prix;
+  const o = (settings && settings.offers && settings.offers[offer]) || (OFFERS_ALL.find((x) => x.id === offer) || {}).prix;
   const i = DURS.findIndex((d) => d.w === Number(weeks));
   return o && i >= 0 ? o[i] : null;
 }
@@ -44,7 +53,8 @@ function ClientRoot({ db, uid, settings, lib, exo }) {
   }, [db, uid]);
   useEffect(() => () => { if (st.src) st.src.close(); }, [st.src]);
 
-  async function submit(profile) {
+  async function submit(profile0) {
+    const profile = { ...profile0, lang: LANG };
     if (st.canDb) {
       try {
         await db.doc("clients/" + uid).set(clone(profile));
@@ -89,6 +99,8 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   const [terrain, setTerrain] = useState(null);
   const [msgs, setMsgs] = useState(false);
   useSanteImport(demo ? null : src, data.ready);
+  /* langue de l'application enregistrée dans le profil : Antoine voit dans quelle langue écrire au client */
+  useEffect(() => { if (demo || !data.ready || !data.profile || !data.profile.name || !src || !src.setProfile) return; if ((data.profile.lang || "fr") !== LANG) src.setProfile({ ...data.profile, lang: LANG }).catch(() => {}); }, [data.ready, data.profile && data.profile.lang]);
   useSantePull(demo ? null : src, relayOf(settings), !!(data.profile && data.profile.santeSync && data.profile.santeSync.on), data.ready);
   const wide = useWide();
   const today = todayISO();
@@ -107,6 +119,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   const canMsg = src && src.mode !== "local" && typeof src.sendMessage === "function";
   const conf = aiConf(settings, data);
   const showAI = conf.on && ai.ready && !!ai.sample && !(data.plan && data.plan.offer === "lite");
+  const aiq = useAIQuota(data, src, settings, plan, !!demo);
 
   if (!data.ready) return html`<${Splash} text="Synchronisation…" />`;
   const banner = demo ? html`<div className="demo-bar"><span>Aperçu de l'espace client avec un exemple</span><span className="btnrow">${onSwitch ? html`<button type="button" className="linkbtn" onClick=${onSwitch}>Autre exemple</button>` : null}${onExit ? html`<button type="button" className="linkbtn" onClick=${onExit}>Revenir à l'espace coach</button>` : null}</span></div>` : null;
@@ -126,7 +139,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   if (sante) return html`<div className="client">${banner}<${SanteScreen} data=${data} src=${src} plan=${plan} relay=${relayOf(settings)} raccourci=${santeRacc(settings)} onClose=${() => setSante(false)} /></div>`;
   if (terrain) return html`<div className="client">${banner}<${TerrainScreen} data=${data} plan=${plan} src=${src} open0=${typeof terrain === "string" ? terrain : null} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setTerrain(null)} />${renewModal}</div>`;
   if (extra) return html`<div className="client">${banner}<${ExtrasScreen} data=${data} plan=${plan} src=${src} tab0=${extra} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setExtra(null)} />${renewModal}</div>`;
-  if (chat) return html`<div className="client">${banner}<${CoachChat} data=${data} src=${src} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} settings=${settings} onClose=${() => setChat(false)} /></div>`;
+  if (chat) return html`<div className="client">${banner}<${CoachChat} data=${data} src=${src} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} settings=${settings} aiq=${demo ? null : aiq} onClose=${() => setChat(false)} /></div>`;
   if (open) {
     const ps = stats.ps;
     const w = open.w;
@@ -169,7 +182,7 @@ function AINotes({ data, w, openChat }) {
   const fresh = rev && diffDays(String(rev.at).slice(0, 10), todayISO()) <= 7 ? rev : null;
   if (!notes.length && !fresh) return null;
   return html`<div className="coachmsg ai"><span className="ai-dot">✦</span><div><div className="eyebrow">Coach IA</div>
-    ${notes.map((n) => html`<p key=${n.id}>${n.text}</p>`)}
+    ${notes.map((n) => html`<p key=${n.id} data-notr="1">${n.text}</p>`)}
     ${fresh ? html`<p className="small">${String(fresh.t).split(/\n/)[0].slice(0, 220)}${String(fresh.t).split(/\n/)[0].length > 220 ? "…" : ""}</p>` : null}
     ${openChat ? html`<button type="button" className="linkbtn" onClick=${openChat}>${fresh ? "Lire l'analyse de ma semaine" : "Poser une question"}</button>` : null}</div></div>`;
 }
@@ -251,7 +264,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <span className="next-go">Commencer</span></button>` : null}`;
   const alerts = html`${testDue ? html`<div className="alert gold"><div><b>Semaine de tests</b><p>Fais tes tests en fin de semaine et note tes résultats.</p></div><${Btn} small onClick=${() => openTests(testPoint)}>Saisir</${Btn}></div>` : null}
     ${liteBan}
-    ${prevMissing ? html`<div className="alert warn"><div><b>Bilan de la semaine ${w - 1} en attente</b><p>${isLite ? "Deux minutes pour faire le point sur ta semaine." : "Deux minutes pour dire à ton coach comment ça s'est passé."}</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
+    ${prevMissing ? html`<div className="alert warn"><div><b>Bilan de la semaine ${w - 1} en attente</b><p>${isLite ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé."}</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
     ${!ck && (ps.day >= 6 || !next) ? html`<div className="alert gold"><div><b>Bilan de la semaine ${w}</b><p>À remplir en fin de semaine.</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
     ${left <= 7 && onRenew && !isLite ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
     ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.</p></div></div>` : null}
@@ -271,7 +284,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   return html`<div className="stack">${hero}${ring}${nextB}${alerts}${vnote}${ainotes}${tweek}${cardMini}${nutri}${extras}${habits}${msgs}${week}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
-  return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p>${text}</p></div></div>`;
+  return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p data-notr="1">${text}</p></div></div>`;
 }
 function Prereq({ prog }) {
   return html`<${Card} title="Avant de commencer" sub="Les critères à remplir avant la reprise de la course.">
@@ -323,7 +336,7 @@ function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, open
     <div className="weeks" role="tablist" aria-label="Semaines">${weeks.map((k) => {
       const pl = stats.plannedByWeek[k] || 0, dn = stats.doneByWeek[k] || 0;
       return html`<button key=${k} type="button" role="tab" aria-selected=${k === w} className=${"wk" + (k === w ? " on" : "") + (ps.week === k && ps.phase === "en_cours" ? " now" : "") + (dn >= pl && pl ? " full" : "")} onClick=${() => setW(k)}>
-        <span>S${k}</span><small>${dn}/${pl}</small></button>`;
+        <span>${WK}${k}</span><small>${dn}/${pl}</small></button>`;
     })}</div>
     <${Card} title=${"Bloc " + Math.ceil(w / 4) + " — " + block.n} sub=${block.focus}>
       ${((w - 1) % 4) + 1 === 4 ? html`<p className="note">Semaine ${w} : allègement (moins de séries, charges plus légères) puis tests de fin de bloc.</p>` : null}
@@ -498,9 +511,10 @@ function Bilans({ data, plan, prog, stats, src, lib, settings, ai, openChat }) {
   const lastRev = chatMsgs(data).filter((m) => m.kind === "bilan" && m.w === w).slice(-1)[0];
   if (!maxW) return html`<div className="stack"><${Empty} title="Pas encore de bilan" text="Ton premier bilan sera à remplir à la fin de ta première semaine." /></div>`;
   return html`<div className="stack">
-    <div className="hero"><div className="eyebrow">Bilan hebdomadaire</div><h1>${plan.offer === "lite" ? "Deux minutes pour faire le point sur ta semaine." : "Deux minutes pour faire le point avec ton coach."}</h1>
-      ${plan.offer === "lite" ? html`<p className="muted small">Formule Lite : tes bilans suivent ta forme et ta progression (carte athlète, tendances) ; ils ne reçoivent pas de réponse personnelle.</p>` : null}</div>
-    <div className="weeks">${Array.from({ length: maxW }, (_, i) => i + 1).map((k) => html`<button key=${k} type="button" className=${"wk" + (k === w ? " on" : "") + (data.checkins["w" + k] ? " full" : "")} onClick=${() => setW(k)}><span>S${k}</span><small>${data.checkins["w" + k] ? "✓" : "à faire"}</small></button>`)}</div>
+    <div className="hero"><div className="eyebrow">Bilan hebdomadaire</div><h1>${plan.offer === "lite" ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour faire le point avec ton coach."}</h1>
+      ${plan.offer === "lite" ? html`<p className="muted small">Formule Lite : tes bilans suivent ta forme et ta progression (carte athlète, tendances) ; ils ne reçoivent pas de réponse personnelle.</p>` : null}
+      ${offerAuto(plan.offer) ? html`<p className="muted small">Formule Coach IA : ton bilan est analysé par le coach IA (une intelligence artificielle), qui ajuste ton programme dans des limites de sécurité. ${COACH_NAME_DEFAULT} ne répond pas personnellement aux bilans ; il est prévenu en cas de douleur ou d'alerte.</p>` : null}</div>
+    <div className="weeks">${Array.from({ length: maxW }, (_, i) => i + 1).map((k) => html`<button key=${k} type="button" className=${"wk" + (k === w ? " on" : "") + (data.checkins["w" + k] ? " full" : "")} onClick=${() => setW(k)}><span>${WK}${k}</span><small>${data.checkins["w" + k] ? "✓" : "à faire"}</small></button>`)}</div>
     <${CheckinForm} key=${"ck" + w} w=${w} prog=${prog} existing=${data.checkins["w" + w]} reply=${data.replies["w" + w]} src=${src} onSaved=${(wk) => { setSent(wk); if (ai) review(wk); }} />
     ${sent === w ? html`<${Card} title="Ta carte athlète cette semaine" sub="Mise à jour avec ton bilan"><${CardEvo} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>` : null}
     ${rev && rev.w === w ? html`<div className="coachmsg ai"><span className="ai-dot">✦</span><div className="stack-s"><div className="eyebrow">Analyse de ta semaine par le coach IA</div>
@@ -514,7 +528,7 @@ function Bilans({ data, plan, prog, stats, src, lib, settings, ai, openChat }) {
       : ai && data.checkins["w" + w] ? html`<div className="right"><${Btn} small kind="ghost" onClick=${() => review(w)}>Faire analyser ma semaine par le coach IA</${Btn}></div>` : null}
     ${list.length ? html`<${Card} title="Historique">${list.map((c) => html`<div key=${c.w} className="hist"><div className="hist-h"><b>Semaine ${c.w}</b><span className="muted small">${fmtD(c.at)}</span></div>
       <div className="chips">${num(c.poids) !== null ? html`<${Pill}>${fmtN(num(c.poids))} kg</${Pill}>` : null}${c.sommeil ? html`<${Pill}>Sommeil ${c.sommeil}/5</${Pill}>` : null}${c.energie ? html`<${Pill}>Énergie ${c.energie}/5</${Pill}>` : null}${c.douleur ? html`<${Pill} tone=${c.douleur >= 4 ? "bad" : "warn"}>Douleur ${c.douleur}/10</${Pill}>` : null}</div>
-      ${data.replies["w" + c.w] ? html`<div className="reply"><b>Réponse :</b> ${data.replies["w" + c.w].text}</div>` : null}</div>`)}</${Card}>` : null}
+      ${data.replies["w" + c.w] ? html`<div className="reply"><b>Réponse :</b> <span data-notr="1">${data.replies["w" + c.w].text}</span></div>` : null}</div>`)}</${Card}>` : null}
   </div>`;
 }
 function CheckinForm({ w, prog, existing, reply, src, onSaved }) {
@@ -533,7 +547,7 @@ function CheckinForm({ w, prog, existing, reply, src, onSaved }) {
     if (ok && onSaved && !existing) onSaved(w);
   };
   return html`<${Card} title=${"Semaine " + w} sub=${existing ? "Envoyé le " + fmtD(existing.at) + " · tu peux le modifier" : "Réponds à ce qui te concerne"}>
-    ${reply ? html`<div className="reply"><b>Réponse de ton coach :</b> ${reply.text}</div>` : null}
+    ${reply ? html`<div className="reply"><b>Réponse de ton coach :</b> <span data-notr="1">${reply.text}</span></div>` : null}
     <div className="form">${fields.map((f) => {
       if (f.k === "zone" && !(v.douleur > 0)) return null;
       if (f.type === "scale") return html`<${Field} key=${f.k} label=${f.n}><${Scale} id=${"ck-" + f.k} min=${f.min} max=${f.max} value=${v[f.k] ?? null} onChange=${(x) => set(f.k, x)} lo=${f.lo} hi=${f.hi} /></${Field}>`;
@@ -570,7 +584,7 @@ function TestsForm({ prog, plan, data, src, point, onDone }) {
     try { await src.saveTest("t" + p, { w: p, at: nowISO(), values: out }); toast("Tests enregistrés.", "ok"); onDone && onDone(); } catch (e) { toast("Enregistrement impossible.", "bad"); }
   };
   return html`<div className="form">
-    <${Seg} options=${pts.map((x) => ({ v: x, n: x === 0 ? "Départ" : "S" + x }))} value=${p} onChange=${setP} />
+    <${Seg} options=${pts.map((x) => ({ v: x, n: x === 0 ? "Départ" : WK + x }))} value=${p} onChange=${setP} />
     ${prefilled ? html`<p className="small note">Tes records notés à l'inscription sont repris ci-dessous : vérifie-les ou refais les tests, puis enregistre.</p>` : null}
     ${prog.tests.map((tid) => {
       const t = TESTS[tid]; const v = vals[tid];
@@ -596,7 +610,7 @@ function TestsTable({ prog, plan, data }) {
   const side = data.profile && data.profile.side;
   if (!pts.length) return html`<p className="muted small">Aucun test enregistré pour l'instant.</p>`;
   return html`<div className="tscroll"><table className="ttable">
-    <thead><tr><th>Test</th>${pts.map((p) => html`<th key=${p}>${p === 0 ? "Départ" : "S" + p}</th>`)}<th>Évolution</th></tr></thead>
+    <thead><tr><th>Test</th>${pts.map((p) => html`<th key=${p}>${p === 0 ? "Départ" : WK + p}</th>`)}<th>Évolution</th></tr></thead>
     <tbody>${prog.tests.map((tid) => {
       const t = TESTS[tid]; if (!t) return null;
       const vals = pts.map((p) => testValue(tid, data.tests["t" + p].values[tid], side));
@@ -617,8 +631,8 @@ function TestsTable({ prog, plan, data }) {
 function Progress({ data, plan, prog, stats, openTests, src, coach, openSante }) {
   const ps = stats.ps;
   const weeksUpTo = ps.phase === "fini" ? plan.weeks : Math.max(1, ps.week);
-  const adh = Array.from({ length: weeksUpTo }, (_, i) => { const w = i + 1; return { x: "S" + w, y: stats.doneByWeek[w] || 0, note: "prévu " + (stats.plannedByWeek[w] || 0), muted: w === ps.week && ps.phase === "en_cours" }; });
-  const load = Array.from({ length: weeksUpTo }, (_, i) => { const w = i + 1; return { x: "S" + w, y: stats.loadByWeek[w] || 0, muted: w === ps.week && ps.phase === "en_cours" }; });
+  const adh = Array.from({ length: weeksUpTo }, (_, i) => { const w = i + 1; return { x: WK + w, y: stats.doneByWeek[w] || 0, note: "prévu " + (stats.plannedByWeek[w] || 0), muted: w === ps.week && ps.phase === "en_cours" }; });
+  const load = Array.from({ length: weeksUpTo }, (_, i) => { const w = i + 1; return { x: WK + w, y: stats.loadByWeek[w] || 0, muted: w === ps.week && ps.phase === "en_cours" }; });
   const tp = testPoints(plan);
   const nextPoint = tp.find((p) => !data.tests["t" + p]);
   return html`<div className="stack">
@@ -661,6 +675,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       </dl></${Card}>
     <${SportCard} data=${data} src=${src} plan=${plan} />
     <${BodyRecordsCard} data=${data} src=${src} />
+    <${Card} title="Langue · Language · Idioma"><${LangPicker} id="lang-profil" onSaved=${src && src.setProfile ? (l) => src.setProfile({ ...(data.profile || {}), lang: l }) : null} /></${Card}>
     <${OrdersCard} data=${data} src=${src} settings=${settings} />
     ${openMsgs ? html`<${Card} title=${"Contacter " + ((coach && coach.name) || COACH_NAME_DEFAULT)}><p className="small muted">Écris-moi dans la messagerie de l'application : je te réponds dès que possible.</p>
       <div className="btnrow"><${Btn} small onClick=${openMsgs}>Écrire à ${(coach && coach.name) || COACH_NAME_DEFAULT}</${Btn}></div></${Card}>` : null}
@@ -780,7 +795,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
         <${Btn} kind="ghost" disabled=${!code.trim()} onClick=${() => { try { onCode(code); } catch (e) { toast(e.message, "bad"); } }}>Ouvrir mon programme</${Btn}></${Card}>`}
     </div>` : null}
     ${step === 1 ? html`<div className="stack form">
-      <h2>Faisons connaissance</h2>
+      <div className="row-between"><h2>Faisons connaissance</h2><${LangPicker} compact /></div>
       <${Field} label="Prénom et nom" id="ob-name"><input id="ob-name" value=${f.name} onChange=${(e) => set("name", e.target.value)} autoComplete="name" /></${Field}>
       <div className="row2"><${Field} label="E-mail" id="ob-email"><input id="ob-email" type="email" value=${f.email} onChange=${(e) => set("email", e.target.value)} autoComplete="email" /></${Field}>
         <${Field} label="Téléphone" id="ob-phone"><input id="ob-phone" type="tel" value=${f.phone} onChange=${(e) => set("phone", e.target.value)} autoComplete="tel" /></${Field}></div>

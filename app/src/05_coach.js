@@ -18,6 +18,8 @@ function rowInfo(row, lib, today, settings) {
   else if (ps && ps.phase === "en_cours") status = { tone: "ok", n: "Semaine " + ps.week + "/" + ps.weeks };
   else if (ps && ps.phase === "fini") status = { tone: "muted", n: "Terminé" };
   const lite = plan && plan.offer === "lite" && plan.status === "active";
+  /* formule Coach IA : l'IA répond aux bilans ; seules la sécurité et la vente restent à Antoine */
+  const auto = !!(plan && offerAuto(plan.offer) && plan.status === "active");
   const lo0 = p.access && p.access.lastOrder;
   const liteOk = lite && Date.now() < liteEndMs(plan, lo0 && lo0.id ? { orders: { [lo0.id]: lo0 } } : null);
   if (lite) status = liteOk ? { tone: "ok", n: (ps && ps.phase === "en_cours" ? "S" + ps.week + "/" + ps.weeks + " · " : "") + "Lite jusqu'au " + fmtD(liteEnd(plan)) } : { tone: "muted", n: "Lite terminé" };
@@ -29,7 +31,7 @@ function rowInfo(row, lib, today, settings) {
   if (lo && lo.cancel && lo.cancel.stripe !== "ok" && !lo.cancel.doneAt) alerts.push({ tone: "bad", n: "Résiliation : arrêter l'abonnement dans Stripe", k: "plan" });
   if (lo && lo.cancel && lo.cancel.refund > 0 && !lo.cancel.refundedAt) alerts.push({ tone: "bad", n: "Résiliation : rembourser " + eur2(lo.cancel.refund), k: "plan" });
   if (lite && liteNoticeDue(plan)) alerts.push({ tone: "warn", n: "Reconduction annuelle le " + fmtD(isoOf(new Date(plan.untilMs))) + " : envoyer l'information au client", k: "plan" });
-  if (plan && plan.source && ["code", "paiement"].includes(plan.source.kind) && !plan.reviewedAt && plan.status === "active") alerts.push({ tone: "gold", n: "Nouvel accès (" + (plan.source.kind === "code" ? "code" : "paiement") + ") : vérifier le plan", k: "plan" });
+  if (plan && plan.source && ["code", "paiement"].includes(plan.source.kind) && !plan.reviewedAt && plan.status === "active" && !auto) alerts.push({ tone: "gold", n: "Nouvel accès (" + (plan.source.kind === "code" ? "code" : "paiement") + ") : vérifier le plan", k: "plan" });
   if ((sum.lastPain || 0) >= 4) alerts.push({ tone: "bad", n: "Douleur " + sum.lastPain + "/10", k: "seances" });
   if (sum.aiAlert) alerts.push({ tone: "bad", n: "Alerte du coach IA", k: "ia" });
   if ((sum.videoPending || 0) > 0) alerts.push({ tone: "gold", n: plural(sum.videoPending, "vidéo", "vidéos") + " à corriger", k: "videos" });
@@ -50,12 +52,12 @@ function rowInfo(row, lib, today, settings) {
         for (let w = 1; w < ps.week; w++) { const n = plannedCount(prog, plan, w, lib); pl += n; dn += Math.min(n, (sum.weeksDone && sum.weeksDone[w]) || 0); }
         adherence = pl ? dn / pl : null;
         if (adherence !== null && adherence < 0.6) alerts.push({ tone: "warn", n: "Régularité faible (" + Math.round(adherence * 100) + " %)", k: "vue" });
-        if ((sum.lastCheckinW || 0) < ps.week - 1 && ps.day >= 2 && !lite) alerts.push({ tone: "muted", n: "Bilan S" + (ps.week - 1) + " non reçu : relancer", k: "bilans" });
+        if ((sum.lastCheckinW || 0) < ps.week - 1 && ps.day >= 2 && !lite && !auto) alerts.push({ tone: "muted", n: "Bilan S" + (ps.week - 1) + " non reçu : relancer", k: "bilans" });
       }
     }
     if (ps.phase === "fini" && !lite) alerts.push({ tone: "muted", n: "Programme terminé : renouveler ou archiver", k: "plan" });
   }
-  if (sum.lastCheckinW && !lite && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : ""), k: "bilans" });
+  if (sum.lastCheckinW && !lite && !auto && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : ""), k: "bilans" });
   const price = plan && plan.status === "active" ? (lite ? litePrice(settings, (plan.lite && plan.lite.period) || "mois") : offerPrice(settings, plan.offer, plan.weeks)) : null;
   /* revenu mensuel moyen : prix ramené à 4 semaines (Lite annuel : prix / 12 ; accès offert : 0) */
   const mrr = !price ? 0 : lite ? (plan.lite && plan.lite.mode === "code" ? 0 : liteOk ? (plan.lite && plan.lite.period === "an" ? price / 12 : price) : 0) : price / (plan.weeks / 4);
@@ -289,7 +291,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Tous les clients</button>
     <header className="page-h"><div><div className="eyebrow">${prog ? prog.n : "Sans programme"}${plan ? " · " + offerName(plan.offer) + " · " + planDur(plan) : ""}</div>
       <h1 className="who"><${Avatar} profile=${p} photo=${data.media && data.media.photo && data.media.photo.data} size=${48} /><span>${p.name || "Client"}</span>${row.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}</h1>
-      <div className="chips"><${Pill} tone=${info.status.tone}>${info.status.n}</${Pill}>${info.alerts.map((a, i) => html`<${Pill} key=${i} tone=${a.tone}>${a.n}</${Pill}>`)}</div></div>
+      <div className="chips"><${Pill} tone=${info.status.tone}>${info.status.n}</${Pill}>${p.lang && p.lang !== "fr" ? html`<${Pill} tone="gold">Langue : ${langFr(p.lang)}</${Pill}>` : null}${info.alerts.map((a, i) => html`<${Pill} key=${i} tone=${a.tone}>${a.n}</${Pill}>`)}</div></div>
       <div className="contactcol">${p.email ? html`<div className="contact"><span>${p.email}</span><${CopyBtn} text=${p.email} /></div>` : null}${p.phone ? html`<div className="contact"><span>${p.phone}</span><${CopyBtn} text=${p.phone} /></div>` : null}</div></header>
     <div className="tabs-scroll"><${Seg} options=${tabs} value=${tab} onChange=${setTab} /></div>
     ${!data.ready ? html`<p className="muted">Chargement…</p>` : null}
@@ -371,8 +373,10 @@ function BilanReply({ c, reply, src, data, plan, prog, lib, settings }) {
   const send = async () => { setBusy(true); try { await src.setReply(c.w, t.trim()); toast("Réponse envoyée.", "ok"); } catch (e) { toast("Envoi impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); } };
   return html`<${Card} title=${"Semaine " + c.w} sub=${"Reçu le " + fmtD(c.at)} action=${reply ? html`<${Pill} tone="ok">Répondu</${Pill}>` : html`<${Pill} tone="gold">À lire</${Pill}>`}>
     <${CheckinView} c=${c} />
+    ${data && data.profile && data.profile.lang && data.profile.lang !== "fr" ? html`<${TrLink} text=${[c.victoire && "Réussite : " + c.victoire, c.difficulte && "Difficulté : " + c.difficulte, c.question && "Question : " + c.question].filter(Boolean).join("\n")} />` : null}
     ${iaRev ? html`<details><summary>Analyse déjà envoyée au client par le coach IA</summary><p className="small">${iaRev.t}</p>${iaRev.ev && iaRev.ev.length ? html`<div className="evs">${iaRev.ev.map((x, k) => html`<span key=${k} className="ev">✓ ${x}</span>`)}</div>` : null}</details>` : null}
     <${Field} label="Ta réponse" id=${"rep-" + c.w}><textarea id=${"rep-" + c.w} rows="3" value=${t} onChange=${(e) => setT(e.target.value)} placeholder="Félicite, ajuste, réponds à la question…"></textarea></${Field}>
+    ${data && data.profile ? html`<${TrSend} text=${t} setText=${setT} to=${data.profile.lang} id=${"rep-trad-" + c.w} />` : null}
     <div className="btnrow">${["Très bonne semaine, on continue comme ça.", "Allège les charges de 10 % cette semaine et surveille la douleur.", "Bravo pour ta régularité !"].map((q) => html`<button key=${q} type="button" className="chipbtn" onClick=${() => setT(t ? t + " " + q : q)}>${q}</button>`)}</div>
     <div className="actions"><${Btn} onClick=${send} disabled=${busy || !t.trim()}>${reply ? "Mettre à jour la réponse" : "Envoyer la réponse"}</${Btn}>
       ${ai.sample && data ? html`<${Btn} kind="ghost" onClick=${draft} disabled=${drafting}>${drafting ? "Rédaction…" : "✦ Rédiger avec l'IA"}</${Btn}>` : null}</div>
@@ -490,7 +494,7 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
     <${Card} title=${data.plan && data.plan.status !== "pending" ? "Plan du client" : "Valider la demande"} sub=${req.programId ? "Demande : " + (progOf(req.programId, lib) || {}).n + " · " + offerName(req.offer) + " · " + durName(req.weeks) : null}>
       <div className="form">
         <${Field} label="Programme" id="pe-prog"><select id="pe-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}>${programOptions(lib).map((o) => html`<option key=${o.v} value=${o.v}>${o.n}</option>`)}</select></${Field}>
-        <div className="row2"><${Field} label="Formule"><${Seg} options=${[...OFFERS.map((o) => ({ v: o.id, n: o.n })), { v: "lite", n: "Lite" }]} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
+        <div className="row2"><${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, true)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
           ${isLite ? html`<${Field} label="Accès Lite jusqu'au (inclus)" id="pe-until"><input id="pe-until" type="date" value=${untilISO} onChange=${(e) => e.target.value && setUntil(e.target.value)} /></${Field}>`
             : html`<${Field} label="Durée"><${Seg} options=${DURS.filter((d) => d.w <= maxWeeks).map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>`}</div>
         ${isLite ? html`<div className="btnrow"><${Btn} small kind="ghost" onClick=${() => extendLite("mois")}>Prolonger d'un mois</${Btn}><${Btn} small kind="ghost" onClick=${() => extendLite("an")}>Prolonger d'un an</${Btn}></div>
@@ -504,6 +508,7 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
         ${p.screeningFlag || f.medicalHold ? html`<label className="chk"><input type="checkbox" id="pe-med" checked=${f.medicalHold === false} onChange=${(e) => set("medicalHold", !e.target.checked)} /><span>Avis médical reçu : le client peut suivre son profil ${nivName(f.niveau || "sportif")} (sinon séances en mode Reprise).</span></label>` : null}
         ${req.answers ? html`<p className="muted small">Réponses du client : ${[["compet", "pratique"], ["xp", "musculation"], ["freq", "séances"]].map(([k, n]) => { const o = (NIVQ[k] && NIVQ[k].o || []).find((x) => x[0] === req.answers[k]); return n + " « " + (o ? o[1] : "—") + " »"; }).join(" · ")}. Profil conseillé : ${nivName(recommendNiveau(req.answers, ageOf(p), p.screeningFlag).id)}.</p>` : null}
         <${Field} label="Message affiché au client" id="pe-msg"><textarea id="pe-msg" rows="3" value=${f.message || ""} onChange=${(e) => set("message", e.target.value)} placeholder="Consigne de la semaine, encouragement…"></textarea></${Field}>
+        <${TrSend} text=${f.message || ""} setText=${(v) => set("message", v)} to=${p.lang} id="pe-msg-trad" />
         <${Field} label="Statut"><${Seg} options=${[{ v: "pending", n: "En attente" }, { v: "active", n: "Actif" }, { v: "paused", n: "En pause" }, { v: "archived", n: "Archivé" }]} value=${f.status} onChange=${(v) => set("status", v)} /></${Field}>
         <p className="muted small">${isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance") + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
       </div>
@@ -698,7 +703,7 @@ function CodesView({ db, codes, rows, lib }) {
     <header className="page-h"><div><h1>Codes & essais</h1><p className="muted small">Offre un programme sans paiement : essai d'une semaine, joueurs d'un club, partenariat… Le client saisit le code (ou ouvre ton lien) à la dernière étape.</p></div></header>
     <${Card} title="Créer un code"><div className="form">
       <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : "OFFERT")); }} /></${Field}>
-        <${Field} label="Formule"><${Seg} options=${[...OFFERS.map((o) => ({ v: o.id, n: o.n })), { v: "lite", n: "Lite" }]} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
+        <${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, true)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
       <${Field} label=${f.offer === "lite" ? "Durée d'accès Lite offerte" : "Durée offerte"}><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
       <div className="row2"><${Field} label="Programme" id="cd-prog"><select id="cd-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Au choix du client</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>
         <${Field} label="Nombre d'utilisations" id="cd-max" hint="1 pour une personne, plus pour un groupe ou un club"><input id="cd-max" inputMode="numeric" value=${f.max} onChange=${(e) => set("max", e.target.value.replace(/\D/g, ""))} /></${Field}></div>
@@ -743,7 +748,7 @@ function AddClient({ db, lib, settings, onDone }) {
     <div className="row2"><${Field} label="E-mail" id="ac-e"><input id="ac-e" value=${f.email} onChange=${(e) => set("email", e.target.value)} /></${Field}><${Field} label="Téléphone" id="ac-p"><input id="ac-p" value=${f.phone} onChange=${(e) => set("phone", e.target.value)} /></${Field}></div>
     <${Field} label="Sport" id="ac-s"><input id="ac-s" value=${f.sport} onChange=${(e) => set("sport", e.target.value)} /></${Field}>
     <${Field} label="Programme" id="ac-prog"><select id="ac-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}>${programOptions(lib).map((o) => html`<option key=${o.v} value=${o.v}>${o.n}</option>`)}</select></${Field}>
-    <${Field} label="Formule"><${Seg} options=${OFFERS.map((o) => ({ v: o.id, n: o.n }))} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
+    <${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, false)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
     <div className="row2"><${Field} label="Durée"><${Seg} options=${DURS.map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
       <${Field} label="Début" id="ac-d"><input id="ac-d" type="date" value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}></div>
     <${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "Salle" }, { v: "maison", n: "Maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>

@@ -27,7 +27,7 @@ TESTS = {**TESTS, **TESTS_SPORT}
 
 content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
-ORDER = ["site/00_platform.js", "site/01_ia.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js",
+ORDER = ["00_i18n.js", "site/00_platform.js", "site/01_ia.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js",
          "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "site/11_site.js", "07_main.js"]
 js = "\n".join((SRC / f).read_text() for f in ORDER)
 assert "</script" not in js
@@ -158,7 +158,7 @@ service cloud.firestore {
     function planKeysOk(p) {
       return p.keys().hasOnly(['programId', 'offer', 'weeks', 'start', 'equipment', 'status', 'niveau', 'medicalHold', 'compDate', 'message', 'extra',
           'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite'])
-        && p.status == 'active' && p.programId is string && p.offer in ['essentiel', 'suivi', 'hybride', 'lite']
+        && p.status == 'active' && p.programId is string && p.offer in ['ia', 'essentiel', 'suivi', 'hybride', 'lite']
         && p.weeks is int && p.weeks >= 1 && p.weeks <= 12 && p.grantWeeks is int
         && p.start is string && p.start.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && p.niveau in ['reprise', 'sportif', 'perf', 'elite'] && p.cycle is int;
@@ -405,7 +405,7 @@ self.addEventListener("fetch", (e) => {
   if (r.method !== "GET") return;
   const u = new URL(r.url);
   if (u.origin !== self.location.origin) return; /* Firebase, Open Food Facts : toujours le réseau */
-  const fresh = r.mode === "navigate" || /\\/(index\\.html|config\\.js|ciqual\\.json)?$/.test(u.pathname);
+  const fresh = r.mode === "navigate" || /\\/(index\\.html|config\\.js|ciqual\\.json|i18n_[a-z]+\\.json)?$/.test(u.pathname);
   if (fresh) {
     e.respondWith(fetch(r).then((res) => { if (res.ok) { const cp = res.clone(); caches.open(V).then((c) => c.put(r, cp)); } return res; })
       .catch(() => caches.match(r).then((m) => m || caches.match("index.html"))));
@@ -426,6 +426,10 @@ if (str(_old.get("date") or ""), str(_old.get("v") or "")) > (str(CIQ.get("date"
     print("ciqual.json : version plus récente du robot gardée (" + str(_old.get("v")) + " du " + str(_old.get("date")) + ")")
 else:
     _cq.write_text(json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+# traductions anglaise et espagnole : fichiers chargés seulement quand la langue est choisie
+from i18n_build import dictionaries
+for _l, _d in dictionaries().items():
+    (OUT / ("i18n_" + _l + ".json")).write_text(json.dumps(_d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 (OUT / ".nojekyll").write_text("")
 (OUT / "404.html").write_text("""<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Antoine Prépa Performance</title>
 <body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0d0d0c;color:#f2eee6;font-family:sans-serif;text-align:center">

@@ -58,7 +58,7 @@
       try { j = await r.json(); } catch (e) {}
       if (r.ok && j && j.ok) return j;
       var c = (j && j.code) || "";
-      throw err(c === "quota" || c === "quota_photos" || c === "surcharge" || c === "limite_gratuite" ? "rate_limited" : c === "formule" || c === "ia_desactivee" ? "sampling_disabled"
+      throw err(c === "quota" ? "quota_jour" : c === "quota_photos" ? "quota_photos_jour" : c === "surcharge" || c === "limite_gratuite" ? "rate_limited" : c === "formule" || c === "ia_desactivee" ? "sampling_disabled"
         : c === "connexion" ? "session_expired" : c === "trop_long" ? "prompt_too_large" : c === "image" ? "image_rejected" : "upstream_error", c);
     }
     async function run(input, opts, json) {
@@ -76,8 +76,7 @@
       }
       var tools = (opts.tools || []).filter(function (t) { return t && t.name && typeof t.execute === "function"; });
       var apiTools = tools.map(function (t) { return { name: t.name, description: t.description || "", input_schema: t.inputSchema || { type: "object", properties: {} } }; });
-      var system = "Tu travailles dans l'application de préparation physique d'Antoine Prépa Performance. Réponds en français et suis exactement les consignes de la demande."
-        + (json ? " Ta réponse finale sera lue par un programme : réponds uniquement avec la valeur JSON demandée, sans texte autour." : "");
+      var system = siteSystemPrompt(json);
       var text = "", finalText = "", stop = "";
       for (var round = 1; ; round++) {
         var last = round >= 6;
@@ -140,3 +139,9 @@
     catch (e) { return { state: "injoignable" }; }
   };
 })();
+/* consigne générale du modèle (pas un texte affiché : non traduite) ; la langue suit celle du client */
+function siteSystemPrompt(json) {
+  var l = typeof LANG === "string" ? LANG : "fr";
+  return "Tu travailles dans l'application de préparation physique d'Antoine Prépa Performance. Réponds en " + (l === "en" ? "anglais (English)" : l === "es" ? "espagnol (español)" : "français, sauf si la demande précise une autre langue,") + " et suis exactement les consignes de la demande."
+    + (json ? " Ta réponse finale sera lue par un programme : réponds uniquement avec la valeur JSON demandée, sans texte autour." : "");
+}

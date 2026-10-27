@@ -7,7 +7,7 @@ function getAI() {
     if (s) {
       try { const l = await s.limits(); images = !!(l && l.images); maxImages = images ? l.images.maxCount || 1 : 0; tools = !!(l && l.tools); } catch (e) {}
     }
-    return { sample: s, images, tools, maxImages };
+    return { sample: s ? aiWrap(s) : null, images, tools, maxImages };
   })();
   return _aiP;
 }
@@ -15,6 +15,63 @@ function useAI() {
   const [st, setSt] = useState({ ready: false, sample: null, images: false, tools: false, maxImages: 0 });
   useEffect(() => { let a = true; getAI().then((x) => { if (a) setSt({ ...x, ready: true }); }); return () => { a = false; }; }, []);
   return st;
+}
+/* ---------- limites d'utilisation du coach IA par jour, selon la formule (réglables par le coach) ----------
+   Une « question » = une demande du client (message, repas, étiquette, vidéo, recette) ; une « photo » = une demande avec image.
+   L'analyse automatique du bilan de la semaine ne compte pas. Le coach n'a pas de limite. Sur le site, le relais applique
+   aussi ces limites (avec 2 demandes de marge pour les analyses de bilan). */
+const AI_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, hybride: { q: 10, ph: 3 } };
+const AI_QUOTA_MAX = 200;
+function aiQuota(settings, offer) {
+  if (!offer || offer === "lite") return { q: 0, ph: 0 };
+  const d = AI_QUOTA_DEF[offer] || AI_QUOTA_DEF.essentiel;
+  const s = (settings && settings.ai && settings.ai.quota && settings.ai.quota[offer]) || {};
+  const n = (v, def) => { const x = Math.round(Number(v)); return Number.isFinite(x) && v !== "" && v !== null && v !== undefined ? clamp(x, 0, AI_QUOTA_MAX) : def; };
+  return { q: n(s.q, d.q), ph: n(s.ph, d.ph) };
+}
+/* langue du client : l'IA lui répond dans sa langue (les consignes restent en français) */
+const LANG_NAME = { fr: "français", en: "anglais (English)", es: "espagnol (español)" };
+function aiLang(extra) { return LANG === "fr" ? "" : "Langue : le client utilise l'application en " + LANG_NAME[LANG] + ". Écris tout ce que le client lira uniquement en " + LANG_NAME[LANG] + " (registre familier, comme un coach), même si ces consignes sont en français." + (extra ? " " + extra : ""); }
+/* texte des limites d'une formule, pour la page d'accueil, la commande et les conditions */
+function aiLimitTxt(settings, offer) { const q = aiQuota(settings, offer); return q.q ? "Coach IA : jusqu'à " + plural(q.q, "question") + " et " + plural(q.ph, "photo") + " par jour." : ""; }
+let _aiq = null; /* { lim: {q, ph}, name, used(): {q, ph}, add(photo) } — posé par l'espace client */
+function aiQuotaSet(c) { _aiq = c; }
+function aiQuotaErr(kind) {
+  const q = _aiq, e = new Error("quota");
+  e.code = kind === "ph" ? "quota_photos_jour" : "quota_jour";
+  e.msg = q ? (kind === "ph" ? "Tu as utilisé tes " + plural(q.lim.ph, "photo") + " analysées par le coach IA aujourd'hui" : "Tu as utilisé tes " + plural(q.lim.q, "question") + " au coach IA aujourd'hui") + (q.name ? " (formule " + q.name + ")" : "") + ". Reviens demain : le compteur repart à zéro à minuit." : "";
+  return e;
+}
+function aiQuotaMsg(aiq, kind) { return (kind === "ph" ? "Tu as utilisé tes " + plural(aiq.lim.ph, "photo") + " analysées par le coach IA aujourd'hui" : "Tu as utilisé tes " + plural(aiq.lim.q, "question") + " au coach IA aujourd'hui") + ". Reviens demain : le compteur repart à zéro à minuit."; }
+function aiLeft() { if (!_aiq) return null; const u = _aiq.used(); return { q: Math.max(0, _aiq.lim.q - u.q), ph: Math.max(0, _aiq.lim.ph - u.ph), lim: _aiq.lim }; }
+function aiWrap(s) {
+  const gate = async (input, opts, fn) => {
+    const o = { ...(opts || {}) }; const sys = !!o.system; delete o.system;
+    const q = sys ? null : _aiq;
+    const photo = !!(o.images && (o.images instanceof Blob || o.images.length));
+    if (q) { const u = q.used(); if (u.q >= q.lim.q) throw aiQuotaErr("q"); if (photo && u.ph >= q.lim.ph) throw aiQuotaErr("ph"); }
+    const r = await fn(input, o);
+    if (q) { try { await q.add(photo); } catch (e) {} }
+    return r;
+  };
+  const w = (input, opts) => gate(input, opts, (i, o) => s(i, o));
+  w.json = (input, opts) => gate(input, opts, (i, o) => s.json(i, o));
+  w.limits = (...a) => s.limits(...a);
+  return w;
+}
+/* compteur du jour du client : document clients/{id}/aiuse/{jour} */
+function useAIQuota(data, src, settings, plan, off) {
+  const day = todayISO();
+  const lim = aiQuota(settings, plan && plan.offer);
+  const cur = (data && data.aiuse && data.aiuse[day]) || {};
+  const used = { q: Number(cur.q) || 0, ph: Number(cur.ph) || 0 };
+  useEffect(() => {
+    if (off || !src || !plan) { aiQuotaSet(null); return; }
+    aiQuotaSet({ lim, name: offerName(plan.offer), used: () => { const c = (src.get().aiuse || {})[todayISO()] || {}; return { q: Number(c.q) || 0, ph: Number(c.ph) || 0 }; },
+      add: async (photo) => { const d = todayISO(); const c = (src.get().aiuse || {})[d] || {}; await src.saveAiUse(d, { d, q: (Number(c.q) || 0) + 1, ph: (Number(c.ph) || 0) + (photo ? 1 : 0), at: nowISO() }); } });
+    return () => aiQuotaSet(null);
+  }, [off, src, plan && plan.offer, lim.q, lim.ph]);
+  return { lim, used, left: { q: Math.max(0, lim.q - used.q), ph: Math.max(0, lim.ph - used.ph) } };
 }
 const AI_ERR = {
   not_granted: "Tu n'as pas autorisé l'application à utiliser Claude. Tu peux l'activer depuis le menu Autorisations de la page.",
@@ -28,6 +85,8 @@ const AI_ERR = {
   invalid_json: "Réponse illisible : réessaie.",
   empty_completion: "Pas de réponse : reformule ta demande.",
   prompt_too_large: "Demande trop longue : raccourcis-la.",
+  quota_jour: "Tu as atteint la limite du jour de ta formule pour le coach IA. Reviens demain : le compteur repart à zéro à minuit.",
+  quota_photos_jour: "Tu as atteint la limite de photos du jour de ta formule. Reviens demain : le compteur repart à zéro à minuit.",
   upstream_error: "Service momentanément indisponible : réessaie dans un instant.",
 };
 /* site : l'IA passe par le relais du coach (pas par un compte Claude) */
@@ -36,7 +95,7 @@ const AI_ERR_SITE = {
   rate_limited: "Le coach IA a atteint sa limite gratuite pour aujourd'hui : réessaie demain.",
   session_expired: "Reconnecte-toi, puis réessaie.",
 };
-function aiErr(e) { if (e && e.code === "cancelled") return ""; return (window.IS_SITE && AI_ERR_SITE[e && e.code]) || AI_ERR[e && e.code] || AI_ERR.upstream_error; }
+function aiErr(e) { if (e && e.code === "cancelled") return ""; if (e && e.msg) return e.msg; return (window.IS_SITE && AI_ERR_SITE[e && e.code]) || AI_ERR[e && e.code] || AI_ERR.upstream_error; }
 const AI_HIDE = ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"];
 
 const DEFAULT_AI_RULES = [
@@ -186,7 +245,9 @@ function aiRules(conf, data, plan, ai) {
     if (conf.allow.charge) canDo.push("donner une consigne de charge (adapter_charge) ou un mot pour la semaine (note_seance)");
   }
   return [
-    "Tu es « Coach IA », l'assistant d'Antoine Limousi, préparateur physique (Antoine Prépa Performance, Bordeaux), intégré à l'application de suivi de ses clients. Tu réponds directement au client, en français, en le tutoyant, de façon chaleureuse, concrète et brève (4 à 10 lignes en général ; une liste ou un menu seulement si c'est demandé). Pas de titres Markdown.",
+    "Tu es « Coach IA », l'assistant d'Antoine Limousi, préparateur physique (Antoine Prépa Performance, Bordeaux), intégré à l'application de suivi de ses clients. Tu réponds directement au client, en " + (LANG === "fr" ? "français" : LANG_NAME[LANG]) + ", en le tutoyant, de façon chaleureuse, concrète et brève (4 à 10 lignes en général ; une liste ou un menu seulement si c'est demandé). Pas de titres Markdown.",
+    ...(LANG === "fr" ? [] : [aiLang()]),
+    ...(plan && offerAuto(plan.offer) ? ["Formule Coach IA : c'est toi qui conduis son programme au quotidien ; Antoine ne répond pas personnellement à ses bilans ni à ses messages. Fais toi-même les ajustements utiles dans tes limites, et préviens Antoine (signaler_coach) pour toute douleur, tout malaise ou toute question médicale."] : []),
     "",
     "Méthode à chaque réponse :",
     "1. Relis le contexte ci-dessous (séances, charges, douleurs, bilans, tests, repas, objectif) et appuie ta réponse sur ces données, en citant les chiffres utiles.",
@@ -305,7 +366,7 @@ async function pushChat(src, data, msg, ensure) {
 }
 const QUICK_Q = ["Que manger ce soir avec ce qu'il me reste ?", "Comment s'est passée ma semaine ?", "J'ai une gêne au genou, que faire ?", "Un petit-déjeuner riche en protéines", "Quoi manger avant et après ma séance ?", "Je mange au restaurant ce soir, que choisir ?"];
 
-function CoachChat({ data, src, plan, prog, stats, lib, settings, onClose }) {
+function CoachChat({ data, src, plan, prog, stats, lib, settings, aiq, onClose }) {
   const ai = useAI();
   const toast = useToast();
   const conf = aiConf(settings, data);
@@ -321,6 +382,7 @@ function CoachChat({ data, src, plan, prog, stats, lib, settings, onClose }) {
   const send = async (q) => {
     const text = String(q ?? txt).trim();
     if (!text || busy || !ai.sample) return;
+    if (aiq && aiq.left.q <= 0) { setErr(aiQuotaMsg(aiq, "q")); return; }
     setTxt(""); setErr(""); setBusy(true);
     const userMsg = { r: "u", t: text.slice(0, 2000), at: nowISO() };
     const before = src.get();
@@ -352,13 +414,14 @@ function CoachChat({ data, src, plan, prog, stats, lib, settings, onClose }) {
       <div className="msg a"><p>${"Salut" + (first ? " " + first : "") + " ! Je suis le coach IA d'Antoine. Je connais ton programme, tes séances, tes bilans et tes repas : pose-moi tes questions sur l'entraînement, la récupération ou la nutrition. Je peux aussi ajuster ton programme, et Antoine voit tout ce que je change."}</p></div>
       ${msgs.slice(-40).map((m, i) => html`<div key=${i} className=${"msg " + (m.r === "u" ? "u" : "a") + (m.kind === "bilan" ? " bilan" : "")}>
         ${m.kind === "bilan" ? html`<div className="eyebrow">Analyse de ta semaine ${m.w || ""}</div>` : null}
-        ${String(m.t).split(/\n{2,}/).map((para, k) => html`<p key=${k}>${para}</p>`)}
+        ${String(m.t).split(/\n{2,}/).map((para, k) => html`<p key=${k} data-notr="1">${para}</p>`)}
         ${m.ev && m.ev.length ? html`<div className="evs">${m.ev.map((x, k) => html`<span key=${k} className="ev">✓ ${x}</span>`)}</div>` : null}</div>`)}
       ${live ? html`<div className="msg a">${live.text ? String(live.text).split(/\n{2,}/).map((para, k) => html`<p key=${k}>${para}</p>`) : html`<p className="muted">Je regarde ton dossier…</p>`}
         ${live.ev && live.ev.length ? html`<div className="evs">${live.ev.map((x, k) => html`<span key=${k} className="ev">✓ ${x}</span>`)}</div>` : null}</div>` : null}
       <div ref=${endRef}></div>
     </div>
     ${err ? html`<p className="small warn-t">${err}</p>` : null}
+    ${aiq ? html`<p className=${"small " + (aiq.left.q ? "muted" : "warn-t")} id="ai-left">${aiq.left.q ? "Questions au coach IA aujourd'hui : " + aiq.used.q + " sur " + aiq.lim.q + " (formule " + offerName(plan && plan.offer) + ")." : aiQuotaMsg(aiq, "q")}</p>` : null}
     ${!busy && msgs.length < 2 ? html`<div className="btnrow">${QUICK_Q.map((q) => html`<button key=${q} type="button" className="chipbtn" onClick=${() => send(q)}>${q}</button>`)}</div>` : null}
     <div className="composer">
       <textarea id="chat-in" rows="2" value=${txt} placeholder="Écris ta question…" onChange=${(e) => setTxt(e.target.value)} onKeyDown=${(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} disabled=${busy}></textarea>
@@ -377,7 +440,7 @@ async function weeklyReview({ ai, src, plan, prog, lib, settings, w, onText, onE
   const tools = ai.tools ? makeTools({ data, src, plan, prog, stats, conf, onEvent: (l) => { events.push(l); onEvent && onEvent([...events]); } }) : undefined;
   const prompt = aiRules(conf, data, plan, ai) + "\n\n" + clientContext({ data, plan, prog, stats, lib }) + (ai.tools && conf.allow.subst ? "\n\n" + exerciseCatalog() : "") +
     "\n\nTâche : bilan_hebdo. Le client vient d'envoyer son bilan de la semaine " + w + ". Analyse sa semaine (régularité, effort, charges, douleur, sommeil, énergie, poids et repas s'ils sont notés) en la comparant aux semaines précédentes. Applique si besoin un ou deux ajustements. Écris ensuite au client un message de 5 à 8 lignes : ce qui va bien (chiffres à l'appui), ce qui est à surveiller, ce que tu as ajusté et pourquoi, et sa priorité pour la semaine prochaine. Précise qu'Antoine lira aussi son bilan.";
-  const r = await ai.sample(prompt, { cache: false, signal, tools, onText });
+  const r = await ai.sample(prompt, { cache: false, signal, tools, onText, system: true });
   await pushChat(src, src.get(), { r: "a", t: r.text, at: nowISO(), kind: "bilan", w, ev: events.length ? events : undefined });
   return { text: r.text, events };
 }
@@ -390,4 +453,39 @@ async function draftReply({ ai, data, plan, prog, lib, c, settings }) {
     "\n\nBilan à traiter : semaine " + c.w + ".\n\nTâche : brouillon_reponse. Rédige le brouillon de la réponse d'Antoine, à la première personne, en tutoyant le client : 3 à 6 lignes, ton direct et encourageant, un retour précis sur les chiffres de la semaine, la réponse à sa question s'il en a posé une, et un conseil concret pour la semaine suivante. Pas de formule d'introduction générique, pas de signature. Si une douleur ou un signal médical apparaît, recommande d'alléger et de consulter si ça persiste.";
   const r = await ai.sample(prompt, { cache: false });
   return r.text.trim();
+}
+
+/* ---------- clients étrangers : l'IA traduit pour Antoine (il relit avant d'envoyer) ----------
+   Côté coach seulement : rien n'est décompté des limites du client. */
+const LANG_FR = { fr: "français", en: "anglais", es: "espagnol" };
+function langFr(l) { return LANG_FR[l] || l || "français"; }
+async function aiTranslate(ai, text, to) {
+  const r = await ai.sample("Tâche : traduction. Traduis le texte placé entre les balises <texte> en " + langFr(to) + ", fidèlement : même sens, même ton, tutoiement gardé, mêmes retours à la ligne, sans rien ajouter ni commenter. Réponds uniquement avec la traduction.\n<texte>\n" + text + "\n</texte>", { cache: false, system: true });
+  return String((r && r.text) || "").replace(/^\s*<texte>\s*/, "").replace(/\s*<\/texte>\s*$/, "").trim();
+}
+/* « Traduire en français » sous un texte écrit par un client étranger */
+function TrLink({ text }) {
+  const ai = useAI();
+  const toast = useToast();
+  const [t, setT] = useState(null);
+  const [busy, setBusy] = useState(false);
+  if (!ai.sample || !String(text || "").trim()) return null;
+  const go = async () => { setBusy(true); try { setT(await aiTranslate(ai, String(text), "fr")); } catch (e) { const m = aiErr(e); if (m) toast(m, "warn"); } finally { setBusy(false); } };
+  return t ? html`<p className="small trad" data-notr="1"><b>Traduction (IA) :</b> ${t}</p>` : html`<button type="button" className="linkbtn small trbtn" onClick=${go} disabled=${busy}>${busy ? "Traduction…" : "Traduire en français"}</button>`;
+}
+/* « Traduire en anglais avant d'envoyer » sous la zone de réponse d'Antoine */
+function TrSend({ text, setText, to, id }) {
+  const ai = useAI();
+  const toast = useToast();
+  const [orig, setOrig] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { if (!String(text || "").trim()) setOrig(""); }, [text]);
+  if (!ai.sample || !to || to === "fr") return null;
+  const go = async () => {
+    const t = String(text || "").trim(); if (!t) return;
+    setBusy(true);
+    try { const x = await aiTranslate(ai, t, to); if (x) { setOrig(t); setText(x); } } catch (e) { const m = aiErr(e); if (m) toast(m, "warn"); } finally { setBusy(false); }
+  };
+  return html`<div className="trsend small"><button type="button" className="linkbtn" id=${id || null} onClick=${go} disabled=${busy || !String(text || "").trim()}>${busy ? "Traduction…" : "✦ Traduire en " + langFr(to) + " avant d'envoyer"}</button>
+    <span className="muted"> Le client lit l'application en ${langFr(to)}.</span>${orig ? html`<span className="muted" data-notr="1"> Ton texte d'origine : « ${orig} »</span>` : null}</div>`;
 }

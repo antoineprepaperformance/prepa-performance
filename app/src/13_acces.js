@@ -1,5 +1,5 @@
 /* ===== Accès payant, codes d'offre, commandes, rétractation, documents légaux ===== */
-const CGV_VERSION = "2026-10-24";
+const CGV_VERSION = "2026-10-27";
 const TRIAL_DURS = [{ w: 1, n: "1 semaine" }, { w: 2, n: "2 semaines" }];
 const CODE_ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 function normCode(s) { return String(s || "").toUpperCase().replace(/\s+/g, "").replace(/[^A-Z0-9-]/g, "").slice(0, 24); }
@@ -14,7 +14,7 @@ function codeState(c, uid) {
   return { ok: true };
 }
 function codeSummary(c) { return (c.kind === "essai" ? "Essai" : "Offert") + " · " + offerName(c.offer) + " · " + durName(c.weeks) + (c.offer === "lite" ? " d'accès" : "") + (c.programId && PB[c.programId] ? " · " + PB[c.programId].n : ""); }
-function eur2(v) { return (Number(v) || 0).toLocaleString("fr-FR", { minimumFractionDigits: Number.isInteger(Number(v)) ? 0 : 2, maximumFractionDigits: 2 }) + " €"; }
+function eur2(v) { return (Number(v) || 0).toLocaleString(LOCALE, { minimumFractionDigits: Number.isInteger(Number(v)) ? 0 : 2, maximumFractionDigits: 2 }) + " €"; }
 function priceOf(settings, offer, weeks) { const p = offerPrice(settings, offer, weeks); return p === null || p === undefined ? null : Number(p); }
 function payLinkOf(settings, offer, weeks) {
   if (offer === "lite") { const l = settings && settings.pay && settings.pay.links && settings.pay.links["lite_" + weeks]; return l && /^https:\/\//.test(l) ? l.trim() : null; }
@@ -354,7 +354,7 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
       ${rec.why.length ? html`<span className="field-h">${rec.why.join(" ")}</span>` : null}</div>
     ${codeC ? html`<div className="alert okb"><div><b>Code ${codeC.code}</b><p>${codeSummary(codeC)} : accès offert, rien à payer.</p></div><button type="button" className="linkbtn" onClick=${() => { setCst(null); setCode(""); }}>Retirer</button></div>` : html`
       <${Field} label="Formule"><${Seg} options=${offers0} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
-      <p className="muted small">${isLite ? liteDesc() : (OFFERS.find((o) => o.id === f.offer) || {}).desc || ""}</p>
+      <p className="muted small">${isLite ? liteDesc() : html`${(OFFERS.find((o) => o.id === f.offer) || {}).desc || ""} ${aiLimitTxt(settings, f.offer)}`}</p>
       ${isLite ? html`
         <${Field} label="Durée"><${Seg} options=${[{ v: "mois", n: "Mensuel · " + eur2(lp("mois")) }, { v: "an", n: "Annuel · " + eur2(lp("an")) + (save > 0 ? " (−" + save + " %)" : "") }]} value=${lPer} onChange=${(v) => set("period", v)} /></${Field}>
         <${Field} label="Paiement"><${Seg} options=${[{ v: "abo", n: "Abonnement (renouvellement automatique)" }, { v: "avance", n: "Paiement d'avance (sans renouvellement)" }]} value=${lMode} onChange=${(v) => set("lmode", v)} /></${Field}>`
@@ -529,15 +529,15 @@ function OrdersCard({ data, src, settings }) {
       <div className="meal-h"><b>${isRen ? "Renouvellement · " + durOf(o) : (PB[o.programId] ? PB[o.programId].n : "Programme") + " · " + durOf(o)}</b><${Pill} tone=${st[0]}>${st[1]}</${Pill}></div>
       <p className="muted small">${isRen ? "Prélèvement du " + fmtDY(String(o.at).slice(0, 10)) + " · " + eur2(o.paidAmount || 0) + " · accès jusqu'au " + fmtD(isoOf(new Date(o.untilMs - 1))) : "Commande du " + fmtDY(String(o.at).slice(0, 10)) + " · " + offerName(o.offer) + " · " + (o.kind === "code" ? "code " + (o.code || "") : o.offer === "lite" ? litePriceTxt(settings, o.period, o.mode) : eur(Number(o.paidAmount ?? o.price) || 0))}</p>
       ${o.offer === "lite" && o.mode === "abo" && o.status === "active" && !o.cancel && plan && plan.source && plan.source.orderId === o.id ? html`<p className="small">Abonnement en cours : prochain prélèvement le ${fmtDY(isoOf(new Date(plan.untilMs)))}.${portal ? html` <a href=${portal} target="_blank" rel="noopener">Gérer ma carte et mes factures</a>` : null}</p>` : null}
-      ${o.cancel && !o.withdrawal ? html`<p className="small">Résiliation reçue le ${new Date(o.cancel.at).toLocaleString("fr-FR")} · fin du contrat ${o.cancel.immediate ? "immédiate" : "le " + fmtD(isoOf(new Date(o.cancel.effectMs - 1))) + " au soir"}${o.cancel.refund > 0 ? " · remboursement prévu : " + eur2(o.cancel.refund) : ""}.
+      ${o.cancel && !o.withdrawal ? html`<p className="small">Résiliation reçue le ${new Date(o.cancel.at).toLocaleString(LOCALE)} · fin du contrat ${o.cancel.immediate ? "immédiate" : "le " + fmtD(isoOf(new Date(o.cancel.effectMs - 1))) + " au soir"}${o.cancel.refund > 0 ? " · remboursement prévu : " + eur2(o.cancel.refund) : ""}.
         <button type="button" className="linkbtn" onClick=${() => saveText("accuse-resiliation-" + o.id + ".txt", cancelText(o, settings))}>Accusé de réception</button></p>` : null}
-      ${o.withdrawal ? html`<p className="small">Rétractation reçue le ${new Date(o.withdrawal.at).toLocaleString("fr-FR")} · remboursement prévu : ${eur2(o.withdrawal.refund || 0)}${o.withdrawal.refundedAt ? " (effectué le " + fmtD(o.withdrawal.refundedAt) + ")" : ""}.
+      ${o.withdrawal ? html`<p className="small">Rétractation reçue le ${new Date(o.withdrawal.at).toLocaleString(LOCALE)} · remboursement prévu : ${eur2(o.withdrawal.refund || 0)}${o.withdrawal.refundedAt ? " (effectué le " + fmtD(o.withdrawal.refundedAt) + ")" : ""}.
         <button type="button" className="linkbtn" onClick=${() => saveText("accuse-retractation-" + o.id + ".txt", orderText(o, settings, "retractation"))}>Accusé de réception</button></p>` : null}
       <div className="btnrow">${!isRen ? html`<button type="button" className="linkbtn" onClick=${() => saveText("commande-" + o.id + ".txt", orderText(o, settings, "commande"))}>Télécharger le récapitulatif</button>` : null}
         ${cancellable(o, plan) && (!rs || rs.o.id !== o.id) ? html`<button type="button" className="linkbtn" onClick=${() => { setRs({ o, step: 1 }); setWd(null); setForm({ name: p.name || "", email: p.email || "", now: false }); }}>Résilier mon abonnement</button>` : null}
         ${withdrawable(o) && (!wd || wd.id !== o.id) ? html`<button type="button" className="linkbtn" onClick=${() => { setWd(o); setRs(null); setForm({ name: p.name || "", email: p.email || "", now: false }); }}>Renoncer au contrat ici</button>` : null}</div>
       ${rs && rs.o.id === o.id ? (() => { const opt = cancelOptions(o, plan, data); const endTxt = fmtDY(isoOf(new Date(opt.endMs - 1)));
-        return rs.step === 3 ? html`<div className="alert okb" role="status"><div><b>Résiliation enregistrée</b><p>Nous avons bien reçu ta résiliation le ${new Date(rs.o.cancel.at).toLocaleString("fr-FR")}. Fin du contrat : ${rs.o.cancel.immediate ? "aujourd'hui" : endTxt + " au soir"}. Aucun nouveau prélèvement. L'accusé de réception est téléchargé.</p>
+        return rs.step === 3 ? html`<div className="alert okb" role="status"><div><b>Résiliation enregistrée</b><p>Nous avons bien reçu ta résiliation le ${new Date(rs.o.cancel.at).toLocaleString(LOCALE)}. Fin du contrat : ${rs.o.cancel.immediate ? "aujourd'hui" : endTxt + " au soir"}. Aucun nouveau prélèvement. L'accusé de réception est téléchargé.</p>
             ${rs.o.cancel.stripe !== "ok" ? html`<p className="small">Antoine arrête aussi ton abonnement dans Stripe et te le confirme par e-mail.${portal ? html` Tu peux vérifier sur <a href=${portal} target="_blank" rel="noopener">ton espace de paiement</a>.` : null}</p>` : null}
             <button type="button" className="linkbtn" onClick=${() => setRs(null)}>Fermer</button></div></div>`
         : html`<div className="card retract"><h3>Résilier mon abonnement</h3>
@@ -593,7 +593,13 @@ function LiteNotice({ plan, data, settings, src, demo }) {
 }
 
 /* ---------- documents légaux ---------- */
-function LegalDoc({ kind, settings }) {
+/* hors français : rappel que seule la version française des textes juridiques fait foi */
+const LEGAL_TR_NOTE = { en: "Translation provided for information only: only the French version is legally binding.", es: "Traducción facilitada a título informativo: solo la versión francesa tiene valor jurídico." };
+function LegalDoc(props) {
+  if (LANG === "fr") return html`<${LegalDocFr} ...${props} />`;
+  return html`<div><p className="legal-note small" data-notr="1" lang=${LANG}>${LEGAL_TR_NOTE[LANG]}</p><${LegalDocFr} ...${props} /></div>`;
+}
+function LegalDocFr({ kind, settings }) {
   const L = legalInfo(settings);
   const v = (x) => x || "[à compléter]";
   const contact = [L.email, L.telephone].filter(Boolean).join(" · ") || "[à compléter]";
@@ -626,8 +632,8 @@ function LegalDoc({ kind, settings }) {
   return html`<div className="legal small">
     <p>Version du ${fmtDY(CGV_VERSION)}, applicable à toute commande passée à compter de cette date.</p>
     <h3>1. Vendeur</h3><p>${L.marque} — ${L.editeur}, ${L.statut}, SIRET ${v(L.siret)}, ${v(L.adresse)}, ${contact}. Éducateur sportif, carte professionnelle n° ${v(L.cartePro)}.</p>
-    <h3>2. Services</h3><p>Accès à un programme de préparation physique en ligne (8 programmes, profils Reprise, Sportif, Performance et Haut niveau), avec l'adaptation des séances au sport et au poste, les séances terrain, une messagerie dans l'application pour écrire à ${L.editeur} (formules Essentiel, Suivi et Hybride ; Lite si ${L.editeur} l'a ouverte, sans délai de réponse garanti), les séances flash, les séances de récupération, les recettes et la santé au quotidien, et le niveau de suivi de la formule : Essentiel (programme, bilan hebdomadaire, réponse courte), Suivi (réponse détaillée, ajustements, correction vidéo par ${L.editeur}), Hybride (en plus, 2 séances d'1 h par mois en présentiel en Bordeaux Métropole), Lite (en autonomie : tous les programmes et contenus, sans réponse personnelle aux bilans, sans correction vidéo par ${L.editeur} et sans coach IA). Fonctionne sur un navigateur récent ou en application installée, avec une connexion internet pour la synchronisation.</p>
-    <h3>3. Prix</h3><p>Prix indiqués en euros au moment de la commande. ${tvaLine(settings)}. Formules Essentiel, Suivi et Hybride : paiement unique, sans abonnement ni renouvellement automatique. Forfait Lite : ${eur2(litePrice(settings, "mois"))} par mois ou ${eur2(litePrice(settings, "an"))} par an, au choix en abonnement ou en paiement d'avance (article 7 bis).</p>
+    <h3>2. Services</h3><p>Accès à un programme de préparation physique en ligne (8 programmes, profils Reprise, Sportif, Performance et Haut niveau), avec l'adaptation des séances au sport et au poste, les séances terrain, une messagerie dans l'application pour écrire à ${L.editeur} (formules Essentiel et Suivi ; Lite et Coach IA si ${L.editeur} l'a ouverte, sans délai de réponse garanti), les séances flash, les séances de récupération, les recettes et la santé au quotidien, et le niveau de suivi de la formule : Coach IA (programme conduit par une intelligence artificielle : réponses aux questions, estimation des repas, analyse du bilan hebdomadaire et ajustements automatiques du programme dans des limites de sécurité, sans réponse personnelle de ${L.editeur}, qui reste prévenu en cas de douleur ou d'alerte), Essentiel (programme, bilan hebdomadaire, réponse courte de ${L.editeur}, coach IA), Suivi (réponse détaillée, ajustements, correction vidéo par ${L.editeur}, coach IA), Lite (en autonomie : tous les programmes et contenus, sans réponse personnelle aux bilans, sans correction vidéo par ${L.editeur} et sans coach IA). Le coach IA s'utilise dans une limite par jour propre à la formule : ${listeNoms(OFFERS.map((o) => { const q = aiQuota(settings, o.id); return o.n + " : " + plural(q.q, "question") + " et " + plural(q.ph, "photo"); }))} ; le compteur repart à zéro chaque jour à minuit, et l'analyse du bilan hebdomadaire ne compte pas. Ses réponses sont générées automatiquement et peuvent comporter des erreurs : ce sont des repères d'entraînement, pas des avis médicaux. Fonctionne sur un navigateur récent ou en application installée, avec une connexion internet pour la synchronisation.</p>
+    <h3>3. Prix</h3><p>Prix indiqués en euros au moment de la commande. ${tvaLine(settings)}. Formules ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique, sans abonnement ni renouvellement automatique. Forfait Lite : ${eur2(litePrice(settings, "mois"))} par mois ou ${eur2(litePrice(settings, "an"))} par an, au choix en abonnement ou en paiement d'avance (article 7 bis).</p>
     <h3>4. Commande</h3><p>Tu choisis ton programme, ton profil, ta formule, ta durée et ta date de début, tu vérifies le récapitulatif, tu acceptes les présentes conditions puis tu valides avec le bouton « Commander avec obligation de paiement » (abonnement Lite : « S'abonner avec obligation de paiement »). Le récapitulatif de commande est téléchargeable dans « Mes commandes » ; Stripe t'envoie un reçu par e-mail à chaque paiement.</p>
     <h3>5. Paiement</h3><p>Paiement par carte via Stripe (paiement sécurisé, authentification forte), ou par un autre moyen convenu avec ${L.editeur}. L'accès s'active à la confirmation du paiement.</p>
     <h3>6. Codes d'essai et codes offerts</h3><p>Personnels, gratuits, utilisables une fois par personne dans la limite des conditions affichées (formule, durée, programme, date limite). Ils ne sont ni échangeables ni remboursables et ne se transforment jamais en commande payante sans nouvelle commande de ta part.</p>

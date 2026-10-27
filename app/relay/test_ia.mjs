@@ -11,9 +11,10 @@ const AI = { async run(model, input) {
 } };
 const env = { ...env0, AI, QUOTA: kv, IA_PAR_JOUR: "3", IA_PHOTOS_PAR_JOUR: "1" };
 const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
-const TOK = { julie: "jeton-valide-de-julie-0123456789", lite: "jeton-valide-du-client-lite-0001", ancien: "jeton-valide-client-termine-0001", coach: "jeton-valide-du-coach-antoine-01" };
-const UID = { [TOK.julie]: "uidJulie123", [TOK.lite]: "uidLite123", [TOK.ancien]: "uidAncien123", [TOK.coach]: "uidCoach123" };
+const TOK = { iaclient: "jeton-valide-client-coach-ia-0001", julie: "jeton-valide-de-julie-0123456789", lite: "jeton-valide-du-client-lite-0001", ancien: "jeton-valide-client-termine-0001", coach: "jeton-valide-du-coach-antoine-01" };
+const UID = { [TOK.iaclient]: "uidIaClient1", [TOK.julie]: "uidJulie123", [TOK.lite]: "uidLite123", [TOK.ancien]: "uidAncien123", [TOK.coach]: "uidCoach123" };
 const PLANS = {
+  uidIaClient1: { status: { stringValue: "active" }, offer: { stringValue: "ia" }, start: { stringValue: day(-3) }, weeks: { integerValue: "4" } },
   uidJulie123: { status: { stringValue: "active" }, offer: { stringValue: "suivi" }, start: { stringValue: day(-10) }, weeks: { integerValue: "8" } },
   uidLite123: { status: { stringValue: "active" }, offer: { stringValue: "lite" }, start: { stringValue: day(-10) }, weeks: { integerValue: "12" } },
   uidAncien123: { status: { stringValue: "active" }, offer: { stringValue: "essentiel" }, start: { stringValue: day(-100) }, weeks: { integerValue: "4" } },
@@ -25,7 +26,8 @@ globalThis.fetch = async (url, opts = {}) => {
     const t = JSON.parse(opts.body).idToken;
     return UID[t] ? new Response(JSON.stringify({ users: [{ localId: UID[t], email: "x@test.fr", emailVerified: true }] }), { status: 200 }) : new Response("{}", { status: 400 });
   }
-  if (url.endsWith("/documents/settings/app")) return new Response(JSON.stringify({ fields: { ai: { mapValue: { fields: { on: { booleanValue: aiOn } } } } } }), { status: 200 });
+  if (url.endsWith("/documents/settings/app")) return new Response(JSON.stringify({ fields: { ai: { mapValue: { fields: { on: { booleanValue: aiOn },
+    quota: { mapValue: { fields: { ia: { mapValue: { fields: { q: { integerValue: "1" }, ph: { integerValue: "0" } } } } } } } } } } } }), { status: 200 });
   const pm = url.match(/documents\/plans\/([^?]+)$/);
   if (pm) {
     const uid = decodeURIComponent(pm[1]); const t = auth.replace("Bearer ", "");
@@ -69,6 +71,15 @@ ok(j.stop_reason === "tool_use" && j.content[0].type === "tool_use" && j.content
 ok(a2[1].role === "assistant" && a2[1].tool_calls[0].function.arguments === "{\"a\":1}" && a2[2].role === "tool" && a2[2].tool_call_id === "call_0" && a2[2].content === "Fait", "historique des outils converti (assistant + tool)");
 aiMode = "limite"; r = await call(TOK.coach, msg("x")); ok(r.status === 429 && (await r.json()).code === "limite_gratuite", "allocation gratuite du jour épuisée : refus clair, rien de facturé"); aiMode = "ok";
 r = await worker.fetch(new Request("https://relais.example/ia", { method: "OPTIONS" }), env); ok(r.status === 204 && r.headers.get("access-control-allow-headers").includes("authorization"), "pré-vérification CORS (en-tête authorization)");
+// formule Coach IA : limites réglées par le coach (1 question + 2 de marge pour le bilan, 0 photo) ; la suite d'un outil ne compte pas
+{ const e2 = { ...env0, AI, QUOTA: { m: {}, async get(k) { return this.m[k] ?? null; }, async put(k, v) { this.m[k] = v; } } };
+  const okq = []; for (let i = 0; i < 3; i++) okq.push((await call(TOK.iaclient, msg("Question " + i), e2)).status);
+  ok(okq.every((x) => x === 200), "Coach IA : questions acceptées dans la limite réglée (+ marge du bilan)");
+  r = await call(TOK.iaclient, msg("Encore une"), e2); ok(r.status === 429 && (await r.json()).code === "quota", "Coach IA : limite du jour atteinte (réglage du coach)");
+  aiMode = "outil"; r = await call(TOK.iaclient, { messages: [{ role: "user", content: "Allège" }, { role: "assistant", content: [{ type: "tool_use", id: "call_0", name: "adapter_charge", input: {} }] }, { role: "user", content: [{ type: "tool_result", tool_use_id: "call_0", content: "Fait" }] }], tools: [{ name: "adapter_charge", description: "x" }] }, e2); aiMode = "ok";
+  ok(r.status === 200, "la suite d'un outil (même question) ne compte pas comme une nouvelle question");
+  r = await call(TOK.iaclient, { messages: [{ role: "user", content: [img, { type: "text", text: "Repas" }] }] }, { ...e2, QUOTA: { m: {}, async get(k) { return this.m[k] ?? null; }, async put(k, v) { this.m[k] = v; } } });
+  ok(r.status === 429 && (await r.json()).code === "quota_photos", "Coach IA : photos à 0 dans les réglages : refusées"); }
 // stockage KV saturé (limite gratuite d'écritures du jour) : le coach IA répond quand même
 { const kvPlein = { async get() { return null; }, async put() { throw new Error("KV put() limit exceeded for the day"); } };
   const r = await call(TOK.coach, msg("Bonjour"), { ...env, QUOTA: kvPlein }); ok(r.status === 200, "stockage plein : le coach IA répond quand même"); }

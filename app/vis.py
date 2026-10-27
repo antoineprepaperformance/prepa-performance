@@ -1,10 +1,12 @@
 """Captures visuelles rapides (aperçu client et espace coach) en mobile et grand écran."""
 import asyncio, subprocess, sys, time
+import pathlib
+HERE = str(pathlib.Path(__file__).resolve().parent)
 from playwright.async_api import async_playwright
-OUT = "/home/claude/app/shots/card"
+OUT = HERE + "/shots/card"
 errs = []
 async def run():
-    srv = subprocess.Popen([sys.executable, "-m", "http.server", "8765"], cwd="/home/claude/app/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    srv = subprocess.Popen([sys.executable, "-m", "http.server", "8765"], cwd=HERE + "/test", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.8)
     try:
         async with async_playwright() as p:
@@ -29,7 +31,7 @@ async def run():
                     await pg.get_by_role("button", name="Changer ma photo ou mon avatar").first.click(); await pg.wait_for_timeout(300)
                     await pg.screenshot(path=f"{OUT}/{name}_avatar.png")
                     await pg.locator(".av-opt").nth(3).click(); await pg.locator(".av-col").nth(4).click()
-                    await pg.set_input_files("#av-photo", "/home/claude/app/test/photo_repas.jpg"); await pg.wait_for_timeout(600)
+                    await pg.set_input_files("#av-photo", HERE + "/test/photo_repas.jpg"); await pg.wait_for_timeout(600)
                     await pg.screenshot(path=f"{OUT}/{name}_avatar_photo.png")
                     await pg.get_by_role("button", name="Enregistrer", exact=True).click(); await pg.wait_for_timeout(500)
                     await pg.screenshot(path=f"{OUT}/{name}_profil_photo.png", full_page=True)

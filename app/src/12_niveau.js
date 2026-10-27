@@ -66,7 +66,7 @@ function assessPlan({ programId, niveau, ans, sport, age, equipment, screeningFl
   else if (rec.includes(programId)) push("ok", "Programme adapté à un " + SPORT_LABEL[cat] + ".");
   else if (cat !== "aucun" && cat !== "autre" && rec.length) push("info", "Pour un " + SPORT_LABEL[cat] + ", « " + PB[rec[0]].n + " » est souvent plus spécifique. Ton choix reste possible.");
   if (programId === "forme" && r >= nivRank("perf")) push("warn", "« Remise en forme » est peu exigeant pour ton niveau : « " + PB[rec[0] && rec[0] !== "forme" ? rec[0] : "prepa"].n + " » te fera davantage progresser.");
-  if ((programId === "force" || programId === "vitesse") && niveau === "reprise") push("warn", "Programme technique et intense : en profil Reprise, les charges et les sprints sont allégés. La formule Hybride permet d'apprendre les mouvements avec Antoine.");
+  if ((programId === "force" || programId === "vitesse") && niveau === "reprise") push("warn", "Programme technique et intense : en profil Reprise, les charges et les sprints sont allégés. Filme-toi sur les mouvements techniques pour vérifier ta position.");
   if (programId === "force" && Number(ans && ans.xp) <= 1) push("warn", "Les mouvements d'haltérophilie demandent un apprentissage : commence léger, filme-toi et envoie la vidéo à ton coach.");
   if (programId === "masse" && cat === "course") push("info", "La prise de muscle peut alourdir ta foulée : idéale hors saison de course.");
   if (programId === "retour" && !prereqOk) push("bad", "Les critères de reprise de la course ne sont pas tous remplis : poursuis ta rééducation avec ton kiné avant ce programme.");

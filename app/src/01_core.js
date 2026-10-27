@@ -6,7 +6,7 @@ const html = (s, ...v) => { const r = _html(s, ...v); return Array.isArray(r) ? 
 
 const CONTENT = JSON.parse(document.getElementById("app-content").textContent);
 const T = CONTENT.T, EXLIB = CONTENT.E, PROGS = CONTENT.P, TESTS = CONTENT.TESTS,
-  CHECKIN = CONTENT.CHECKIN, SCREENING = CONTENT.SCREENING, OFFERS = CONTENT.OFFERS;
+  CHECKIN = CONTENT.CHECKIN, SCREENING = CONTENT.SCREENING, OFFERS_ALL = CONTENT.OFFERS, OFFERS = OFFERS_ALL.filter((o) => !o.retired);
 const EXB = Object.fromEntries(EXLIB.map((e) => [e.id, e]));
 const PB = Object.fromEntries(PROGS.map((p) => [p.id, p]));
 const CATS = [...new Set(EXLIB.map((e) => e.c))];
@@ -23,8 +23,11 @@ function diffDays(a, b) {
   const A = parseISO(a), B = parseISO(b);
   return Math.round((Date.UTC(B.getFullYear(), B.getMonth(), B.getDate()) - Date.UTC(A.getFullYear(), A.getMonth(), A.getDate())) / 86400000);
 }
-const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
-const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+const MOIS = { fr: ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."],
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  es: ["ene.", "feb.", "mar.", "abr.", "may.", "jun.", "jul.", "ago.", "sept.", "oct.", "nov.", "dic."] }[typeof LANG === "string" ? LANG : "fr"];
+const JOURS = { fr: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  es: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"] }[typeof LANG === "string" ? LANG : "fr"];
 function fmtD(s) { if (!s) return "—"; const d = parseISO(s.slice(0, 10)); return d.getDate() + " " + MOIS[d.getMonth()]; }
 function fmtDY(s) { if (!s) return "—"; const d = parseISO(s.slice(0, 10)); return d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear(); }
 function nextMonday() { const d = new Date(); const k = (8 - d.getDay()) % 7 || 7; d.setDate(d.getDate() + k); return isoOf(d); }
@@ -34,7 +37,7 @@ function nowISO() { return new Date().toISOString(); }
 function rid(prefix) { return (prefix || "") + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
 function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 function num(v) { if (v === "" || v === null || v === undefined) return null; const n = Number(String(v).replace(",", ".")); return Number.isFinite(n) ? n : null; }
-function fmtN(v, d) { if (v === null || v === undefined || !Number.isFinite(v)) return "—"; return v.toLocaleString("fr-FR", { maximumFractionDigits: d ?? 1 }); }
+function fmtN(v, d) { if (v === null || v === undefined || !Number.isFinite(v)) return "—"; return v.toLocaleString(typeof LOCALE === "string" ? LOCALE : "fr-FR", { maximumFractionDigits: d ?? 1 }); }
 function eur(v) { return fmtN(v, 0) + " €"; }
 function b64enc(obj) { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }
 function b64dec(s) { return JSON.parse(decodeURIComponent(escape(atob(s.trim())))); }
@@ -148,8 +151,8 @@ function computeStats(data, plan, prog, lib, today) {
   }
   const sorted = logs.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   const checkins = Object.values(data.checkins || {}).filter(Boolean).sort((a, b) => a.w - b.w);
-  const weights = checkins.filter((c) => num(c.poids) !== null).map((c) => ({ x: "S" + c.w, y: num(c.poids) }));
-  const waists = checkins.filter((c) => num(c.taille) !== null).map((c) => ({ x: "S" + c.w, y: num(c.taille) }));
+  const weights = checkins.filter((c) => num(c.poids) !== null).map((c) => ({ x: WK + c.w, y: num(c.poids) }));
+  const waists = checkins.filter((c) => num(c.taille) !== null).map((c) => ({ x: WK + c.w, y: num(c.taille) }));
   // 1RM estimés
   const lifts = {};
   logs.forEach((l) => (l.items || []).forEach((it) => {
@@ -160,7 +163,7 @@ function computeStats(data, plan, prog, lib, today) {
     const w = Number(l.w) || 0;
     lifts[it.e][w] = Math.max(lifts[it.e][w] || 0, best);
   }));
-  const liftSeries = Object.entries(lifts).map(([e, byW]) => ({ e, points: Object.keys(byW).map(Number).sort((a, b) => a - b).map((w) => ({ x: "S" + w, y: byW[w] })) }))
+  const liftSeries = Object.entries(lifts).map(([e, byW]) => ({ e, points: Object.keys(byW).map(Number).sort((a, b) => a - b).map((w) => ({ x: WK + w, y: byW[w] })) }))
     .filter((s) => s.points.length >= 2).sort((a, b) => b.points.length - a.points.length).slice(0, 4);
   const thisWeek = ps && ps.phase === "en_cours" ? ps.week : null;
   return { ps, logs: sorted, doneByWeek, plannedByWeek, loadByWeek, adherence, checkins, weights, waists, liftSeries, thisWeek,

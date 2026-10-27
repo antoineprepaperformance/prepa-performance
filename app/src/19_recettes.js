@@ -143,6 +143,7 @@ function AIRecipe({ data, np, ai, src, onDone }) {
       "Régime : " + (REGIMES.find((x) => x.v === pr.regime) || {}).n + ". À éviter absolument : " + ((pr.evite || []).map((k) => (EVITE.find((x) => x[0] === k) || [k, k])[1]).join(", ") || "rien") + ". Aime : " + ((pr.aime || []).map((k) => (AIME.find((x) => x[0] === k) || [k, k])[1]).join(", ") || "—") + ".",
       f.frigo ? "Ingrédients disponibles : " + f.frigo + "." : "", f.envie ? "Envie : " + f.envie + "." : "",
       "Aliments simples, peu transformés. Pas de compléments alimentaires. Poids en grammes, crus.",
+      aiLang("« n », « etapes » et « astuce » sont dans cette langue ; garde le « nom » de chaque ingrédient en français (il sert à retrouver ses valeurs nutritionnelles)."),
       'Réponds en JSON strict : {"n": "nom", "temps": 20, "ingredients": [{"nom": "...", "g": 120}], "etapes": ["..."], "astuce": "une phrase", "kcal": 600, "p": 40, "c": 60, "f": 18}.'].filter(Boolean).join("\n");
     try {
       const j = await ai.sample.json(prompt, { modelTier: "default" });

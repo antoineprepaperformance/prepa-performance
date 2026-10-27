@@ -363,7 +363,7 @@ function mealPrompt(kind, np, tot, slot, note) {
     ? '{"titre": "Poulet, riz et brocolis", "items": [{"n": "Riz"}], "verdict": "bon" | "correct" | "a_ameliorer", "commentaire": "1 à 2 phrases sur l\'équilibre de l\'assiette, sans aucun chiffre", "conseil": "une suggestion concrète"}'
     : '{"titre": "Poulet, riz et brocolis", "items": [{"n": "Riz basmati cuit", "ciqual": "Riz basmati, cuit", "g": 180, "kcal": 266, "p": 5, "c": 59, "f": 1}], "confiance": "faible" | "moyenne" | "bonne", "verdict": "bon" | "correct" | "a_ameliorer", "commentaire": "1 à 2 phrases, tutoiement, par rapport à ses cibles du jour", "conseil": "une suggestion concrète pour ce repas ou le suivant"}';
   const ciq = eq ? "" : "Pour chaque aliment, donne dans « ciqual » son nom tel qu'il est écrit dans la table Ciqual de l'ANSES : l'aliment d'abord, puis l'état ou la cuisson (ex. « Poulet, filet sans peau, grillé/poêlé », « Riz basmati, cuit », « Huile d'olive vierge extra », « Haricot vert, cuit »). L'application y lit les valeurs officielles ; tes valeurs ne servent que si l'aliment est absent de la table.";
-  return [head, nutriShort(np, tot), kind === "photo" && note ? "Précision du client : " + note : "", how, ciq, eq ? "Ne donne aucun chiffre de calories ou de macros." : "Les valeurs nutritionnelles sont celles de la quantité estimée (pas pour 100 g).", "Réponds uniquement avec un objet JSON de cette forme : " + fmt].filter(Boolean).join("\n");
+  return [head, nutriShort(np, tot), kind === "photo" && note ? "Précision du client : " + note : "", how, ciq, aiLang("Les champs « n », « titre », « commentaire » et « conseil » sont dans cette langue ; « ciqual » reste le nom français de la table de l'ANSES."), eq ? "Ne donne aucun chiffre de calories ou de macros." : "Les valeurs nutritionnelles sont celles de la quantité estimée (pas pour 100 g).", "Réponds uniquement avec un objet JSON de cette forme : " + fmt].filter(Boolean).join("\n");
 }
 
 /* ---------- ajout d'un repas : photo, description, saisie ---------- */
@@ -435,8 +435,8 @@ function AddMeal({ mode, np, tot, ai, onAdd, onClose }) {
 function productPrompt(np, tot, ean, n) {
   return ["Tâche : analyse_produit. " + (n > 1 ? "Les photos montrent" : "La photo montre") + " un produit alimentaire emballé (face avant, tableau des valeurs nutritionnelles ou code-barres)." + (ean ? " Code-barres lu : " + ean + "." : ""),
     "Lis les valeurs pour 100 g (ou 100 ml) sur le tableau nutritionnel. Si le tableau n'est pas visible ou pas lisible, mets \"lisible\": false ; donne alors des valeurs typiques avec \"estime\": true seulement si tu reconnais le produit avec certitude, sinon mets les valeurs à null.",
-    nutriShort(np, tot),
-    'Réponds uniquement avec un objet JSON de cette forme : {"produit": "Skyr nature", "marque": "…", "ean": "les chiffres du code-barres s\'ils sont lisibles, sinon null", "lisible": true, "estime": false, "pour100": {"kcal": 64, "p": 11, "c": 4, "f": 0.2, "sucres": 4, "fibres": 0, "sel": 0.1}, "portion_g": 150, "nutriscore": "A", "verdict": "bon" | "occasionnel" | "a_limiter", "commentaire": "1 à 2 phrases pour ce client", "alternative": "une alternative plus intéressante si utile, sinon null"}'].join("\n");
+    nutriShort(np, tot), aiLang("Les champs « commentaire » et « alternative » sont dans cette langue."),
+    'Réponds uniquement avec un objet JSON de cette forme : {"produit": "Skyr nature", "marque": "…", "ean": "les chiffres du code-barres s\'ils sont lisibles, sinon null", "lisible": true, "estime": false, "pour100": {"kcal": 64, "p": 11, "c": 4, "f": 0.2, "sucres": 4, "fibres": 0, "sel": 0.1}, "portion_g": 150, "nutriscore": "A", "verdict": "bon" | "occasionnel" | "a_limiter", "commentaire": "1 à 2 phrases pour ce client", "alternative": "une alternative plus intéressante si utile, sinon null"}'].filter(Boolean).join("\n");
 }
 function parseProduct(j, ean) {
   const p1 = (j && j.pour100) || {};

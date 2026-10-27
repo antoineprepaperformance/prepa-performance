@@ -29,7 +29,7 @@ function scoped(raw) {
   return { ...raw, logs: scopeMap(raw.logs, pre), checkins: scopeMap(raw.checkins, pre), tests: scopeMap(raw.tests, pre), replies: scopeMap(raw.replies, pre), cycle: cycOf(raw.plan),
     allLogs: raw.logs || {} };
 }
-function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, videos: {}, sante: {}, activites: {}, libres: {}, recettes: {}, messages: {}, msgseen: null, ready: false }; }
+function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, videos: {}, sante: {}, aiuse: {}, activites: {}, libres: {}, recettes: {}, messages: {}, msgseen: null, ready: false }; }
 
 /* ---------- base partagée (capability db) ---------- */
 function dbSource(db, cid) {
@@ -37,7 +37,7 @@ function dbSource(db, cid) {
   let data = scoped(raw);
   const em = emitter();
   const unsubs = [];
-  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1, videos: 1, sante: 1, activites: 1, libres: 1, recettes: 1, messages: 1, msgseen: 1 };
+  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1, videos: 1, sante: 1, aiuse: 1, activites: 1, libres: 1, recettes: 1, messages: 1, msgseen: 1 };
   const got = {};
   const push = (k, v) => { raw = { ...raw, [k]: v }; got[k] = 1; raw.ready = Object.keys(need).every((x) => got[x]); data = scoped(raw); em.emit(data); };
   const pre = () => cpre(raw.plan);
@@ -60,7 +60,7 @@ function dbSource(db, cid) {
   docSub("replies/" + cid, "replies", (d) => d || {});
   colSub(base + "/logs", "logs"); colSub(base + "/checkins", "checkins"); colSub(base + "/tests", "tests"); colSub(base + "/habits", "habits");
   colSub(base + "/food", "food", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -60)) : q)); colSub(base + "/nutri", "nutri"); colSub(base + "/ai", "ai"); colSub(base + "/chat", "chat"); colSub(base + "/media", "media"); colSub(base + "/orders", "orders");
-  colSub(base + "/videos", "videos"); colSub(base + "/sante", "sante", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -120)) : q)); colSub(base + "/activites", "activites"); colSub(base + "/libres", "libres"); colSub(base + "/recettes", "recettes");
+  colSub(base + "/videos", "videos"); colSub(base + "/sante", "sante", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -120)) : q)); colSub(base + "/aiuse", "aiuse", (q) => (q.where ? q.where("d", ">=", addDays(todayISO(), -1)) : q)); colSub(base + "/activites", "activites"); colSub(base + "/libres", "libres"); colSub(base + "/recettes", "recettes");
   /* messagerie avec le coach : une année de messages, et la date de dernière lecture côté client */
   colSub(base + "/messages", "messages", (q) => (q.where ? q.where("at", ">=", new Date(Date.now() - 365 * 86400000).toISOString()) : q));
   docSub(base + "/msgstate/seen", "msgseen");
@@ -106,6 +106,7 @@ function dbSource(db, cid) {
     async saveChat(month, doc) { await qwrite(base + "/chat/" + month, () => db.doc(base + "/chat/" + month).set(clone(doc))); },
     async saveVideo(id, doc) { await qwrite(base + "/videos/" + id, () => (doc ? db.doc(base + "/videos/" + id).set(clone(doc)) : db.doc(base + "/videos/" + id).delete())); await writeSummary({ ...data, videos: { ...data.videos, [id]: doc || undefined } }); },
     async saveSante(date, doc) { await qwrite(base + "/sante/" + date, () => (doc ? db.doc(base + "/sante/" + date).set(clone({ ...doc, d: date })) : db.doc(base + "/sante/" + date).delete())); },
+    async saveAiUse(date, doc) { await qwrite(base + "/aiuse/" + date, () => db.doc(base + "/aiuse/" + date).set(clone({ ...doc, d: date }))); },
     async saveActivite(id, doc) { await qwrite(base + "/activites/" + id, () => (doc ? db.doc(base + "/activites/" + id).set(clone(doc)) : db.doc(base + "/activites/" + id).delete())); },
     async saveLibre(id, doc) { await qwrite(base + "/libres/" + id, () => (doc ? db.doc(base + "/libres/" + id).set(clone(doc)) : db.doc(base + "/libres/" + id).delete())); },
     async saveRecette(id, doc) { await qwrite(base + "/recettes/" + id, () => (doc ? db.doc(base + "/recettes/" + id).set(clone(doc)) : db.doc(base + "/recettes/" + id).delete())); },
@@ -150,6 +151,7 @@ function localSource(initial) {
     async saveChat(month, doc) { set("chat", { ...data.chat, [month]: clone(doc) }); },
     async saveVideo(id, doc) { const m = { ...(data.videos || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("videos", m); },
     async saveSante(date, doc) { const m = { ...(data.sante || {}) }; if (doc) m[date] = clone({ ...doc, d: date }); else delete m[date]; set("sante", m); },
+    async saveAiUse(date, doc) { set("aiuse", { ...(data.aiuse || {}), [date]: clone({ ...doc, d: date }) }); },
     async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
     async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
     async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
@@ -195,6 +197,7 @@ function memSource(seed, mode) {
     async saveChat(month, doc) { set("chat", { ...data.chat, [month]: clone(doc) }); },
     async saveVideo(id, doc) { const m = { ...(data.videos || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; data = { ...data, videos: m }; data = { ...data, profile: { ...data.profile, sum: summarize(scoped(data)) } }; emit(); },
     async saveSante(date, doc) { const m = { ...(data.sante || {}) }; if (doc) m[date] = clone({ ...doc, d: date }); else delete m[date]; set("sante", m); },
+    async saveAiUse(date, doc) { set("aiuse", { ...(data.aiuse || {}), [date]: clone({ ...doc, d: date }) }); },
     async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
     async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
     async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
@@ -280,7 +283,7 @@ function errWhy(e, coach) {
 /* droit à l'effacement : supprime toutes les données d'un client */
 async function deleteClient(db, cid) {
   const base = "clients/" + cid;
-  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders", "videos", "sante", "activites", "libres", "recettes", "messages", "msgstate"]) {
+  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders", "videos", "sante", "aiuse", "activites", "libres", "recettes", "messages", "msgstate"]) {
     try { const s = await db.collection(base + "/" + sub).get(); for (const doc of s.docs) await dbDel(db, base + "/" + sub + "/" + doc.id); } catch (e) {}
   }
   for (const p of ["plans/" + cid, "replies/" + cid, "coachnotes/" + cid, base]) { try { await dbDel(db, p); } catch (e) {} }

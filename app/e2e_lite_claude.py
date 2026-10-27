@@ -69,7 +69,7 @@ async def run():
             await co.locator("ul.alerts button", has_text="Lina").first.click(); await co.wait_for_timeout(500)
             await btn(co, "Paiement reçu · activer"); await co.wait_for_timeout(700)
             plan = await mdb(co, "plans/u_lite1")
-            ok(plan and plan["offer"] == "lite" and plan["lite"]["mode"] == "abo" and 28 <= (plan["untilMs"] - plan["startMs"]) / DAY <= 31.1, "coach : accès Lite d'un mois activé", plan)
+            ok(plan and plan["offer"] == "lite" and plan["lite"]["mode"] == "abo" and 27.9 <= (plan["untilMs"] - plan["startMs"]) / DAY <= 31.1, "coach : accès Lite d'un mois activé", plan)
             ok(await has(co, "Lite jusqu'au"), "coach : statut « Lite jusqu'au »")
             await c1.bring_to_front(); await c1.wait_for_timeout(1000)
             ok(await has(c1, "prochaine séance", 6000) and await has(c1, "Formule Lite · accès jusqu'au"), "client : programme ouvert, date de fin d'accès")
@@ -82,7 +82,7 @@ async def run():
             u0 = plan["untilMs"]
             await btn(co, "Prolonger d'un mois"); await btn(co, "Enregistrer", exact=True); await co.wait_for_timeout(600)
             plan = await mdb(co, "plans/u_lite1")
-            ok(28 <= (plan["untilMs"] - u0) / DAY <= 31.1 and plan["lite"]["mode"] == "abo", "coach : prolongation d'un mois")
+            ok(27.9 <= (plan["untilMs"] - u0) / DAY <= 31.1 and plan["lite"]["mode"] == "abo", "coach : prolongation d'un mois")
             await shot(co, "coach_plan_lite")
             # programme fini : le client choisit la suite, l'espace coach l'applique
             await mset(co, "plans/u_lite1", {"start": (TODAY - datetime.timedelta(weeks=13)).isoformat()})

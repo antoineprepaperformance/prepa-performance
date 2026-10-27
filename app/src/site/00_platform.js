@@ -8,7 +8,7 @@
     try {
       firebase.initializeApp(fb);
       auth = firebase.auth();
-      try { auth.languageCode = "fr"; } catch (e) {}
+      try { auth.languageCode = typeof LANG === "string" ? LANG : "fr"; } catch (e) {}
       if (C.emulators && C.emulators.auth) auth.useEmulator(C.emulators.auth, { disableWarnings: true });
       if (C.authPersistence === "session") { try { auth.setPersistence(firebase.auth.Auth.Persistence.SESSION); } catch (e) {} }
       fs = firebase.firestore();

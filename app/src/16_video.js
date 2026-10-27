@@ -6,7 +6,7 @@ function ytSearch(ex) { return "https://www.youtube.com/results?search_query=" +
 /* la formule permet-elle l'envoi au coach ? Suivi par défaut ; réglable par le coach */
 function videoCoachOk(settings, plan) {
   const who = (settings && settings.video && settings.video.coach) || "suivi";
-  if (!plan || plan.offer === "lite") return false;
+  if (!plan || plan.offer === "lite" || offerAuto(plan.offer)) return false;
   return who === "toutes" || plan.offer === who || (who === "suivi" && plan.offer === "suivi");
 }
 
@@ -111,7 +111,7 @@ function VideoCheck({ e, ex, data, src, plan, settings, ai, onClose }) {
         "Mesures faites par le client : " + (frames.flatMap((f) => f.marks.map((m) => "image à " + f.t + " s : " + m.txt)).join(" ; ") || "aucune") + ".",
         "Profil : " + nivName(effNiveau(plan, data.profile)) + ". Sport : " + ((data.profile && data.profile.sport) || "—") + ". Ressenti du client : " + (note || "—") + ".",
         "Réponds en JSON strict : {\"resume\": \"2 phrases\", \"points\": [{\"point\": \"...\", \"ok\": true|false, \"conseil\": \"1 phrase concrète\"}], \"priorite\": \"la correction n°1, une phrase\", \"securite\": \"vide ou une alerte si risque de blessure\"}.",
-        "Reste prudent : une image ne montre pas tout le mouvement ; si l'angle de vue empêche de juger un point, dis-le. Pas de diagnostic médical. Tutoie le client, en français."].join("\n");
+        "Reste prudent : une image ne montre pas tout le mouvement ; si l'angle de vue empêche de juger un point, dis-le. Pas de diagnostic médical. Tutoie le client, en français.", aiLang("Les textes du JSON sont dans cette langue.")].filter(Boolean).join("\n");
       const j = await ai.sample.json(prompt, { images: imgs, modelTier: "default" });
       setAiRes({ ...j, busy: false });
     } catch (err) { setAiRes({ busy: false, err: aiErr(err) }); } finally { setBusy(false); }
@@ -211,7 +211,7 @@ function VideoDetail({ v, src, mine, coachMode }) {
     ${v.note ? html`<p className="small"><b>${coachMode ? "Le client" : "Ma note"} :</b> ${v.note}</p>` : null}
     ${v.link ? html`<p className="small"><a href=${v.link} target="_blank" rel="noopener">Voir la vidéo complète</a></p>` : null}
     ${v.ai ? html`<div className="coachmsg ai"><span className="ai-dot">✦</span><div className="stack-s"><div className="eyebrow">Coach IA</div><p className="small">${v.ai.resume}</p>${v.ai.priorite ? html`<p className="small"><b>Priorité :</b> ${v.ai.priorite}</p>` : null}</div></div>` : null}
-    ${v.reply && !coachMode ? html`<div className="coachmsg"><${Logo} size=${24} /><div><div className="eyebrow">Correction d'Antoine · ${fmtD(v.reply.at)}</div><p>${v.reply.text}</p></div></div>` : null}
+    ${v.reply && !coachMode ? html`<div className="coachmsg"><${Logo} size=${24} /><div><div className="eyebrow">Correction d'Antoine · ${fmtD(v.reply.at)}</div><p data-notr="1">${v.reply.text}</p></div></div>` : null}
     ${coachMode && v.toCoach ? html`<${Field} label="Ta correction" id=${"vr-" + v.id}><textarea id=${"vr-" + v.id} rows="3" value=${reply} onChange=${(e) => setReply(e.target.value)} placeholder="Ce qui va bien, la correction prioritaire, un repère à sentir"></textarea></${Field}>
       <div className="actions"><${Btn} small onClick=${send} disabled=${busy || !reply.trim()}>${v.reply ? "Mettre à jour la correction" : "Envoyer la correction"}</${Btn}></div>` : null}
   </div>`;

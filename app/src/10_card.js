@@ -234,7 +234,7 @@ function AthleteCard({ data, stats, evo, size, idp }) {
     <g clipPath=${"url(#" + id + "sp)"}>${[0, 1, 2, 3, 4].map((i) => html`<line key=${i} x1=${-40 + i * 90} y1="430" x2=${80 + i * 90} y2="0" stroke=${t === "elite" ? "#e9c45a" : "#fff"} strokeOpacity="0.06" strokeWidth="18"></line>`)}</g>
     <text x="30" y="82" fill=${txt} style=${{ fontFamily: "Barlow Condensed, Arial Narrow, sans-serif", fontWeight: 700 }} fontSize="64">${stats.overall}</text>
     <text x="32" y="106" fill=${txt} style=${{ fontFamily: "Barlow Condensed, Arial Narrow, sans-serif", fontWeight: 700, letterSpacing: "1px" }} fontSize="19">${stats.pos}</text>
-    <text x="32" y="130" fill=${txt} fillOpacity="0.8" style=${{ fontFamily: "Barlow, Arial, sans-serif", fontWeight: 600 }} fontSize="12">${stats.tier.n.toUpperCase()}</text>
+    <text x="32" y="130" fill=${txt} fillOpacity="0.8" style=${{ fontFamily: "Barlow, Arial, sans-serif", fontWeight: 600 }} fontSize="12">${tr(stats.tier.n).toUpperCase()}</text>
     ${evo && evo.d ? html`<text x="32" y="152" fill=${evo.d > 0 ? (t === "elite" ? "#7ee2a8" : "#145c34") : "#8a1f2a"} style=${{ fontFamily: "Barlow, Arial, sans-serif", fontWeight: 700 }} fontSize="14">${(evo.d > 0 ? "▲ +" : "▼ ") + evo.d}</text>` : null}
     <g transform="translate(34 172) scale(0.62)" stroke=${txt} fill="none" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85">
       <rect x="4" y="9.5" width="40" height="3" rx="1.5" fill=${txt} stroke="none"></rect><rect x="7" y="4" width="4.5" height="14" rx="1.2" fill=${txt} stroke="none"></rect><rect x="36.5" y="4" width="4.5" height="14" rx="1.2" fill=${txt} stroke="none"></rect>

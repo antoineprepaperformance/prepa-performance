@@ -221,7 +221,7 @@ function SettingsView({ settings, db, dl, rows }) {
   const [coach, setCoach] = useState({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(s0.coach || {}) });
   const [offers, setOffers] = useState(() => Object.fromEntries(OFFERS.map((o) => [o.id, ((s0.offers && s0.offers[o.id]) || o.prix).slice()])));
   const [busy, setBusy] = useState(false);
-  const aiInit = () => { const c = aiConf(s0, null); return { on: c.on, rules: c.rules, allow: { ...c.allow } }; };
+  const aiInit = () => { const c = aiConf(s0, null); return { on: c.on, rules: c.rules, allow: { ...c.allow }, quota: Object.fromEntries(OFFERS.map((o) => [o.id, aiQuota(s0, o.id)])) }; };
   const [aiS, setAiS] = useState(aiInit);
   const payInit = () => ({ mode: "manuel", info: "", links: {}, ...(s0.pay || {}) });
   const [pay, setPay] = useState(payInit);
@@ -245,7 +245,7 @@ function SettingsView({ settings, db, dl, rows }) {
     if (badUrl) { toast("Adresse invalide : elle doit commencer par https://", "warn"); return; }
     if (String(sanS.raccourci || "").trim() && !santeRacc({ sante: { raccourci: sanS.raccourci } })) { toast("Lien du raccourci invalide : il commence par https://www.icloud.com/shortcuts/", "warn"); return; }
     const links = Object.fromEntries(Object.entries(pay.links || {}).map(([k, v]) => [k, String(v || "").trim()]).filter(([, v]) => v));
-    try { await dbSet(db, "settings/app", { ...(settings || {}), video: { coach: vid }, coach, offers: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, v.map((x) => num(x) || 0)])), ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow },
+    try { await dbSet(db, "settings/app", { ...(settings || {}), video: { coach: vid }, coach, offers: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, v.map((x) => num(x) || 0)])), ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow, quota: Object.fromEntries(OFFERS.map((o) => { const x = aiS.quota[o.id] || {}; const n = (v) => clamp(Math.round(num(v) || 0), 0, AI_QUOTA_MAX); return [o.id, { q: n(x.q), ph: n(x.ph) }]; })) },
       msg: { on: msgS.on, lite: msgS.lite }, sante: { raccourci: String(sanS.raccourci || "").trim() }, pay: { mode: pay.mode, info: String(pay.info || "").trim(), links, relay: String(pay.relay || "").trim() }, lite: { on: lite.on !== false, mois: num(lite.mois) || LITE.prix.mois, an: num(lite.an) || LITE.prix.an, portail: String(lite.portail || "").trim() }, legal: Object.fromEntries(Object.entries(leg).map(([k, v]) => [k, String(v || "").trim()])), updatedAt: nowISO() }); toast("Réglages enregistrés.", "ok"); }
     catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); }
   };
@@ -287,7 +287,7 @@ function SettingsView({ settings, db, dl, rows }) {
         <${Field} label="Consignes de paiement sans lien Stripe (facultatif)" id="pay-info"><textarea id="pay-info" rows="2" value=${pay.info || ""} onChange=${(e) => setPay({ ...pay, info: e.target.value })} placeholder="Ex. Je t'envoie un lien de paiement ou un RIB par e-mail sous 24 h."></textarea></${Field}>
       </div></${Card}>
     <${Card} title="Correction vidéo" sub="Le client filme son mouvement, garde 3 images et te les envoie avec ses repères">
-      <${Field} label="Envoi à toi possible pour"><${Seg} options=${[{ v: "suivi", n: "Formule Suivi" }, { v: "toutes", n: "Essentiel, Suivi et Hybride" }]} value=${vid} onChange=${setVid} /></${Field}>
+      <${Field} label="Envoi à toi possible pour"><${Seg} options=${[{ v: "suivi", n: "Formule Suivi" }, { v: "toutes", n: "Essentiel et Suivi" }]} value=${vid} onChange=${setVid} /></${Field}>
       <p className="muted small">Le forfait Lite garde la fiche animée et l'autocontrôle vidéo, sans envoi au coach.</p></${Card}>
     <${Card} title="Forfait Lite" sub=${"En autonomie : programmes, séances flash, récup, recettes et santé au quotidien, sans réponse aux bilans" + (window.IS_SITE ? " et sans correction vidéo par toi" : ", sans correction vidéo par toi et sans coach IA")}>
       <div className="form">
@@ -319,8 +319,8 @@ function SettingsView({ settings, db, dl, rows }) {
     <${Card} title="Messagerie avec tes clients" sub="Tes clients t'écrivent depuis l'application (bulle en haut à droite) et tu réponds dans Messages ou dans leur fiche. Pas de bouton d'appel ni d'e-mail : le contact passe par écrit. Les visiteurs du site sont invités à créer leur compte gratuit pour t'écrire.">
       <div className="form">
         <${Field} label="Messagerie"><${Seg} options=${[{ v: true, n: "Activée" }, { v: false, n: "Désactivée" }]} value=${msgS.on} onChange=${(v) => setMsgS({ ...msgS, on: v })} /></${Field}>
-        <label className="chk"><input type="checkbox" id="msg-lite" checked=${msgS.lite} onChange=${(e) => setMsgS({ ...msgS, lite: e.target.checked })} /><span>Ouverte aussi aux clients du forfait Lite</span></label>
-        <span className="field-h">Par défaut, le forfait Lite (en autonomie) n'a pas la messagerie : ses clients voient seulement tes coordonnées.</span>
+        <label className="chk"><input type="checkbox" id="msg-lite" checked=${msgS.lite} onChange=${(e) => setMsgS({ ...msgS, lite: e.target.checked })} /><span>Ouverte aussi aux clients du forfait Lite et de la formule Coach IA</span></label>
+        <span className="field-h">Par défaut, le forfait Lite (en autonomie) et la formule Coach IA (conduite par l'IA) n'ont pas la messagerie : leurs clients voient seulement tes coordonnées légales.</span>
       </div></${Card}>
     ${html`<${Card} title="Coach IA" sub=${window.IS_SITE ? "Répond seul aux questions de tes clients, estime les repas en photo, analyse chaque bilan et ajuste le programme dans des limites de sécurité. Sur le site, il passe par ton relais Cloudflare et son IA gratuite (Workers AI, modèle Gemma) : 0 €, dans la limite de l'allocation gratuite du jour, partagée entre tes clients." : "Répond seul aux questions de tes clients, analyse chaque bilan et ajuste le programme dans des limites de sécurité. L'IA tourne sur le compte Claude du client : rien à payer de ton côté."}>
       <div className="form">
@@ -329,6 +329,11 @@ function SettingsView({ settings, db, dl, rows }) {
         <div className="field"><span className="field-l">Ce que le coach IA peut modifier seul</span>
           ${[["nutri", "Les cibles nutritionnelles (calories, macros, pas)"], ["subst", "Remplacer un exercice (douleur, matériel, spécificité du sport)"], ["charge", "Donner une consigne de charge ou un mot pour la semaine"]].map(([k, n]) => html`<label key=${k} className="chk"><input type="checkbox" id=${"ai-" + k} checked=${aiS.allow[k]} onChange=${(e) => setAiS({ ...aiS, allow: { ...aiS.allow, [k]: e.target.checked } })} /><span>${n}</span></label>`)}
           <span className="field-h">Sinon, il propose le changement et te le signale. Chaque ajustement apparaît dans « À traiter » ; tu peux l'annuler depuis la fiche du client.</span></div>
+        <div className="field"><span className="field-l">Limites par jour et par client</span>
+          <div className="tscroll"><table className="ptable"><thead><tr><th>Formule</th><th>Questions</th><th>Photos</th></tr></thead>
+            <tbody>${OFFERS.map((o) => { const x = aiS.quota[o.id] || {}; const setQ = (k, v) => setAiS({ ...aiS, quota: { ...aiS.quota, [o.id]: { ...x, [k]: v.replace(/[^\d]/g, "").slice(0, 3) } } });
+              return html`<tr key=${o.id}><th>${o.n}</th><td><input id=${"aiq-" + o.id} inputMode="numeric" aria-label=${"Questions par jour " + o.n} value=${x.q ?? ""} onChange=${(e) => setQ("q", e.target.value)} /></td><td><input id=${"aiph-" + o.id} inputMode="numeric" aria-label=${"Photos par jour " + o.n} value=${x.ph ?? ""} onChange=${(e) => setQ("ph", e.target.value)} /></td></tr>`; })}</tbody></table></div>
+          <span className="field-h">Une question = un message, un repas décrit, une étiquette, une vidéo ou une recette ; une photo = un repas ou une étiquette en photo. L'analyse du bilan de la semaine ne compte pas. Le Lite n'a pas le coach IA ; toi, tu n'as pas de limite. ${window.IS_SITE ? "Sur le site, l'allocation gratuite de Cloudflare (environ 70 à 180 questions par jour pour tous tes clients) reste la limite d'ensemble ; au-delà, voir MISE_EN_LIGNE.md, étape 9." : "Dans la version Claude, chaque client utilise son propre compte Claude."}</span></div>
         <${Field} label="Tes consignes (lues par l'IA à chaque réponse)" id="ai-rules" hint="Ta philosophie, tes règles, ce que tu ne veux jamais voir conseillé. Les règles de sécurité restent prioritaires."><textarea id="ai-rules" rows="7" value=${aiS.rules} onChange=${(e) => setAiS({ ...aiS, rules: e.target.value })}></textarea></${Field}>
         <div className="actions"><button type="button" className="linkbtn" onClick=${() => setAiS({ ...aiS, rules: DEFAULT_AI_RULES })}>Rétablir les consignes par défaut</button></div>
       </div></${Card}>`}

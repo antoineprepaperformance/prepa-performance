@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="0478052251">
+<meta name="app-build" content="1bafeb4aa0">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -404,6 +404,13 @@ details ul { margin: 8px 0 0; padding-left: 18px; }
 .macro-h { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
 .macro-h b { font-variant-numeric: tabular-nums; }
 .pbar-f.over { background: var(--warn); }
+.pbar-f.ok { background: var(--ok); }
+.hydra-h { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.hydra-v { font-size: 26px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.hydra-btns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0 8px; }
+.hydra-btns .addbtn { padding: 9px 10px; }
+.hydra-btns .addbtn:disabled { opacity: 0.45; }
+@media (max-width: 420px) { .hydra-btns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .alert.okb { background: var(--ok-bg); border-color: transparent; }
 .alert.okb b { color: var(--ok); }
 .addrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; }
@@ -4614,6 +4621,8 @@ function clientContext({ data, plan, prog, stats, lib }) {
     const tot = dayTotals(day);
     if (day && (day.meals || []).length) L.push("Aujourd'hui, repas notés : " + day.meals.map((m) => slotName(m.slot) + " « " + m.title + " »" + (np.mode !== "equilibre" ? " " + fmtN(m.kcal, 0) + " kcal / P " + fmtN(m.p, 0) + " g" : "")).join(" ; ") + (np.mode !== "equilibre" ? " — total " + fmtN(tot.kcal, 0) + " kcal, P " + fmtN(tot.p, 0) + " g, G " + fmtN(tot.c, 0) + " g, L " + fmtN(tot.f, 0) + " g" : ""));
     else L.push("Aujourd'hui : aucun repas noté pour l'instant.");
+    { const hy = hydraTarget(data, np, today), st = np.mode !== "equilibre" ? sweatTest(data) : null;
+      L.push("Hydratation aujourd'hui : " + fmtN(waterOf(data, today), 2) + " L bus sur un objectif de " + fmtN(hy.total, 1) + " L (base " + fmtN(hy.base, 1) + " L" + (hy.extra ? " + " + fmtN(hy.extra, 1) + " L pour " + hy.mins + " min d'entraînement" : "") + ")" + (st ? " · débit de sueur mesuré le " + fmtD(st.d) + " : " + fmtN(num(st.taux), 1) + " L par heure, perte " + fmtN(num(st.perte), 1) + " % du poids" : "")); }
     const wk = Array.from({ length: 7 }, (_, i) => addDays(today, -i - 1)).map((d) => ({ d, t: dayTotals(data.food[d]), n: ((data.food[d] || {}).meals || []).length })).filter((x) => x.n);
     if (wk.length && np.mode !== "equilibre") L.push("7 jours précédents : " + wk.length + " jours notés · moyenne " + fmtN(wk.reduce((s, x) => s + x.t.kcal, 0) / wk.length, 0) + " kcal et " + fmtN(wk.reduce((s, x) => s + x.t.p, 0) / wk.length, 0) + " g de protéines par jour noté.");
   } else L.push("Nutrition : pas encore d'objectif défini (onglet Nutrition).");
@@ -5556,6 +5565,117 @@ function EnergyCard({ data, src, np, date }) {
   </${Card}>`;
 }
 
+/* ---------- hydratation ----------
+   Base : 33 mL par kg et par jour, entre 1,5 et 3,5 L (ordre de grandeur des apports de référence de l'EFSA, 2010 :
+   2 L chez la femme, 2,5 L chez l'homme, dont environ 80 % par les boissons). Mode équilibre : repère sans le poids.
+   Jours d'entraînement : + la sueur perdue pendant l'effort, au débit mesuré par le test de pesée, sinon 0,5 L par heure,
+   car une perte de plus de 2 % du poids de corps dégrade la performance (ACSM, Sawka 2007). */
+const HYDRA_REFS = [
+  "EFSA Panel on Dietetic Products, Nutrition, and Allergies. Scientific opinion on dietary reference values for water. EFSA Journal. 2010;8(3):1459.",
+  "Sawka MN, Burke LM, Eichner ER, Maughan RJ, Montain SJ, Stachenfeld NS. American College of Sports Medicine position stand. Exercise and fluid replacement. Med Sci Sports Exerc. 2007;39(2):377-390.",
+  "Thomas DT, Erdman KA, Burke LM. American College of Sports Medicine joint position statement. Nutrition and athletic performance. Med Sci Sports Exerc. 2016;48(3):543-568.",
+  "Shirreffs SM, Taylor AJ, Leiper JB, Maughan RJ. Post-exercise rehydration in man: effects of volume consumed and drink sodium content. Med Sci Sports Exerc. 1996;28(10):1260-1271.",
+  "Armstrong LE, Maresh CM, Castellani JW, et al. Urinary indices of hydration status. Int J Sport Nutr. 1994;4(3):265-279.",
+  "Parretti HM, Aveyard P, Blannin A, et al. Efficacy of water preloading before main meals as a strategy for weight loss in primary care patients with obesity: RCT. Obesity. 2015;23(9):1785-1791.",
+];
+const r2 = (v) => Math.round(v * 100) / 100;
+/* minutes d'entraînement du jour : séances enregistrées et activités notées */
+function hydraMinutes(data, d) {
+  let m = 0;
+  Object.values(data.logs || {}).forEach((l) => { if (l && l.date === d) m += clamp(num(l.duree) || 60, 10, 240); });
+  Object.values(data.activites || {}).forEach((a) => { if (a && a.d === d) m += clamp(num(a.duree) || 0, 0, 600); });
+  return Math.min(m, 600);
+}
+/* dernier test de sueur (moins de 6 mois) */
+function sweatTest(data) {
+  const ds = Object.keys(data.sante || {}).filter((d) => data.sante[d] && data.sante[d].sueur && num(data.sante[d].sueur.taux)).sort();
+  const d = ds[ds.length - 1];
+  return d && diffDays(d, todayISO()) <= 183 ? { d, ...data.sante[d].sueur } : null;
+}
+function hydraTarget(data, np, d) {
+  const eq = !np || np.mode === "equilibre";
+  const sex = (np && np.sex) || ((data.nutri && data.nutri.plan) || {}).sex;
+  const w = eq ? null : npWeight(data, np);
+  const base = w ? clamp(Math.round(w * 0.033 * 10) / 10, 1.5, 3.5) : sex === "F" ? 1.6 : 2.0;
+  const mins = hydraMinutes(data, d || todayISO());
+  const st = eq ? null : sweatTest(data);
+  const rate = st ? clamp(num(st.taux), 0.2, 3) : 0.5;
+  const extra = mins ? Math.round(Math.min(2.5, rate * mins / 60) * 10) / 10 : 0;
+  return { base, extra, total: Math.round((base + extra) * 10) / 10, mins, rate, measured: !!st, w };
+}
+function waterOf(data, d) { const s = data.sante && data.sante[d]; return s ? num(s.eau) || 0 : 0; }
+function SweatTest({ data, src, date, onDone }) {
+  const toast = useToast();
+  const mins0 = hydraMinutes(data, date);
+  const [f, setF] = useState({ avant: "", apres: "", bu: "", min: mins0 ? String(mins0) : "60" });
+  const a = num(f.avant), b = num(f.apres), bu = num(f.bu) || 0, mn = num(f.min);
+  const ok = a !== null && b !== null && mn !== null && a >= 30 && a <= 300 && b >= 30 && b <= 300 && Math.abs(a - b) <= 5 && mn >= 15 && mn <= 300 && bu >= 0 && bu <= 5;
+  const taux = ok ? (a - b + bu) / (mn / 60) : null;
+  const perte = ok ? (a - b) / a * 100 : null;
+  const valid = ok && taux >= 0.1 && taux <= 4;
+  const save = async () => {
+    if (!valid) { toast("Vérifie les valeurs : poids en kg, durée en minutes.", "warn"); return; }
+    const cur = (src.get().sante || {})[date] || {};
+    try { await src.saveSante(date, { ...cur, at: nowISO(), sueur: { avant: a, apres: b, bu: r2(bu), min: Math.round(mn), taux: r2(taux), perte: Math.round(perte * 10) / 10 } }); toast("Test de sueur enregistré : ton objectif d'eau des jours d'entraînement en tient compte.", "ok"); onDone(); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); }
+  };
+  return html`<div className="stack-s">
+    <p className="small">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p>
+    <div className="row2"><${Field} label="Poids avant (kg)" id="sw-avant"><input id="sw-avant" inputMode="decimal" value=${f.avant} onChange=${(e) => setF({ ...f, avant: e.target.value })} /></${Field}>
+      <${Field} label="Poids après (kg)" id="sw-apres"><input id="sw-apres" inputMode="decimal" value=${f.apres} onChange=${(e) => setF({ ...f, apres: e.target.value })} /></${Field}></div>
+    <div className="row2"><${Field} label="Bu pendant la séance (L)" id="sw-bu"><input id="sw-bu" inputMode="decimal" placeholder="0" value=${f.bu} onChange=${(e) => setF({ ...f, bu: e.target.value })} /></${Field}>
+      <${Field} label="Durée de la séance (min)" id="sw-min"><input id="sw-min" inputMode="numeric" value=${f.min} onChange=${(e) => setF({ ...f, min: e.target.value })} /></${Field}></div>
+    ${valid ? html`<div className=${"alert " + (perte > 2 ? "warn" : "okb")}><div><b>Tu perds environ ${fmtN(taux, 1)} L de sueur par heure</b>
+      <p>Perte pendant la séance : ${fmtN(perte, 1)} % de ton poids${perte > 2 ? ", au-dessus du seuil de 2 % où la performance baisse : bois davantage pendant l'effort" : ", sous le seuil de 2 % où la performance baisse"}.${a - b > 0 ? " Pour récupérer, bois environ " + fmtN(Math.round((a - b) * 1.5 * 10) / 10, 1) + " L dans les heures qui suivent (1,5 fois la perte), avec un repas ou une pincée de sel." : ""}</p></div></div>` : null}
+    <div className="actions"><${Btn} small onClick=${save} disabled=${!valid}>Enregistrer le test</${Btn}><${Btn} small kind="quiet" onClick=${onDone}>Annuler</${Btn}></div>
+  </div>`;
+}
+function HydraCard({ data, src, np, date }) {
+  const toast = useToast();
+  const [edit, setEdit] = useState(null);
+  const [sw, setSw] = useState(false);
+  const eq = !np || np.mode === "equilibre";
+  const h = hydraTarget(data, np, date);
+  const drunk = waterOf(data, date);
+  const isToday = date === todayISO();
+  const st = eq ? null : sweatTest(data);
+  const setWater = async (v) => {
+    const cur = (src.get().sante || {})[date] || {};
+    const out = { ...cur, at: nowISO(), src: cur.src && !String(cur.src).includes("manuel") ? cur.src + "+manuel" : cur.src || "manuel" };
+    if (v <= 0) delete out.eau; else out.eau = r2(Math.min(10, v));
+    try { await src.saveSante(date, out); } catch (e) { toast("Enregistrement impossible.", "bad"); }
+  };
+  const add = (ml) => setWater(waterOf(src.get(), date) + ml / 1000);
+  const saveEdit = async () => { const v = num(edit); if (v === null || v < 0 || v > 10) { toast("Entre une quantité en litres, entre 0 et 10.", "warn"); return; } await setWater(v); setEdit(null); };
+  const last7 = Array.from({ length: 7 }, (_, i) => addDays(todayISO(), i - 6)).map((d) => ({ x: JOURS[parseISO(d).getDay()].slice(0, 3) + ".", y: r2(waterOf(data, d)), muted: d === todayISO() }));
+  const r = drunk / (h.total || 1);
+  const left = Math.max(0, Math.round((h.total - drunk) * 10) / 10);
+  return html`<${Card} title="Hydratation" sub=${isToday ? "Ce que tu as bu aujourd'hui (eau et boissons sans alcool)" : "Ce que tu as bu ce jour-là"}
+    action=${src && edit === null ? html`<${Btn} small kind="ghost" onClick=${() => setEdit(drunk ? String(r2(drunk)).replace(".", ",") : "")}>Saisir</${Btn}>` : null}>
+    <div className="hydra-h"><b className="hydra-v">${fmtN(drunk, 2)} L</b><span className="muted small">sur ${fmtN(h.total, 1)} L${r >= 1 ? " · objectif atteint" : isToday ? " · encore " + fmtN(left, 1) + " L" : ""}</span></div>
+    <${Bar} value=${r} tone=${r >= 1 ? "ok" : ""} />
+    ${edit === null ? html`<div className="hydra-btns">
+      <button type="button" className="addbtn" onClick=${() => add(250)}><b>+ 250 mL</b><small>un verre</small></button>
+      <button type="button" className="addbtn" onClick=${() => add(500)}><b>+ 500 mL</b><small>une bouteille</small></button>
+      <button type="button" className="addbtn" onClick=${() => add(750)}><b>+ 750 mL</b><small>une gourde</small></button>
+      <button type="button" className="addbtn" disabled=${drunk <= 0} onClick=${() => add(-250)}><b>− 250 mL</b><small>corriger</small></button></div>`
+      : html`<div className="row2"><${Field} label="Total bu ce jour (L)" id="hy-edit"><input id="hy-edit" inputMode="decimal" value=${edit} onChange=${(e) => setEdit(e.target.value)} /></${Field}></div>
+      <div className="actions"><${Btn} small onClick=${saveEdit}>Enregistrer</${Btn}><${Btn} small kind="quiet" onClick=${() => setEdit(null)}>Annuler</${Btn}></div>`}
+    <p className="small muted">${eq ? "Repère du jour : " + fmtN(h.base, 1) + " L" : "Base : " + fmtN(h.base, 1) + " L (33 mL par kg)"}${h.extra ? " + " + fmtN(h.extra, 1) + " L pour " + plural(h.mins, "minute") + " d'entraînement (" + (h.measured ? "ton débit de sueur mesuré, " + fmtN(h.rate, 1) + " L par heure" : "0,5 L par heure d'effort") + ")" : isToday ? ". Les jours d'entraînement, l'objectif augmente dès que ta séance est enregistrée" : ""}.</p>
+    <${BarChart} data=${last7} unit="L" digits=${1} target=${h.base} height=${120} />
+    <details><summary>Bien boire selon ton objectif</summary><ul className="small">
+      <li>Urines claires ou jaune pâle : tu es bien hydraté ; foncées : bois davantage (Armstrong, 1994).</li>
+      ${eq ? null : html`<li>Avant l'entraînement : environ ${fmtN(Math.round((h.w || 70) * 6 / 50) * 50, 0)} mL dans les 4 heures qui précèdent (5 à 7 mL par kg, Thomas 2016).</li>`}
+      <li>Pendant l'effort : bois régulièrement pour ne pas perdre plus de 2 % de ton poids, seuil où la performance baisse (Sawka, 2007).</li>
+      <li>Après : 1,5 fois l'eau perdue, avec un repas ou un peu de sel pour la garder (Shirreffs, 1996).</li>
+      ${np && np.goal === "perte" && !eq ? html`<li>Objectif perte de poids : un grand verre d'eau (500 mL) 30 minutes avant les deux repas principaux a aidé à perdre 1,3 kg de plus en 12 semaines (Parretti, 2015).</li>` : null}
+    </ul></details>
+    ${eq ? null : html`<details open=${sw}><summary onClick=${(e) => { e.preventDefault(); setSw(!sw); }}>Mesurer ma perte en sueur${st ? " · dernier test : " + fmtN(num(st.taux), 1) + " L par heure (" + fmtD(st.d) + ")" : ""}</summary>
+      ${sw ? html`<${SweatTest} data=${data} src=${src} date=${date} onDone=${() => setSw(false)} />` : null}</details>`}
+    <details><summary>Références scientifiques</summary><ol className="refs" data-notr>${HYDRA_REFS.map((x, i) => html`<li key=${i}>${x}</li>`)}</ol></details>
+  </${Card}>`;
+}
+
 /* ---------- onglet Nutrition du client ---------- */
 function NutritionTab({ data, src, plan, prog, settings, db }) {
   const ai = useAI();
@@ -5608,6 +5728,7 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
           <div className="meal-h"><b>${m.title}</b>${VERDICT[m.verdict] ? html`<${Pill} tone=${VERDICT[m.verdict].t}>${VERDICT[m.verdict].n}</${Pill}>` : null}<button type="button" className="linkbtn" onClick=${() => delMeal(m.id)}>Supprimer</button></div>
           <p className="muted small">${(m.items || []).map((x) => x.n + (eq || !x.g ? "" : " " + Math.round(x.g) + " g")).join(" · ")}${eq ? "" : " — " + fmtN(m.kcal, 0) + " kcal · P " + fmtN(m.p, 0) + " g"}</p>
           ${m.comment ? html`<p className="small">${m.comment}</p>` : null}</div>`)}</${Card}>`) : html`<${Empty} title="Aucun repas noté" text=${canAI ? "Prends ton repas en photo, scanne un produit ou décris-le." : "Scanne un produit ou ajoute tes aliments en quelques secondes."} />`}
+      <${HydraCard} data=${data} src=${src} np=${np} date=${date} />
       ${eq ? null : html`<${EnergyCard} data=${data} src=${src} np=${np} date=${date} />`}
       ${eq ? null : html`<${Card} title="7 derniers jours" sub="Calories notées par jour ; le trait indique ta cible"><${BarChart} data=${last7} unit="kcal" target=${np.targets.kcal} /></${Card}>`}
     ` : null}
@@ -5628,6 +5749,7 @@ function NutriToday({ data, go }) {
   return html`<button type="button" className="nutri-mini" onClick=${() => go("nutrition")}>
     <div className="nm-h"><b>Nutrition du jour</b><span className="muted small">${plural(n, "repas", "repas")} noté${n > 1 ? "s" : ""}</span></div>
     ${typeof weekRecipe === "function" && weekRecipe(data, np) ? html`<span className="small">Recette de la semaine : <b>${weekRecipe(data, np).n}</b></span>` : null}
+    <span className="small">Eau : ${fmtN(waterOf(data, todayISO()), 1)} / ${fmtN(hydraTarget(data, np, todayISO()).total, 1)} L</span>
     ${np.mode === "equilibre" ? html`<span className="small">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>` : html`<${Bar} value=${tot.kcal / (tD.kcal || 1)} /><span className="small">${fmtN(tot.kcal, 0)} / ${fmtN(tD.kcal, 0)} kcal${en && en.bonus ? " (+" + fmtN(en.bonus, 0) + " activité)" : ""} · protéines ${fmtN(tot.p, 0)} / ${fmtN(np.targets.p, 0)} g${en && en.total ? " · dépense " + fmtN(en.total, 0) + " kcal" : ""}</span>`}
   </button>`;
 }
@@ -7015,7 +7137,7 @@ function LegalDocFr({ kind, settings }) {
     <h3>Données traitées et pourquoi</h3><ul>
       <li><b>Compte et contact</b> (nom, e-mail, téléphone, année de naissance, sport et poste) : créer ton compte, te suivre et adapter tes séances à ton sport. Base : exécution du contrat.</li>
       <li><b>Données de santé et d'entraînement</b> (questionnaire santé et précisions de tes réponses « oui », douleurs, taille, poids, mensurations, records et performances que tu déclares, tests, séances en salle et sur le terrain avec leurs chronos, forme du jour, repas, photo de profil facultative) : adapter et suivre ton programme en sécurité. Base : ton consentement explicite (article 9.2.a du RGPD), que tu peux retirer à tout moment.</li>
-      <li><b>Santé au quotidien et montre connectée</b> (facultatif : sommeil, pas, calories actives et dépense totale, fréquence cardiaque au repos, variabilité cardiaque, poids, énergie ; résumé des activités importées : date, sport, durée, distance, fréquence cardiaque moyenne, effort ressenti) : repérer la fatigue, doser l'entraînement et ajuster tes apports à ta dépense réelle. Tu choisis ce que tu envoies (saisie, raccourci iPhone, application Android ou fichier exporté) et tu peux arrêter l'envoi automatique à tout moment : l'application ne se connecte pas à ton compte Apple Santé, Health Connect ou à celui de ta montre, et ne garde pas le tracé GPS. Base : ton consentement explicite.</li>
+      <li><b>Santé au quotidien et montre connectée</b> (facultatif : sommeil, pas, calories actives et dépense totale, fréquence cardiaque au repos, variabilité cardiaque, poids, énergie, eau bue, test de sueur : poids avant et après une séance, boisson et durée ; résumé des activités importées : date, sport, durée, distance, fréquence cardiaque moyenne, effort ressenti) : repérer la fatigue, doser l'entraînement et ajuster tes apports à ta dépense réelle. Tu choisis ce que tu envoies (saisie, raccourci iPhone, application Android ou fichier exporté) et tu peux arrêter l'envoi automatique à tout moment : l'application ne se connecte pas à ton compte Apple Santé, Health Connect ou à celui de ta montre, et ne garde pas le tracé GPS. Base : ton consentement explicite.</li>
       <li><b>Vidéos d'exercice</b> : la vidéo reste sur ton appareil ; seules les images que tu gardes (3 au maximum, réduites) et tes repères sont enregistrés, pour la correction de ta technique. Base : ton consentement.</li>
       <li><b>Goûts et régime alimentaire</b> (aliments évités ou aimés, végétarien, sans gluten…) : te proposer des recettes adaptées. Base : exécution du contrat ; une allergie ou intolérance que tu indiques est traitée avec ton consentement explicite.</li>
       <li><b>Commandes, abonnements et paiements</b> (formule, montant, date, statut, identifiant d'abonnement Stripe, rétractation ou résiliation ; jamais tes coordonnées bancaires, gérées par Stripe) : gérer ta commande, tes prélèvements, ta facture, une rétractation ou une résiliation. Base : contrat et obligations comptables.</li>
@@ -8392,7 +8514,7 @@ function santeFlag(data, d) {
 }
 function refShort(r) { if (!r) return ""; const a = String(r).split(/[ ,]/)[0]; const y = (String(r).match(/\b(19|20)\d{2}\b/) || [""])[0]; return a + (y ? ", " + y : ""); }
 function sleepScore(h) { if (h === null || h === undefined) return null; return h >= 8 ? 5 : h >= 7 ? 4 : h >= 6 ? 3 : h >= 5 ? 2 : 1; }
-function waterTarget(data) { const np = data.nutri && data.nutri.plan; return np && np.sex === "F" ? 2.0 : 2.5; }
+function waterTarget(data) { return hydraTarget(data, data.nutri && data.nutri.plan, todayISO()).base; }
 function stepsTarget(data) { const np = data.nutri && data.nutri.plan; return (np && np.targets && np.targets.steps) || 8000; }
 function tipOfDay(data) {
   const d7 = santeDays(data, 7);

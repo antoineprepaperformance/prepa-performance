@@ -17,7 +17,7 @@ service cloud.firestore {
     function planKeysOk(p) {
       return p.keys().hasOnly(['programId', 'offer', 'weeks', 'start', 'equipment', 'status', 'niveau', 'medicalHold', 'compDate', 'message', 'extra',
           'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite'])
-        && p.status == 'active' && p.programId is string && p.offer in ['essentiel', 'suivi', 'hybride', 'lite']
+        && p.status == 'active' && p.programId is string && p.offer in ['ia', 'essentiel', 'suivi', 'hybride', 'lite']
         && p.weeks is int && p.weeks >= 1 && p.weeks <= 12 && p.grantWeeks is int
         && p.start is string && p.start.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && p.niveau in ['reprise', 'sportif', 'perf', 'elite'] && p.cycle is int;

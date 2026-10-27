@@ -24,8 +24,8 @@
      Liaison Workers AI « AI » (Settings › Bindings › Add › Workers AI)
      FIREBASE_API_KEY, FIREBASE_PROJECT_ID, SITE_ORIGIN : comme ci-dessus
      IA_MODELE              (facultatif) modèle, par défaut @cf/google/gemma-4-26b-a4b-it (vision et outils)
-     IA_PAR_JOUR            (facultatif) demandes par client et par jour, par défaut 25 (avec le stockage KV « QUOTA »)
-     IA_PHOTOS_PAR_JOUR     (facultatif) demandes avec photo par client et par jour, par défaut 6
+     Limites par client et par jour : celles de chaque formule, réglées dans l'application (Offres & réglages › Coach IA),
+     comptées avec le stockage KV « QUOTA ». Plafonds facultatifs pour tous : IA_PAR_JOUR (questions) et IA_PHOTOS_PAR_JOUR.
    Liaison KV « QUOTA » (facultative, recommandée) : partage équitablement l'allocation gratuite entre les clients.
 
    Données de la montre ou du téléphone (facultatif, gratuit) : adresses « …/sante/… ». Chaque client crée dans l'application
@@ -36,7 +36,7 @@
      SANTE_ENVOIS_PAR_JOUR  (facultatif) envois acceptés par client et par jour, par défaut 36.
      SANTE_ECART_MIN        (facultatif) minutes entre deux envois du Raccourci iPhone pour un même jour, par défaut 15. */
 
-const DEFAULT_PRICES = { essentiel: [49, 95, 135], suivi: [99, 189, 269], hybride: [139, 265, 375] };
+const DEFAULT_PRICES = { ia: [25, 47, 67], essentiel: [49, 95, 135], suivi: [99, 189, 269], hybride: [139, 265, 375] };
 const DEFAULT_LITE = { mois: 9.9, an: 89 };
 const DURATIONS = [4, 8, 12];
 const TOLERANCE_S = 300;
@@ -205,15 +205,31 @@ async function iaEtat(request, env) {
   return new Response(JSON.stringify({ ok: true, ia: !!(env.AI && typeof env.AI.run === "function"), quota: !!env.QUOTA }), { status: 200, headers: H });
 }
 function dayKey() { return new Date().toISOString().slice(0, 10); }
-/* formule en cours (hors Lite) d'après le document plans/{uid}, lu avec le jeton du client lui-même */
+/* formule en cours (hors Lite) d'après le document plans/{uid}, lu avec le jeton du client lui-même : renvoie son identifiant */
 function planActif(fields, now) {
-  if (!fields) return false;
+  if (!fields) return null;
   const g = (k) => fromFs(fields[k]);
-  if (g("status") !== "active" || !["essentiel", "suivi", "hybride"].includes(g("offer"))) return false;
+  const offer = String(g("offer") || "");
+  if (g("status") !== "active" || !["ia", "essentiel", "suivi", "hybride"].includes(offer)) return null;
   const start = String(g("start") || ""), weeks = Number(g("weeks")) || 0;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || weeks < 1) return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || weeks < 1) return null;
   const t0 = Date.parse(start + "T00:00:00Z");
-  return now >= t0 - 31 * 86400000 && now <= t0 + (weeks * 7 + 7) * 86400000;
+  return now >= t0 - 31 * 86400000 && now <= t0 + (weeks * 7 + 7) * 86400000 ? offer : null;
+}
+/* limites du coach IA par formule et par jour : réglées par le coach (settings/app › ai › quota), sinon par défaut.
+   Le relais accepte 2 demandes de plus que la limite affichée au client, pour l'analyse automatique du bilan de la semaine. */
+const IA_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, hybride: { q: 10, ph: 3 } };
+function iaLimites(aiFields, offer) {
+  const d = IA_QUOTA_DEF[offer] || IA_QUOTA_DEF.essentiel;
+  const qm = aiFields && aiFields.quota && aiFields.quota.mapValue && aiFields.quota.mapValue.fields;
+  const o = qm && qm[offer] && qm[offer].mapValue && qm[offer].mapValue.fields;
+  const n = (v, def) => { const x = Number(fromFs(v)); return Number.isFinite(x) && v ? Math.max(0, Math.min(200, Math.round(x))) : def; };
+  return { q: o ? n(o.q, d.q) : d.q, ph: o ? n(o.ph, d.ph) : d.ph };
+}
+/* une « question » : la dernière demande du client n'est pas la suite d'un outil (résultat d'outil renvoyé à l'IA) */
+function estQuestion(corps) {
+  const last = corps.messages[corps.messages.length - 1];
+  return !(last && last.role === "user" && last.content.some((c) => c.type === "tool_result"));
 }
 /* nettoie la demande : seuls les messages, images et outils de la page passent, avec des limites */
 function iaCorps(b) {
@@ -311,27 +327,31 @@ async function ia(request, env) {
     const lj = lk.ok ? await lk.json() : {};
     const u = lj.users && lj.users[0];
     if (!u || !u.localId) return out(401, { ok: false, code: "connexion" });
-    /* coach IA désactivé par le coach dans ses réglages */
+    /* coach IA désactivé par le coach dans ses réglages ; limites par formule */
     const st = await fetch(FS(env) + "settings/app");
+    let aiF = null;
     if (st.ok) {
       const sj = await st.json();
-      const on = sj.fields && sj.fields.ai && sj.fields.ai.mapValue && sj.fields.ai.mapValue.fields && sj.fields.ai.mapValue.fields.on;
+      aiF = (sj.fields && sj.fields.ai && sj.fields.ai.mapValue && sj.fields.ai.mapValue.fields) || null;
+      const on = aiF && aiF.on;
       if (on && on.booleanValue === false) return out(403, { ok: false, code: "ia_desactivee" });
     }
     /* droit d'accès : client avec une formule en cours (hors Lite), sinon le coach (seul à pouvoir lister les codes) */
     const auth = { authorization: "Bearer " + idToken };
     let coach = false;
     const pl = await fetch(FS(env) + "plans/" + encodeURIComponent(u.localId), { headers: auth });
-    const ok = pl.ok && planActif((await pl.json()).fields, Date.now());
-    if (!ok) {
+    const offre = pl.ok ? planActif((await pl.json()).fields, Date.now()) : null;
+    if (!offre) {
       const cl = await fetch(FS(env) + "codes?pageSize=1", { headers: auth });
       coach = cl.ok;
       if (!coach) return out(403, { ok: false, code: "formule" });
     }
-    if (!coach) {
-      const d = dayKey();
-      if (!(await quota(env, "ia:" + u.localId + ":" + d, Number(env.IA_PAR_JOUR) || 25))) return out(429, { ok: false, code: "quota" });
-      if (corps.images && !(await quota(env, "photo:" + u.localId + ":" + d, Number(env.IA_PHOTOS_PAR_JOUR) || 6))) return out(429, { ok: false, code: "quota_photos" });
+    if (!coach && estQuestion(corps)) {
+      const d = dayKey(), lim = iaLimites(aiF, offre);
+      /* IA_PAR_JOUR / IA_PHOTOS_PAR_JOUR (facultatifs) : plafonds pour tous les clients, quels que soient les réglages */
+      const capQ = Number(env.IA_PAR_JOUR) || 1000, capPh = Number(env.IA_PHOTOS_PAR_JOUR) || 1000;
+      if (!(await quota(env, "ia:" + u.localId + ":" + d, Math.min(lim.q + 2, capQ)))) return out(429, { ok: false, code: "quota" });
+      if (corps.images && !(await quota(env, "photo:" + u.localId + ":" + d, Math.min(lim.ph, capPh)))) return out(429, { ok: false, code: "quota_photos" });
     }
     let j;
     try { j = await env.AI.run(env.IA_MODELE || IA_MODELE, versOpenAI(corps)); }

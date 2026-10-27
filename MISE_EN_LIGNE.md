@@ -105,6 +105,7 @@ Sans Stripe, tes clients passent commande et tu confirmes toi-même chaque paiem
    - **Après le paiement** › **Ne pas afficher de page de confirmation, rediriger les clients vers votre site** :
      `https://ton-pseudo.github.io/prepa-performance/?paiement=ok&session_id={CHECKOUT_SESSION_ID}`
 5. Copie chaque lien (`https://buy.stripe.com/…`) dans ton espace coach : **Offres & réglages › Paiement en ligne**, case de la formule et de la durée › **Enregistrer**.
+   - Formules en vente : **Coach IA** (25 €, 47 €, 67 € pour 1, 2, 3 mois), **Essentiel** (49 €, 95 €, 135 €), **Suivi** (99 €, 189 €, 269 €). La formule Hybride n'est plus vendue : désactive ses liens dans Stripe (Liens de paiement › … › Désactiver).
 
 Dès qu'un client paie, sa commande apparaît dans « À traiter » : vérifie le paiement dans Stripe et clique sur **Paiement reçu · activer**. Pour que ce soit automatique, passe à l'étape 6.
 
@@ -171,14 +172,14 @@ Teste enfin le parcours complet avec une autre adresse e-mail : inscription, pro
 
 ## Étape 9 · Coach IA et photo des repas sur le site (facultatif, gratuit, 10 min)
 
-Sur le site, le coach IA (questions des clients, photo et description des repas, lecture d'étiquette, analyse des vidéos et des bilans, recettes sur mesure) passe par ton relais Cloudflare et son IA gratuite, **Workers AI** : un modèle ouvert (Gemma 4 de Google, licence Apache 2.0) exécuté par Cloudflare. Le relais vérifie à chaque demande que la personne est connectée, qu'elle a une formule en cours (Essentiel, Suivi ou Hybride, pas Lite) ou que c'est toi.
+Sur le site, le coach IA (questions des clients, photo et description des repas, lecture d'étiquette, analyse des vidéos et des bilans, recettes sur mesure) passe par ton relais Cloudflare et son IA gratuite, **Workers AI** : un modèle ouvert (Gemma 4 de Google, licence Apache 2.0) exécuté par Cloudflare. Le relais vérifie à chaque demande que la personne est connectée, qu'elle a une formule en cours (Coach IA, Essentiel ou Suivi, pas Lite) ou que c'est toi, et qu'elle n'a pas dépassé la limite du jour de sa formule.
 
 **Coût : 0 €.** L'offre gratuite de Cloudflare (Workers Free) donne 10 000 « neurones » par jour, soit environ 70 à 180 messages au coach IA ou plusieurs centaines de photos de repas par jour, partagés entre tous tes clients. Au-delà, le coach IA répond « limite gratuite atteinte pour aujourd'hui » jusqu'au lendemain : **rien ne peut être facturé** tant que tu n'ajoutes pas de moyen de paiement chez Cloudflare (n'en ajoute pas). Cloudflare n'utilise pas ces données pour entraîner des modèles et ne les garde pas après la réponse.
 
 1. **Relais** : si tu ne l'as pas encore, crée-le comme à l'étape 6 point 3 (dash.cloudflare.com › Workers & Pages › Créer › Worker › colle le contenu de `relais/worker.js` › Déployer). Si tu l'as déjà, remplace son code par le nouveau `relais/worker.js` › **Déployer**.
 2. **IA gratuite** : ton relais › Settings › **Bindings › Add › Workers AI**, nom de variable **`AI`** › Déployer.
 3. **Secrets du relais** (si ce n'est pas déjà fait) : Settings › Variables and Secrets › `FIREBASE_API_KEY` et `FIREBASE_PROJECT_ID` (ceux de `config.js`), et la variable `SITE_ORIGIN` (`https://ton-pseudo.github.io`) › Déployer. Pour le coach IA seul, les secrets Stripe ne sont pas nécessaires.
-4. **Stockage du relais (recommandé ; obligatoire pour l'envoi automatique des montres, étape 10)** : Cloudflare › **Storage & Databases › KV › Create** (nom `quota`), puis ton relais › Settings › **Bindings › Add › KV namespace**, nom de variable **`QUOTA`**, espace `quota` › Déployer. Chaque client a alors au plus 25 demandes et 6 photos par jour, pour qu'un seul client n'épuise pas l'allocation gratuite (variables `IA_PAR_JOUR` et `IA_PHOTOS_PAR_JOUR` pour changer).
+4. **Stockage du relais (recommandé ; obligatoire pour l'envoi automatique des montres, étape 10)** : Cloudflare › **Storage & Databases › KV › Create** (nom `quota`), puis ton relais › Settings › **Bindings › Add › KV namespace**, nom de variable **`QUOTA`**, espace `quota` › Déployer. Chaque client a alors au plus le nombre de questions et de photos par jour de sa formule : par défaut 10 questions et 3 photos (Coach IA, Essentiel), 20 et 5 (Suivi). Tu les changes dans **Offres & réglages › Coach IA › Limites par jour et par client** ; l'analyse automatique du bilan de la semaine ne compte pas. Les variables `IA_PAR_JOUR` et `IA_PHOTOS_PAR_JOUR` du relais fixent seulement un plafond général (1 000 par défaut).
 5. Espace coach › **Offres & réglages** › colle l'adresse du relais dans **Adresse du relais** › Enregistrer, puis carte **Coach IA › Revérifier** : « Actif sur le site ».
 
 Le coach IA reste désactivable à tout moment (Offres & réglages › Coach IA › Désactivé) : le relais refuse alors toute demande. Sans relais, le site fonctionne comme avant, sans coach IA.
@@ -221,6 +222,17 @@ C'est gratuit (GitHub Actions est inclus pour les dépôts publics) et ne demand
 
 ---
 
+## Étape 12 · Mises à jour automatiques chaque semaine (5 min)
+
+Chaque **mardi vers 12 h 45**, juste après le renouvellement de ton quota Claude de la semaine, une session de Claude se lance toute seule : elle relit le site, tes idées et le journal des mises à jour, corrige ce qui ne va pas, ajoute du contenu utile (programmes, séances, recettes, nutrition, toujours avec ses études), vérifie que les règles françaises et européennes n'ont pas changé, lance toute la batterie de tests, puis te **propose** la mise à jour. Rien ne change sans ton accord, et **l'adresse du site reste la même**.
+
+1. **Relie GitHub à Claude** : claude.ai › Paramètres › Connecteurs › **GitHub** › autorise l'accès au dépôt `prepa-performance` (et à `prepa-idees`, point 2).
+2. **Ton carnet privé** (le dépôt du site est public : n'y écris pas tes méthodes) : GitHub › **+ › New repository** › nom `prepa-idees` › **Private** › coche **Add a README file** › Create. Puis **Add file › Create new file** › nom `IDEES.md` › colle le modèle `outils/IDEES_modele.md` › Commit. Pour une idée rapide depuis ton téléphone : application GitHub › `prepa-idees` › **Issues › New issue** (une idée, une méthode, un retour d'un client sans son nom).
+3. **Valider une mise à jour** : tu reçois une notification de Claude et de GitHub. Ouvre la pull request, lis le résumé (ce qui change pour tes clients, les sources), puis appuie sur **Merge pull request** › **Confirm merge** (ça marche dans l'application GitHub du téléphone). Le site se met à jour en 1 à 2 minutes. Si tu n'en veux pas : **Close pull request**. Si le résumé demande une action en gras (règles Firestore ou relais à recoller), fais-la juste après.
+4. **Mettre en pause** : dans tes tâches programmées de Claude, désactive « Mise à jour hebdo du site ». Les règles que suit chaque passage sont dans `CLAUDE.md` (aucun secret, rien de payant, rien de cassé, jamais de changement d'un programme qu'un client suit en ce moment) ; l'historique est dans `JOURNAL.md`.
+
+---
+
 ## Ce que tu peux faire ensuite
 
 - **Changer les prix, les liens, les codes, tes programmes et exercices** : directement dans ton espace coach, sans toucher au code.
@@ -232,17 +244,18 @@ C'est gratuit (GitHub Actions est inclus pour les dépôts publics) et ne demand
 - Firebase Spark : 50 000 lectures et 20 000 écritures par jour. Un client qui ouvre l'application lit son dossier complet, soit environ 100 à 150 lectures : de quoi suivre environ 100 clients actifs. Au-delà, il faudra passer à l'offre Blaze (paiement à l'usage) ; tu le verras venir dans Firebase › Firestore › Utilisation.
 - Stripe : pas de frais fixes, une commission sur chaque paiement, plus 0,7 % sur les abonnements Lite (voir stripe.com/fr/pricing).
 - Stockage du relais (Cloudflare KV, gratuit) : 1 000 écritures par jour pour tout le compte, partagées entre le quota du coach IA et l'envoi automatique des montres (étape 10) : assez pour plusieurs dizaines de clients. Au-delà, les envois du jour sont refusés et repartent le lendemain (Android renvoie tout seul ; sur iPhone, l'envoi suivant porte les totaux du jour).
-- Coach IA sur le site : seulement avec le relais et son IA gratuite (étape 9), dans la limite de l'allocation gratuite du jour. Sans relais, la nutrition fonctionne avec le scan de code-barres (base Open Food Facts), une liste d'aliments courants, la saisie manuelle et le livre de recettes, et la correction vidéo sans l'analyse par l'IA. La version Claude de l'application garde son propre coach IA ; les deux versions ont des bases de données séparées.
+- Coach IA sur le site : seulement avec le relais et son IA gratuite (étape 9), dans la limite de l'allocation gratuite du jour (10 000 « neurones », environ 70 à 180 questions par jour pour tous tes clients) et de la limite par jour de chaque formule.
+- **Un coach IA « illimité »** : ton abonnement Claude ne sert pas au site (il sert à tes conversations avec Claude et à la version Claude de l'application, où chaque client utilise son propre compte Claude) ; le prendre plus cher n'ajouterait rien pour tes clients. Pour aller au-delà de l'allocation gratuite, il faudrait passer ton compte Cloudflare à **Workers Paid** : 5 $ par mois minimum, puis 0,011 $ pour 1 000 neurones au-delà des 10 000 gratuits par jour (environ 1 $ pour 1 000 questions, les photos coûtent plus). Cloudflare ne propose **pas de plafond de dépense** : ce sont les limites par formule (étape 9) qui bornent la facture. À ne faire que si les clients Coach IA te le rapportent largement. Sans relais, la nutrition fonctionne avec le scan de code-barres (base Open Food Facts), une liste d'aliments courants, la saisie manuelle et le livre de recettes, et la correction vidéo sans l'analyse par l'IA. La version Claude de l'application garde son propre coach IA ; les deux versions ont des bases de données séparées.
 - Messagerie : tes clients voient tes réponses en ouvrant l'application ; il n'y a pas de notification sur leur téléphone (le nombre de messages non lus s'affiche sur l'icône de l'application installée quand elle est ouverte).
 - Le contenu des programmes est dans le code de la page : un client ne voit ses séances qu'après paiement ou code, mais une personne qui s'y connaît peut lire ce contenu en fouillant le code.
 
 ## Mettre le site à jour (nouvelle version)
 
-Quand une nouvelle version du zip t'est envoyée :
+Une fois l'étape 12 faite, les nouvelles versions arrivent en pull request : tu n'as plus de zip à déposer. Sinon, quand une nouvelle version du zip t'est envoyée :
 
 1. Décompresse le zip sur ton ordinateur.
 2. Sur ton dépôt GitHub, ouvre le dossier **`docs`**, puis **Add file › Upload files**.
-3. Glisse les fichiers du dossier `docs` du zip **sauf `config.js`** (le tien contient tes clés : ne le remplace jamais). En général, seuls `index.html` et `sw.js` changent. `ciqual.json` (valeurs de l'ANSES) s'ajoute la première fois ; ensuite, le robot de l'étape 11 le tient à jour : ne le remplace que si on te le dit. Clique sur **Commit changes**.
+3. Glisse les fichiers du dossier `docs` du zip **sauf `config.js`** (le tien contient tes clés : ne le remplace jamais). En général, seuls `index.html`, `sw.js` et les traductions `i18n_en.json` et `i18n_es.json` changent. `ciqual.json` (valeurs de l'ANSES) s'ajoute la première fois ; ensuite, le robot de l'étape 11 le tient à jour : ne le remplace que si on te le dit. Clique sur **Commit changes**.
 4. Facultatif : fais de même pour le dossier `app` (le code source, utile pour les modifications futures, pas pour le fonctionnement du site).
 5. Attends 1 à 2 minutes, ouvre ton site et recharge-le deux fois.
 6. Si on t'indique que les règles Firestore ont changé : recopie `firestore.rules` dans Firebase › Firestore › Règles (avec ton adresse de coach) › **Publier**.

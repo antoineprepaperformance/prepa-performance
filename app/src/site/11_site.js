@@ -151,10 +151,11 @@ function Landing() {
   useEffect(() => { let a = true; (async () => { try { const s = await window.SITE.fs.doc("settings/app").get(); if (a && s.exists) setSettings(s.data()); } catch (e) {} })(); return () => { a = false; }; }, []);
   const demo = useMemo(() => demoWorld().demo_lucas, []);
   const dprog = PB.vitesse;
-  const offers = OFFERS.map((o) => ({ ...o, prix: (settings && settings.offers && settings.offers[o.id]) || o.prix }));
+  const offers = OFFERS;
+  const sm = (settings && settings.surmesure) || {};
   const coach = (settings && settings.coach) || {};
   const steps = [["Choisis ton objectif", "8 programmes : perte de poids, muscle, force, vitesse, sports collectifs, remise en forme, course, retour après blessure."],
-    ["Ton plan sur mesure", "Profil Reprise, Sportif, Performance ou Haut niveau : charges, tempo, récupération et prévention adaptés. Accès de 1 à 3 mois payé une fois, ou forfait Lite au mois ou à l'année."],
+    ["Ton plan sur mesure", "Profil Reprise, Sportif, Performance ou Haut niveau : charges, tempo, récupération et prévention adaptés. Accompagnement de 1 à 12 mois payé une fois, ou forfait Lite au mois ou à l'année."],
     ["Tes séances, guidées", "La dose de la semaine, chaque mouvement animé, tes charges de la dernière fois. En plus : séances flash à la maison, récupération, recettes et santé au quotidien."],
     ["Tes progrès, visibles", "Tests toutes les 4 semaines, courbes, nutrition, badges et ta carte athlète qui évolue."]];
   return html`<div className="landing">
@@ -173,12 +174,15 @@ function Landing() {
     </section>
     <section className="l-sec"><h2>Comment ça marche</h2><div className="l-steps">${steps.map(([t, d], i) => html`<div key=${i} className="l-step"><span className="l-n">${i + 1}</span><b>${t}</b><p className="small muted">${d}</p></div>`)}</div></section>
     <section className="l-sec"><h2>Les programmes</h2><div className="pgrid wide">${PROGS.map((p) => html`<div key=${p.id} className="pcard"><b>${p.n}</b><span>${p.short}</span><small>${p.lieu} · 12 semaines</small></div>`)}</div></section>
-    <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className="card l-offer"><h3>${o.n}</h3><p className="small">${o.desc}</p><p className="muted small">${aiLimitTxt(settings, o.id)}</p>
-      <div className="l-prices">${DURS.map((d, i) => html`<div key=${d.w}><b>${eur(o.prix[i])}</b><small>${d.n}</small></div>`)}</div></div>`)}
-      ${liteOn(settings) ? html`<div className="card l-offer lite"><h3>Lite</h3><p className="small">${liteDesc()}</p>
-        <div className="l-prices"><div><b>${eur2(litePrice(settings, "mois"))}</b><small>par mois</small></div><div><b>${eur2(litePrice(settings, "an"))}</b><small>par an</small></div></div>
+    <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className=${"card l-offer" + (o.top ? " top" : "")}>${o.top ? html`<span className="l-badge">Recommandé</span>` : null}<h3>${o.n}</h3>
+      ${o.places ? html`<p className="small gold-t">${sm.on === false ? "Complet pour le moment : écris-moi pour être prévenu d'une place." : plural(Number(sm.places) || o.places, "place") + " seulement, pour garder du temps pour chacun."}</p>` : null}
+      <p className="small">${o.desc}</p><p className="muted small">${aiLimitTxt(settings, o.id)}</p>
+      <div className="l-prices">${DURS.map((d) => { const v = offerPrice(settings, o.id, d.w); return html`<div key=${d.w}><b>${eur(v)}</b><small>${d.n}</small>${isLongW(d.w) && v ? html`<small>${"soit " + eur(Math.round(v / monthsOfW(d.w))) + "/mois"}</small>` : null}</div>`; })}</div></div>`)}
+      ${liteOn(settings) ? html`<div className="card l-offer lite"><h3>Lite et Lite + Nutrition</h3><p className="small">${liteDesc()} ${LITE.descN}</p>
+        <div className="l-prices"><div><b>${eur2(litePrice(settings, "mois"))}</b><small>Lite · par mois</small></div><div><b>${eur2(litePrice(settings, "an"))}</b><small>Lite · par an</small></div>
+          <div><b>${eur2(litePrice(settings, "mois", true))}</b><small>+ Nutrition · par mois</small></div><div><b>${eur2(litePrice(settings, "an", true))}</b><small>+ Nutrition · par an</small></div></div>
         <p className="muted small">En abonnement (résiliable en quelques clics) ou en paiement d'avance.</p></div>` : null}</div>
-      <p className="muted small">${tvaLine(settings)}. ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique, sans abonnement. Lite : abonnement mensuel sans engagement, abonnement annuel ou paiement d'avance sans renouvellement. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
+      <p className="muted small">${tvaLine(settings)}. ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique pour 1, 3, 6 ou 12 mois, sans abonnement ni renouvellement automatique. Lite : abonnement mensuel sans engagement, abonnement annuel ou paiement d'avance sans renouvellement. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><div className="btnrow center"><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}><${Btn} kind="ghost" onClick=${() => setContact(true)}>Une question ? Me contacter</${Btn}></div></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       ${coach.instagram ? html`<div className="small muted">Instagram : ${coach.instagram}</div>` : null}

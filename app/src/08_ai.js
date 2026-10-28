@@ -20,7 +20,7 @@ function useAI() {
    Une « question » = une demande du client (message, repas, étiquette, vidéo, recette) ; une « photo » = une demande avec image.
    L'analyse automatique du bilan de la semaine ne compte pas. Le coach n'a pas de limite. Sur le site, le relais applique
    aussi ces limites (avec 2 demandes de marge pour les analyses de bilan). */
-const AI_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, hybride: { q: 10, ph: 3 } };
+const AI_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
 const AI_QUOTA_MAX = 200;
 function aiQuota(settings, offer) {
   if (!offer || offer === "lite") return { q: 0, ph: 0 };
@@ -223,6 +223,8 @@ function clientContext({ data, plan, prog, stats, lib }) {
     const tot = dayTotals(day);
     if (day && (day.meals || []).length) L.push("Aujourd'hui, repas notés : " + day.meals.map((m) => slotName(m.slot) + " « " + m.title + " »" + (np.mode !== "equilibre" ? " " + fmtN(m.kcal, 0) + " kcal / P " + fmtN(m.p, 0) + " g" : "")).join(" ; ") + (np.mode !== "equilibre" ? " — total " + fmtN(tot.kcal, 0) + " kcal, P " + fmtN(tot.p, 0) + " g, G " + fmtN(tot.c, 0) + " g, L " + fmtN(tot.f, 0) + " g" : ""));
     else L.push("Aujourd'hui : aucun repas noté pour l'instant.");
+    { const hy = hydraTarget(data, np, today), st = np.mode !== "equilibre" ? sweatTest(data) : null;
+      L.push("Hydratation aujourd'hui : " + fmtN(waterOf(data, today), 2) + " L bus sur un objectif de " + fmtN(hy.total, 1) + " L (base " + fmtN(hy.base, 1) + " L" + (hy.extra ? " + " + fmtN(hy.extra, 1) + " L pour " + hy.mins + " min d'entraînement" : "") + ")" + (st ? " · débit de sueur mesuré le " + fmtD(st.d) + " : " + fmtN(num(st.taux), 1) + " L par heure, perte " + fmtN(num(st.perte), 1) + " % du poids" : "")); }
     const wk = Array.from({ length: 7 }, (_, i) => addDays(today, -i - 1)).map((d) => ({ d, t: dayTotals(data.food[d]), n: ((data.food[d] || {}).meals || []).length })).filter((x) => x.n);
     if (wk.length && np.mode !== "equilibre") L.push("7 jours précédents : " + wk.length + " jours notés · moyenne " + fmtN(wk.reduce((s, x) => s + x.t.kcal, 0) / wk.length, 0) + " kcal et " + fmtN(wk.reduce((s, x) => s + x.t.p, 0) / wk.length, 0) + " g de protéines par jour noté.");
   } else L.push("Nutrition : pas encore d'objectif défini (onglet Nutrition).");

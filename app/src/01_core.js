@@ -10,7 +10,11 @@ const T = CONTENT.T, EXLIB = CONTENT.E, PROGS = CONTENT.P, TESTS = CONTENT.TESTS
 const EXB = Object.fromEntries(EXLIB.map((e) => [e.id, e]));
 const PB = Object.fromEntries(PROGS.map((p) => [p.id, p]));
 const CATS = [...new Set(EXLIB.map((e) => e.c))];
-const DURS = [{ w: 4, n: "1 mois" }, { w: 8, n: "2 mois" }, { w: 12, n: "3 mois" }];
+/* durées en vente (en semaines) : 1, 3, 6 et 12 mois ; « 2 mois » ne se vend plus (commandes passées avant le 28 octobre 2026) */
+const DURS = [{ w: 4, n: "1 mois" }, { w: 12, n: "3 mois" }, { w: 26, n: "6 mois" }, { w: 52, n: "12 mois" }];
+const DURS_OLD = [{ w: 8, n: "2 mois" }];
+function monthsOfW(w) { return { 4: 1, 8: 2, 12: 3, 26: 6, 52: 12 }[Number(w)] || Math.max(1, Math.round(Number(w) / 4.33)); }
+function isLongW(w) { return Number(w) >= 26; }
 const COACH_NAME_DEFAULT = "Antoine";
 
 /* ---------- dates (locales, format AAAA-MM-JJ) ---------- */

@@ -20,11 +20,19 @@ function offerOptions(cur, withLite) {
 }
 /* formules sans réponse du coach aux bilans : Lite et Coach IA */
 function noReply(plan) { return !!plan && (plan.offer === "lite" || offerAuto(plan.offer)); }
-function durName(w) { const d = DURS.find((x) => x.w === Number(w)); return d ? d.n : (w ? plural(Number(w), "semaine") : "—"); }
+function durName(w) { const d = DURS.find((x) => x.w === Number(w)) || DURS_OLD.find((x) => x.w === Number(w)); return d ? d.n : (w ? plural(Number(w), "semaine") : "—"); }
+/* prix d'une formule pour une durée : réglages du coach (« tarifs », par nombre de semaines), sinon grille par défaut ;
+   ancienne grille (1, 2, 3 mois, réglage « offers ») pour la formule retirée et les commandes de 2 mois */
 function offerPrice(settings, offer, weeks) {
-  const o = (settings && settings.offers && settings.offers[offer]) || (OFFERS_ALL.find((x) => x.id === offer) || {}).prix;
-  const i = DURS.findIndex((d) => d.w === Number(weeks));
-  return o && i >= 0 ? o[i] : null;
+  const w = Number(weeks), o = OFFERS_ALL.find((x) => x.id === offer) || {};
+  const t = settings && settings.tarifs && settings.tarifs[offer];
+  if (t && t[w] !== undefined && t[w] !== null && t[w] !== "" && Number.isFinite(Number(t[w]))) return Number(t[w]);
+  if (o.retired || w === 8) {
+    const old = (settings && settings.offers && settings.offers[offer]) || (o.retired ? o.prix : null), i = { 4: 0, 8: 1, 12: 2 }[w];
+    return old && i !== undefined && old[i] !== undefined ? old[i] : null;
+  }
+  const i = DURS.findIndex((d) => d.w === w);
+  return o.prix && i >= 0 ? o.prix[i] : null;
 }
 
 /* ---------- racine client : choisit la source ---------- */
@@ -159,7 +167,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
       ${tab === "programme" ? html`<${ClientProgram} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} exo=${exoAll}
           openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} />` : null}
       ${tab === "bilan" ? html`<${Bilans} data=${data} plan=${plan} prog=${prog} stats=${stats} src=${src} lib=${libAll} settings=${settings} ai=${showAI ? ai : null} openChat=${showAI ? () => setChat(true) : null} />` : null}
-      ${tab === "nutrition" ? html`<${NutritionTab} data=${data} src=${src} plan=${plan} prog=${prog} settings=${settings} db=${db} />` : null}
+      ${tab === "nutrition" ? html`<${NutritionTab} data=${data} src=${src} plan=${plan} prog=${prog} settings=${settings} db=${db} onUpgrade=${demo ? null : () => setRenew(true)} />` : null}
       ${tab === "progres" ? html`<${Progress} data=${data} plan=${plan} prog=${prog} stats=${stats} openTests=${(w) => setTestOpen(w)} src=${src} coach=${coach} openSante=${() => setSante(true)} />` : null}
       ${tab === "profil" ? html`<${ClientProfile} data=${data} plan=${plan} prog=${prog} src=${src} settings=${settings} coach=${coach} lib=${libAll} openMsgs=${canMsg ? () => setMsgs(true) : null} />` : null}
     </main>
@@ -196,8 +204,10 @@ function useWide() {
 function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid }) {
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
-  const liteOk = isLite && access === "actif";
-  const liteBan = isLite ? html`<${LiteBanner} plan=${plan} data=${data} onRenew=${onRenew} go=${go} />` : null;
+  /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
+  const dated = !!plan.untilMs;
+  const liteOk = dated && access === "actif";
+  const liteBan = dated ? html`<${LiteBanner} plan=${plan} data=${data} onRenew=${onRenew} go=${go} />` : null;
   const name = (profile.name || "").split(" ")[0];
   const hold = plan.medicalHold ? html`<div className="alert warn"><div><b>Avis médical en attente</b><p>Ton questionnaire santé demande l'avis de ton médecin : tes séances restent en mode Reprise jusqu'à ce que ${coach && coach.name || COACH_NAME_DEFAULT} enregistre cet avis.</p></div></div>` : null;
   if (ps.phase === "avant") {
@@ -205,7 +215,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
     return html`<div className="stack">
       <div className="hero"><div className="eyebrow">Départ le ${JOURS[parseISO(plan.start).getDay()]} ${fmtD(plan.start)}</div>
         <h1>Bonjour ${name || ""}, ton programme commence dans ${plural(ps.daysToStart, "jour")}.</h1>
-        <p className="muted">${prog.n} · ${durName(plan.weeks)} · formule ${offerName(plan.offer)}${isLite ? " · accès jusqu'au " + fmtD(liteEnd(plan)) : ""}</p></div>
+        <p className="muted">${prog.n} · ${durName(plan.weeks)} · formule ${offerName(plan.offer)}${dated ? " · accès jusqu'au " + fmtD(liteEnd(plan)) : ""}</p></div>
       ${liteBan}
       ${!data.tests.t0 ? html`<${Card} title="Fais tes tests de départ" sub="Ils serviront de point de comparaison toutes les 4 semaines."><${Btn} onClick=${() => openTests(0)}>Saisir mes tests</${Btn}></${Card}>` : null}
       ${prog.prereq ? html`<${Prereq} prog=${prog} />` : null}
@@ -218,7 +228,8 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div className="hero"><div className="eyebrow">Programme terminé le ${fmtD(ps.end)}</div>
         <h1>Bravo ${name || ""} : ${plural(stats.logs.filter((l) => l.kind !== "presentiel").length, "séance")} réalisées. On enchaîne ?</h1></div>
       ${liteBan}
-      <${Card} title="Choisir mon prochain programme"><${LiteNextCycle} data=${data} src=${src} db=${db} uid=${uid} plan=${plan} /></${Card}>
+      ${plan.offer === "surmesure" ? html`<${Card} title="Ton prochain programme"><p className="small">${coach && coach.name || COACH_NAME_DEFAULT} écrit ton prochain bloc sur mesure : il s'affiche ici dès qu'il est prêt. Écris-lui ton calendrier et tes objectifs dans la messagerie si quelque chose a changé.</p></${Card}>`
+        : html`<${Card} title="Choisir mon prochain programme"><${LiteNextCycle} data=${data} src=${src} db=${db} uid=${uid} plan=${plan} /></${Card}>`}
       <div className="btnrow"><${Btn} kind="ghost" onClick=${() => go("progres")}>Voir mes progrès</${Btn}>${!data.tests["t" + plan.weeks] ? html`<${Btn} kind="ghost" onClick=${() => openTests(plan.weeks)}>Saisir mes tests finaux</${Btn}>` : null}</div>
       ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null}
     </div>`;
@@ -249,7 +260,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <h1>${next ? (name ? name + ", " : "") + "prochaine séance : " + next.s.t.toLowerCase() : "Toutes les séances de la semaine sont faites."}</h1>
       <${Bar} value=${(w - 1 + ps.day / 7) / ps.weeks} />
       <p className="muted small">${ps.wib === 4 ? "Semaine d'allègement : charges plus légères, puis tests." : block.focus}</p>
-      ${isLite ? html`<p className="muted small">Formule Lite · accès jusqu'au ${fmtD(liteEnd(plan))}</p>` : null}
+      ${isLite ? html`<p className="muted small">Formule Lite · accès jusqu'au ${fmtD(liteEnd(plan))}</p>` : dated ? html`<p className="muted small">Formule ${offerName(plan.offer)} · accès jusqu'au ${fmtD(liteEnd(plan))}</p>` : null}
     </div>`;
   const ring = html`<div className="today-grid">
       <${Ring} value=${stats.plannedThisWeek ? stats.doneThisWeek / stats.plannedThisWeek : 0} label=${stats.doneThisWeek + "/" + stats.plannedThisWeek} sub="séances" size=${118} />
@@ -266,8 +277,8 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
     ${liteBan}
     ${prevMissing ? html`<div className="alert warn"><div><b>Bilan de la semaine ${w - 1} en attente</b><p>${isLite ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé."}</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
     ${!ck && (ps.day >= 6 || !next) ? html`<div className="alert gold"><div><b>Bilan de la semaine ${w}</b><p>À remplir en fin de semaine.</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
-    ${left <= 7 && onRenew && !isLite ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
-    ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.</p></div></div>` : null}
+    ${left <= 7 && onRenew && !dated ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
+    ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>${isLite ? html`Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.` : plan.offer === "surmesure" ? html`Ensuite, ${coach && coach.name || COACH_NAME_DEFAULT} t'écrit le bloc suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.` : html`Ensuite, tu choisis toi-même le suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.`}</p></div></div>` : null}
     ${hold}`;
   const ainotes = html`<${AINotes} data=${data} w=${w} openChat=${openChat} />`;
   const vReply = Object.values(data.videos || {}).filter((v) => v && v.reply && !v.seen).sort((a, b) => String(b.reply.at).localeCompare(String(a.reply.at)))[0];
@@ -275,7 +286,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const extras = openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null;
   const tweek = openTerrain ? html`<${TerrainWeek} data=${data} plan=${plan} w=${w} wib=${ps.wib} open=${openTerrain} />` : null;
   const cardMini = html`<${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} compact=${true} onOpen=${() => go("profil")} />`;
-  const nutri = html`<${NutriToday} data=${data} go=${go} />${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}`;
+  const nutri = html`${nutriOk(plan) ? html`<${NutriToday} data=${data} go=${go} />` : null}${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}`;
   const habits = prog.habits && prog.habits.length ? html`<${Habits} prog=${prog} data=${data} src=${src} block=${ps.block} />` : null;
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
@@ -661,13 +672,14 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
   return html`<div className="stack">
     <div className="prof-h"><button type="button" className="avbtn big" aria-label="Changer ma photo ou mon avatar" onClick=${() => setEdit(true)}><${Avatar} profile=${p} photo=${data.media && data.media.photo && data.media.photo.data} size=${72} ring=${true} /><span className="av-edit">✎</span></button>
       <div><div className="eyebrow">Mon profil</div><h1>${p.name || "Mon espace"}</h1>
-      <p className="muted">${prog ? prog.n : ""} · formule ${offerName(plan && plan.offer)} · ${plan && plan.offer === "lite" ? "accès jusqu'au " + fmtD(liteEnd(plan)) : durName(plan && plan.weeks)}</p>
+      <p className="muted">${prog ? prog.n : ""} · formule ${offerName(plan && plan.offer)} · ${plan && plan.untilMs ? "accès jusqu'au " + fmtD(liteEnd(plan)) : durName(plan && plan.weeks)}</p>
       <button type="button" className="linkbtn" onClick=${() => setEdit(true)}>Changer ma photo ou mon avatar</button></div></div>
     <div className="cols2 prof"><${Card} title="Ma carte athlète" sub="Elle évolue avec tes séances, tes bilans et tes tests"><${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>
       <${Badges} data=${data} plan=${plan} prog=${prog} lib=${lib} /></div>
     <${Modal} open=${edit} title="Ma photo et mon avatar" onClose=${() => setEdit(false)}>${edit ? html`<${AvatarPicker} data=${data} src=${src} onDone=${() => setEdit(false)} />` : null}</${Modal}>
     <${Card} title="Mon programme"><dl className="dl">
       <dt>Début</dt><dd>${fmtDY(plan && plan.start)}</dd><dt>Fin</dt><dd>${plan ? fmtDY(addDays(plan.start, plan.weeks * 7 - 1)) : "—"}</dd>
+      ${plan && plan.offer !== "lite" && plan.untilMs ? html`<dt>Accès</dt><dd>${"jusqu'au " + fmtDY(liteEnd(plan))}</dd>` : null}
       ${plan && plan.offer === "lite" ? html`<dt>Accès Lite</dt><dd>${plan.lite && plan.lite.mode === "abo" && !liteCancelOf(data, plan) ? "abonnement " + (plan.lite.period === "an" ? "annuel" : "mensuel") + ", prochain prélèvement le " + fmtD(isoOf(new Date(plan.untilMs))) : "jusqu'au " + fmtDY(liteEnd(plan))}</dd>` : null}
       <dt>Lieu</dt><dd>${plan && plan.equipment === "maison" ? "À la maison" : "En salle / sur terrain"}</dd>
       <dt>Profil</dt><dd>${nivName(effNiveau(plan, p))}${plan && plan.medicalHold ? " (Reprise en attendant l'avis médical)" : ""}</dd>

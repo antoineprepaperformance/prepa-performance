@@ -1,7 +1,7 @@
 /* ===== Espace coach ===== */
 const COACH_NAV = [
   { id: "dash", n: "Tableau de bord" }, { id: "clients", n: "Clients" }, { id: "messages", n: "Messages" }, { id: "programmes", n: "Programmes" },
-  { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "reglages", n: "Offres & réglages" },
+  { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "finances", n: "Finances" }, { id: "reglages", n: "Offres & réglages" },
 ];
 
 function rowInfo(row, lib, today, settings) {
@@ -23,6 +23,12 @@ function rowInfo(row, lib, today, settings) {
   const lo0 = p.access && p.access.lastOrder;
   const liteOk = lite && Date.now() < liteEndMs(plan, lo0 && lo0.id ? { orders: { [lo0.id]: lo0 } } : null);
   if (lite) status = liteOk ? { tone: "ok", n: (ps && ps.phase === "en_cours" ? "S" + ps.week + "/" + ps.weeks + " · " : "") + "Lite jusqu'au " + fmtD(liteEnd(plan)) } : { tone: "muted", n: "Lite terminé" };
+  /* formules de 6 et 12 mois : accès daté, les programmes s'enchaînent */
+  const dated = !!(plan && plan.offer !== "lite" && plan.untilMs && plan.status === "active");
+  const datedOk = dated && Date.now() < plan.untilMs;
+  if (dated) status = datedOk ? { tone: "ok", n: (ps && ps.phase === "en_cours" ? "S" + ps.week + "/" + ps.weeks + " · " : "") + "jusqu'au " + fmtD(liteEnd(plan)) } : { tone: "muted", n: "Accès terminé" };
+  if (datedOk && Math.ceil((plan.untilMs - Date.now()) / 86400000) <= 14) alerts.push({ tone: "gold", n: "Accès jusqu'au " + fmtD(liteEnd(plan)) + " : proposer la suite", k: "plan" });
+  if (plan && plan.offer === "surmesure" && plan.status === "active" && plan.customCycle !== cycOf(plan)) alerts.push({ tone: "gold", n: "Sur mesure : programme du cycle " + cycOf(plan) + " à écrire", k: "plan" });
   if (p.screeningFlag && (!plan || plan.medicalHold !== false)) alerts.push({ tone: "warn", n: plan && plan.medicalHold ? "Avis médical à recevoir (séances en Reprise)" : "Questionnaire santé : avis médical", k: "plan" });
   const lo = p.access && p.access.lastOrder;
   const recentAuto = lo && lo.kind === "paiement" && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
@@ -44,7 +50,7 @@ function rowInfo(row, lib, today, settings) {
       const last = sum.lastLogAt ? diffDays(sum.lastLogAt, today) : sinceStart;
       if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
       const left = diffDays(today, ps.end);
-      if (left <= 7 && !lite) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
+      if (left <= 7 && !lite && !dated) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
       weekPlanned = plannedCount(prog, plan, ps.week, lib);
       weekDone = (sum.weeksDone && sum.weeksDone[ps.week]) || 0;
       if (ps.week > 1) {
@@ -55,13 +61,15 @@ function rowInfo(row, lib, today, settings) {
         if ((sum.lastCheckinW || 0) < ps.week - 1 && ps.day >= 2 && !lite && !auto) alerts.push({ tone: "muted", n: "Bilan S" + (ps.week - 1) + " non reçu : relancer", k: "bilans" });
       }
     }
-    if (ps.phase === "fini" && !lite) alerts.push({ tone: "muted", n: "Programme terminé : renouveler ou archiver", k: "plan" });
+    if (ps.phase === "fini" && !lite && !datedOk) alerts.push({ tone: "muted", n: "Programme terminé : renouveler ou archiver", k: "plan" });
+    if (ps.phase === "fini" && datedOk && plan.offer !== "surmesure") alerts.push({ tone: "gold", n: "Programme terminé : le client choisit le suivant (ou propose-le)", k: "plan" });
   }
-  if (sum.lastCheckinW && !lite && !auto && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : ""), k: "bilans" });
-  const price = plan && plan.status === "active" ? (lite ? litePrice(settings, (plan.lite && plan.lite.period) || "mois") : offerPrice(settings, plan.offer, plan.weeks)) : null;
-  /* revenu mensuel moyen : prix ramené à 4 semaines (Lite annuel : prix / 12 ; accès offert : 0) */
-  const mrr = !price ? 0 : lite ? (plan.lite && plan.lite.mode === "code" ? 0 : liteOk ? (plan.lite && plan.lite.period === "an" ? price / 12 : price) : 0) : price / (plan.weeks / 4);
-  return { p, plan, prog, ps, sum, alerts, status, adherence, weekDone, weekPlanned, price, mrr, lite, liteOk };
+  if (sum.lastCheckinW && !lite && !auto && !(row.replies && row.replies["w" + sum.lastCheckinW])) alerts.push({ tone: plan && plan.offer === "surmesure" ? "warn" : "gold", n: "Bilan S" + sum.lastCheckinW + " à lire" + (sum.lastQuestion ? " · question" : "") + (plan && plan.offer === "surmesure" ? " · Sur mesure, prioritaire" : ""), k: "bilans" });
+  const price = plan && plan.status === "active" ? (lite ? litePrice(settings, (plan.lite && plan.lite.period) || "mois", !!(plan.lite && plan.lite.nutri)) : offerPrice(settings, plan.offer, dated ? plan.grantWeeks : plan.weeks)) : null;
+  /* revenu mensuel moyen : prix ramené à 4 semaines (Lite annuel : prix / 12 ; 6 et 12 mois : prix / nombre de mois ; accès offert : 0) */
+  const mrr = !price ? 0 : lite ? (plan.lite && plan.lite.mode === "code" ? 0 : liteOk ? (plan.lite && plan.lite.period === "an" ? price / 12 : price) : 0)
+    : dated ? (datedOk && !(plan.source && plan.source.kind === "code") ? price / monthsOfW(plan.grantWeeks) : 0) : price / (plan.weeks / 4);
+  return { p, plan, prog, ps, sum, alerts, status, adherence, weekDone, weekPlanned, price, mrr, lite, liteOk, dated, datedOk };
 }
 
 function CoachApp({ db, settings, lib, exo, dl }) {
@@ -94,6 +102,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
   useAppBadge(msgUnread.length);
   useAutoActivate(db, rows, codes);
   useLiteSync(db, rows);
+  const fin = useAutoInvoices(db, rows, settings);
   const go = (v) => { setView(v); setSel(null); setProgSel(null); setEditDoc(null); try { window.scrollTo(0, 0); } catch (e) {} };
   const openClient = (cid, tab) => { setSel({ cid, tab: tab || "vue" }); setView("client"); try { window.scrollTo(0, 0); } catch (e) {} };
 
@@ -125,6 +134,8 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "edit" && editDoc ? html`<${DocEditor} doc=${editDoc} db=${db} lib=${lib} exo=${exo} onDone=${() => go("programmes")} />` : null}
       ${view === "exos" ? html`<${ExercisesView} exo=${exo} db=${db} />` : null}
       ${view === "codes" ? html`<${CodesView} db=${db} codes=${codes.items} rows=${rows} lib=${lib} />` : null}
+      ${view === "dash" && db ? html`<${FinAlert} fin=${fin} go=${go} />` : null}
+      ${view === "finances" ? html`<${FinancesView} db=${db} fin=${fin} settings=${settings} rows=${rows} />` : null}
       ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} />` : null}
     </main>
     <${Modal} open=${addOpen} title="Ajouter un client" onClose=${() => setAddOpen(false)}>${addOpen ? html`<${AddClient} db=${db} lib=${lib} settings=${settings} onDone=${(cid) => { setAddOpen(false); if (cid) openClient(cid, "plan"); }} />` : null}</${Modal}>
@@ -199,7 +210,7 @@ function PublicCancels({ db, rows, openClient }) {
 }
 /* ---------- Tableau de bord ---------- */
 function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings, db }) {
-  const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && (r.info.lite ? r.info.liteOk : r.info.ps && r.info.ps.phase !== "fini"));
+  const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && (r.info.lite ? r.info.liteOk : r.info.dated ? r.info.datedOk : r.info.ps && r.info.ps.phase !== "fini"));
   const alerts = rows.flatMap((r) => r.info.alerts.map((a) => ({ ...a, r })));
   const order = { bad: 0, warn: 1, gold: 2, muted: 3 };
   alerts.sort((a, b) => order[a.tone] - order[b.tone]);
@@ -463,7 +474,14 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
   const toast = useToast();
   const p = data.profile || {};
   const req = p.request || {};
-  const init = () => data.plan ? clone(data.plan) : { programId: req.programId || "vitesse", offer: req.offer || "suivi", weeks: req.weeks || 12, start: req.start || nextMonday(), equipment: req.equipment || "salle", status: "pending", message: "", extra: [] };
+  const init = () => {
+    if (data.plan) return clone(data.plan);
+    const x = { programId: req.programId || "vitesse", offer: req.offer || "suivi", weeks: req.weeks || 12, start: req.start || nextMonday(), equipment: req.equipment || "salle", status: "pending", message: "", extra: [] };
+    if (x.offer === "lite" || !isLongW(x.weeks)) return x;
+    /* demande de 6 ou 12 mois : accès daté à partir du début demandé */
+    const startMs = msOfISO(x.start), untilMs = addPeriodMs(startMs, "mois", monthsOfW(x.weeks));
+    return { ...x, grantWeeks: Number(x.weeks), weeks: 12, startMs, untilMs, until: isoOf(new Date(untilMs - 1)) };
+  };
   const [f, setF] = useState(init);
   useEffect(() => { setF(init()); }, [data.ready, data.plan && JSON.stringify(data.plan), JSON.stringify(req)]);
   const [addX, setAddX] = useState({ sid: "", w: 1 });
@@ -472,7 +490,14 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
   const sessions = Object.entries(lib || {}).filter(([, d]) => d.kind === "session");
   const maxWeeks = prog ? prog.blocks.length * 4 : 12;
   const isLite = f.offer === "lite";
-  const untilISO = isLite ? (f.untilMs ? isoOf(new Date(f.untilMs - 1)) : isoOf(new Date(addPeriodMs(msOfISO(f.start || todayISO()), "mois") - 1))) : null;
+  /* formules de 6 et 12 mois : accès daté (début → fin), le programme s'enchaîne */
+  const isDated = !isLite && !!f.untilMs;
+  const untilISO = isLite || isDated ? (f.untilMs ? isoOf(new Date(f.untilMs - 1)) : isoOf(new Date(addPeriodMs(msOfISO(f.start || todayISO()), "mois") - 1))) : null;
+  const setDur = (w) => setF((o) => {
+    if (!isLongW(w)) { const x = { ...o, weeks: w, grantWeeks: w }; delete x.startMs; delete x.untilMs; delete x.until; return x; }
+    const startMs = msOfISO(o.start || todayISO()), u = addPeriodMs(startMs, "mois", monthsOfW(w));
+    return { ...o, weeks: maxWeeks, grantWeeks: w, startMs, untilMs: u, until: isoOf(new Date(u - 1)) };
+  });
   const setUntil = (iso) => setF((o) => ({ ...o, untilMs: msOfISO(iso) + 86400000, until: iso }));
   const extendLite = (per) => setF((o) => { const base = o.untilMs && o.untilMs > Date.now() ? o.untilMs : msOfISO(todayISO()); const u = addPeriodMs(base, per); return { ...o, untilMs: u, until: isoOf(new Date(u - 1)) }; });
   const save = async (status) => {
@@ -481,6 +506,9 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
       const startMs = f.startMs || msOfISO(f.start || todayISO());
       const untilMs = f.untilMs || addPeriodMs(startMs, "mois");
       out = { ...out, weeks: maxWeeks, grantWeeks: 0, startMs, untilMs, until: isoOf(new Date(untilMs - 1)), lite: { mode: "manuel", period: "mois", sub: null, ...(f.lite || {}) } };
+    } else if (isDated) {
+      delete out.lite;
+      out = { ...out, weeks: Math.min(12, maxWeeks), startMs: f.startMs || msOfISO(f.start || todayISO()), until: isoOf(new Date(f.untilMs - 1)) };
     } else { delete out.lite; delete out.startMs; delete out.untilMs; delete out.until; }
     if (status === "active" && !f.validatedAt) out.validatedAt = nowISO();
     try { await src.setPlan(out); toast(status === "active" ? "Programme activé." : "Plan enregistré.", "ok"); } catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); }
@@ -496,11 +524,16 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
         <${Field} label="Programme" id="pe-prog"><select id="pe-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}>${programOptions(lib).map((o) => html`<option key=${o.v} value=${o.v}>${o.n}</option>`)}</select></${Field}>
         <div className="row2"><${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, true)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
           ${isLite ? html`<${Field} label="Accès Lite jusqu'au (inclus)" id="pe-until"><input id="pe-until" type="date" value=${untilISO} onChange=${(e) => e.target.value && setUntil(e.target.value)} /></${Field}>`
-            : html`<${Field} label="Durée"><${Seg} options=${DURS.filter((d) => d.w <= maxWeeks).map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>`}</div>
+            : html`<${Field} label="Durée"><${Seg} options=${DURS.filter((d) => d.w <= maxWeeks || isLongW(d.w)).map((d) => ({ v: d.w, n: d.n }))} value=${isDated ? (isLongW(f.grantWeeks) ? Number(f.grantWeeks) : null) : Number(f.weeks)} onChange=${setDur} /></${Field}>`}</div>
+        ${isDated ? html`<div className="row2"><${Field} label="Accès jusqu'au (inclus)" id="pe-until"><input id="pe-until" type="date" value=${untilISO} onChange=${(e) => e.target.value && setUntil(e.target.value)} /></${Field}>
+          <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => extendLite("mois")}>Prolonger d'un mois</${Btn}><${Btn} small kind="ghost" onClick=${() => extendLite("an")}>Prolonger d'un an</${Btn}></div></div>
+          <p className="muted small">Programme de ${Math.min(12, maxWeeks)} semaines ; ${f.offer === "surmesure" ? "tu écris le suivant à chaque cycle (bouton « Nouveau cycle »)" : "le client choisit lui-même le suivant tant que son accès court, et tu peux le changer ici"}. Blessure ou contre-indication médicale certifiée : mets le plan en pause et repousse la date de fin d'autant, ou rembourse au prorata (article 7 ter des conditions de vente).</p>` : null}
+        ${f.offer === "surmesure" ? html`<label className="chk"><input type="checkbox" id="pe-custom" checked=${f.customCycle === cycOf(f)} onChange=${(e) => setF((o) => ({ ...o, customCycle: e.target.checked ? cycOf(o) : null, customAt: e.target.checked ? nowISO() : null }))} /><span>Sur mesure : programme du cycle ${cycOf(f)} écrit pour ce client (crée-le dans Programmes › Mes programmes, puis choisis-le ci-dessus).</span></label>` : null}
         ${isLite ? html`<div className="btnrow"><${Btn} small kind="ghost" onClick=${() => extendLite("mois")}>Prolonger d'un mois</${Btn}><${Btn} small kind="ghost" onClick=${() => extendLite("an")}>Prolonger d'un an</${Btn}></div>
+          <label className="chk"><input type="checkbox" id="pe-nutri" checked=${nutriOk({ ...f, offer: "lite", validatedAt: f.validatedAt || nowISO() })} onChange=${(e) => setF((o) => ({ ...o, lite: { mode: "manuel", period: "mois", sub: null, ...(o.lite || {}), nutri: e.target.checked } }))} /><span>Option nutrition (Lite + Nutrition)${f.validatedAt && String(f.validatedAt) < LITE_NUTRI_FROM ? " · incluse : client Lite d'avant le 28 octobre 2026" : ""}</span></label>
           <p className="muted small">${f.lite && f.lite.mode === "abo" ? "Abonnement Stripe : la date de fin avance toute seule à chaque prélèvement." : "Paiement encaissé à ta façon : prolonge l'accès à chaque paiement, puis enregistre."} Programme de ${maxWeeks} semaines ; le client choisit lui-même le suivant tant que son accès court.</p>
           ${data.plan && liteNoticeDue(data.plan) ? html`<${LiteNotice} plan=${data.plan} data=${data} settings=${settings} src=${src} demo=${demo} />` : null}` : null}
-        <div className="row2"><${Field} label="Début (de préférence un lundi)" id="pe-start"><input id="pe-start" type="date" value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
+        <div className="row2"><${Field} label="Début (de préférence un lundi)" id="pe-start"><input id="pe-start" type="date" value=${f.start} onChange=${(e) => { const v = e.target.value; if (isDated && f.status === "pending" && isLongW(f.grantWeeks) && v) { const startMs = msOfISO(v), u = addPeriodMs(startMs, "mois", monthsOfW(f.grantWeeks)); setF((o) => ({ ...o, start: v, startMs, untilMs: u, until: isoOf(new Date(u - 1)) })); } else set("start", v); }} /></${Field}>
           <${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "Salle" }, { v: "maison", n: "Maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}></div>
         ${prog && !prog.maison && f.equipment === "maison" ? html`<p className="small warn-t">Ce programme n'a pas de version maison : les exercices resteront ceux de la salle.</p>` : null}
         <div className="row2"><${Field} label="Profil" id="pe-niv"><select id="pe-niv" value=${f.niveau || "sportif"} onChange=${(e) => set("niveau", e.target.value)}>${NIV.map((n) => html`<option key=${n.id} value=${n.id}>${n.n}</option>`)}</select></${Field}>
@@ -510,7 +543,8 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
         <${Field} label="Message affiché au client" id="pe-msg"><textarea id="pe-msg" rows="3" value=${f.message || ""} onChange=${(e) => set("message", e.target.value)} placeholder="Consigne de la semaine, encouragement…"></textarea></${Field}>
         <${TrSend} text=${f.message || ""} setText=${(v) => set("message", v)} to=${p.lang} id="pe-msg-trad" />
         <${Field} label="Statut"><${Seg} options=${[{ v: "pending", n: "En attente" }, { v: "active", n: "Actif" }, { v: "paused", n: "En pause" }, { v: "archived", n: "Archivé" }]} value=${f.status} onChange=${(v) => set("status", v)} /></${Field}>
-        <p className="muted small">${isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance") + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
+        <p className="muted small">${isDated ? "Prix : " + eur(offerPrice(settings, f.offer, isLongW(f.grantWeeks) ? f.grantWeeks : 52)) + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, Math.min(12, maxWeeks) * 7 - 1))
+          : isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance", !!(f.lite && f.lite.nutri)) + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
       </div>
       <div className="actions">${f.status === "pending" ? html`<${Btn} onClick=${() => save("active")}>Valider et activer</${Btn}>` : null}<${Btn} kind=${f.status === "pending" ? "ghost" : "primary"} onClick=${() => save()}>Enregistrer</${Btn}></div>
     </${Card}>
@@ -544,16 +578,19 @@ function SiteAccessHowto({ onPreview }) {
 function CoachOrders({ data, src, cid, demo, settings }) {
   const toast = useToast();
   const [busy, setBusy] = useState(false);
+  const [pm, setPm] = useState({});
   const orders = Object.values(data.orders || {}).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)));
   if (!orders.length) return null;
   const p = data.profile || {};
+  const pmOf = (o) => pm[o.id] || (o.kind === "paiement" ? "Carte bancaire (Stripe)" : "Virement");
   const activate = async (o) => {
     if (demo) { toast("Exemple : rien n'est enregistré.", "warn"); return; }
     setBusy(true);
     try {
       const next = planFromOrder(data.plan, o, p, { kind: "coach", id: o.kind });
       await src.setPlan({ ...next, reviewedAt: nowISO() });
-      const done = { ...o, status: "active", activatedAt: nowISO(), activatedBy: "coach" };
+      const now = nowISO();
+      const done = { ...o, status: "active", activatedAt: now, activatedBy: "coach", ...(o.kind === "code" ? {} : { payMethod: pmOf(o), paidAt: now, paidAmount: Number(o.paidAmount ?? o.price) || 0 }) };
       await src.saveOrder(o.id, done);
       await src.setProfile({ ...p, access: accessSummary(done) });
       toast("Accès activé.", "ok");
@@ -582,7 +619,9 @@ function CoachOrders({ data, src, cid, demo, settings }) {
       ${o.cancel ? html`<p className="small warn-t">Résiliation le ${new Date(o.cancel.at).toLocaleString("fr-FR")} par ${o.cancel.name} · effet ${o.cancel.immediate ? "immédiat" : "le " + fmtD(isoOf(new Date(o.cancel.effectMs - 1)))} · Stripe : ${o.cancel.stripe === "ok" ? "abonnement arrêté automatiquement" : o.cancel.doneAt ? "arrêté le " + fmtD(o.cancel.doneAt) : "à arrêter dans Stripe (Abonnements › Annuler" + (o.cancel.immediate ? " immédiatement" : " à la fin de la période") + ")"}${o.cancel.refund > 0 ? " · à rembourser : " + eur2(o.cancel.refund) + (o.cancel.refundedAt ? " (remboursé le " + fmtD(o.cancel.refundedAt) + ")" : "") : ""}</p>` : null}
       ${o.withdrawal ? html`<p className="small warn-t">Rétractation le ${new Date(o.withdrawal.at).toLocaleString("fr-FR")} par ${o.withdrawal.name} · à rembourser : ${eur2(o.withdrawal.refund || 0)} (prorata)${o.withdrawal.refundedAt ? " · remboursé le " + fmtD(o.withdrawal.refundedAt) : ""}</p>` : null}
       <div className="btnrow">
+        ${o.status === "en_attente" && !o.withdrawal && o.kind !== "code" ? html`<select aria-label="Moyen de paiement reçu" value=${pmOf(o)} onChange=${(e) => setPm({ ...pm, [o.id]: e.target.value })}>${["Carte bancaire (Stripe)", "Virement", "Espèces", "Chèque", "Carte bancaire (terminal)", "Autre"].map((x) => html`<option key=${x} value=${x}>${x}</option>`)}</select>` : null}
         ${o.status === "en_attente" && !o.withdrawal ? html`<${Btn} small onClick=${() => activate(o)} disabled=${busy}>${o.kind === "code" ? "Activer le code" : "Paiement reçu · activer"}</${Btn}>` : null}
+        ${o.facture ? html`<button type="button" className="linkbtn" onClick=${() => saveFacture(o.facture)}>Facture ${o.facture.num}</button>` : null}${o.avoir ? html`<button type="button" className="linkbtn" onClick=${() => saveFacture(o.avoir)}>Avoir ${o.avoir.num}</button>` : null}
         ${o.withdrawal && !o.withdrawal.refundedAt ? html`<${Btn} small kind="danger" onClick=${() => refunded(o)} disabled=${busy}>Remboursement effectué · clôturer l'accès</${Btn}>` : null}
         ${o.cancel && o.cancel.stripe !== "ok" && !o.cancel.doneAt ? html`<${Btn} small kind="danger" onClick=${() => patch(o, { doneAt: todayISO() }, "Arrêt de l'abonnement noté.")} disabled=${busy}>Abonnement arrêté dans Stripe</${Btn}>` : null}
         ${o.cancel && o.cancel.refund > 0 && !o.cancel.refundedAt ? html`<${Btn} small kind="ghost" onClick=${() => patch(o, { refundedAt: todayISO() }, "Remboursement noté.")} disabled=${busy}>Remboursement effectué</${Btn}>` : null}
@@ -623,7 +662,7 @@ function useLiteSync(db, rows) {
   useEffect(() => {
     if (!db) return;
     rows.forEach(async (r) => {
-      if (r.demo || !r.plan || r.plan.offer !== "lite") return;
+      if (r.demo || !r.plan || !r.plan.untilMs) return;
       const nc = r.profile && r.profile.nextCycle;
       if (!nc || nc.cycle !== cycOf(r.plan) + 1 || doneRef.current["nc" + r.cid + nc.cycle]) return;
       doneRef.current["nc" + r.cid + nc.cycle] = 1;
@@ -690,7 +729,7 @@ function CodesView({ db, codes, rows, lib }) {
     if (codes[code]) { toast("Ce code existe déjà.", "warn"); return; }
     setBusy(true);
     try {
-      await dbSet(db, "codes/" + code, { code, kind: f.kind, offer: f.offer, weeks: Number(f.weeks), programId: f.programId || null, max: Math.max(1, Math.min(500, Number(f.max) || 1)), uses: 0, usedBy: {}, active: true,
+      await dbSet(db, "codes/" + code, { code, kind: f.kind, offer: f.offer, ...(f.offer === "lite" && f.nutri ? { nutri: true } : {}), weeks: Number(f.weeks), programId: f.programId || null, max: Math.max(1, Math.min(500, Number(f.max) || 1)), uses: 0, usedBy: {}, active: true,
         expiresMs: f.expires ? parseISO(f.expires).setHours(23, 59, 59, 999) : null, note: f.note.trim(), createdAt: nowISO() });
       toast("Code " + code + " créé.", "ok");
       setF({ ...blank(), kind: f.kind, code: genCode(f.kind === "essai" ? "ESSAI" : "OFFERT") });
@@ -704,6 +743,7 @@ function CodesView({ db, codes, rows, lib }) {
     <${Card} title="Créer un code"><div className="form">
       <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : "OFFERT")); }} /></${Field}>
         <${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, true)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
+      ${f.offer === "lite" ? html`<${Field} label="Contenu du Lite"><${Seg} options=${[{ v: false, n: "Lite" }, { v: true, n: "Lite + Nutrition" }]} value=${!!f.nutri} onChange=${(v) => set("nutri", v)} /></${Field}>` : null}
       <${Field} label=${f.offer === "lite" ? "Durée d'accès Lite offerte" : "Durée offerte"}><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
       <div className="row2"><${Field} label="Programme" id="cd-prog"><select id="cd-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Au choix du client</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>
         <${Field} label="Nombre d'utilisations" id="cd-max" hint="1 pour une personne, plus pour un groupe ou un club"><input id="cd-max" inputMode="numeric" value=${f.max} onChange=${(e) => set("max", e.target.value.replace(/\D/g, ""))} /></${Field}></div>
@@ -738,7 +778,8 @@ function AddClient({ db, lib, settings, onDone }) {
     const cid = rid("m_");
     try {
       await dbSet(db, "clients/" + cid, { name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), sport: f.sport.trim(), sportId: sportIdOf(f.sport) || null, manual: true, local: true, createdAt: nowISO(), consent: null, sum: summarize({}) });
-      await dbSet(db, "plans/" + cid, { programId: f.programId, offer: f.offer, weeks: Number(f.weeks), start: f.start, equipment: f.equipment, status: "active", message: "", extra: [], validatedAt: nowISO() });
+      const g = Number(f.weeks), startMs = msOfISO(f.start), untilMs = isLongW(g) ? addPeriodMs(startMs, "mois", monthsOfW(g)) : 0;
+      await dbSet(db, "plans/" + cid, { programId: f.programId, offer: f.offer, weeks: untilMs ? 12 : g, grantWeeks: g, start: f.start, ...(untilMs ? { startMs, untilMs, until: isoOf(new Date(untilMs - 1)) } : {}), equipment: f.equipment, status: "active", message: "", extra: [], validatedAt: nowISO() });
       toast(window.IS_SITE ? "Fiche client créée." : "Client créé. Copie son code d'accès dans l'onglet Plan.", "ok");
       onDone(cid);
     } catch (e) { toast("Création impossible" + errWhy(e, true), "bad"); }

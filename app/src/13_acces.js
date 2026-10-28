@@ -1,5 +1,5 @@
 /* ===== Accès payant, codes d'offre, commandes, rétractation, documents légaux ===== */
-const CGV_VERSION = "2026-10-27";
+const CGV_VERSION = "2026-10-28";
 const TRIAL_DURS = [{ w: 1, n: "1 semaine" }, { w: 2, n: "2 semaines" }];
 const CODE_ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 function normCode(s) { return String(s || "").toUpperCase().replace(/\s+/g, "").replace(/[^A-Z0-9-]/g, "").slice(0, 24); }
@@ -13,17 +13,17 @@ function codeState(c, uid) {
   if ((Number(c.uses) || 0) >= (Number(c.max) || 1)) return { ok: false, why: "Ce code a atteint son nombre d'utilisations." };
   return { ok: true };
 }
-function codeSummary(c) { return (c.kind === "essai" ? "Essai" : "Offert") + " · " + offerName(c.offer) + " · " + durName(c.weeks) + (c.offer === "lite" ? " d'accès" : "") + (c.programId && PB[c.programId] ? " · " + PB[c.programId].n : ""); }
+function codeSummary(c) { return (c.kind === "essai" ? "Essai" : "Offert") + " · " + offerName(c.offer) + (c.offer === "lite" && c.nutri ? " + Nutrition" : "") + " · " + durName(c.weeks) + (c.offer === "lite" ? " d'accès" : "") + (c.programId && PB[c.programId] ? " · " + PB[c.programId].n : ""); }
 function eur2(v) { return (Number(v) || 0).toLocaleString(LOCALE, { minimumFractionDigits: Number.isInteger(Number(v)) ? 0 : 2, maximumFractionDigits: 2 }) + " €"; }
 function priceOf(settings, offer, weeks) { const p = offerPrice(settings, offer, weeks); return p === null || p === undefined ? null : Number(p); }
 function payLinkOf(settings, offer, weeks) {
-  if (offer === "lite") { const l = settings && settings.pay && settings.pay.links && settings.pay.links["lite_" + weeks]; return l && /^https:\/\//.test(l) ? l.trim() : null; }
+  if (offer === "lite") { const l = settings && settings.pay && settings.pay.links && settings.pay.links["lite_" + weeks]; return l && /^https:\/\//.test(l) ? l.trim() : null; } // weeks = "mois_abo", "an_avance_n"…
   const l = settings && settings.pay && settings.pay.links && settings.pay.links[offer + "_" + weeks];
   return l && /^https:\/\//.test(l) ? l.trim() : null;
 }
 function payMode(settings) { return (settings && settings.pay && settings.pay.mode) || "manuel"; }
 function stripeUrl(link, uid, order, email) {
-  const ref = [uid, order.offer, order.offer === "lite" ? order.period + "-" + order.mode : order.weeks, order.id].join("__").replace(/[^A-Za-z0-9_-]/g, "");
+  const ref = [uid, order.offer, order.offer === "lite" ? order.period + "-" + order.mode + (order.nutri ? "-n" : "") : order.weeks, order.id].join("__").replace(/[^A-Za-z0-9_-]/g, "");
   return link + (link.includes("?") ? "&" : "?") + "client_reference_id=" + encodeURIComponent(ref) + (email ? "&prefilled_email=" + encodeURIComponent(email) : "");
 }
 function legalInfo(settings) {
@@ -49,11 +49,15 @@ const LITE = CONTENT.LITE || { id: "lite", n: "Lite", prix: { mois: 9.9, an: 89 
 const LITE_PER = [{ v: "mois", n: "Mensuel" }, { v: "an", n: "Annuel" }];
 const LITE_MODE = [{ v: "abo", n: "Abonnement" }, { v: "avance", n: "Paiement d'avance" }];
 function liteDesc() { const d = LITE.desc || ""; return window.IS_SITE ? d.replace(", sans correction vidéo par Antoine et sans coach IA.", " et sans correction vidéo par Antoine.") : d; }
-function litePrice(settings, period) { const s = settings && settings.lite && settings.lite[period]; const v = s !== undefined && s !== null && s !== "" ? Number(s) : LITE.prix[period]; return Number.isFinite(v) ? v : null; }
+/* Lite + Nutrition : mêmes réglages préfixés par « n » (nmois, nan) */
+function litePrice(settings, period, nutri) { const k = (nutri ? "n" : "") + period; const s = settings && settings.lite && settings.lite[k]; const v = s !== undefined && s !== null && s !== "" ? Number(s) : (nutri ? LITE.prixN || { mois: 14.9, an: 129 } : LITE.prix)[period]; return Number.isFinite(v) ? v : null; }
+/* nutrition : incluse partout sauf dans le Lite simple ; les abonnés Lite d'avant le 28 octobre 2026 la gardent */
+const LITE_NUTRI_FROM = "2026-10-27T23:00"; // 28 octobre 2026 à 0 h, heure de Paris (validatedAt est en UTC) ; même seuil dans les règles Firestore (liteNewOk)
+function nutriOk(plan) { if (!plan || plan.offer !== "lite") return true; return !!(plan.lite && plan.lite.nutri) || String(plan.validatedAt || "") < LITE_NUTRI_FROM; }
 function liteOn(settings) { return !(settings && settings.lite && settings.lite.on === false); }
-function liteLabel(x) { const l = (x && (x.lite || x)) || {}; if (l.mode === "code" || x.kind === "code") return "Lite offert" + (x.weeks ? " · " + durName(x.weeks) : ""); return "Lite " + (l.period === "an" ? "annuel" : "mensuel") + (l.mode === "abo" ? " (abonnement)" : " (paiement d'avance)"); }
+function liteLabel(x) { const l = (x && (x.lite || x)) || {}; if (l.mode === "code" || x.kind === "code") return "Lite offert" + (x.weeks ? " · " + durName(x.weeks) : ""); return "Lite " + (l.nutri ? "+ Nutrition " : "") + (l.period === "an" ? "annuel" : "mensuel") + (l.mode === "abo" ? " (abonnement)" : " (paiement d'avance)"); }
 function litePer(period) { return period === "an" ? "an" : "mois"; }
-function orderLink(settings, o) { return o.offer === "lite" ? payLinkOf(settings, "lite", o.period + "_" + o.mode) : payLinkOf(settings, o.offer, o.weeks); }
+function orderLink(settings, o) { return o.offer === "lite" ? payLinkOf(settings, "lite", o.period + "_" + o.mode + (o.nutri ? "_n" : "")) : payLinkOf(settings, o.offer, o.weeks); }
 const LITE_GRACE = 3 * 86400000; // délai de prélèvement d'un renouvellement (Stripe retente un paiement refusé)
 function liteCancelOf(data, plan) { const o = plan && plan.source && data && data.orders && data.orders[plan.source.orderId]; return o && o.cancel ? o.cancel : null; }
 function liteEndMs(plan, data) {
@@ -71,7 +75,10 @@ function addPeriodMs(ms, period, n) {
   return d.getTime();
 }
 function liteEnd(plan) { return plan && plan.untilMs ? isoOf(new Date(plan.untilMs - 1)) : null; }
-function planDur(plan) { return plan && plan.offer === "lite" ? "Lite jusqu'au " + fmtD(liteEnd(plan)) : durName(plan && plan.weeks); }
+function planDur(plan) { return plan && plan.offer === "lite" ? "Lite jusqu'au " + fmtD(liteEnd(plan)) : plan && plan.untilMs ? "jusqu'au " + fmtD(liteEnd(plan)) : durName(plan && plan.weeks); }
+/* formules accompagnées sur 6 ou 12 mois (et leurs prolongations) : accès daté comme le Lite (startMs → untilMs), programme de 12 semaines qui s'enchaîne */
+function datedPlan(plan) { return !!(plan && plan.offer !== "lite" && plan.untilMs); }
+function datedActive(plan) { return !!(datedPlan(plan) && plan.status === "active" && Date.now() < plan.untilMs); }
 function progWeeks(programId) { const pr = PB[programId]; return pr ? Math.min(12, pr.blocks.length * 4) : 12; }
 function liteActive(plan, data) { return !!(plan && plan.offer === "lite" && plan.untilMs && plan.status === "active" && Date.now() < liteEndMs(plan, data)); }
 /* renouvellement annuel tacite : information écrite 1 à 3 mois avant l'échéance (article L215-1) */
@@ -85,6 +92,7 @@ function canExtend(prev, programId, weeks) {
 function planFromOrder(prev, order, profile, source) {
   if (order.offer === "lite") return litePlanFromOrder(prev, order, profile, source);
   const g = Number(order.weeks);
+  if (isLongW(g) || (order.ext && datedActive(prev) && DURS.some((d) => d.w === g))) return datedPlanFromOrder(prev, order, profile, source);
   const base = { source: { kind: source.kind, id: source.id || "", orderId: order.id }, grantWeeks: g, updatedAt: nowISO(), offer: order.offer };
   if (order.ext && canExtend(prev, order.programId, g)) {
     const end = planEnd(prev);
@@ -99,7 +107,7 @@ function planFromOrder(prev, order, profile, source) {
 function litePlanFromOrder(prev, order, profile, source) {
   const base = { source: { kind: source.kind, id: source.id || "", orderId: order.id }, grantWeeks: 0, updatedAt: nowISO(), offer: "lite" };
   const mode = order.kind === "code" ? "code" : order.mode || "avance";
-  const lite = { mode, period: mode === "code" ? null : order.period || "mois", sub: (source.pay && source.pay.sub) || null };
+  const lite = { mode, period: mode === "code" ? null : order.period || "mois", sub: (source.pay && source.pay.sub) || null, nutri: !!order.nutri };
   /* paiement d'avance alors que l'accès Lite court encore : on prolonge la date de fin, sans toucher au programme */
   if (prev && prev.offer === "lite" && liteActive(prev) && order.ext && prev.programId === order.programId) {
     const untilMs = mode === "code" ? prev.untilMs + Number(order.weeks) * 7 * 86400000 : addPeriodMs(prev.untilMs, lite.period);
@@ -111,7 +119,34 @@ function litePlanFromOrder(prev, order, profile, source) {
   return { programId: order.programId, offer: "lite", weeks: progWeeks(order.programId), start, startMs, untilMs, until: isoOf(new Date(untilMs - 1)), lite, equipment: order.equipment || "salle", status: "active",
     niveau: order.niveau || "sportif", medicalHold: !!(profile && profile.screeningFlag), compDate: order.compDate || null, message: "", extra: [], validatedAt: nowISO(), cycle: prev ? cycOf(prev) + 1 : 1, ...base };
 }
-/* Lite : le client choisit lui-même son programme suivant tant que son accès court */
+/* commande sur 6 ou 12 mois, ou prolongation d'un accès daté :
+   1. même formule et même programme, accès en cours : la date de fin avance du nombre de mois payés ;
+   2. accompagnement de 1 ou 3 mois en cours, même programme : on garde le programme, l'accès daté part de sa fin ;
+   3. sinon : nouveau départ à la date choisie. */
+function convOk(prev, programId) { return !!(prev && prev.offer !== "lite" && !prev.untilMs && prev.status === "active" && prev.programId === programId && PB[programId] && planEnd(prev) >= todayISO()); }
+function datedPlanFromOrder(prev, order, profile, source) {
+  const g = Number(order.weeks), n = monthsOfW(g);
+  const base = { source: { kind: source.kind, id: source.id || "", orderId: order.id }, grantWeeks: g, updatedAt: nowISO(), offer: order.offer };
+  const fin = (untilMs) => ({ untilMs, until: isoOf(new Date(untilMs - 1)) });
+  if (order.ext && datedActive(prev) && prev.offer === order.offer && prev.programId === order.programId)
+    return { ...prev, ...base, ...fin(addPeriodMs(prev.untilMs, "mois", n)), cycle: cycOf(prev) };
+  if (order.ext && convOk(prev, order.programId)) {
+    const startMs = msOfISO(todayISO());
+    return { ...prev, ...base, weeks: progWeeks(prev.programId), startMs, ...fin(addPeriodMs(Math.max(msOfISO(addDays(planEnd(prev), 1)), startMs), "mois", n)), cycle: cycOf(prev) };
+  }
+  const start = order.start || todayISO(), startMs = msOfISO(start);
+  return { programId: order.programId, offer: order.offer, weeks: progWeeks(order.programId), start, startMs, ...fin(addPeriodMs(startMs, "mois", n)), equipment: order.equipment || "salle", status: "active",
+    niveau: order.niveau || "sportif", medicalHold: !!(profile && profile.screeningFlag), compDate: order.compDate || null, message: "", extra: [],
+    validatedAt: nowISO(), cycle: prev ? cycOf(prev) + 1 : 1, ...base };
+}
+/* fin prévue d'une commande (affichage) */
+function orderUntilMs(prev, order) {
+  const g = Number(order.weeks), n = monthsOfW(g);
+  if (order.ext && datedActive(prev)) return addPeriodMs(prev.untilMs, "mois", n);
+  if (order.ext && convOk(prev, order.programId)) return addPeriodMs(Math.max(msOfISO(addDays(planEnd(prev), 1)), msOfISO(todayISO())), "mois", n);
+  return addPeriodMs(msOfISO(order.start || todayISO()), "mois", n);
+}
+/* Lite et accès daté : le client choisit lui-même son programme suivant tant que son accès court (Sur mesure : Antoine l'écrit) */
 function liteNextCycle(prev, f) {
   return { ...prev, programId: f.programId, weeks: progWeeks(f.programId), start: f.start, niveau: f.niveau || prev.niveau, equipment: f.equipment || prev.equipment, compDate: f.compDate || null, extra: [], message: "", cycle: cycOf(prev) + 1, updatedAt: nowISO() };
 }
@@ -148,6 +183,9 @@ async function redeemPayment(db, uid, pid, pay, data) {
   let order = (pay.orderId && data.orders && data.orders[pay.orderId]) || orders.filter((o) => o && o.kind === "paiement" && o.status === "en_attente").sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
   const req = (data.profile && data.profile.request) || {};
   if (!order) order = { id: pay.orderId || rid("o"), at: nowISO(), kind: "paiement", offer: pay.offer, weeks: Number(pay.weeks), programId: req.programId, niveau: req.niveau, start: req.start, equipment: req.equipment, price: pay.amount / 100, status: "en_attente" };
+  /* paiement sans commande retrouvée pendant un accès daté de la même formule : on le prolonge plutôt que de le remplacer */
+  if (!order.ext && pay.offer !== "lite" && datedActive(data.plan) && data.plan.offer === pay.offer && DURS.some((d) => d.w === Number(pay.weeks)) && !orders.some((o) => o && o.id === order.id))
+    order = { ...order, ext: true, programId: data.plan.programId, start: data.plan.start };
   /* déjà activée par le coach (paiement vérifié à la main) : on ne crée pas un second accès */
   if (order.status === "active" || (data.plan && data.plan.source && data.plan.source.orderId === order.id)) return null;
   if (pay.offer === "lite") { if (order.offer !== "lite" || order.period !== pay.period || order.mode !== pay.mode) order = { ...order, offer: "lite", period: pay.period, mode: pay.mode }; }
@@ -193,6 +231,14 @@ function refundFor(order, plan, atISO) {
     if (nowMs <= plan.startMs) return Math.round(price * 100) / 100;
     return Math.round(price * Math.max(0, Math.min(1, (plan.untilMs - nowMs) / tot)) * 100) / 100;
   }
+  if (isLongW(order.weeks) || (plan && plan.untilMs && plan.source && plan.source.orderId === order.id)) {
+    const own = plan && plan.source && plan.source.orderId === order.id && plan.startMs && plan.untilMs;
+    if (!own) return Math.round(price * 100) / 100;
+    const fromMs = order.ext ? addPeriodMs(plan.untilMs, "mois", -monthsOfW(order.weeks)) : plan.startMs;
+    const nowMs = msOfISO(at) + 86400000;
+    if (nowMs <= fromMs) return Math.round(price * 100) / 100;
+    return Math.round(price * Math.max(0, Math.min(1, (plan.untilMs - nowMs) / (plan.untilMs - fromMs))) * 100) / 100;
+  }
   const start = plan && plan.source && plan.source.orderId === order.id ? (order.ext ? addDays(planEnd(plan), -Number(order.weeks) * 7 + 1) : plan.start) : null;
   if (!start || at < start) return Math.round(price * 100) / 100;
   const used = diffDays(start, at) + 1, total = Number(order.weeks) * 7;
@@ -208,24 +254,26 @@ function accessOf(data) {
   if (!plan) return "aucun";
   if (plan.status === "paused") return "pause";
   if (plan.status === "archived") return "termine";
-  if (plan.offer === "lite") return Date.now() < liteEndMs(plan, data) ? "actif" : "termine";
+  if (plan.offer === "lite" || plan.untilMs) return Date.now() < liteEndMs(plan, data) ? "actif" : "termine";
   const ps = planState(plan);
   return ps && ps.phase === "fini" ? "termine" : "actif";
 }
 
 /* ---------- commande (première fois ou renouvellement) ---------- */
-function litePriceTxt(settings, period, mode) { const v = litePrice(settings, period); return v === null ? "—" : eur2(v) + (mode === "abo" ? (period === "an" ? " / an" : " / mois") : period === "an" ? " (1 an)" : " (1 mois)"); }
+function litePriceTxt(settings, period, mode, nutri) { const v = litePrice(settings, period, nutri); return v === null ? "—" : eur2(v) + (mode === "abo" ? (period === "an" ? " / an" : " / mois") : period === "an" ? " (1 an)" : " (1 mois)"); }
 function liteTerms(period, mode, price, fromISO, toISO) {
   if (mode === "abo" && period === "an") return "Abonnement annuel à reconduction tacite : " + eur2(price) + " prélevés chaque année à la date anniversaire. Tu reçois un rappel écrit 1 à 3 mois avant chaque échéance pour pouvoir t'y opposer. Résiliation en quelques clics dans « Mes commandes » : elle prend effet à la fin de l'année payée.";
   if (mode === "abo") return "Abonnement mensuel sans durée minimale : " + eur2(price) + " prélevés chaque mois à la date anniversaire, jusqu'à résiliation. Résiliation à tout moment en quelques clics dans « Mes commandes » : elle prend effet à la fin du mois déjà payé.";
   return "Paiement unique, sans abonnement ni renouvellement automatique. Accès du " + fmtD(fromISO) + " au " + fmtD(toISO) + " inclus.";
 }
+/* clause de sortie des formules de 6 et 12 mois (reprise dans les conditions de vente) */
+const LONG_EXIT = "En cas de blessure ou de contre-indication médicale attestée par un certificat, ton accompagnement est mis en pause (et prolongé d'autant) ou remboursé au prorata de la période restante, à ton choix.";
 function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   const toast = useToast();
   const p = data.profile || {};
   const req = p.request || {};
   const prev = data.plan && data.plan.status !== "pending" ? data.plan : null;
-  const prevEnd = prev && prev.offer === "lite" ? liteEnd(prev) : planEnd(prev);
+  const prevEnd = prev && prev.untilMs ? liteEnd(prev) : planEnd(prev);
   const age = ageOf(p);
   const minor = age !== null && age < 18;
   const rec = recommendNiveau(req.answers || {}, age, p.screeningFlag);
@@ -233,12 +281,14 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   const lOn = liteOn(settings);
   /* abonnement Lite en cours (non résilié) : pas de second achat Lite, il se renouvelle tout seul */
   const aboOn = mode === "renew" && prev && prev.offer === "lite" && prev.lite && prev.lite.mode === "abo" && liteActive(prev, data) && !liteCancelOf(data, prev);
-  const offers0 = [...OFFERS.map((o) => ({ v: o.id, n: o.n })), ...(lOn && !aboOn ? [{ v: "lite", n: "Lite" }] : [])];
+  /* Sur mesure : places limitées ; un client déjà en Sur mesure peut toujours prolonger */
+  const smOpen = !(settings && settings.surmesure && settings.surmesure.on === false) || (prev && prev.offer === "surmesure");
+  const offers0 = [...OFFERS.filter((o) => o.id !== "surmesure" || smOpen).map((o) => ({ v: o.id, n: o.n })), ...(lOn && !aboOn ? [{ v: "lite", n: "Lite" }] : [])];
   const [f, setF] = useState(() => {
     let of = req.offer || (prev && prev.offer) || "suivi";
     if (!offers0.some((o) => o.v === of)) of = "suivi";
     return { programId: (mode === "renew" && prev ? prev.programId : req.programId) || "", niveau: (prev && prev.niveau) || req.niveau || rec.id, offer: of,
-      weeks: Number(req.weeks) || 4, start: req.start && req.start >= todayISO() ? req.start : nextMonday(), equipment: req.equipment || (prev && prev.equipment) || "salle", compDate: req.compDate || "",
+      weeks: DURS.some((d) => d.w === Number(req.weeks)) ? Number(req.weeks) : 4, nutri: !!(req.nutri || (prev && prev.lite && prev.lite.nutri)), start: req.start && req.start >= todayISO() ? req.start : nextMonday(), equipment: req.equipment || (prev && prev.equipment) || "salle", compDate: req.compDate || "",
       period: req.period || (prev && prev.lite && prev.lite.period) || "mois", lmode: req.lmode || (prev && prev.lite && prev.lite.mode !== "code" && prev.lite.mode) || "abo" };
   });
   const [code, setCode] = useState(req.code || pending || "");
@@ -255,15 +305,22 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   const weeks = codeC ? Number(codeC.weeks) : isLite ? 0 : Number(f.weeks);
   const programId = codeC && codeC.programId ? codeC.programId : f.programId;
   const prog = PB[programId];
-  const progW = isLite ? progWeeks(programId) : weeks;
+  const nutri = isLite && (codeC ? !!codeC.nutri : !!f.nutri);
+  const long = !isLite && isLongW(weeks);
+  const progW = isLite || long ? progWeeks(programId) : weeks;
   /* prolongation : même programme, sans recommencer */
-  const liteExtOk = isLite && mode === "renew" && liteActive(prev, data) && prev.programId === programId && (!!codeC || lMode === "avance");
-  const extOk = isLite ? liteExtOk : mode === "renew" && canExtend(prev, programId, weeks);
+  const liteExtOk = isLite && mode === "renew" && liteActive(prev, data) && prev.programId === programId && (!!codeC || lMode === "avance") && !!(prev.lite && prev.lite.nutri) === nutri;
+  /* accès daté en cours (6 ou 12 mois) : toute commande de la même formule et du même programme le prolonge */
+  const dExt = !isLite && mode === "renew" && datedActive(prev) && prev.offer === offer && prev.programId === programId && DURS.some((d) => d.w === weeks);
+  /* 1 ou 3 mois en cours, passage à 6 ou 12 mois : on garde le programme */
+  const cExt = !isLite && long && mode === "renew" && convOk(prev, programId);
+  const extOk = isLite ? liteExtOk : dExt || cExt || (!long && mode === "renew" && !datedPlan(prev) && canExtend(prev, programId, weeks));
   const [ext, setExt] = useState(true);
-  const isExt = extOk && ext;
+  const isExt = dExt || (extOk && ext);
+  const dated = !isLite && (long || (isExt && (dExt || cExt)));
   const isCode = !!codeC || !!(cst && cst.pendingCoach);
-  const price = isCode ? 0 : isLite ? litePrice(settings, lPer) : priceOf(settings, offer, weeks);
-  const link = isCode ? null : isLite ? payLinkOf(settings, "lite", lPer + "_" + lMode) : payLinkOf(settings, offer, weeks);
+  const price = isCode ? 0 : isLite ? litePrice(settings, lPer, nutri) : priceOf(settings, offer, weeks);
+  const link = isCode ? null : isLite ? payLinkOf(settings, "lite", lPer + "_" + lMode + (nutri ? "_n" : "")) : payLinkOf(settings, offer, weeks);
   const checks = assessPlan({ programId, niveau: f.niveau, ans: req.answers, sport: p.sport, age, equipment: f.equipment, screeningFlag: p.screeningFlag, prereqOk: !PB[programId] || !PB[programId].prereq || (p.prereq || []).length >= PB[programId].prereq.length, weeks: progW, compDate: f.compDate, start: f.start });
   const blocking = checks.some((c) => c.t === "bad");
   useEffect(() => { if (code && !cst) check(code); }, []);
@@ -280,19 +337,22 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   }
   /* dates : Lite en abonnement démarre au paiement ; prolongation Lite à la suite de l'accès en cours */
   const startCont = isLite ? (isExt ? isoOf(new Date(prev.untilMs)) : lMode === "abo" && !codeC ? todayISO() : f.start)
-    : isExt ? (prevEnd >= todayISO() ? addDays(prevEnd, 1) : f.start) : f.start;
+    : isExt ? (dExt ? isoOf(new Date(prev.untilMs)) : prevEnd >= todayISO() ? addDays(prevEnd, 1) : f.start) : f.start;
   const liteToMs = isLite ? (codeC ? (isExt ? prev.untilMs : msOfISO(startCont)) + weeks * 7 * 86400000 : addPeriodMs(isExt ? prev.untilMs : msOfISO(startCont), lPer)) : 0;
-  const endISO = isLite ? isoOf(new Date(liteToMs - 1)) : weeks ? addDays(startCont, weeks * 7 - 1) : null;
+  const endISO = isLite ? isoOf(new Date(liteToMs - 1)) : dated ? isoOf(new Date(orderUntilMs(prev, { weeks, ext: isExt, start: f.start, programId }) - 1)) : weeks ? addDays(startCont, weeks * 7 - 1) : null;
   const mkOrder = (kind) => ({ id: rid("o"), at: nowISO(), kind, offer, weeks: isLite && !codeC ? null : weeks, period: isLite && !codeC ? lPer : null, mode: isLite && !codeC ? lMode : null,
-    programId, niveau: f.niveau, start: isExt ? prev.start : isLite ? startCont : f.start, contStart: isExt ? startCont : null,
+    ...(nutri ? { nutri: true } : {}), programId, niveau: f.niveau, start: isExt ? prev.start : isLite ? startCont : f.start, contStart: isExt ? startCont : null,
     ext: !!isExt, equipment: prog && prog.maison ? f.equipment : "salle", compDate: f.compDate || null, price: price || 0, currency: "EUR", status: "en_attente",
     code: codeC ? codeC.code : cst && cst.pendingCoach ? cst.code : null, cgv: { v: CGV_VERSION, at: nowISO() }, early: !!(early && price),
     parent: minor ? { ok: !!parent, name: (p.parent && p.parent.name) || "", email: (p.parent && p.parent.email) || "" } : null });
   const needEarly = !!price && startCont < addDays(todayISO(), 15);
-  const startOk = !isLite || isExt || (lMode === "abo" && !codeC) || (f.start >= todayISO() && f.start <= addDays(todayISO(), 60));
+  const startOk = isLite ? isExt || (lMode === "abo" && !codeC) || (f.start >= todayISO() && f.start <= addDays(todayISO(), 60)) : !dated || isExt || (f.start >= todayISO() && f.start <= addDays(todayISO(), 60));
+  const replaces = !isLite && mode === "renew" && datedActive(prev) && !dExt;
+  /* Lite en cours remplacé (nouveau départ ou passage au Lite + Nutrition) : on le dit avant la commande */
+  const liteReplaces = isLite && mode === "renew" && !aboOn && liteActive(prev, data) && !isExt && !(prev.lite && prev.lite.mode === "abo" && !liteCancelOf(data, prev));
   const ready = !!prog && cgv && (!minor || parent) && !blocking && (!needEarly || early) && startOk && !(isLite && aboOn);
   async function saveReq(order) {
-    const next = { ...p, request: { ...req, programId, niveau: f.niveau, offer, weeks: isLite ? req.weeks || 4 : weeks, period: isLite ? lPer : req.period || null, lmode: isLite ? lMode : req.lmode || null, start: f.start, equipment: order.equipment, compDate: f.compDate || null, code: order.code || null }, access: accessSummary(order) };
+    const next = { ...p, request: { ...req, programId, niveau: f.niveau, offer, weeks: isLite ? req.weeks || 4 : weeks, period: isLite ? lPer : req.period || null, lmode: isLite ? lMode : req.lmode || null, nutri: isLite ? nutri : req.nutri || false, start: f.start, equipment: order.equipment, compDate: f.compDate || null, code: order.code || null }, access: accessSummary(order) };
     await src.setProfile(next);
     await src.saveOrder(order.id, order);
   }
@@ -340,27 +400,32 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
     ${settings && settings.pay && settings.pay.info && sent.kind === "manuel" ? html`<${Card} title="Paiement"><p className="small">${settings.pay.info}</p></${Card}>` : null}
   </div>`;
   const durs = (codeC ? [] : DURS);
-  const lp = (per) => litePrice(settings, per);
+  const lp = (per) => litePrice(settings, per, nutri);
   const save = lp("mois") && lp("an") ? Math.round((1 - lp("an") / (lp("mois") * 12)) * 100) : 0;
   const btnTxt = busy ? "Un instant…" : codeC ? "Activer mon accès offert" : cst && cst.pendingCoach ? "Envoyer mon code à Antoine"
-    : isLite && lMode === "abo" ? "S'abonner avec obligation de paiement · " + litePriceTxt(settings, lPer, "abo") : "Commander avec obligation de paiement · " + (isLite ? eur2(price) : eur(price));
+    : isLite && lMode === "abo" ? "S'abonner avec obligation de paiement · " + litePriceTxt(settings, lPer, "abo", nutri) : "Commander avec obligation de paiement · " + (isLite ? eur2(price) : eur(price));
   return html`<div className="stack form">
-    ${mode === "renew" ? html`<p className="muted small">${prev ? "Ton programme actuel : " + (PB[prev.programId] ? PB[prev.programId].n : "") + ", " + (prev.offer === "lite" ? "formule Lite, accès jusqu'au " + fmtDY(prevEnd) : durName(prev.weeks) + (prevEnd ? ", fin le " + fmtDY(prevEnd) : "")) + "." : ""}</p>` : null}
+    ${mode === "renew" ? html`<p className="muted small">${prev ? "Ton programme actuel : " + (PB[prev.programId] ? PB[prev.programId].n : "") + ", " + (prev.offer === "lite" ? "formule Lite, accès jusqu'au " + fmtDY(prevEnd) : prev.untilMs ? "formule " + offerName(prev.offer) + ", accès jusqu'au " + fmtDY(prevEnd) : durName(prev.weeks) + (prevEnd ? ", fin le " + fmtDY(prevEnd) : "")) + "." : ""}</p>` : null}
     ${aboOn ? html`<div className="alert okb"><div><b>Ton abonnement Lite est actif</b><p>Il se renouvelle tout seul : rien à racheter. Pour changer de programme quand le tien est terminé, utilise « Choisir mon prochain programme ». Pour passer à une formule avec suivi, résilie d'abord ton abonnement dans « Mes commandes » (sinon il continue d'être prélevé).</p></div></div>` : null}
     <${Field} label="Programme" id="pu-prog"><select id="pu-prog" value=${programId} disabled=${!!(codeC && codeC.programId)} onChange=${(e) => set("programId", e.target.value)}>
       <option value="">Choisir</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>
-    ${extOk ? html`<${Field} label="Suite"><${Seg} options=${isLite ? [{ v: true, n: "Prolonger mon accès (même programme)" }, { v: false, n: "Nouveau départ en semaine 1" }] : [{ v: true, n: "Continuer (semaines " + (Number(prev.weeks) + 1) + " à " + (Number(prev.weeks) + weeks) + ")" }, { v: false, n: "Recommencer à la semaine 1" }]} value=${ext} onChange=${setExt} /></${Field}>` : null}
+    ${extOk && !dExt ? html`<${Field} label="Suite"><${Seg} options=${isLite ? [{ v: true, n: "Prolonger mon accès (même programme)" }, { v: false, n: "Nouveau départ en semaine 1" }] : cExt ? [{ v: true, n: "Continuer mon programme en cours" }, { v: false, n: "Recommencer à la semaine 1" }] : [{ v: true, n: "Continuer (semaines " + (Number(prev.weeks) + 1) + " à " + (Number(prev.weeks) + weeks) + ")" }, { v: false, n: "Recommencer à la semaine 1" }]} value=${ext} onChange=${setExt} /></${Field}>` : null}
+    ${dExt ? html`<p className="small">Ton accès en cours est prolongé : ton programme continue, sans recommencer.</p>` : null}
+    ${liteReplaces ? html`<div className="alert warn"><div><b>Ton accès Lite actuel court jusqu'au ${fmtDY(prevEnd)}</b><p>Cette commande le remplace dès son début. Pour ajouter la nutrition sans perdre de jours, écris plutôt à Antoine : il ajoute l'option au prorata.</p></div></div>` : null}
+    ${replaces ? html`<div className="alert warn"><div><b>Ton accompagnement actuel court jusqu'au ${fmtDY(prevEnd)}</b><p>Une commande avec une autre formule ou un autre programme le remplace dès son début. Pour changer de programme, utilise plutôt « Choisir mon prochain programme » à la fin du tien ; pour changer de formule sans rien perdre, écris à Antoine : il ajuste ton accès au prorata.</p></div></div>` : null}
     <div className="field"><span className="field-l">Ton profil</span><${NiveauCards} value=${f.niveau} onChange=${(v) => set("niveau", v)} recommended=${rec.id} />
       ${rec.why.length ? html`<span className="field-h">${rec.why.join(" ")}</span>` : null}</div>
     ${codeC ? html`<div className="alert okb"><div><b>Code ${codeC.code}</b><p>${codeSummary(codeC)} : accès offert, rien à payer.</p></div><button type="button" className="linkbtn" onClick=${() => { setCst(null); setCode(""); }}>Retirer</button></div>` : html`
       <${Field} label="Formule"><${Seg} options=${offers0} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>
-      <p className="muted small">${isLite ? liteDesc() : html`${(OFFERS.find((o) => o.id === f.offer) || {}).desc || ""} ${aiLimitTxt(settings, f.offer)}`}</p>
+      <p className="muted small">${isLite ? (nutri ? LITE.descN : liteDesc()) : html`${(OFFERS.find((o) => o.id === f.offer) || {}).desc || ""} ${aiLimitTxt(settings, f.offer)}`}</p>
       ${isLite ? html`
+        <${Field} label="Contenu"><${Seg} options=${[{ v: false, n: "Lite · " + eur2(litePrice(settings, "mois")) + " / mois" }, { v: true, n: "Lite + Nutrition · " + eur2(litePrice(settings, "mois", true)) + " / mois" }]} value=${!!f.nutri} onChange=${(v) => set("nutri", v)} /></${Field}>
         <${Field} label="Durée"><${Seg} options=${[{ v: "mois", n: "Mensuel · " + eur2(lp("mois")) }, { v: "an", n: "Annuel · " + eur2(lp("an")) + (save > 0 ? " (−" + save + " %)" : "") }]} value=${lPer} onChange=${(v) => set("period", v)} /></${Field}>
         <${Field} label="Paiement"><${Seg} options=${[{ v: "abo", n: "Abonnement (renouvellement automatique)" }, { v: "avance", n: "Paiement d'avance (sans renouvellement)" }]} value=${lMode} onChange=${(v) => set("lmode", v)} /></${Field}>`
-      : html`<${Field} label="Durée"><${Seg} options=${durs.filter((d) => !isExt || Number(prev.weeks) + d.w <= 12).map((d) => ({ v: d.w, n: d.n + " · " + eur(priceOf(settings, f.offer, d.w)) }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>`}`}
+      : html`<${Field} label="Durée"><${Seg} options=${durs.filter((d) => !isExt || datedActive(prev) || isLongW(d.w) || Number(prev.weeks) + d.w <= 12).map((d) => ({ v: d.w, n: d.n + " · " + eur(priceOf(settings, f.offer, d.w)) }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
+        ${long ? html`<p className="small muted">${"Soit " + eur(Math.round(priceOf(settings, f.offer, weeks) / monthsOfW(weeks))) + " par mois, payés en une fois. Ton programme de 12 semaines s'enchaîne avec le suivant jusqu'à la fin de ton accès."}</p>` : null}`}`}
     ${isLite && !isExt && lMode === "abo" && !codeC ? html`<p className="small muted">Ton accès commence dès le paiement.</p>` : null}
-    ${(isLite ? !isExt && (lMode === "avance" || codeC) : !isExt || prevEnd < todayISO()) ? html`<div className="row2"><${Field} label=${isExt ? "Reprise le" : "Début"} id="pu-start" hint=${isLite ? "Au plus tard dans 60 jours." : null}><input id="pu-start" type="date" min=${todayISO()} max=${isLite ? addDays(todayISO(), 60) : undefined} value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
+    ${(isLite ? !isExt && (lMode === "avance" || codeC) : !isExt || prevEnd < todayISO()) ? html`<div className="row2"><${Field} label=${isExt ? "Reprise le" : "Début"} id="pu-start" hint=${isLite || dated ? "Au plus tard dans 60 jours." : null}><input id="pu-start" type="date" min=${todayISO()} max=${isLite || dated ? addDays(todayISO(), 60) : undefined} value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
       ${prog && prog.maison ? html`<${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "En salle" }, { v: "maison", n: "À la maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>` : null}</div>` : null}
     ${!startOk ? html`<p className="small warn-t">Choisis une date de début entre aujourd'hui et dans 60 jours.</p>` : null}
     ${nivRank(f.niveau) >= 2 ? html`<${Field} label="Prochaine compétition importante (facultatif)" id="pu-comp" hint="Pour programmer l'affûtage des deux semaines précédentes."><input id="pu-comp" type="date" value=${f.compDate} onChange=${(e) => set("compDate", e.target.value)} /></${Field}>` : null}
@@ -371,11 +436,11 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
       ${cst && cst.pendingCoach ? html`<p className="small">Code ${cst.code} : il sera vérifié par Antoine à l'activation.</p>` : null}` : null}
     <${Card} title="Récapitulatif">
       <dl className="dl"><dt>Programme</dt><dd>${prog ? prog.n : "—"}</dd><dt>Profil</dt><dd>${nivName(f.niveau)}</dd><dt>Formule</dt><dd>${offerName(offer)}</dd>
-        ${isLite ? html`<dt>Accès</dt><dd>${codeC ? durName(weeks) + " offert" : (lPer === "an" ? "Annuel" : "Mensuel") + " · " + (lMode === "abo" ? "abonnement" : "paiement d'avance")}${isExt ? " de plus" : ""}</dd>`
-          : html`<dt>Durée</dt><dd>${durName(weeks)}${isExt ? " de plus (jusqu'à " + durName(Number(prev.weeks) + weeks) + " au total)" : ""}</dd>`}
-        <dt>${isExt ? "Suite" : "Début"}</dt><dd>${fmtDY(startCont)}</dd>${isLite && !(lMode === "abo" && !codeC) ? html`<dt>Fin de l'accès</dt><dd>${fmtDY(endISO)}</dd>` : null}
-        <dt>Prix</dt><dd><b>${price === 0 ? "Offert" : price === null ? "—" : isLite ? litePriceTxt(settings, lPer, lMode) : eur(price)}</b></dd></dl>
-      <p className="muted small">${tvaLine(settings)}. ${isLite && !codeC ? liteTerms(lPer, lMode, price, startCont, endISO) : "Paiement unique, sans abonnement ni renouvellement automatique." + (endISO ? " Accès du " + fmtD(startCont) + " au " + fmtD(endISO) + " inclus." : "")}</p></${Card}>
+        ${isLite ? html`<dt>Accès</dt><dd>${codeC ? durName(weeks) + " offert" : (lPer === "an" ? "Annuel" : "Mensuel") + " · " + (lMode === "abo" ? "abonnement" : "paiement d'avance")}${isExt ? " de plus" : ""}${nutri ? " · avec nutrition" : ""}</dd>`
+          : html`<dt>Durée</dt><dd>${durName(weeks)}${isExt ? (dated ? " de plus" : " de plus (jusqu'à " + durName(Number(prev.weeks) + weeks) + " au total)") : ""}</dd>`}
+        <dt>${isExt ? "Suite" : "Début"}</dt><dd>${fmtDY(startCont)}</dd>${(isLite && !(lMode === "abo" && !codeC)) || dated ? html`<dt>Fin de l'accès</dt><dd>${fmtDY(endISO)}</dd>` : null}
+        <dt>Prix</dt><dd><b>${price === 0 ? "Offert" : price === null ? "—" : isLite ? litePriceTxt(settings, lPer, lMode, nutri) : eur(price)}</b></dd></dl>
+      <p className="muted small">${tvaLine(settings)}. ${isLite && !codeC ? liteTerms(lPer, lMode, price, startCont, endISO) : "Paiement unique, sans abonnement ni renouvellement automatique." + (endISO ? " Accès du " + fmtD(startCont) + " au " + fmtD(endISO) + " inclus." : "")}${long ? " " + LONG_EXIT : ""}</p></${Card}>
     <label className="chk"><input type="checkbox" id="pu-cgv" checked=${cgv} onChange=${(e) => setCgv(e.target.checked)} /><span>J'ai lu et j'accepte les <button type="button" className="linkbtn" onClick=${() => setLegal("cgv")}>conditions générales de vente</button> et la <button type="button" className="linkbtn" onClick=${() => setLegal("confidentialite")}>politique de confidentialité</button>.</span></label>
     ${needEarly ? html`<label className="chk"><input type="checkbox" id="pu-early" checked=${early} onChange=${(e) => setEarly(e.target.checked)} /><span>Je demande que mon ${isLite ? "accès" : "accompagnement"} commence dès l'activation, avant la fin du délai de rétractation de 14 jours. Je sais que si je me rétracte, je paierai la part du service déjà fournie.</span></label>` : null}
     ${minor ? html`<label className="chk"><input type="checkbox" id="pu-parent" checked=${parent} onChange=${(e) => setParent(e.target.checked)} /><span>Je suis le parent ou le tuteur légal de ${p.name || "l'enfant"} et je passe cette commande pour lui.</span></label>` : null}
@@ -435,7 +500,7 @@ function orderText(o, settings, kind) {
     "", "Remboursement sous 14 jours avec le moyen de paiement utilisé, au prorata du service fourni jusqu'à ta rétractation (article L221-25 du code de la consommation)."]
     : ["RÉCAPITULATIF DE COMMANDE", "", L.marque + " — " + L.editeur + (L.siret ? " — SIRET " + L.siret : ""), L.adresse, L.email, "",
       "Commande : " + o.id + " du " + new Date(o.at).toLocaleString("fr-FR"), "Programme : " + (PB[o.programId] ? PB[o.programId].n : o.programId) + " — profil " + nivName(o.niveau),
-      "Formule : " + offerName(o.offer) + " — " + durOf(o) + " — début " + fmtDY(o.contStart || o.start), "Prix : " + (o.kind === "code" ? "offert (code " + o.code + ")" : o.offer === "lite" ? litePriceTxt(settings, o.period, o.mode) : eur(Number(o.price) || 0)) + " — " + tvaLine(settings),
+      "Formule : " + offerName(o.offer) + " — " + durOf(o) + " — début " + fmtDY(o.contStart || o.start), "Prix : " + (o.kind === "code" ? "offert (code " + o.code + ")" : o.offer === "lite" ? litePriceTxt(settings, o.period, o.mode, !!o.nutri) : eur(Number(o.price) || 0)) + " — " + tvaLine(settings),
       o.offer === "lite" && o.mode === "abo" ? "Abonnement : " + liteTerms(o.period, "abo", Number(o.price) || 0) : undefined,
       "Conditions générales de vente acceptées : version " + ((o.cgv && o.cgv.v) || CGV_VERSION) + " le " + (o.cgv ? new Date(o.cgv.at).toLocaleString("fr-FR") : "—"),
       o.early ? "Demande expresse de commencer avant la fin du délai de rétractation : oui." : "", "Droit de rétractation : 14 jours à compter de la commande, depuis « Mes commandes » (bouton « Renoncer au contrat ici »)."];
@@ -445,7 +510,7 @@ function cancelText(o, settings) {
   const L = legalInfo(settings), c = o.cancel;
   return ["ACCUSÉ DE RÉCEPTION DE RÉSILIATION", "", L.marque + " — " + L.editeur + (L.siret ? " — SIRET " + L.siret : ""), L.adresse, L.email, "",
     "Nous confirmons la réception de ta résiliation.", "Notification reçue le : " + new Date(c.at).toLocaleString("fr-FR"), "Consommateur : " + c.name, "E-mail : " + (c.email || "—"),
-    "Contrat : commande " + o.id + " du " + fmtDY(String(o.at).slice(0, 10)) + " — abonnement " + liteLabel(o) + ", " + litePriceTxt(settings, o.period, "abo"),
+    "Contrat : commande " + o.id + " du " + fmtDY(String(o.at).slice(0, 10)) + " — abonnement " + liteLabel(o) + ", " + litePriceTxt(settings, o.period, "abo", !!o.nutri),
     "Fin du contrat : " + (c.immediate ? "immédiate, le " + fmtDY(isoOf(new Date(c.effectMs))) : "le " + fmtDY(isoOf(new Date(c.effectMs - 1))) + " au soir, à la fin de la période déjà payée"),
     "Effets : aucun nouveau prélèvement ; ton accès Lite reste ouvert jusqu'à la fin du contrat ; ton historique (séances, bilans, tests, carte athlète) reste consultable.",
     c.refund > 0 ? "Remboursement : " + eur2(c.refund) + " (part non utilisée depuis la dernière reconduction), sous 30 jours avec le moyen de paiement utilisé (article L215-1 du code de la consommation)." : undefined,
@@ -533,7 +598,7 @@ function OrdersCard({ data, src, settings }) {
         <button type="button" className="linkbtn" onClick=${() => saveText("accuse-resiliation-" + o.id + ".txt", cancelText(o, settings))}>Accusé de réception</button></p>` : null}
       ${o.withdrawal ? html`<p className="small">Rétractation reçue le ${new Date(o.withdrawal.at).toLocaleString(LOCALE)} · remboursement prévu : ${eur2(o.withdrawal.refund || 0)}${o.withdrawal.refundedAt ? " (effectué le " + fmtD(o.withdrawal.refundedAt) + ")" : ""}.
         <button type="button" className="linkbtn" onClick=${() => saveText("accuse-retractation-" + o.id + ".txt", orderText(o, settings, "retractation"))}>Accusé de réception</button></p>` : null}
-      <div className="btnrow">${!isRen ? html`<button type="button" className="linkbtn" onClick=${() => saveText("commande-" + o.id + ".txt", orderText(o, settings, "commande"))}>Télécharger le récapitulatif</button>` : null}
+      <div className="btnrow">${o.facture ? html`<button type="button" className="linkbtn" onClick=${() => saveFacture(o.facture)}>Télécharger ma facture</button>` : null}${o.avoir ? html`<button type="button" className="linkbtn" onClick=${() => saveFacture(o.avoir)}>Télécharger l'avoir</button>` : null}${!isRen ? html`<button type="button" className="linkbtn" onClick=${() => saveText("commande-" + o.id + ".txt", orderText(o, settings, "commande"))}>Télécharger le récapitulatif</button>` : null}
         ${cancellable(o, plan) && (!rs || rs.o.id !== o.id) ? html`<button type="button" className="linkbtn" onClick=${() => { setRs({ o, step: 1 }); setWd(null); setForm({ name: p.name || "", email: p.email || "", now: false }); }}>Résilier mon abonnement</button>` : null}
         ${withdrawable(o) && (!wd || wd.id !== o.id) ? html`<button type="button" className="linkbtn" onClick=${() => { setWd(o); setRs(null); setForm({ name: p.name || "", email: p.email || "", now: false }); }}>Renoncer au contrat ici</button>` : null}</div>
       ${rs && rs.o.id === o.id ? (() => { const opt = cancelOptions(o, plan, data); const endTxt = fmtDY(isoOf(new Date(opt.endMs - 1)));
@@ -565,7 +630,7 @@ function liteNoticeText(plan, data, settings) {
   const due = isoOf(new Date(plan.untilMs)), limit = isoOf(new Date(plan.untilMs - 86400000));
   return ["Ton abonnement Lite annuel sera reconduit le " + fmtDY(due), "",
     "Bonjour " + ((p.name || "").split(" ")[0] || "") + ",", "",
-    "Ton abonnement Lite annuel (" + L.marque + ") arrive à échéance. Sans démarche de ta part, il sera reconduit tacitement pour un an le " + fmtDY(due) + ", au prix de " + eur2(litePrice(settings, "an")) + ".", "",
+    "Ton abonnement Lite annuel (" + L.marque + ") arrive à échéance. Sans démarche de ta part, il sera reconduit tacitement pour un an le " + fmtDY(due) + ", au prix de " + eur2(litePrice(settings, "an", !!(plan.lite && plan.lite.nutri))) + ".", "",
     "┌─────────────────────────────────────────────┐",
     "  DATE LIMITE DE NON-RECONDUCTION : " + fmtDY(limit),
     "└─────────────────────────────────────────────┘", "",
@@ -616,12 +681,13 @@ function LegalDocFr({ kind, settings }) {
     <h3>Données traitées et pourquoi</h3><ul>
       <li><b>Compte et contact</b> (nom, e-mail, téléphone, année de naissance, sport et poste) : créer ton compte, te suivre et adapter tes séances à ton sport. Base : exécution du contrat.</li>
       <li><b>Données de santé et d'entraînement</b> (questionnaire santé et précisions de tes réponses « oui », douleurs, taille, poids, mensurations, records et performances que tu déclares, tests, séances en salle et sur le terrain avec leurs chronos, forme du jour, repas, photo de profil facultative) : adapter et suivre ton programme en sécurité. Base : ton consentement explicite (article 9.2.a du RGPD), que tu peux retirer à tout moment.</li>
-      <li><b>Santé au quotidien et montre connectée</b> (facultatif : sommeil, pas, calories actives et dépense totale, fréquence cardiaque au repos, variabilité cardiaque, poids, énergie ; résumé des activités importées : date, sport, durée, distance, fréquence cardiaque moyenne, effort ressenti) : repérer la fatigue, doser l'entraînement et ajuster tes apports à ta dépense réelle. Tu choisis ce que tu envoies (saisie, raccourci iPhone, application Android ou fichier exporté) et tu peux arrêter l'envoi automatique à tout moment : l'application ne se connecte pas à ton compte Apple Santé, Health Connect ou à celui de ta montre, et ne garde pas le tracé GPS. Base : ton consentement explicite.</li>
+      <li><b>Santé au quotidien et montre connectée</b> (facultatif : sommeil, pas, calories actives et dépense totale, fréquence cardiaque au repos, variabilité cardiaque, poids, énergie, eau bue, test de sueur : poids avant et après une séance, boisson et durée ; résumé des activités importées : date, sport, durée, distance, fréquence cardiaque moyenne, effort ressenti) : repérer la fatigue, doser l'entraînement et ajuster tes apports à ta dépense réelle. Tu choisis ce que tu envoies (saisie, raccourci iPhone, application Android ou fichier exporté) et tu peux arrêter l'envoi automatique à tout moment : l'application ne se connecte pas à ton compte Apple Santé, Health Connect ou à celui de ta montre, et ne garde pas le tracé GPS. Base : ton consentement explicite.</li>
       <li><b>Vidéos d'exercice</b> : la vidéo reste sur ton appareil ; seules les images que tu gardes (3 au maximum, réduites) et tes repères sont enregistrés, pour la correction de ta technique. Base : ton consentement.</li>
       <li><b>Goûts et régime alimentaire</b> (aliments évités ou aimés, végétarien, sans gluten…) : te proposer des recettes adaptées. Base : exécution du contrat ; une allergie ou intolérance que tu indiques est traitée avec ton consentement explicite.</li>
       <li><b>Commandes, abonnements et paiements</b> (formule, montant, date, statut, identifiant d'abonnement Stripe, rétractation ou résiliation ; jamais tes coordonnées bancaires, gérées par Stripe) : gérer ta commande, tes prélèvements, ta facture, une rétractation ou une résiliation. Base : contrat et obligations comptables.</li>
       <li><b>Messages</b> échangés avec ${L.editeur} dans l'application (texte et photos que tu choisis d'envoyer) : répondre à tes questions et te suivre. Base : exécution du contrat ; une information de santé que tu y écris est traitée avec ton consentement explicite.</li>
-      <li><b>Codes d'essai</b> : vérifier qu'un code n'est utilisé qu'une fois par personne. Base : contrat.</li></ul>
+      <li><b>Codes d'essai</b> : vérifier qu'un code n'est utilisé qu'une fois par personne. Base : contrat.</li>
+      <li><b>Certificat médical</b> que tu envoies pour suspendre ou résilier une formule de 6 ou 12 mois (article 7 ter des conditions de vente) : traiter ta demande, puis il est supprimé une fois la demande traitée. Base : ton consentement explicite.</li></ul>
     <h3>Qui y accède</h3><p>Uniquement toi et ${L.editeur}. Prestataires techniques : ${window.IS_SITE ? "Google Firebase (comptes et base de données, Europe pour la base ; comptes possiblement aux États-Unis), GitHub (hébergement des pages), Stripe (paiement et abonnements), Cloudflare (relais de confirmation des paiements et des résiliations ; si tu actives l'envoi automatique depuis ton téléphone, tes valeurs du jour y attendent que ton application les récupère, au plus 14 jours, et sont effacées quand tu arrêtes l'envoi ; et coach IA s'il est activé : quand tu l'utilises, ton dossier, tes photos de repas et les images de tes vidéos sont traités par un modèle Gemma exécuté par Cloudflare Workers AI, qui ne les conserve pas après la réponse et ne les utilise pas pour entraîner de modèles), Open Food Facts (seul le code-barres scanné est envoyé)" : "Anthropic (hébergement de l'application et coach IA : ton dossier, tes photos de repas et les images de tes vidéos lui sont envoyés quand tu utilises le coach IA), Stripe (paiement et abonnements)"}. Les transferts hors de l'Union européenne reposent sur le cadre de protection des données UE–États-Unis et des clauses contractuelles types. Aucune donnée n'est vendue ni utilisée pour de la publicité.</p>
     <h3>Combien de temps</h3><p>Pendant ton accompagnement, puis 3 ans après ton dernier contact pour le suivi commercial ; les données de santé sont supprimées 3 mois après la fin de ton dernier programme si tu ne reprends pas. Factures : 10 ans (obligation légale).</p>
     <h3>Mineurs</h3><p>Avant 15 ans, l'inscription demande l'accord conjoint de l'enfant et d'un titulaire de l'autorité parentale (article 45 de la loi Informatique et Libertés). Avant 18 ans, la commande est passée par un parent.</p>
@@ -632,12 +698,14 @@ function LegalDocFr({ kind, settings }) {
   return html`<div className="legal small">
     <p>Version du ${fmtDY(CGV_VERSION)}, applicable à toute commande passée à compter de cette date.</p>
     <h3>1. Vendeur</h3><p>${L.marque} — ${L.editeur}, ${L.statut}, SIRET ${v(L.siret)}, ${v(L.adresse)}, ${contact}. Éducateur sportif, carte professionnelle n° ${v(L.cartePro)}.</p>
-    <h3>2. Services</h3><p>Accès à un programme de préparation physique en ligne (8 programmes, profils Reprise, Sportif, Performance et Haut niveau), avec l'adaptation des séances au sport et au poste, les séances terrain, une messagerie dans l'application pour écrire à ${L.editeur} (formules Essentiel et Suivi ; Lite et Coach IA si ${L.editeur} l'a ouverte, sans délai de réponse garanti), les séances flash, les séances de récupération, les recettes et la santé au quotidien, et le niveau de suivi de la formule : Coach IA (programme conduit par une intelligence artificielle : réponses aux questions, estimation des repas, analyse du bilan hebdomadaire et ajustements automatiques du programme dans des limites de sécurité, sans réponse personnelle de ${L.editeur}, qui reste prévenu en cas de douleur ou d'alerte), Essentiel (programme, bilan hebdomadaire, réponse courte de ${L.editeur}, coach IA), Suivi (réponse détaillée, ajustements, correction vidéo par ${L.editeur}, coach IA), Lite (en autonomie : tous les programmes et contenus, sans réponse personnelle aux bilans, sans correction vidéo par ${L.editeur} et sans coach IA). Le coach IA s'utilise dans une limite par jour propre à la formule : ${listeNoms(OFFERS.map((o) => { const q = aiQuota(settings, o.id); return o.n + " : " + plural(q.q, "question") + " et " + plural(q.ph, "photo"); }))} ; le compteur repart à zéro chaque jour à minuit, et l'analyse du bilan hebdomadaire ne compte pas. Ses réponses sont générées automatiquement et peuvent comporter des erreurs : ce sont des repères d'entraînement, pas des avis médicaux. Fonctionne sur un navigateur récent ou en application installée, avec une connexion internet pour la synchronisation.</p>
-    <h3>3. Prix</h3><p>Prix indiqués en euros au moment de la commande. ${tvaLine(settings)}. Formules ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique, sans abonnement ni renouvellement automatique. Forfait Lite : ${eur2(litePrice(settings, "mois"))} par mois ou ${eur2(litePrice(settings, "an"))} par an, au choix en abonnement ou en paiement d'avance (article 7 bis).</p>
+    <h3>2. Services</h3><p>Accès à un programme de préparation physique en ligne (8 programmes, profils Reprise, Sportif, Performance et Haut niveau), avec l'adaptation des séances au sport et au poste, les séances terrain, une messagerie dans l'application pour écrire à ${L.editeur} (formules Essentiel, Suivi et Sur mesure ; Lite et Coach IA si ${L.editeur} l'a ouverte, sans délai de réponse garanti), les séances flash, les séances de récupération, les recettes et la santé au quotidien, et le niveau de suivi de la formule : Coach IA (programme et nutrition conduits par une intelligence artificielle : réponses aux questions, estimation des repas, analyse du bilan hebdomadaire et ajustements automatiques du programme dans des limites de sécurité, sans réponse personnelle de ${L.editeur}, qui reste prévenu en cas de douleur ou d'alerte), Essentiel (Coach IA, plus une réponse courte de ${L.editeur} à chaque bilan hebdomadaire sous 48 heures ouvrées et la messagerie), Suivi (Essentiel, plus une réponse détaillée à chaque bilan sous 24 heures ouvrées, l'ajustement du programme et des cibles nutritionnelles et la correction vidéo d'un exercice par semaine), Sur mesure (Suivi, plus un programme écrit par ${L.editeur} pour le sport, le poste et le calendrier de compétition du client, réécrit à chaque bloc, deux corrections vidéo par semaine et des réponses en priorité ; nombre de places limité), Lite (en autonomie : tous les programmes et contenus d'entraînement, sans nutrition, sans réponse personnelle aux bilans, sans correction vidéo par ${L.editeur} et sans coach IA) et Lite + Nutrition (Lite, plus l'objectif nutritionnel calculé, le journal des repas, les plats types, le scan des produits et le livre de recettes). Les jours ouvrés s'entendent du lundi au vendredi, hors jours fériés et congés annoncés dans l'application ; tout le suivi se fait par écrit, dans l'application. Le coach IA s'utilise dans une limite par jour propre à la formule : ${listeNoms(OFFERS.map((o) => { const q = aiQuota(settings, o.id); return o.n + " : " + plural(q.q, "question") + " et " + plural(q.ph, "photo"); }))} ; le compteur repart à zéro chaque jour à minuit, et l'analyse du bilan hebdomadaire ne compte pas. Ses réponses sont générées automatiquement et peuvent comporter des erreurs : ce sont des repères d'entraînement, pas des avis médicaux. Fonctionne sur un navigateur récent ou en application installée, avec une connexion internet pour la synchronisation.</p>
+    <h3>3. Prix</h3><p>Prix indiqués en euros au moment de la commande. ${tvaLine(settings)}. Formules ${listeNoms(OFFERS.map((o) => o.n))} : paiement unique pour 1, 3, 6 ou 12 mois, sans abonnement ni renouvellement automatique. Forfait Lite : ${eur2(litePrice(settings, "mois"))} par mois ou ${eur2(litePrice(settings, "an"))} par an ; Lite + Nutrition : ${eur2(litePrice(settings, "mois", true))} par mois ou ${eur2(litePrice(settings, "an", true))} par an ; au choix en abonnement ou en paiement d'avance (article 7 bis).</p>
     <h3>4. Commande</h3><p>Tu choisis ton programme, ton profil, ta formule, ta durée et ta date de début, tu vérifies le récapitulatif, tu acceptes les présentes conditions puis tu valides avec le bouton « Commander avec obligation de paiement » (abonnement Lite : « S'abonner avec obligation de paiement »). Le récapitulatif de commande est téléchargeable dans « Mes commandes » ; Stripe t'envoie un reçu par e-mail à chaque paiement.</p>
     <h3>5. Paiement</h3><p>Paiement par carte via Stripe (paiement sécurisé, authentification forte), ou par un autre moyen convenu avec ${L.editeur}. L'accès s'active à la confirmation du paiement.</p>
     <h3>6. Codes d'essai et codes offerts</h3><p>Personnels, gratuits, utilisables une fois par personne dans la limite des conditions affichées (formule, durée, programme, date limite). Ils ne sont ni échangeables ni remboursables et ne se transforment jamais en commande payante sans nouvelle commande de ta part.</p>
     <h3>7. Durée de l'accès</h3><p>L'accès aux séances court de la date de début pendant la durée achetée. Ensuite, ton historique (séances, bilans, tests, carte athlète) reste consultable ; tu peux prolonger ou choisir un nouveau programme.</p>
+    <p><b>Formules de 6 et 12 mois</b> : l'accès court de la date de début à la date de fin indiquée dans le récapitulatif. Les programmes de 12 semaines s'enchaînent pendant cette période : en Coach IA, Essentiel et Suivi, tu choisis ton programme suivant (${L.editeur} peut l'ajuster) ; en Sur mesure, ${L.editeur} l'écrit. Une nouvelle commande de la même formule et du même programme pendant un accès en cours le prolonge d'autant. Les corrections vidéo par ${L.editeur} se comptent sur 7 jours glissants : une en Suivi (et en Essentiel si ${L.editeur} l'a ouverte), deux en Sur mesure.</p>
+    <h3>7 ter. Blessure ou contre-indication médicale (formules de 6 et 12 mois)</h3><p>Si une blessure ou une contre-indication médicale, attestée par un certificat médical, t'empêche de t'entraîner, tu peux demander par écrit (messagerie de l'application ou e-mail à ${v(L.email)}), à ton choix : la suspension de ton accompagnement, la date de fin étant repoussée de la durée de l'arrêt ; ou la résiliation, avec le remboursement de la période restante au prorata, sous 14 jours, avec le moyen de paiement utilisé. Le certificat sert uniquement à traiter ta demande.</p>
     <h3>7 bis. Forfait Lite</h3><p><b>Paiement d'avance</b> : un mois ou un an d'accès, payé en une fois, sans renouvellement automatique ; l'accès commence à la date choisie (au plus tard 60 jours après la commande) et peut être prolongé avant son terme.</p>
     <p><b>Abonnement mensuel</b> : contrat sans durée minimale, prélevé chaque mois à la date anniversaire de la souscription jusqu'à résiliation. Tu peux le résilier à tout moment ; la résiliation prend effet à la fin du mois déjà payé.</p>
     <p><b>Abonnement annuel</b> : contrat d'un an reconduit tacitement pour un an à chaque échéance, au prix en vigueur à la reconduction. Tu es informé par écrit, par e-mail dédié, au plus tôt trois mois et au plus tard un mois avant l'échéance, de la possibilité de ne pas reconduire le contrat, avec la date limite de non-reconduction. Tu peux le résilier à tout moment ; la résiliation prend effet à la fin de l'année en cours, sauf dans le cas prévu au deuxième alinéa de l'article L215-1 reproduit ci-dessous.</p>
@@ -698,7 +766,8 @@ function LiteNextCycle({ data, src, db, uid, plan, onDone }) {
   };
   if (asked) return html`<div className="alert gold"><div><b>Programme suivant choisi</b><p>${PB[(p.nextCycle || {}).programId] ? PB[p.nextCycle.programId].n : "Ton choix"} à partir du ${fmtD((p.nextCycle || {}).start)} : il s'affiche dès qu'Antoine ouvre son espace.</p></div></div>`;
   return html`<div className="stack form">
-    <p className="small">Ton accès Lite court jusqu'au ${fmtDY(endISO)} : choisis ton prochain programme de ${progWeeks(f.programId || plan.programId)} semaines. Ton historique reste consultable.</p>
+    ${plan.offer === "lite" ? html`<p className="small">Ton accès Lite court jusqu'au ${fmtDY(endISO)} : choisis ton prochain programme de ${progWeeks(f.programId || plan.programId)} semaines. Ton historique reste consultable.</p>`
+      : html`<p className="small">Ton accompagnement court jusqu'au ${fmtDY(endISO)} : choisis ton prochain programme de ${progWeeks(f.programId || plan.programId)} semaines. Antoine le voit et l'ajuste si besoin. Ton historique reste consultable.</p>`}
     <${Field} label="Programme" id="nc-prog"><select id="nc-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Choisir</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}${x.id === plan.programId ? " (à nouveau)" : ""}</option>`)}</select></${Field}>
     <div className="field"><span className="field-l">Ton profil</span><${NiveauCards} value=${f.niveau} onChange=${(v) => set("niveau", v)} recommended=${rec.id} /></div>
     <div className="row2"><${Field} label="Début" id="nc-start" hint=${"Au plus tard le " + fmtDY(maxStart) + "."}><input id="nc-start" type="date" min=${todayISO()} max=${maxStart} value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
@@ -710,7 +779,13 @@ function LiteNextCycle({ data, src, db, uid, plan, onDone }) {
 }
 /* abonnement annuel : rappel dans l'application en plus de l'e-mail du coach */
 function LiteBanner({ plan, data, onRenew, go }) {
-  if (!plan || plan.offer !== "lite" || !plan.untilMs) return null;
+  if (!plan || !plan.untilMs) return null;
+  if (plan.offer !== "lite") {
+    const left = Math.ceil((plan.untilMs - Date.now()) / 86400000), end = fmtD(liteEnd(plan));
+    if (left <= 0) return html`<div className="alert warn"><div><b>Ton accompagnement s'est terminé le ${end}</b><p>Tes séances sont en pause ; ton historique, tes bilans et tes tests restent consultables. Reprends quand tu veux.</p></div>${onRenew ? html`<${Btn} small onClick=${onRenew}>Reprendre</${Btn}>` : null}</div>`;
+    if (left <= 14) return html`<div className="alert gold"><div><b>Ton accompagnement se termine le ${end}</b><p>Paiement d'avance sans renouvellement automatique. Prolonge pour continuer sans coupure.</p></div>${onRenew ? html`<${Btn} small onClick=${onRenew}>Prolonger</${Btn}>` : null}</div>`;
+    return null;
+  }
   const c = liteCancelOf(data, plan), mode = plan.lite && plan.lite.mode;
   const left = Math.ceil((plan.untilMs - Date.now()) / 86400000);
   const end = fmtD(liteEnd(plan));

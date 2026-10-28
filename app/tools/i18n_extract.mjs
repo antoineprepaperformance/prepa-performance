@@ -12,7 +12,7 @@ import * as walk from "acorn-walk";
 const APP = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const SRC = path.join(APP, "src");
 /* 05_coach.js et 06_library.js : espace coach uniquement (en français) */
-const COACH_FILES = new Set(["05_coach.js", "06_library.js"]);
+const COACH_FILES = new Set(["05_coach.js", "06_library.js", "24_finances.js"]);
 const FILES = [...fs.readdirSync(SRC).filter((f) => f.endsWith(".js") && !COACH_FILES.has(f)).sort().map((f) => path.join(SRC, f)),
   ...fs.readdirSync(path.join(SRC, "site")).filter((f) => f.endsWith(".js")).sort().map((f) => path.join(SRC, "site", f))];
 

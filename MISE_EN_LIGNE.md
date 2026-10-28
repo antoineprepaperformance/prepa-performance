@@ -101,11 +101,24 @@ Sans Stripe, tes clients passent commande et tu confirmes toi-même chaque paiem
 1. Crée un compte sur **stripe.com** et complète la vérification de ton activité (SIRET, IBAN).
 2. **Paramètres › Informations publiques** : nom de l'activité, e-mail d'assistance, et les liens `https://ton-pseudo.github.io/prepa-performance/#cgv` (conditions) et `…/#confidentialite` (confidentialité).
 3. **Paramètres › E-mails clients** : active les reçus de paiement réussi.
-4. **Liens de paiement › Nouveau** : un lien par formule et par durée, au prix de ta grille (exemple : « Suivi — 1 mois », 99 €, paiement unique).
+4. **Liens de paiement › Nouveau** : un lien par formule et par durée, au prix de ta grille (exemple : « Suivi — 1 mois », 119 €, paiement unique).
    - **Après le paiement** › **Ne pas afficher de page de confirmation, rediriger les clients vers votre site** :
      `https://ton-pseudo.github.io/prepa-performance/?paiement=ok&session_id={CHECKOUT_SESSION_ID}`
 5. Copie chaque lien (`https://buy.stripe.com/…`) dans ton espace coach : **Offres & réglages › Paiement en ligne**, case de la formule et de la durée › **Enregistrer**.
-   - Formules en vente : **Coach IA** (25 €, 47 €, 67 € pour 1, 2, 3 mois), **Essentiel** (49 €, 95 €, 135 €), **Suivi** (99 €, 189 €, 269 €). La formule Hybride n'est plus vendue : désactive ses liens dans Stripe (Liens de paiement › … › Désactiver).
+   - Grille du 28 octobre 2026, 16 liens (1, 3, 6 et 12 mois, paiement unique) :
+
+     | Formule | 1 mois | 3 mois | 6 mois | 12 mois |
+     |---|---|---|---|---|
+     | Coach IA | 29 € | 79 € | 149 € | 279 € |
+     | Essentiel | 59 € | 159 € | 299 € | 569 € |
+     | Suivi | 119 € | 319 € | 599 € | 1 139 € |
+     | Sur mesure (places limitées) | 199 € | 539 € | 999 € | 1 899 € |
+
+   - **Désactive les anciens liens** (Liens de paiement › … › Désactiver) : tous les liens « 2 mois », la formule Hybride, et les anciens prix 1 et 3 mois. Un paiement à un ancien prix arrive quand même, mais en « montant à vérifier » : tu l'actives à la main.
+   - 6 et 12 mois : le client paie une fois ; ses programmes de 12 semaines s'enchaînent jusqu'à la date de fin. En cas de blessure ou de contre-indication médicale avec certificat, il peut demander la pause (tu repousses la date de fin dans sa fiche › Plan) ou le remboursement au prorata (article 7 ter des conditions de vente).
+   - Sur mesure : nombre de places dans **Offres & réglages › Prix des formules** ; passe la formule en « Complète » quand toutes les places sont prises.
+
+> Factures : l'application les établit et les envoie au client toute seule (onglet **Finances** de ton espace coach, une fois ton SIRET et ton adresse remplis). Dans Stripe, n'active pas l'option de facture après paiement : elle est payante (Stripe Invoicing) et ferait doublon.
 
 Dès qu'un client paie, sa commande apparaît dans « À traiter » : vérifie le paiement dans Stripe et clique sur **Paiement reçu · activer**. Pour que ce soit automatique, passe à l'étape 6.
 
@@ -118,8 +131,9 @@ Dès qu'un client paie, sa commande apparaît dans « À traiter » : vérifie l
    - 89 € **récurrent, annuel** ;
    - 9,90 € **paiement unique** (un mois d'avance) ;
    - 89 € **paiement unique** (un an d'avance).
-2. **Liens de paiement › Nouveau** : un lien par prix, avec la même redirection qu'au point 4 ci-dessus.
-3. Colle les 4 liens dans **Offres & réglages › Forfait Lite** (Mensuel · abonnement, Annuel · abonnement, Mensuel · paiement d'avance, Annuel · paiement d'avance). Tu y changes aussi les prix et tu peux masquer le forfait.
+   Puis un second produit « Lite + Nutrition » avec les mêmes quatre prix à **14,90 €** et **129 €**.
+2. **Liens de paiement › Nouveau** : un lien par prix (8 liens), avec la même redirection qu'au point 4 ci-dessus.
+3. Colle les liens dans **Offres & réglages › Forfait Lite** : colonne « Lite » et colonne « Lite + Nutrition » (Mensuel · abonnement, Annuel · abonnement, Mensuel · paiement d'avance, Annuel · paiement d'avance). Tu y changes aussi les prix et tu peux masquer le forfait. Le Lite simple n'a plus la nutrition ; les clients Lite d'avant le 28 octobre 2026 la gardent.
 4. **Paramètres › Billing › Portail client** : active le lien de connexion, autorise l'annulation **à la fin de la période de facturation** et la mise à jour du moyen de paiement. Copie le lien (`https://billing.stripe.com/p/login/…`) dans **Forfait Lite › Portail client** : le client y gère sa carte et télécharge ses factures.
 5. **Paramètres › Billing › Abonnements et e-mails** : active les relances automatiques des paiements refusés et, à la fin des relances, l'annulation de l'abonnement.
 

@@ -115,7 +115,7 @@ async def run():
         cb = await A.new_page(); hook(cb, "B"); await cb.set_viewport_size({"width": 390, "height": 844})
         await signup(cb, "bastien@test.fr"); await onboard(cb, "Bastien Payeur", "Rugby", "Régional", "6 mois à 2 ans", "Prépa sports collectifs")
         uB = await uid_of(cb)
-        ok(await has(cb, "Commander avec obligation de paiement · 99 €"), "prix du lien : Suivi 1 mois 99 €")
+        ok(await has(cb, "Commander avec obligation de paiement · 119 €"), "prix du lien : Suivi 1 mois 119 €")
         await cb.fill("#pu-start", TODAY.isoformat())
         await cb.check("#pu-cgv")
         ok(await cb.get_by_role("button", name="Commander avec obligation de paiement").first.is_disabled(), "début immédiat : la demande expresse (art. L221-25) est obligatoire")
@@ -128,14 +128,14 @@ async def run():
         ok(ref[0] == uB and ref[1] == "suivi" and ref[2] == "4" and len(ref) == 4 and q.get("prefilled_email") == ["bastien@test.fr"], "redirection Stripe avec la référence de commande", ref)
         orderB = ref[3]
         od = await db(co, f"clients/{uB}/orders/{orderB}")
-        ok(od and od["status"] == "en_attente" and od["early"] is True and od["cgv"]["v"] and od["price"] == 99, "commande enregistrée avant paiement (CGV, demande expresse)", od)
+        ok(od and od["status"] == "en_attente" and od["early"] is True and od["cgv"]["v"] and od["price"] == 119, "commande enregistrée avant paiement (CGV, demande expresse)", od)
         # le relais (Cloudflare) écrit le paiement confirmé par Stripe
-        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B1', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: '{orderB}', amount: 9900, expected: 9900, currency: 'eur', email: 'bastien@test.fr', ok: true, used: false, at: new Date().toISOString(), session: 'cs_test_B1', live: false }})")
+        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B1', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: '{orderB}', amount: 11900, expected: 11900, currency: 'eur', email: 'bastien@test.fr', ok: true, used: false, at: new Date().toISOString(), session: 'cs_test_B1', live: false }})")
         ok(r == "ok", "relais : paiement enregistré")
         await cb.goto(URL + "?paiement=ok&session_id=cs_test_B1")
         ok(await has(cb, "prochaine séance", 10000), "retour de Stripe : accès activé automatiquement")
         plan = await db(cb, f"plans/{uB}"); pay = await db(cb, "payments/cs_test_B1"); od = await db(cb, f"clients/{uB}/orders/{orderB}")
-        ok(plan and plan["source"] == {"kind": "paiement", "id": "cs_test_B1", "orderId": orderB} and plan["weeks"] == 4 and pay["used"] is True and od["status"] == "active" and od["paidAmount"] == 99, "paiement utilisé une fois, commande active", [plan and plan.get("source"), pay and pay.get("used"), od and od.get("status")])
+        ok(plan and plan["source"] == {"kind": "paiement", "id": "cs_test_B1", "orderId": orderB} and plan["weeks"] == 4 and pay["used"] is True and od["status"] == "active" and od["paidAmount"] == 119, "paiement utilisé une fois, commande active", [plan and plan.get("source"), pay and pay.get("used"), od and od.get("status")])
         fraud = await ev(cb, """(async () => { const db = firebase.firestore(); const me = firebase.auth().currentUser.uid; const r = {};
           const t = async (k, f) => { try { await f(); r[k] = 'ok'; } catch (e) { r[k] = e.code; } };
           await t('reutiliser_paiement', async () => { const b = db.batch(); b.update(db.doc('payments/cs_test_B1'), { used: true, usedAt: 'x' }); b.set(db.doc('plans/' + me), { programId: 'force', offer: 'suivi', weeks: 4, start: '2026-12-01', equipment: 'salle', status: 'active', niveau: 'perf', cycle: 2, grantWeeks: 4, source: { kind: 'paiement', id: 'cs_test_B1', orderId: 'z' } }); await b.commit(); });
@@ -145,7 +145,7 @@ async def run():
           return r; })()""")
         ok(fraud == {"reutiliser_paiement": "permission-denied", "allonger_sans_payer": "permission-denied", "remettre_paiement_neuf": "permission-denied", "lire_paiements_des_autres": "permission-denied"}, "règles : paiement non réutilisable, accès non modifiable", fraud)
         # montant insuffisant signalé par le relais : pas d'activation
-        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B2', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: 'oautre', amount: 4900, expected: 9900, currency: 'eur', ok: false, used: false, at: new Date().toISOString() }})")
+        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B2', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: 'oautre', amount: 4900, expected: 11900, currency: 'eur', ok: false, used: false, at: new Date().toISOString() }})")
         await cb.wait_for_timeout(1500)
         pay2 = await db(cb, "payments/cs_test_B2")
         ok(pay2 and pay2["used"] is False, "paiement au montant insuffisant : jamais activé")

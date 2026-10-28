@@ -20,6 +20,7 @@ function ciqParse(j) {
 function ciqApply(t) {
   const set = (d, i, r) => { d[i] = r.kcal; d[i + 1] = r.p || 0; d[i + 2] = r.c || 0; d[i + 3] = r.f || 0; };
   (typeof FOODS !== "undefined" ? FOODS : []).forEach((fd) => { const r = fd[6] && t.by[fd[6]]; if (r && r.kcal !== null && r.kcal !== undefined) set(fd, 1, r); });
+  (typeof PLATS !== "undefined" ? PLATS : []).forEach((p) => (p.i || []).forEach((fd) => { const r = fd[6] && t.by[fd[6]]; if (r && r.kcal !== null && r.kcal !== undefined) set(fd, 1, r); }));
   if (typeof ING !== "undefined") Object.values(ING).forEach((d) => { const r = d && d[7] && t.by[d[7]]; if (r && r.kcal !== null && r.kcal !== undefined) set(d, 1, r); });
 }
 function ciqLoad() {
@@ -40,7 +41,8 @@ function ciqLoad() {
 }
 function useCiqual() {
   const [t, setT] = useState(_ciq);
-  useEffect(() => { let on = true; if (!_ciq) ciqLoad().then((x) => { if (on && x) setT(x); }); return () => { on = false; }; }, []);
+  /* la table peut avoir été chargée entre le premier rendu et cet effet (par un autre composant affiché en même temps) */
+  useEffect(() => { let on = true; if (_ciq) { if (t !== _ciq) setT(_ciq); } else ciqLoad().then((x) => { if (on && x) setT(x); }); return () => { on = false; }; }, []);
   return t;
 }
 function ciqLabel(t) {

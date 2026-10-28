@@ -3,7 +3,8 @@ import worker from "./worker.js";
 import { createHmac } from "node:crypto";
 const env = { STRIPE_WEBHOOK_SECRET: "whsec_test_secret_123", FIREBASE_API_KEY: "AIza-test", FIREBASE_PROJECT_ID: "prepa-test", RELAIS_EMAIL: "relais@prepa.test", RELAIS_PASSWORD: "pw" };
 const store = {}; const calls = [];
-let settingsDoc = { fields: { offers: { mapValue: { fields: { suivi: { arrayValue: { values: [{ integerValue: "149" }, { integerValue: "189" }, { integerValue: "269" }] } } } } } } };
+let settingsDoc = { fields: { tarifs: { mapValue: { fields: { suivi: { mapValue: { fields: { "4": { integerValue: "149" }, "52": { integerValue: "1139" } } } } } } },
+  offers: { mapValue: { fields: { suivi: { arrayValue: { values: [{ integerValue: "99" }, { integerValue: "189" }, { integerValue: "269" }] } } } } } } };
 globalThis.fetch = async (url, opts = {}) => {
   calls.push([opts.method || "GET", url]);
   if (url.includes("accounts:signInWithPassword")) {
@@ -63,6 +64,17 @@ b = ev({ payment_status: "unpaid" }); id = JSON.parse(b).data.object.id; r = awa
 b = JSON.stringify({ id: "evt_x", type: "charge.refunded", data: { object: {} } }); r = await post(b); ok(r.status === 200 && (await r.text()).startsWith("ignoré"), "autre type d'événement ignoré");
 b = ev({ client_reference_id: "n'importe/quoi" }); id = JSON.parse(b).data.object.id; r = await post(b); ok(r.status === 200 && !store[id], "référence invalide : ignorée");
 b = ev({ client_reference_id: "AbC123uidXYZ__suivi__3__o1" }); id = JSON.parse(b).data.object.id; r = await post(b); ok(!store[id], "durée hors grille : ignorée");
+// 5 bis. grille 2026 : 6 et 12 mois, Sur mesure, ancienne grille pour les liens 2 mois encore actifs
+b = ev({ client_reference_id: "AbC123uidXYZ__suivi__52__o52abc", amount_total: 113900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === true && store[id].weeks.integerValue === "52" && store[id].expected.integerValue === "113900", "Suivi 12 mois : prix des réglages (1 139 €)");
+b = ev({ client_reference_id: "AbC123uidXYZ__surmesure__26__o26abc", amount_total: 99900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === true && store[id].expected.integerValue === "99900", "Sur mesure 6 mois : prix par défaut (999 €)");
+b = ev({ client_reference_id: "AbC123uidXYZ__surmesure__26__o26abd", amount_total: 59900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === false, "Sur mesure 6 mois payé au prix du Suivi : à vérifier");
+b = ev({ client_reference_id: "AbC123uidXYZ__suivi__8__o8abc", amount_total: 18900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === true && store[id].expected.integerValue === "18900", "ancien lien 2 mois : ancienne grille des réglages (189 €)");
+b = ev({ client_reference_id: "AbC123uidXYZ__suivi__4__o4old", amount_total: 9900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === false && store[id].expected.integerValue === "14900", "ancien lien 1 mois au prix d'avant : à vérifier");
 // 6. réglages illisibles : prix par défaut
 settingsDoc = null; b = ev({ client_reference_id: "AbC123uidXYZ__essentiel__8__o9a8b7", amount_total: 9500 }); id = JSON.parse(b).data.object.id; r = await post(b);
 ok(store[id] && store[id].ok.booleanValue === true && store[id].expected.integerValue === "9500", "réglages absents : prix par défaut (95 €)");
@@ -83,12 +95,24 @@ b = ev({ client_reference_id: "AbC123uidXYZ__lite__an-avance__oLite03", amount_t
 ok(store[id] && store[id].ok.booleanValue === false, "Lite annuel payé au prix mensuel : non valable");
 b = ev({ client_reference_id: "AbC123uidXYZ__lite__semaine-abo__o1" }); id = JSON.parse(b).data.object.id; r = await post(b); ok(!store[id], "Lite : durée inconnue ignorée");
 b = ev({ client_reference_id: "AbC123uidXYZ__lite__mois-abo__o1", amount_total: 990 }); id = JSON.parse(b).data.object.id; r = await post(b); ok(!store[id], "Lite abonnement sans identifiant d'abonnement : ignoré");
+b = ev({ client_reference_id: "AbC123uidXYZ__lite__mois-avance-n__oLiteN1", amount_total: 1490 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].nutri.booleanValue === true && store[id].ok.booleanValue === true && store[id].expected.integerValue === "1490", "Lite + Nutrition d'avance : 14,90 €, option enregistrée");
+b = ev({ client_reference_id: "AbC123uidXYZ__lite__an-avance-n__oLiteN2", amount_total: 8900 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === false && store[id].expected.integerValue === "12900", "Lite + Nutrition annuel payé au prix du Lite : à vérifier");
+b = ev({ client_reference_id: "AbC123uidXYZ__lite__mois-avance__oLiteN3", amount_total: 990 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].nutri.booleanValue === false, "Lite simple : sans l'option");
 const inv = (o) => JSON.stringify({ id: "evt_" + Math.random().toString(36).slice(2), type: "invoice.paid", livemode: false, data: { object: { object: "invoice", id: "in_" + Math.random().toString(36).slice(2), status: "paid", billing_reason: "subscription_cycle", currency: "eur", amount_paid: 990,
   parent: { subscription_details: { subscription: "sub_TEST123abc" } }, lines: { data: [{ period: { start: 1790000000, end: 1792600000 } }] }, ...o } } });
 b = inv({}); id = JSON.parse(b).data.object.id; r = await post(b);
 ok(store[id] && store[id].renewal.booleanValue === true && store[id].untilMs.integerValue === String(1792600000 * 1000) && store[id].uid.stringValue === "AbC123uidXYZ" && store[id].ok.booleanValue === true, "renouvellement (API récente : parent.subscription_details) → nouvelle date de fin");
 b = inv({ parent: null, subscription: "sub_TEST123abc", amount_paid: 500 }); id = JSON.parse(b).data.object.id; r = await post(b);
 ok(store[id] && store[id].ok.booleanValue === false, "renouvellement (ancienne API : invoice.subscription) payé trop bas : non valable");
+b = ev({ client_reference_id: "AbC123uidXYZ__lite__mois-abo-n__oLiteN4", amount_total: 1490, mode: "subscription", subscription: "sub_NUTRI456def", customer: "cus_2" }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].nutri.booleanValue === true && store[id].ok.booleanValue === true, "Lite + Nutrition en abonnement : souscription enregistrée");
+b = inv({ parent: null, subscription: "sub_NUTRI456def", amount_paid: 990 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === false && store[id].expected.integerValue === "1490", "renouvellement Lite + Nutrition au prix du Lite : non valable");
+b = inv({ parent: null, subscription: "sub_NUTRI456def", amount_paid: 1490 }); id = JSON.parse(b).data.object.id; r = await post(b);
+ok(store[id] && store[id].ok.booleanValue === true, "renouvellement Lite + Nutrition à 14,90 € : valable");
 b = inv({ billing_reason: "subscription_create" }); id = JSON.parse(b).data.object.id; r = await post(b); ok(!store[id], "première facture de l'abonnement ignorée (déjà comptée par la session)");
 b = inv({ parent: { subscription_details: { subscription: "sub_INCONNU999" } } }); id = JSON.parse(b).data.object.id; r = await post(b); ok(!store[id] && (await r.text()).includes("inconnu"), "abonnement inconnu ignoré");
 b = JSON.stringify({ id: "evt_s1", type: "customer.subscription.updated", data: { object: { object: "subscription", id: "sub_TEST123abc", status: "active", cancel_at_period_end: true, cancel_at: null, items: { data: [{ current_period_end: 1795000000 }] } } } }); r = await post(b);

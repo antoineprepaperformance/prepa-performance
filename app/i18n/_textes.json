@@ -2030,13 +2030,6 @@
   "n": 2
  },
  {
-  "h": "046a375520",
-  "k": "Sprint final",
-  "kind": "content",
-  "where": "content:DRILLS",
-  "n": 1
- },
- {
   "h": "0f248d0da7",
   "k": "Avants : plaque un bouclier au 2e plot et ajoute un 3e relevé avant le sprint final.",
   "kind": "content",
@@ -42877,598 +42870,633 @@
   "n": 1
  },
  {
-  "h": "a3d61dc516",
-  "k": "Mondial de handball",
+  "h": "565b707ade",
+  "k": "Grand rendez-vous du handball",
   "kind": "string",
-  "where": "src/26_saisons.js:21",
-  "n": 2
- },
- {
-  "h": "1056494d5d",
-  "k": "la finale du Mondial de handball",
-  "kind": "string",
-  "where": "src/26_saisons.js:21",
+  "where": "src/26_saisons.js:23",
   "n": 1
  },
  {
-  "h": "c25e7fd8ab",
-  "k": "Du 13 au 31 janvier en Allemagne. Mets-toi au rythme des handballeurs : sauts, sprints, changements de direction.",
+  "h": "a7bf87a94d",
+  "k": "la grande finale du handball",
   "kind": "string",
-  "where": "src/26_saisons.js:22",
+  "where": "src/26_saisons.js:23",
+  "n": 1
+ },
+ {
+  "h": "26a13cc3f2",
+  "k": "Le handball à l'honneur",
+  "kind": "string",
+  "where": "src/26_saisons.js:24",
+  "n": 1
+ },
+ {
+  "h": "2a96c12508",
+  "k": "Du 13 au 31 janvier, une grande compétition internationale de handball. Mets-toi au rythme des handballeurs : sauts, sprints, changements de direction.",
+  "kind": "string",
+  "where": "src/26_saisons.js:24",
   "n": 1
  },
  {
   "h": "dac6d1ad01",
   "k": "Défi explosivité",
   "kind": "string",
-  "where": "src/26_saisons.js:23",
+  "where": "src/26_saisons.js:25",
   "n": 1
  },
  {
-  "h": "9f1e01bbef",
-  "k": "6 séances pendant le Mondial, du 13 au 31 janvier.",
+  "h": "598c509323",
+  "k": "6 séances entre le 13 et le 31 janvier.",
   "kind": "string",
-  "where": "src/26_saisons.js:23",
+  "where": "src/26_saisons.js:25",
   "n": 1
  },
  {
   "h": "fa1db70bde",
   "k": "Main de fer",
   "kind": "string",
-  "where": "src/26_saisons.js:23",
-  "n": 1
- },
- {
-  "h": "56886ee5d6",
-  "k": "Tournoi des Six Nations",
-  "kind": "string",
-  "where": "src/26_saisons.js:24",
-  "n": 2
- },
- {
-  "h": "49e34ac6c6",
-  "k": "la dernière journée du Tournoi",
-  "kind": "string",
-  "where": "src/26_saisons.js:24",
-  "n": 1
- },
- {
-  "h": "fa0db5c823",
-  "k": "5 journées de rugby du 5 février au 13 mars : deux séances par semaine pendant tout le Tournoi.",
-  "kind": "string",
   "where": "src/26_saisons.js:25",
   "n": 1
  },
  {
-  "h": "c070cfc9db",
-  "k": "Défi du Tournoi",
+  "h": "df5ecc2239",
+  "k": "Grand tournoi de rugby d'hiver",
   "kind": "string",
   "where": "src/26_saisons.js:26",
   "n": 1
  },
  {
-  "h": "b9576294a9",
-  "k": "10 séances pendant le Tournoi : deux par semaine jusqu'à la dernière journée, le 13 mars.",
+  "h": "c06b408fe2",
+  "k": "la dernière journée du tournoi",
   "kind": "string",
   "where": "src/26_saisons.js:26",
   "n": 1
  },
  {
-  "h": "fc7aa87366",
-  "k": "Grand Chelem",
-  "kind": "string",
-  "where": "src/26_saisons.js:26",
-  "n": 1
- },
- {
-  "h": "b0fa5a81c4",
-  "k": "Finale de la Coupe d'Europe de rugby",
+  "h": "11be3cfdab",
+  "k": "L'hiver du rugby",
   "kind": "string",
   "where": "src/26_saisons.js:27",
   "n": 1
  },
  {
-  "h": "5abbaab140",
-  "k": "la finale de la Coupe d'Europe",
+  "h": "1fa89a11c2",
+  "k": "Du 5 février au 13 mars, cinq week-ends de grand rugby international : deux séances par semaine pendant tout le tournoi.",
   "kind": "string",
   "where": "src/26_saisons.js:27",
   "n": 1
  },
  {
-  "h": "d9ef164847",
-  "k": "Finale de la Coupe d'Europe à Lyon",
+  "h": "15a4e8a06f",
+  "k": "Défi de l'hiver",
   "kind": "string",
   "where": "src/26_saisons.js:28",
   "n": 1
  },
  {
-  "h": "a542333aee",
-  "k": "Le 22 mai, la finale de la Coupe d'Europe de rugby se joue à Lyon.",
+  "h": "1d9fc52d25",
+  "k": "10 séances entre le 5 février et le 13 mars : deux par semaine.",
   "kind": "string",
   "where": "src/26_saisons.js:28",
+  "n": 1
+ },
+ {
+  "h": "f62bb4ac2b",
+  "k": "Carton plein",
+  "kind": "string",
+  "where": "src/26_saisons.js:28",
+  "n": 1
+ },
+ {
+  "h": "a1ed589382",
+  "k": "Grande finale européenne de rugby",
+  "kind": "string",
+  "where": "src/26_saisons.js:29",
+  "n": 1
+ },
+ {
+  "h": "2ad9f91941",
+  "k": "la grande finale",
+  "kind": "string",
+  "where": "src/26_saisons.js:29",
+  "n": 2
+ },
+ {
+  "h": "97d483e3af",
+  "k": "Le mois des finales",
+  "kind": "string",
+  "where": "src/26_saisons.js:30",
+  "n": 1
+ },
+ {
+  "h": "d41f7fbbcc",
+  "k": "Le 22 mai, la grande finale européenne de rugby des clubs. Deux semaines pour finir fort.",
+  "kind": "string",
+  "where": "src/26_saisons.js:30",
   "n": 1
  },
  {
   "h": "feca43771e",
   "k": "Défi des phases finales",
   "kind": "string",
-  "where": "src/26_saisons.js:29",
+  "where": "src/26_saisons.js:31",
   "n": 1
  },
  {
-  "h": "7aaecf3d48",
-  "k": "4 séances dans les deux semaines avant la finale.",
-  "kind": "string",
-  "where": "src/26_saisons.js:29",
-  "n": 1
- },
- {
-  "h": "6ab37aa6d7",
-  "k": "Champion d'Europe",
-  "kind": "string",
-  "where": "src/26_saisons.js:29",
-  "n": 1
- },
- {
-  "h": "cbd94a218e",
-  "k": "Phases finales du Top 14",
-  "kind": "string",
-  "where": "src/26_saisons.js:30",
-  "n": 2
- },
- {
-  "h": "421d7bd4ca",
-  "k": "la finale du Top 14",
-  "kind": "string",
-  "where": "src/26_saisons.js:30",
-  "n": 1
- },
- {
-  "h": "31cc0ce00a",
-  "k": "Demi-finales à Bordeaux, finale le 26 juin au Stade de France.",
+  "h": "561e1c6a58",
+  "k": "4 séances dans les deux semaines avant la finale du 22 mai.",
   "kind": "string",
   "where": "src/26_saisons.js:31",
   "n": 1
  },
  {
-  "h": "52e18b4bd4",
-  "k": "Défi du Bouclier",
+  "h": "aea2e3ad4d",
+  "k": "Finisseur de mai",
+  "kind": "string",
+  "where": "src/26_saisons.js:31",
+  "n": 1
+ },
+ {
+  "h": "6e620706f1",
+  "k": "Phases finales du championnat de rugby",
   "kind": "string",
   "where": "src/26_saisons.js:32",
   "n": 1
  },
  {
-  "h": "2090ff0a58",
-  "k": "4 séances entre les barrages et la finale du 26 juin.",
+  "h": "2cf5c91f31",
+  "k": "la finale du championnat",
   "kind": "string",
   "where": "src/26_saisons.js:32",
   "n": 1
  },
  {
-  "h": "ef0c6bebfe",
-  "k": "Bouclier",
-  "kind": "string",
-  "where": "src/26_saisons.js:32",
-  "n": 1
- },
- {
-  "h": "198cb7acd1",
-  "k": "Tour de France",
+  "h": "7d893a88fd",
+  "k": "Le sprint final du championnat",
   "kind": "string",
   "where": "src/26_saisons.js:33",
+  "n": 1
+ },
+ {
+  "h": "b130ca4be7",
+  "k": "Du 11 au 26 juin, les phases finales du championnat de France de rugby.",
+  "kind": "string",
+  "where": "src/26_saisons.js:33",
+  "n": 1
+ },
+ {
+  "h": "71c37ae658",
+  "k": "Défi du sprint final",
+  "kind": "string",
+  "where": "src/26_saisons.js:34",
+  "n": 1
+ },
+ {
+  "h": "6a3c8792a6",
+  "k": "4 séances entre le 11 et le 26 juin.",
+  "kind": "string",
+  "where": "src/26_saisons.js:34",
+  "n": 1
+ },
+ {
+  "h": "046a375520",
+  "k": "Sprint final",
+  "kind": "string",
+  "where": "src/26_saisons.js:34",
   "n": 2
  },
  {
-  "h": "5b1957075d",
-  "k": "l'arrivée du Tour à Paris",
+  "h": "9b5c7ceae6",
+  "k": "Grande course cycliste de juillet",
   "kind": "string",
-  "where": "src/26_saisons.js:33",
+  "where": "src/26_saisons.js:35",
   "n": 1
  },
  {
-  "h": "0fbfac130a",
-  "k": "21 étapes d'Édimbourg à Paris, du 2 au 25 juillet.",
+  "h": "bee85098d8",
+  "k": "l'arrivée de la grande course à étapes",
   "kind": "string",
-  "where": "src/26_saisons.js:34",
+  "where": "src/26_saisons.js:35",
+  "n": 1
+ },
+ {
+  "h": "807b251f09",
+  "k": "Juillet, le mois du vélo",
+  "kind": "string",
+  "where": "src/26_saisons.js:36",
+  "n": 1
+ },
+ {
+  "h": "7ddcbbc156",
+  "k": "Du 2 au 25 juillet, trois semaines de grande course cycliste à étapes. À toi de tenir la distance.",
+  "kind": "string",
+  "where": "src/26_saisons.js:36",
   "n": 1
  },
  {
   "h": "913285c38e",
   "k": "Défi des 21 étapes",
   "kind": "string",
-  "where": "src/26_saisons.js:35",
+  "where": "src/26_saisons.js:37",
   "n": 1
  },
  {
   "h": "41eb3165a1",
   "k": "Bouge au moins 30 minutes 15 jours sur 24 : séance, vélo, course, 8 000 pas ou case cochée.",
   "kind": "string",
-  "where": "src/26_saisons.js:35",
+  "where": "src/26_saisons.js:37",
   "n": 1
  },
  {
   "h": "7eea7cc246",
   "k": "Maillot de l'effort",
   "kind": "string",
-  "where": "src/26_saisons.js:35",
-  "n": 1
- },
- {
-  "h": "0a8b46e075",
-  "k": "Mondiaux d'athlétisme",
-  "kind": "string",
-  "where": "src/26_saisons.js:36",
-  "n": 2
- },
- {
-  "h": "8ab98ffca0",
-  "k": "la fin des Mondiaux d'athlétisme",
-  "kind": "string",
-  "where": "src/26_saisons.js:36",
-  "n": 1
- },
- {
-  "h": "b61ec90f5b",
-  "k": "Du 11 au 19 septembre à Pékin : place à la vitesse.",
-  "kind": "string",
   "where": "src/26_saisons.js:37",
+  "n": 1
+ },
+ {
+  "h": "3933e75b5e",
+  "k": "Grands championnats d'athlétisme",
+  "kind": "string",
+  "where": "src/26_saisons.js:38",
+  "n": 1
+ },
+ {
+  "h": "b0b6701a29",
+  "k": "la fin des grands championnats d'athlétisme",
+  "kind": "string",
+  "where": "src/26_saisons.js:38",
+  "n": 1
+ },
+ {
+  "h": "1440bc6880",
+  "k": "Place à la vitesse",
+  "kind": "string",
+  "where": "src/26_saisons.js:39",
+  "n": 1
+ },
+ {
+  "h": "06fa115226",
+  "k": "Du 11 au 19 septembre, les meilleurs athlètes du monde se retrouvent. Une semaine pour aller vite.",
+  "kind": "string",
+  "where": "src/26_saisons.js:39",
   "n": 1
  },
  {
   "h": "45e9859c8b",
   "k": "Défi sprint",
   "kind": "string",
-  "where": "src/26_saisons.js:38",
+  "where": "src/26_saisons.js:40",
   "n": 1
  },
  {
-  "h": "c39a71c7e7",
-  "k": "3 séances de vitesse ou de puissance pendant les Mondiaux.",
+  "h": "87de011e06",
+  "k": "3 séances de vitesse ou de puissance entre le 11 et le 19 septembre.",
   "kind": "string",
-  "where": "src/26_saisons.js:38",
+  "where": "src/26_saisons.js:40",
   "n": 1
  },
  {
   "h": "b3bb747779",
   "k": "Pointes d'or",
   "kind": "string",
-  "where": "src/26_saisons.js:38",
-  "n": 1
- },
- {
-  "h": "24e472f79a",
-  "k": "Coupe du monde de rugby",
-  "kind": "string",
-  "where": "src/26_saisons.js:39",
-  "n": 2
- },
- {
-  "h": "cb694ec8ac",
-  "k": "la finale de la Coupe du monde",
-  "kind": "string",
-  "where": "src/26_saisons.js:39",
-  "n": 1
- },
- {
-  "h": "e00cfb2c80",
-  "k": "Du 1er octobre au 13 novembre en Australie : six semaines de rugby, six semaines de défi.",
-  "kind": "string",
   "where": "src/26_saisons.js:40",
   "n": 1
  },
  {
-  "h": "a868fafca7",
-  "k": "Défi de la Coupe du monde",
+  "h": "661a9e5da8",
+  "k": "Grand rendez-vous mondial du rugby",
   "kind": "string",
   "where": "src/26_saisons.js:41",
+  "n": 1
+ },
+ {
+  "h": "431fc67d8f",
+  "k": "Six semaines de rugby mondial",
+  "kind": "string",
+  "where": "src/26_saisons.js:42",
+  "n": 1
+ },
+ {
+  "h": "3788232c7b",
+  "k": "Du 1er octobre au 13 novembre, la plus grande compétition de rugby : six semaines de rugby, six semaines de défi.",
+  "kind": "string",
+  "where": "src/26_saisons.js:42",
+  "n": 1
+ },
+ {
+  "h": "54b4749316",
+  "k": "Défi des six semaines",
+  "kind": "string",
+  "where": "src/26_saisons.js:43",
   "n": 1
  },
  {
   "h": "6be4fe3423",
   "k": "12 séances en 6 semaines : deux par semaine jusqu'à la finale du 13 novembre.",
   "kind": "string",
-  "where": "src/26_saisons.js:41",
+  "where": "src/26_saisons.js:43",
   "n": 1
  },
  {
-  "h": "fe20ecf18b",
-  "k": "Mondialiste",
+  "h": "31b88fa2ad",
+  "k": "Increvable",
   "kind": "string",
-  "where": "src/26_saisons.js:41",
+  "where": "src/26_saisons.js:43",
   "n": 1
  },
  {
   "h": "16b878bab0",
   "k": "Nouvel an",
   "kind": "string",
-  "where": "src/26_saisons.js:43",
+  "where": "src/26_saisons.js:45",
   "n": 1
  },
  {
   "h": "78a5992f32",
   "k": "le Nouvel an",
   "kind": "string",
-  "where": "src/26_saisons.js:43",
+  "where": "src/26_saisons.js:45",
   "n": 1
  },
  {
   "h": "b959b72a27",
   "k": "Bonne année",
   "kind": "string",
-  "where": "src/26_saisons.js:44",
+  "where": "src/26_saisons.js:46",
   "n": 1
  },
  {
   "h": "7f68624705",
   "k": "Une nouvelle année commence : on la lance en force.",
   "kind": "string",
-  "where": "src/26_saisons.js:44",
+  "where": "src/26_saisons.js:46",
   "n": 1
  },
  {
   "h": "2aafd89a3a",
   "k": "Démarrage en trombe",
   "kind": "string",
-  "where": "src/26_saisons.js:45",
+  "where": "src/26_saisons.js:47",
   "n": 1
  },
  {
   "h": "94333029ca",
   "k": "3 séances entre le 27 décembre et le 7 janvier.",
   "kind": "string",
-  "where": "src/26_saisons.js:45",
+  "where": "src/26_saisons.js:47",
   "n": 1
  },
  {
   "h": "8fa9449d94",
   "k": "Départ lancé",
   "kind": "string",
-  "where": "src/26_saisons.js:45",
+  "where": "src/26_saisons.js:47",
   "n": 1
  },
  {
   "h": "2d4262ed28",
   "k": "Pâques",
   "kind": "string",
-  "where": "src/26_saisons.js:46",
+  "where": "src/26_saisons.js:48",
   "n": 2
  },
  {
   "h": "e1f2b61483",
   "k": "La chasse aux œufs",
   "kind": "string",
-  "where": "src/26_saisons.js:47",
+  "where": "src/26_saisons.js:49",
   "n": 1
  },
  {
   "h": "ccab27f31d",
   "k": "Chaque séance te rapporte un œuf : trouve-les tous avant le lundi de Pâques.",
   "kind": "string",
-  "where": "src/26_saisons.js:47",
+  "where": "src/26_saisons.js:49",
   "n": 1
  },
  {
   "h": "3f31cc4633",
   "k": "Chasse aux œufs",
   "kind": "string",
-  "where": "src/26_saisons.js:48",
+  "where": "src/26_saisons.js:50",
   "n": 1
  },
  {
   "h": "5637528109",
   "k": "5 séances dans les deux semaines avant le lundi de Pâques.",
   "kind": "string",
-  "where": "src/26_saisons.js:48",
+  "where": "src/26_saisons.js:50",
   "n": 1
  },
  {
   "h": "54df31d4f0",
   "k": "Œuf en or",
   "kind": "string",
-  "where": "src/26_saisons.js:48",
+  "where": "src/26_saisons.js:50",
   "n": 1
  },
  {
   "h": "8f40a7cc33",
   "k": "Rentrée",
   "kind": "string",
-  "where": "src/26_saisons.js:49",
+  "where": "src/26_saisons.js:51",
   "n": 1
  },
  {
   "h": "62bd590bf5",
   "k": "la rentrée",
   "kind": "string",
-  "where": "src/26_saisons.js:49",
+  "where": "src/26_saisons.js:51",
   "n": 1
  },
  {
   "h": "abf3af6120",
   "k": "C'est la rentrée",
   "kind": "string",
-  "where": "src/26_saisons.js:50",
+  "where": "src/26_saisons.js:52",
   "n": 1
  },
  {
   "h": "afddc359e7",
   "k": "Le bon moment pour reprendre un rythme régulier.",
   "kind": "string",
-  "where": "src/26_saisons.js:50",
+  "where": "src/26_saisons.js:52",
   "n": 1
  },
  {
   "h": "0ed50595bd",
   "k": "Défi de la rentrée",
   "kind": "string",
-  "where": "src/26_saisons.js:51",
+  "where": "src/26_saisons.js:53",
   "n": 1
  },
  {
   "h": "4a377c12b3",
   "k": "5 séances entre le 25 août et le 10 septembre.",
   "kind": "string",
-  "where": "src/26_saisons.js:51",
+  "where": "src/26_saisons.js:53",
   "n": 1
  },
  {
   "h": "3c86696495",
   "k": "Bonne rentrée",
   "kind": "string",
-  "where": "src/26_saisons.js:51",
+  "where": "src/26_saisons.js:53",
   "n": 1
  },
  {
   "h": "d7925e873b",
   "k": "Halloween",
   "kind": "string",
-  "where": "src/26_saisons.js:52",
+  "where": "src/26_saisons.js:54",
   "n": 2
  },
  {
   "h": "306146fe70",
   "k": "Le défi des citrouilles",
   "kind": "string",
-  "where": "src/26_saisons.js:53",
+  "where": "src/26_saisons.js:55",
   "n": 1
  },
  {
   "h": "0d0361036f",
   "k": "Fais peur à tes courbatures avant le 31 octobre.",
   "kind": "string",
-  "where": "src/26_saisons.js:53",
+  "where": "src/26_saisons.js:55",
   "n": 1
  },
  {
   "h": "706318b465",
   "k": "Défi des citrouilles",
   "kind": "string",
-  "where": "src/26_saisons.js:54",
+  "where": "src/26_saisons.js:56",
   "n": 1
  },
  {
   "h": "f829a4c2a6",
   "k": "4 séances entre le 17 et le 31 octobre.",
   "kind": "string",
-  "where": "src/26_saisons.js:54",
+  "where": "src/26_saisons.js:56",
   "n": 1
  },
  {
   "h": "c79e04edaf",
   "k": "Citrouille d'or",
   "kind": "string",
-  "where": "src/26_saisons.js:54",
+  "where": "src/26_saisons.js:56",
   "n": 1
  },
  {
   "h": "f74a492d6b",
   "k": "Noël",
   "kind": "string",
-  "where": "src/26_saisons.js:55",
+  "where": "src/26_saisons.js:57",
   "n": 2
  },
  {
   "h": "15076ea3e2",
   "k": "Le défi de l'Avent",
   "kind": "string",
-  "where": "src/26_saisons.js:56",
+  "where": "src/26_saisons.js:58",
   "n": 1
  },
  {
   "h": "1cc0f0fd15",
   "k": "Une case par jour jusqu'au 24 décembre : chaque jour où tu bouges compte.",
   "kind": "string",
-  "where": "src/26_saisons.js:56",
+  "where": "src/26_saisons.js:58",
   "n": 1
  },
  {
   "h": "9ff1309546",
   "k": "Défi de l'Avent",
   "kind": "string",
-  "where": "src/26_saisons.js:57",
+  "where": "src/26_saisons.js:59",
   "n": 1
  },
  {
   "h": "3e68ac1bf4",
   "k": "Bouge au moins 10 minutes 20 jours sur 24 : séance, séance flash, récup, marche ou case cochée.",
   "kind": "string",
-  "where": "src/26_saisons.js:57",
+  "where": "src/26_saisons.js:59",
   "n": 1
  },
  {
   "h": "06330e9ff3",
   "k": "Étoile de l'Avent",
   "kind": "string",
-  "where": "src/26_saisons.js:57",
+  "where": "src/26_saisons.js:59",
   "n": 1
  },
  {
   "h": "14e95c74f5",
   "k": "J-{} avant {}",
   "kind": "pattern",
-  "where": "src/26_saisons.js:123",
+  "where": "src/26_saisons.js:125",
   "n": 1
  },
  {
   "h": "8892d22143",
   "k": "C'est le jour J",
   "kind": "string",
-  "where": "src/26_saisons.js:124",
+  "where": "src/26_saisons.js:126",
   "n": 1
  },
  {
   "h": "abc59c55f9",
   "k": "C'est aujourd'hui",
   "kind": "string",
-  "where": "src/26_saisons.js:124",
+  "where": "src/26_saisons.js:126",
   "n": 1
  },
  {
   "h": "e6346eab92",
   "k": "La compétition est terminée",
   "kind": "string",
-  "where": "src/26_saisons.js:125",
+  "where": "src/26_saisons.js:127",
   "n": 1
  },
  {
   "h": "8cfff1e427",
   "k": "Bonnes fêtes",
   "kind": "string",
-  "where": "src/26_saisons.js:125",
+  "where": "src/26_saisons.js:127",
   "n": 1
  },
  {
   "h": "b7271f4e4d",
   "k": "Défi réussi : badge «",
   "kind": "string",
-  "where": "src/26_saisons.js:159",
+  "where": "src/26_saisons.js:161",
   "n": 2
  },
  {
   "h": "37a4d5e1c2",
   "k": "» débloqué !",
   "kind": "string",
-  "where": "src/26_saisons.js:159",
+  "where": "src/26_saisons.js:161",
   "n": 1
  },
  {
   "h": "b594eddd47",
   "k": "Défi réussi : badge « {} » débloqué !",
   "kind": "pattern",
-  "where": "src/26_saisons.js:159",
+  "where": "src/26_saisons.js:161",
   "n": 1
  },
  {
   "h": "82a8201886",
   "k": "Aperçu : la case n'est pas enregistrée.",
   "kind": "string",
-  "where": "src/26_saisons.js:162",
+  "where": "src/26_saisons.js:164",
   "n": 1
  },
  {
   "h": "eb94016928",
   "k": "Journée comptée pour le défi.",
   "kind": "string",
-  "where": "src/26_saisons.js:164",
+  "where": "src/26_saisons.js:166",
   "n": 1
  },
  {
@@ -43476,21 +43504,21 @@
   "k": "Voir le défi",
   "kind": "text",
   "ctx": "<section className={} aria-label={}> <div className=\"saison-h\"><span className=\"saison-i\"><{} k={} size={} /></span> <div><div className=\"eyebrow\">{}</div><h3>{}</h3></div></div> <p>{}</p> <div className=\"saison-d\"><div className=\"saison-dh\"><b>{}</b><span>{} / {} {}</span></div> <{} value={} /> <p className=\"small\">{}</p></div> <div className=\"btnrow\"> {} {} <{} small kind=\"ghost\" onClick={}>Voir",
-  "where": "src/26_saisons.js:169",
+  "where": "src/26_saisons.js:171",
   "n": 1
  },
  {
   "h": "ac0868f839",
   "k": "» débloqué. Bravo !",
   "kind": "string",
-  "where": "src/26_saisons.js:175",
+  "where": "src/26_saisons.js:177",
   "n": 1
  },
  {
   "h": "762487b4e9",
   "k": "Défi réussi : badge « {} » débloqué. Bravo !",
   "kind": "pattern",
-  "where": "src/26_saisons.js:175",
+  "where": "src/26_saisons.js:177",
   "n": 1
  },
  {
@@ -43498,7 +43526,7 @@
   "k": "J'ai bougé aujourd'hui",
   "kind": "text",
   "ctx": "<{} small onClick={}>J'ai bougé aujourd'hui</{}>",
-  "where": "src/26_saisons.js:177",
+  "where": "src/26_saisons.js:179",
   "n": 1
  },
  {
@@ -43506,7 +43534,7 @@
   "k": "✓ Aujourd'hui compte",
   "kind": "text",
   "ctx": "<span className=\"saison-ok\">✓ Aujourd'hui compte</span>",
-  "where": "src/26_saisons.js:178",
+  "where": "src/26_saisons.js:180",
   "n": 1
  },
  {
@@ -43514,7 +43542,7 @@
   "k": "Du",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <p>{}</p> <p className=\"small muted\">Du {} au {} · objectif {} · {}</p> {} <p className=\"small muted\">Comptent : tes séances du programme et tes séances en plus{}. À la fin, un badge rejoint ta carte athlète.</p> </div>",
-  "where": "src/26_saisons.js:186",
+  "where": "src/26_saisons.js:188",
   "n": 1
  },
  {
@@ -43522,7 +43550,7 @@
   "k": "· objectif",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <p>{}</p> <p className=\"small muted\">Du {} au {} · objectif {} · {}</p> {} <p className=\"small muted\">Comptent : tes séances du programme et tes séances en plus{}. À la fin, un badge rejoint ta carte athlète.</p> </div>",
-  "where": "src/26_saisons.js:186",
+  "where": "src/26_saisons.js:188",
   "n": 1
  },
  {
@@ -43530,7 +43558,7 @@
   "k": "Comptent : tes séances du programme et tes séances en plus",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <p>{}</p> <p className=\"small muted\">Du {} au {} · objectif {} · {}</p> {} <p className=\"small muted\">Comptent : tes séances du programme et tes séances en plus{}. À la fin, un badge rejoint ta carte athlète.</p> </div>",
-  "where": "src/26_saisons.js:186",
+  "where": "src/26_saisons.js:188",
   "n": 1
  },
  {
@@ -43538,21 +43566,21 @@
   "k": ". À la fin, un badge rejoint ta carte athlète.",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <p>{}</p> <p className=\"small muted\">Du {} au {} · objectif {} · {}</p> {} <p className=\"small muted\">Comptent : tes séances du programme et tes séances en plus{}. À la fin, un badge rejoint ta carte athlète.</p> </div>",
-  "where": "src/26_saisons.js:186",
+  "where": "src/26_saisons.js:188",
   "n": 1
  },
  {
   "h": "974be5a268",
   "k": "réussi",
   "kind": "string",
-  "where": "src/26_saisons.js:188",
+  "where": "src/26_saisons.js:190",
   "n": 1
  },
  {
   "h": "419f78784e",
   "k": ", tes activités importées, les jours à 8 000 pas et les cases cochées",
   "kind": "string",
-  "where": "src/26_saisons.js:190",
+  "where": "src/26_saisons.js:192",
   "n": 1
  },
  {
@@ -43560,7 +43588,7 @@
   "k": "En ce moment ·",
   "kind": "text",
   "ctx": "<section className={} aria-label={}> <div className=\"saison-h\"><span className=\"saison-i\"><{} k={} size={} /></span> <div><div className=\"eyebrow\">En ce moment · {}</div><h3>{}</h3></div></div> <p>{} <b>{}</b> : {}</p> {} </section>",
-  "where": "src/26_saisons.js:213",
+  "where": "src/26_saisons.js:216",
   "n": 1
  },
  {
@@ -43568,7 +43596,7 @@
   "k": "Je relève le défi",
   "kind": "text",
   "ctx": "<div className=\"btnrow\"><{} small onClick={}>Je relève le défi</{}></div>",
-  "where": "src/26_saisons.js:217",
+  "where": "src/26_saisons.js:220",
   "n": 1
  },
  {

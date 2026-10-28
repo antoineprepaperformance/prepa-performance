@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="452aba494c">
+<meta name="app-build" content="e60573059c">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -4746,8 +4746,8 @@ function SaisonsCard({ settings, db, onPreview }) {
       <span className="btnrow"><button type="button" className="linkbtn sm" onClick=${() => setEdit(ed)}>Message</button>
         ${onPreview ? html`<button type="button" className="linkbtn sm" onClick=${() => onPreview(addDays(ed.from, Math.min(5, diffDays(ed.from, ed.to))))}>Aperçu</button>` : null}</span>
       <button type="button" role="switch" aria-checked=${!off[ed.ev.id]} aria-label=${"Activer : " + ed.ev.n} className=${"tgl" + (!off[ed.ev.id] ? " on" : "")} onClick=${() => setOff({ ...off, [ed.ev.id]: !off[ed.ev.id] })}><span></span></button></li>`)}</ul>
-    <p className="muted small">Les compétitions des années suivantes sont ajoutées par la mise à jour de chaque semaine, avec leurs dates officielles. Jamais de logo : seulement le nom de l'événement.</p>
-    <p className="muted small">Les compétitions restent à l'intérieur de l'application, pour tes clients. La page d'accueil publique ne montre que les fêtes : une compétition utilisée pour vendre (publicité, publication, offre « spéciale Tournoi ») peut être attaquée par l'organisateur (code du sport, art. L333-1). Sur Instagram, parle de ton défi sans le nom ni les images de la compétition.</p>
+    <p className="muted small">Les compétitions des années suivantes sont ajoutées par la mise à jour de chaque semaine, avec leurs dates officielles. Elles sont annoncées sans leur nom officiel, sans équipe, sans pays et sans logo : seulement « une grande compétition arrive » et ses dates.</p>
+    <p className="muted small">Elles restent à l'intérieur de l'application, pour tes clients. La page d'accueil publique ne montre que les fêtes : une compétition utilisée pour vendre (publicité, publication, offre « spéciale Tournoi ») peut être attaquée par l'organisateur (code du sport, art. L333-1). Si tu écris ton propre message, garde la même règle ; sur Instagram, parle de ton défi sans le nom ni les images de la compétition.</p>
     <div className="btnrow"><${Btn} onClick=${save} disabled=${busy}>Enregistrer les thèmes</${Btn}></div>
     <${Modal} open=${!!edit} title=${edit ? "Message : " + edit.ev.n : ""} onClose=${() => setEdit(null)}>${edit ? html`<div className="stack">
       <p className="small muted">Texte par défaut : ${edit.ev.x}</p>
@@ -11273,28 +11273,30 @@ const SAISON_ICONS = {
 };
 /* m-j : mois-jour répétés chaque année ; from/to datés : une seule édition. countTo : fin du décompte du défi (sinon fin de la période) */
 const SAISONS = [
-  /* grandes compétitions (prioritaires sur les fêtes quand elles se chevauchent) */
-  { id: "hand27", kind: "sport", from: "2027-01-13", to: "2027-01-31", main: "2027-01-31", n: "Mondial de handball", court: "la finale du Mondial de handball", icon: "ballon", deco: "ballon", accent: "bleu",
-    t: "Mondial de handball", x: "Du 13 au 31 janvier en Allemagne. Mets-toi au rythme des handballeurs : sauts, sprints, changements de direction.",
-    defi: { type: "seances", target: 6, n: "Défi explosivité", d: "6 séances pendant le Mondial, du 13 au 31 janvier." }, badge: "Main de fer" },
-  { id: "tournoi27", kind: "sport", from: "2027-02-05", to: "2027-03-13", main: "2027-03-13", n: "Tournoi des Six Nations", court: "la dernière journée du Tournoi", icon: "ovale", deco: "ovale", accent: "bleu",
-    t: "Tournoi des Six Nations", x: "5 journées de rugby du 5 février au 13 mars : deux séances par semaine pendant tout le Tournoi.",
-    defi: { type: "seances", target: 10, n: "Défi du Tournoi", d: "10 séances pendant le Tournoi : deux par semaine jusqu'à la dernière journée, le 13 mars." }, badge: "Grand Chelem" },
-  { id: "europe27", kind: "sport", from: "2027-05-08", to: "2027-05-22", main: "2027-05-22", n: "Finale de la Coupe d'Europe de rugby", court: "la finale de la Coupe d'Europe", icon: "coupe", deco: "ovale",
-    t: "Finale de la Coupe d'Europe à Lyon", x: "Le 22 mai, la finale de la Coupe d'Europe de rugby se joue à Lyon.",
-    defi: { type: "seances", target: 4, n: "Défi des phases finales", d: "4 séances dans les deux semaines avant la finale." }, badge: "Champion d'Europe" },
-  { id: "top1427", kind: "sport", from: "2027-06-11", to: "2027-06-26", main: "2027-06-26", n: "Phases finales du Top 14", court: "la finale du Top 14", icon: "ovale", deco: "ovale",
-    t: "Phases finales du Top 14", x: "Demi-finales à Bordeaux, finale le 26 juin au Stade de France.",
-    defi: { type: "seances", target: 4, n: "Défi du Bouclier", d: "4 séances entre les barrages et la finale du 26 juin." }, badge: "Bouclier" },
-  { id: "tour27", kind: "sport", from: "2027-07-02", to: "2027-07-25", main: "2027-07-25", n: "Tour de France", court: "l'arrivée du Tour à Paris", icon: "roue", deco: "roue", accent: "argent",
-    t: "Tour de France", x: "21 étapes d'Édimbourg à Paris, du 2 au 25 juillet.",
+  /* grandes compétitions (prioritaires sur les fêtes quand elles se chevauchent).
+     Jamais leur nom officiel, ni équipe, ni pays, ni ville, ni logo : on dit seulement qu'une grande compétition arrive et
+     quand (code du sport, art. L333-1 : le droit d'exploiter un événement appartient à son organisateur). */
+  { id: "hand27", kind: "sport", from: "2027-01-13", to: "2027-01-31", main: "2027-01-31", n: "Grand rendez-vous du handball", court: "la grande finale du handball", icon: "ballon", deco: "ballon",
+    t: "Le handball à l'honneur", x: "Du 13 au 31 janvier, une grande compétition internationale de handball. Mets-toi au rythme des handballeurs : sauts, sprints, changements de direction.",
+    defi: { type: "seances", target: 6, n: "Défi explosivité", d: "6 séances entre le 13 et le 31 janvier." }, badge: "Main de fer" },
+  { id: "tournoi27", kind: "sport", from: "2027-02-05", to: "2027-03-13", main: "2027-03-13", n: "Grand tournoi de rugby d'hiver", court: "la dernière journée du tournoi", icon: "ovale", deco: "ovale", accent: "vert",
+    t: "L'hiver du rugby", x: "Du 5 février au 13 mars, cinq week-ends de grand rugby international : deux séances par semaine pendant tout le tournoi.",
+    defi: { type: "seances", target: 10, n: "Défi de l'hiver", d: "10 séances entre le 5 février et le 13 mars : deux par semaine." }, badge: "Carton plein" },
+  { id: "europe27", kind: "sport", from: "2027-05-08", to: "2027-05-22", main: "2027-05-22", n: "Grande finale européenne de rugby", court: "la grande finale", icon: "coupe", deco: "ovale",
+    t: "Le mois des finales", x: "Le 22 mai, la grande finale européenne de rugby des clubs. Deux semaines pour finir fort.",
+    defi: { type: "seances", target: 4, n: "Défi des phases finales", d: "4 séances dans les deux semaines avant la finale du 22 mai." }, badge: "Finisseur de mai" },
+  { id: "top1427", kind: "sport", from: "2027-06-11", to: "2027-06-26", main: "2027-06-26", n: "Phases finales du championnat de rugby", court: "la finale du championnat", icon: "ovale", deco: "ovale",
+    t: "Le sprint final du championnat", x: "Du 11 au 26 juin, les phases finales du championnat de France de rugby.",
+    defi: { type: "seances", target: 4, n: "Défi du sprint final", d: "4 séances entre le 11 et le 26 juin." }, badge: "Sprint final" },
+  { id: "tour27", kind: "sport", from: "2027-07-02", to: "2027-07-25", main: "2027-07-25", n: "Grande course cycliste de juillet", court: "l'arrivée de la grande course à étapes", icon: "roue", deco: "roue", accent: "argent",
+    t: "Juillet, le mois du vélo", x: "Du 2 au 25 juillet, trois semaines de grande course cycliste à étapes. À toi de tenir la distance.",
     defi: { type: "jours", target: 15, n: "Défi des 21 étapes", d: "Bouge au moins 30 minutes 15 jours sur 24 : séance, vélo, course, 8 000 pas ou case cochée." }, badge: "Maillot de l'effort" },
-  { id: "athle27", kind: "sport", from: "2027-09-11", to: "2027-09-19", main: "2027-09-19", n: "Mondiaux d'athlétisme", court: "la fin des Mondiaux d'athlétisme", icon: "chrono", deco: "chrono",
-    t: "Mondiaux d'athlétisme", x: "Du 11 au 19 septembre à Pékin : place à la vitesse.",
-    defi: { type: "seances", target: 3, n: "Défi sprint", d: "3 séances de vitesse ou de puissance pendant les Mondiaux." }, badge: "Pointes d'or" },
-  { id: "cdm27", kind: "sport", from: "2027-10-01", to: "2027-11-13", main: "2027-11-13", n: "Coupe du monde de rugby", court: "la finale de la Coupe du monde", icon: "ovale", deco: "ovale", accent: "bleu",
-    t: "Coupe du monde de rugby", x: "Du 1er octobre au 13 novembre en Australie : six semaines de rugby, six semaines de défi.",
-    defi: { type: "seances", target: 12, n: "Défi de la Coupe du monde", d: "12 séances en 6 semaines : deux par semaine jusqu'à la finale du 13 novembre." }, badge: "Mondialiste" },
+  { id: "athle27", kind: "sport", from: "2027-09-11", to: "2027-09-19", main: "2027-09-19", n: "Grands championnats d'athlétisme", court: "la fin des grands championnats d'athlétisme", icon: "chrono", deco: "chrono",
+    t: "Place à la vitesse", x: "Du 11 au 19 septembre, les meilleurs athlètes du monde se retrouvent. Une semaine pour aller vite.",
+    defi: { type: "seances", target: 3, n: "Défi sprint", d: "3 séances de vitesse ou de puissance entre le 11 et le 19 septembre." }, badge: "Pointes d'or" },
+  { id: "cdm27", kind: "sport", from: "2027-10-01", to: "2027-11-13", main: "2027-11-13", n: "Grand rendez-vous mondial du rugby", court: "la grande finale", icon: "ovale", deco: "ovale", accent: "vert",
+    t: "Six semaines de rugby mondial", x: "Du 1er octobre au 13 novembre, la plus grande compétition de rugby : six semaines de rugby, six semaines de défi.",
+    defi: { type: "seances", target: 12, n: "Défi des six semaines", d: "12 séances en 6 semaines : deux par semaine jusqu'à la finale du 13 novembre." }, badge: "Increvable" },
   /* fêtes et moments de l'année */
   { id: "nouvelan", kind: "fete", md: ["12-27", "01-07"], main: "01-01", n: "Nouvel an", court: "le Nouvel an", icon: "etoile", deco: "etoile",
     t: "Bonne année", x: "Une nouvelle année commence : on la lance en force.",
@@ -11454,9 +11456,10 @@ function saisonBadges(profile) {
   }).filter(Boolean);
 }
 /* page d'accueil du site : la fête du moment, pour donner envie de rejoindre le défi.
-   Jamais les compétitions sportives sur cette page publique : s'en servir pour vendre, c'est exploiter l'événement de
-   l'organisateur (code du sport, art. L333-1 ; tribunal judiciaire de Paris, 6 janvier 2026, FFR c. Royaltiz). Dans
-   l'application, elles restent une information (dates publiques) pour les clients déjà inscrits (Cass. com., 20 mai 2014, n° 13-12102). */
+   Jamais les compétitions sportives sur cette page publique, même sans leur nom : une publicité calée sur un événement
+   peut être vue comme son exploitation (code du sport, art. L333-1 ; tribunal judiciaire de Paris, 6 janvier 2026,
+   FFR c. Royaltiz). Dans l'application, pour les clients déjà inscrits, on annonce seulement qu'une grande compétition
+   arrive et ses dates publiques, sans nom officiel (Cass. com., 20 mai 2014, n° 13-12102). */
 function SaisonRibbon({ settings, onJoin }) {
   const date = saisonDate();
   const ed = saisonActive(date, settings, "fete");

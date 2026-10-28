@@ -41,7 +41,12 @@ async def run():
                 cnt: saisonCount(saisonActive("2026-12-10"), "2026-12-10"), jour: saisonCount(saisonActive("2027-10-15"), "2027-11-13") }; }""")
             ok(r["paques27"] == "2027-03-28" and r["paques28"] == "2028-04-16", "date de Pâques calculée (2027 : 28 mars, 2028 : 16 avril)", r)
             ok(r["hal"] == "halloween|halloween-2026" and r["nov"] is None and r["avent"] == "noel|noel-2026" and r["an"] == "nouvelan|nouvelan-2026", "fêtes : Halloween, rien mi-novembre, Avent, Nouvel an (édition qui commence fin 2026)", r)
-            ok(r["hand"].startswith("hand27") and r["tournoi"].startswith("tournoi27") and r["pq"].startswith("paques") and r["cdm"].startswith("cdm27"), "compétitions : Mondial de handball, Tournoi, Pâques, Coupe du monde", r)
+            ok(r["hand"].startswith("hand27") and r["tournoi"].startswith("tournoi27") and r["pq"].startswith("paques") and r["cdm"].startswith("cdm27"), "compétitions de 2027 (handball, rugby d'hiver, rugby mondial) et Pâques", r)
+            interdits = ["Six Nations", "Top 14", "Tour de France", "Grande Boucle", "Coupe du monde", "Coupe d'Europe", "Champions Cup", "Mondial", "Mondiaux", "Bleus", "équipe de France",
+                         "Allemagne", "Australie", "Pékin", "Édimbourg", "Lyon", "Stade de France", "Grand Chelem", "Bouclier", "Brennus", "maillot jaune"]
+            txt = await co.evaluate("JSON.stringify(SAISONS.filter((e) => e.kind === 'sport'))")
+            vus = [w for w in interdits if w in txt]  # majuscules comprises : « mondial » reste un mot courant
+            ok(not vus, "compétitions annoncées sans nom officiel, équipe, pays ni ville", vus)
             ok(r["halcdm"].startswith("cdm27"), "deux événements en même temps : la compétition passe avant Halloween", r)
             ok(r["off"] is None, "événement coupé par le coach : plus de thème", r)
             ok(r["up"][:4] == ["halloween", "noel", "nouvelan", "hand27"] and "tournoi27" in r["up"] and "cdm27" in r["up"] and r["up"].count("halloween") == 2, "à venir sur 13 mois, dans l'ordre des dates", r["up"])

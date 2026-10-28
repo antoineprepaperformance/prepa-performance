@@ -19,6 +19,8 @@ const NUTRI_REFS = [
   "Westerterp KR. Diet induced thermogenesis. Nutr Metab (Lond). 2004;1(1):5.",
   "Ainsworth BE, Haskell WL, Herrmann SD, et al. 2011 Compendium of Physical Activities: a second update of codes and MET values. Med Sci Sports Exerc. 2011;43(8):1575-1581.",
   "Fuller D, Colwell E, Low J, et al. Reliability and validity of commercially available wearable devices for measuring steps, energy expenditure, and heart rate: systematic review. JMIR Mhealth Uhealth. 2020;8(9):e18694.",
+  "Amoutzopoulos B, Page P, Roberts C, et al. Portion size estimation in dietary assessment: a systematic review of existing tools, their strengths and limitations. Nutr Rev. 2020;78(11):885-900.",
+  "Règlement (CE) n° 589/2008 de la Commission du 23 juin 2008 (normes de commercialisation des œufs), article 4 : catégories de poids (M : 53 à 63 g).",
 ];
 const VERDICT = { bon: { n: "Bon choix", t: "ok" }, correct: { n: "Correct", t: "gold" }, a_ameliorer: { n: "À améliorer", t: "warn" }, occasionnel: { n: "Occasionnel", t: "gold" }, a_limiter: { n: "À limiter", t: "warn" } };
 const r10 = (v) => Math.round(v / 10) * 10;
@@ -284,17 +286,32 @@ function PlatPicker({ slot, np, tot, onPick }) {
     <p className="muted small">${eq ? "Touche un plat pour l'ajouter, puis ajuste les quantités." : "Portion habituelle ; touche un plat pour l'ajouter, puis ajuste les grammes de chaque élément. Valeurs de la table Ciqual de l'ANSES."}</p>
   </div>`;
 }
-function FoodPicker({ onPick }) {
+function FoodPicker({ onPick, eq }) {
   const t = useCiqual();
   const [q, setQ] = useState("");
-  const qq = q.trim(), nq = ciqNorm(qq);
-  const cur = qq.length >= 2 ? FOODS.filter((f) => ciqNorm(f[0]).includes(nq)).slice(0, 5) : [];
+  const qq = q.trim();
+  const chunks = qq.length >= 2 ? quickChunks(qq).map(quickParse1) : [];
+  const one = chunks.length === 1 ? chunks[0] : null;
+  /* une phrase avec des quantités ou plusieurs aliments : « 2 tranches de brioche, un œuf et du beurre de cacahuète » */
+  const phrase = chunks.length > 1 || !!(one && (one.q !== null || one.unit.length || one.size.length));
+  const got = phrase ? chunks.map((c) => ({ c, it: quickItem(c) })) : [];
+  const items = got.map((x) => x.it).filter(Boolean);
+  const sq = one ? one.food.join(" ") : "", nq = ciqNorm(sq);
+  const qf = sq.length >= 2 ? quickFood(one.food) : null;
+  const cur = sq.length >= 2 ? (qf && qf.fd ? [qf.fd] : []).concat(FOODS.filter((f) => ciqNorm(f[0]).includes(nq) && !(qf && qf.fd === f))).slice(0, 5) : [];
   const codes = new Set(cur.map((f) => f[6]).filter(Boolean));
-  const more = t && qq.length >= 2 ? ciqSearch(qq, 10).filter((r) => !codes.has(r.code)).slice(0, 6) : [];
-  return html`<div className="stack-s"><${Field} label="Ajouter un aliment" id="fd-q" hint="Valeurs nutritionnelles de la table Ciqual de l'ANSES"><input id="fd-q" value=${q} onChange=${(e) => setQ(e.target.value)} placeholder="Ex. riz, poulet, banane…" autoComplete="off" /></${Field}>
-    ${cur.length || more.length ? html`<div className="sugg">${cur.map((f) => html`<button key=${f[0]} type="button" onClick=${() => { onPick(foodItem(f)); setQ(""); }}><b>${f[0]}</b><span className="muted small">${f[5]} g</span></button>`)}
-      ${more.map((r) => html`<button key=${"c" + r.code} type="button" onClick=${() => { onPick(ciqRowItem(r, 100)); setQ(""); }}><b>${r.nom}</b><span className="muted small">${fmtN(r.kcal, 0)} kcal / 100 g</span></button>`)}</div>`
-      : qq.length >= 2 ? html`<p className="muted small">${t || !window.IS_SITE ? "Pas trouvé dans la table de l'ANSES : saisis-le plus bas." : "Recherche dans la table de l'ANSES…"}</p>` : null}</div>`;
+  const more = t && sq.length >= 2 ? (qf && qf.r ? [qf.r] : []).concat(ciqSearch(sq, 10).filter((r) => !(qf && qf.r === r))).filter((r) => !codes.has(r.code)).slice(0, 6) : [];
+  const pick = (f) => { onPick(quickMake(f, one && phrase ? one : { q: null, gUnit: 0, unit: [], size: [] })); setQ(""); };
+  const hint = (f) => { const it = quickMake(f, one && phrase ? one : { q: null, gUnit: 0, unit: [], size: [] }); return eq ? qtyText(it) : qtyText(it) + " ≈ " + fmtN(it.g, 0) + " " + pUnit(itemPortions(it)) + " · " + fmtN(it.kcal, 0) + " kcal"; };
+  return html`<div className="stack-s"><${Field} label="Ajouter des aliments" id="fd-q" hint="Tape un aliment, ou tout ton repas avec les quantités : « 2 tranches de pain, 1 œuf, 1 c. à soupe de beurre de cacahuète »"><input id="fd-q" value=${q} onChange=${(e) => setQ(e.target.value)} placeholder="Ex. 2 tranches de brioche, un œuf…" autoComplete="off" /></${Field}>
+    ${phrase && got.length ? html`<div className="quick" aria-live="polite"><div className="field-l">J'ai compris :</div>
+      ${got.map((x, i) => x.it ? html`<div key=${i} className="quick-r"><span><b>${qtyText(x.it)}</b> ${x.it.n}</span>${eq ? null : html`<span className="muted small">${fmtN(x.it.g, 0)} ${pUnit(itemPortions(x.it))} · ${fmtN(x.it.kcal, 0)} kcal</span>`}</div>`
+        : html`<div key=${i} className="quick-r miss"><span>« ${x.c.raw} »</span><span className="small">${t || !window.IS_SITE ? "pas trouvé : écris-le autrement" : "recherche…"}</span></div>`)}
+      ${items.length ? html`<${Btn} small onClick=${() => { onPick(items); setQ(""); }}>${items.length > 1 ? "Ajouter ces " + items.length + " aliments" : "Ajouter cet aliment"}</${Btn}>` : null}
+      <p className="muted small">Tu pourras changer chaque quantité juste après.</p></div>` : null}
+    ${!phrase || chunks.length === 1 ? (cur.length || more.length ? html`<div className="sugg">${cur.map((f) => html`<button key=${f[0]} type="button" onClick=${() => pick({ fd: f })}><b>${f[0]}</b><span className="muted small pl">${hint({ fd: f })}</span></button>`)}
+      ${more.map((r) => html`<button key=${"c" + r.code} type="button" onClick=${() => pick({ r })}><b>${r.nom}</b><span className="muted small pl">${hint({ r })}</span></button>`)}</div>`
+      : sq.length >= 2 && !phrase ? html`<p className="muted small">${t || !window.IS_SITE ? "Pas trouvé dans la table de l'ANSES : essaie un autre mot, ou saisis-le plus bas." : "Recherche dans la table de l'ANSES…"}</p>` : null) : null}</div>`;
 }
 const VERDICT_NS = { A: "bon", B: "bon", C: "correct", D: "occasionnel", E: "a_limiter" };
 /* Open Food Facts (base collaborative, licence ODbL) : uniquement sur le site, où le réseau est ouvert */
@@ -368,7 +385,7 @@ function MacroBars({ tot, t }) {
 function MealEditor({ draft, setDraft, eq }) {
   const [sw, setSw] = useState(null);
   const tot = sumItems(draft.items);
-  const upd = (i, g) => setDraft({ ...draft, items: draft.items.map((x, k) => (k === i ? scaleItem(x, g) : x)) });
+  const upd = (i, it) => setDraft({ ...draft, items: draft.items.map((x, k) => (k === i ? it : x)) });
   const del = (i) => { setSw(null); setDraft({ ...draft, items: draft.items.filter((_, k) => k !== i) }); };
   const swap = (i, r) => { setSw(null); setDraft({ ...draft, items: draft.items.map((x, k) => (k === i ? ciqRowItem(r, x.g || 100, r.nom) : x)) }); };
   const v = VERDICT[draft.verdict];
@@ -376,12 +393,24 @@ function MealEditor({ draft, setDraft, eq }) {
     <div className="meal-h"><b>${draft.title || "Repas"}</b>${v ? html`<${Pill} tone=${v.t}>${v.n}</${Pill}>` : null}${draft.conf && !eq ? html`<span className="muted small">quantités estimées ${draft.conf === "bonne" ? "avec une bonne confiance" : draft.conf === "faible" ? "avec une faible confiance" : "avec une confiance moyenne"}</span>` : null}</div>
     ${draft.items.length ? html`<div className="items-n">${draft.items.map((x, i) => html`<div key=${i} className="it-wrap"><div className="it-n">
       <span className="it-name">${x.n}${eq ? null : html`<span className="it-meta">${x.ciq ? html`<span className="it-src" title=${x.ciqN || "Table Ciqual de l'ANSES"}>ANSES</span>` : x.est ? html`<span className="it-src est" title="Aliment absent de la table : valeurs estimées par le coach IA">estimé</span>` : null}<button type="button" className="linkbtn sm" onClick=${() => setSw(sw === i ? null : i)}>changer</button></span>`}</span>
-      ${eq ? null : html`<label className="it-g"><input inputMode="decimal" aria-label=${"Quantité " + x.n} value=${Math.round(x.g)} onChange=${(e) => upd(i, e.target.value)} /><span>g</span></label><span className="it-k">${fmtN(x.kcal, 0)} kcal</span>`}
       <button type="button" className="x sm" aria-label=${"Retirer " + x.n} onClick=${() => del(i)}>×</button></div>
+      ${eq ? null : html`<${PortionRow} x=${x} onChange=${(it) => upd(i, it)} />`}
       ${sw === i ? html`<${CiqSwap} item=${x} onPick=${(r) => swap(i, r)} onCancel=${() => setSw(null)} />` : null}</div>`)}</div>` : html`<p className="muted small">Aucun aliment reconnu.</p>`}
     ${eq ? null : html`<div className="tot-line"><b>${fmtN(tot.kcal, 0)} kcal</b><span>P ${fmtN(tot.p, 0)} g · G ${fmtN(tot.c, 0)} g · L ${fmtN(tot.f, 0)} g</span></div>`}
     ${draft.comment ? html`<p className="small">${draft.comment}</p>` : null}
     ${draft.advice ? html`<p className="small note">${draft.advice}</p>` : null}
+  </div>`;
+}
+/* quantité d'une ligne : nombre × portion parlante (tranche, œuf moyen…), ou grammes pour qui pèse */
+function PortionRow({ x, onChange }) {
+  const o = itemPortions(x), v = portionView(x, o), u = pUnit(o), d = o[0];
+  const q0 = d && !d.raw && x.g > 0 ? Math.round(x.g / d.g * 2) / 2 : 0;
+  const unit = (k) => { const p = o[k]; onChange(setPortion(x, p.raw ? Math.round(x.g) : v.p.raw ? Math.max(0.5, Math.round(x.g / p.g * 2) / 2 || 1) : v.q, p)); };
+  return html`<div className="it-q">
+    ${v.p.raw ? html`<input className="it-gin" inputMode="decimal" aria-label=${"Quantité en " + u + " : " + x.n} value=${Math.round(x.g)} onChange=${(e) => onChange(setPortion(x, e.target.value, v.p))} />`
+      : html`<select className="it-cnt" aria-label=${"Nombre : " + x.n} value=${String(v.q)} onChange=${(e) => onChange(setPortion(x, e.target.value, v.p))}>${qtyList(v.q).map((n) => html`<option key=${n} value=${String(n)}>${qFmt(n)}</option>`)}</select><span className="it-x">×</span>`}
+    <select className=${v.p.raw ? "it-u raw" : "it-u"} aria-label=${"Portion : " + x.n} value=${String(o.indexOf(v.p))} onChange=${(e) => unit(+e.target.value)}>${o.map((p, k) => html`<option key=${k} value=${String(k)}>${p.raw ? p.l : p.l + " · " + fmtN(p.g, 0) + " " + u}</option>`)}</select>
+    <span className="it-eq">${v.p.raw ? (q0 >= 0.5 && q0 <= 6 ? "≈ " + qFmt(q0) + " × " + d.l + " · " : "") : "= " + fmtN(x.g, 0) + " " + u + " · "}${fmtN(x.kcal, 0)} kcal</span>
   </div>`;
 }
 function SlotPick({ value, onChange }) { return html`<${Field} label="Moment"><${Seg} options=${SLOTS.map((s) => ({ v: s.id, n: s.n }))} value=${value} onChange=${onChange} /></${Field}>`; }
@@ -453,8 +482,8 @@ function AddMeal({ mode, np, tot, ai, onAdd, onClose }) {
         ${!draft ? html`<${Btn} onClick=${analyze} disabled=${busy}>${busy ? "Analyse en cours…" : "Analyser la photo"}</${Btn}>` : null}` : null}` : null}
     ${mode === "texte" ? html`<${Field} label="Ce que tu as mangé" id="meal-txt"><textarea id="meal-txt" rows="3" value=${note} onChange=${(e) => setNote(e.target.value)} placeholder="Ex. 2 œufs brouillés, 2 tranches de pain complet, un yaourt grec et un café"></textarea></${Field}>
       ${!draft ? html`<${Btn} onClick=${analyze} disabled=${busy || note.trim().length < 3}>${busy ? "Estimation…" : "Estimer"}</${Btn}>` : null}` : null}
-    ${mode === "manuel" ? html`${fdraft.items.length && !plats ? html`<button type="button" className="linkbtn" onClick=${() => setPlats(true)}>+ Ajouter un plat type</button>` : html`<${PlatPicker} slot=${slot} np=${np} tot=${tot} onPick=${(p) => { setFdraft({ ...fdraft, items: [...fdraft.items, ...platItems(p)] }); if (!man.n.trim() && !fdraft.items.length) setMan({ ...man, n: p.n }); setPlats(false); }} />`}
-      <${FoodPicker} onPick=${(it) => setFdraft({ ...fdraft, items: [...fdraft.items, it] })} />
+    ${mode === "manuel" ? html`<${FoodPicker} eq=${eq} onPick=${(it) => setFdraft({ ...fdraft, items: [...fdraft.items, ...[].concat(it)] })} />
+      ${fdraft.items.length && !plats ? html`<button type="button" className="linkbtn" onClick=${() => setPlats(true)}>+ Ajouter un plat type</button>` : html`<${PlatPicker} slot=${slot} np=${np} tot=${tot} onPick=${(p) => { setFdraft({ ...fdraft, items: [...fdraft.items, ...platItems(p)] }); if (!man.n.trim() && !fdraft.items.length) setMan({ ...man, n: p.n }); setPlats(false); }} />`}
       ${fdraft.items.length ? html`<${Card}><${MealEditor} draft=${{ ...fdraft, title: man.n.trim() || "Mon repas" }} setDraft=${(d) => setFdraft({ ...fdraft, items: d.items })} eq=${eq} /></${Card}>` : null}
       <${Field} label=${fdraft.items.length ? "Nom du repas (facultatif)" : "Repas"} id="mn-n"><input id="mn-n" value=${man.n} onChange=${(e) => setMan({ ...man, n: e.target.value })} placeholder="Ex. Salade de pâtes" /></${Field}>
       ${eq ? null : html`${fdraft.items.length ? html`<p className="muted small">Autre chose à ajouter ? Indique ses valeurs ci-dessous (facultatif).</p>` : null}<div className="row4"><${Field} label="kcal" id="mn-k"><input id="mn-k" inputMode="numeric" value=${man.kcal} onChange=${(e) => setMan({ ...man, kcal: e.target.value })} /></${Field}>
@@ -465,7 +494,7 @@ function AddMeal({ mode, np, tot, ai, onAdd, onClose }) {
     ${err ? html`<p className="small warn-t">${err}</p>` : null}
     ${draft ? html`<${Card}><${MealEditor} draft=${draft} setDraft=${setDraft} eq=${eq} /></${Card}>
       <p className="muted small">${eq ? "" : "Valeurs nutritionnelles de la " + ciqLabel() + " pour les aliments marqués ANSES ; les quantités sont estimées" + (mode === "photo" ? " à partir de la photo (compte ±20 à 30 %)" : "") + " : corrige-les si besoin."}</p>` : null}
-    ${mode === "manuel" && !eq ? html`<p className="muted small">Valeurs de la ${ciqLabel()}. Pour un produit emballé, scanne son code-barres.</p>` : null}
+    ${mode === "manuel" && !eq ? html`<p className="muted small">Valeurs de la ${ciqLabel()}. Les portions (tranche, œuf moyen, cuillère à soupe…) sont des repères moyens : choisis « g » si tu pèses. Pour un produit emballé, scanne son code-barres.</p>` : null}
     ${draft || mode === "manuel" ? html`<div className="actions"><${Btn} onClick=${add} disabled=${mode === "manuel" && !man.n.trim() && !man.kcal && !fdraft.items.length}>Ajouter au journal</${Btn}>${draft ? html`<${Btn} kind="quiet" onClick=${analyze} disabled=${busy}>Relancer l'analyse</${Btn}>` : null}</div>` : null}
   </div>`;
 }

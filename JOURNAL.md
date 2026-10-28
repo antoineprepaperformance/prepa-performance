@@ -3,6 +3,14 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 28 octobre 2026 (après-midi) · nutrition : portions parlantes et saisie en une phrase
+
+- « Saisir un repas » : chaque aliment se compte en portions du quotidien (2 × tranche, 1 × œuf moyen, 1 × cuillère à soupe, 1 × bol…) au lieu de « pour 100 g ». Le poids et les calories s'affichent à côté, et « g » (ou « ml ») reste au choix pour qui pèse.
+- On peut taper tout son repas d'un coup : « deux parts de brioche, beurre de cacahuète et un œuf » donne 2 parts de brioche (90 g), 1 cuillère à soupe de beurre de cacahuète (15 g) et 1 œuf moyen (50 g), sans passer par le coach IA. Reconnaît les nombres en lettres, ½, « c. à s. », « g », « cl », les tailles (petit, gros) et plusieurs aliments séparés par des virgules, « et », « avec », « sur »…
+- Les repas estimés par le coach IA, les plats types et les produits déjà saisis s'affichent aussi en portions quand ça tombe juste (sinon en grammes, avec l'équivalent : « ≈ 1½ × assiette moyenne »).
+- Repères dans `content_nutri.py` (MESURES) : poids mangés moyens, arrondis ; œufs selon les catégories de poids du règlement (CE) n° 589/2008. Le poids enregistré reste en grammes : rien ne change pour les repas déjà notés ni pour les cibles.
+- Sources : Amoutzopoulos B et al., Portion size estimation in dietary assessment: a systematic review of existing tools, Nutr Rev 2020;78(11):885-900 (on estime mal les grammes sans balance ; les repères ménagers aident) ; règlement (CE) n° 589/2008, art. 4. Valeurs nutritionnelles inchangées : table Ciqual de l'ANSES.
+
 ## 28 octobre 2026 · finances, factures et secrétariat
 
 - Espace coach, nouvel onglet **Finances** : factures numérotées automatiquement à chaque paiement (AAAA-NNNN, mention EI, SIRET, période, « TVA non applicable, art. 293 B du CGI », acquittée), avoir sur la facture d'origine à chaque remboursement, registre jamais modifié ni supprimé (règle Firestore `factures`). Le client télécharge sa facture et son avoir dans « Mes commandes ». Paiement direct : le moyen (virement, espèces…) se choisit à l'activation.

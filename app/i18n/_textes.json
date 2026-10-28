@@ -13342,6 +13342,615 @@
   "n": 1
  },
  {
+  "h": "cd36777eb5",
+  "k": "brique (20 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "de1ebd9094",
+  "k": "pour 1 tartine",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 3
+ },
+ {
+  "h": "94ae50630e",
+  "k": "noisette (pour 1 tartine)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "d9894a2495",
+  "k": "plaquette individuelle",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "b1acfbfd66",
+  "k": "portion (pour une assiette de pâtes)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "5193d3a73b",
+  "k": "grande tranche",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "44ad380b04",
+  "k": "pain au lait",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "b62be08425",
+  "k": "grosse tranche ou part",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "0f04b4da26",
+  "k": "pain au chocolat",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "a5691b944e",
+  "k": "mini pain au chocolat",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "a25ed70db2",
+  "k": "pièce",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "c8e5af36cc",
+  "k": "tranche ou morceau",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "123f67b764",
+  "k": "quart de baguette",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "9dfea274b8",
+  "k": "baguette entière",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "d4ed216733",
+  "k": "pizza entière",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "e74d38164e",
+  "k": "part (un quart)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "fc17df3f3c",
+  "k": "part (un huitième)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "695f08800a",
+  "k": "galette garnie",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "1bce0d2d51",
+  "k": "crêpe",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "d73d95dc39",
+  "k": "petit burger (type cheeseburger)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "1ddbf3d1e2",
+  "k": "blanc d'œuf",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "56155f4f6a",
+  "k": "jaune d'œuf",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "c6f71c0a75",
+  "k": "omelette de 2 œufs",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "8f7d15ae63",
+  "k": "omelette de 3 œufs",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "98c5bb1482",
+  "k": "œuf moyen",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "582fe499dd",
+  "k": "petit œuf",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "56b2465edb",
+  "k": "gros œuf",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "8dfc91f7fe",
+  "k": "tranche fine",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "4e5b9d3792",
+  "k": "portion apéritif (10 rondelles)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "388b0b67dc",
+  "k": "petite barquette",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "2c196b0191",
+  "k": "steak haché",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "c3dc5cb5f7",
+  "k": "gros steak haché",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "49e26f6e4e",
+  "k": "steak haché (100 g cru)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "fb4eeaa474",
+  "k": "gros steak haché (125 g cru)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "0ebe1a4ba0",
+  "k": "filet ou escalope",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "83b04b738b",
+  "k": "cuisse entière",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "a7b8bf7138",
+  "k": "petite boîte égouttée",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "10656e285d",
+  "k": "boîte égouttée",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "c24b76abc5",
+  "k": "bâtonnet",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "7c707a05aa",
+  "k": "pavé ou filet",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "f37a153c34",
+  "k": "un nuage (dans un café)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "6ec2d8062d",
+  "k": "pot individuel",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "5fa5b3096c",
+  "k": "petite brique (20 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "62071b3000",
+  "k": "cuillère à soupe (râpé)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "808f07e114",
+  "k": "copeaux (portion)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "1617cd895e",
+  "k": "petit bol",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "b679db4c81",
+  "k": "grand bol",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "25ba5ce1f4",
+  "k": "petit paquet",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "8ff8616dc6",
+  "k": "grande portion",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "50d50219a1",
+  "k": "pomme de terre moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "5d757e5a44",
+  "k": "petite pomme de terre",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "805f79cd85",
+  "k": "grosse pomme de terre",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "db83f8f7a4",
+  "k": "portion (pesée crue)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "83dcdaa11c",
+  "k": "petite assiette",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 3
+ },
+ {
+  "h": "d528fcd6f1",
+  "k": "grosse assiette",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "9cdce7a33c",
+  "k": "assiette creuse",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "74d7652316",
+  "k": "tomate cerise",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "a505b20f95",
+  "k": "tomate moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "1b5fc31f07",
+  "k": "carotte moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "eff9c8ad8c",
+  "k": "avocat entier",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "895667a1d6",
+  "k": "banane moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "4c126c0c1c",
+  "k": "petite banane",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "e5df31c52e",
+  "k": "grosse banane",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "667f8f44b7",
+  "k": "pomme moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "cc73e64079",
+  "k": "petite pomme",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "dddbabb19f",
+  "k": "grosse pomme",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "9c6391f1dc",
+  "k": "poire moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "c23e16806f",
+  "k": "orange moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "6660b66655",
+  "k": "clémentine",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "89644a37ba",
+  "k": "pêche moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "78cef00c19",
+  "k": "fruit sec",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "d215582c49",
+  "k": "grappe moyenne",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "a312d818bd",
+  "k": "pot ou gourde",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "577254655a",
+  "k": "petite bouteille (25 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "b6ccb27480",
+  "k": "noix de cajou",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "23976290f5",
+  "k": "noix (2 cerneaux)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "ab6fc032a6",
+  "k": "morceau ou cuillère à café",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "2b8af8da3a",
+  "k": "dose pour un verre",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "84d834f5e1",
+  "k": "carré",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 3
+ },
+ {
+  "h": "f78c72a234",
+  "k": "rangée (4 carrés)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "6986c13588",
+  "k": "cône ou bâtonnet",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "52ffb49ef5",
+  "k": "bouteille (50 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "9e984ddad6",
+  "k": "canette (33 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 2
+ },
+ {
+  "h": "4158758e30",
+  "k": "demi (25 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "2430cfac75",
+  "k": "pinte (50 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "a2c3ed2aa1",
+  "k": "dose (4 cl)",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
+  "h": "bbc8edd9cd",
+  "k": "fruit moyen ou portion",
+  "kind": "content",
+  "where": "content:MESURES",
+  "n": 1
+ },
+ {
   "h": "799d38c7e3",
   "k": "Débutant ou retour après une longue pause",
   "kind": "content",
@@ -25280,416 +25889,423 @@
   "n": 1
  },
  {
+  "h": "a39082717d",
+  "k": "Règlement (CE) n° 589/2008 de la Commission du 23 juin 2008 (normes de commercialisation des œufs), article 4 : catégories de poids (M : 53 à 63 g).",
+  "kind": "string",
+  "where": "src/09_nutrition.js:23",
+  "n": 1
+ },
+ {
   "h": "b83a955e93",
   "k": "Bon choix",
   "kind": "string",
-  "where": "src/09_nutrition.js:23",
+  "where": "src/09_nutrition.js:25",
   "n": 1
  },
  {
   "h": "48e09e45c5",
   "k": "Correct",
   "kind": "string",
-  "where": "src/09_nutrition.js:23",
+  "where": "src/09_nutrition.js:25",
   "n": 1
  },
  {
   "h": "3b6042098c",
   "k": "À améliorer",
   "kind": "string",
-  "where": "src/09_nutrition.js:23",
+  "where": "src/09_nutrition.js:25",
   "n": 1
  },
  {
   "h": "1174fcee71",
   "k": "Occasionnel",
   "kind": "string",
-  "where": "src/09_nutrition.js:23",
+  "where": "src/09_nutrition.js:25",
   "n": 1
  },
  {
   "h": "bbff75cdf7",
   "k": "À limiter",
   "kind": "string",
-  "where": "src/09_nutrition.js:23",
+  "where": "src/09_nutrition.js:25",
   "n": 1
  },
  {
   "h": "2e6839d39c",
   "k": "Renseigne ton âge, ta taille (cm) et ton poids (kg).",
   "kind": "string",
-  "where": "src/09_nutrition.js:29",
+  "where": "src/09_nutrition.js:31",
   "n": 1
  },
  {
   "h": "dc2e8c68da",
   "k": "Ce poids visé est trop bas pour ta taille (indice de masse corporelle sous 18,5). Vise au plus",
   "kind": "string",
-  "where": "src/09_nutrition.js:46",
+  "where": "src/09_nutrition.js:48",
   "n": 1
  },
  {
   "h": "ba3d1f434a",
   "k": "kg de perte.",
   "kind": "string",
-  "where": "src/09_nutrition.js:46",
+  "where": "src/09_nutrition.js:48",
   "n": 1
  },
  {
   "h": "444e84d7dd",
   "k": "Ce poids visé est trop bas pour ta taille (indice de masse corporelle sous 18,5). Vise au plus {} kg de perte.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:46",
+  "where": "src/09_nutrition.js:48",
   "n": 1
  },
  {
   "h": "ae81e254d9",
   "k": "calories relevées à",
   "kind": "string",
-  "where": "src/09_nutrition.js:82",
+  "where": "src/09_nutrition.js:84",
   "n": 1
  },
  {
   "h": "621822fcc7",
   "k": "kcal (minimum de sécurité)",
   "kind": "string",
-  "where": "src/09_nutrition.js:82",
+  "where": "src/09_nutrition.js:84",
   "n": 1
  },
  {
   "h": "a134fd1b06",
   "k": "calories relevées à {} kcal (minimum de sécurité)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:82",
+  "where": "src/09_nutrition.js:84",
   "n": 1
  },
  {
   "h": "04b3598853",
   "k": "calories ramenées à",
   "kind": "string",
-  "where": "src/09_nutrition.js:83",
+  "where": "src/09_nutrition.js:85",
   "n": 1
  },
  {
   "h": "91407c5d8d",
   "k": "calories ramenées à {} kcal",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:83",
+  "where": "src/09_nutrition.js:85",
   "n": 1
  },
  {
   "h": "9c190219bb",
   "k": "protéines relevées à",
   "kind": "string",
-  "where": "src/09_nutrition.js:86",
+  "where": "src/09_nutrition.js:88",
   "n": 1
  },
  {
   "h": "b43170617a",
   "k": "protéines relevées à {} g",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:86",
+  "where": "src/09_nutrition.js:88",
   "n": 1
  },
  {
   "h": "fa9855245b",
   "k": "protéines ramenées à",
   "kind": "string",
-  "where": "src/09_nutrition.js:87",
+  "where": "src/09_nutrition.js:89",
   "n": 1
  },
  {
   "h": "1fac3da065",
   "k": "protéines ramenées à {} g",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:87",
+  "where": "src/09_nutrition.js:89",
   "n": 1
  },
  {
   "h": "16e57e1ec8",
   "k": "lipides relevés à",
   "kind": "string",
-  "where": "src/09_nutrition.js:89",
+  "where": "src/09_nutrition.js:91",
   "n": 1
  },
  {
   "h": "a11c702ee7",
   "k": "lipides relevés à {} g",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:89",
+  "where": "src/09_nutrition.js:91",
   "n": 1
  },
  {
   "h": "da367230ff",
   "k": "glucides recalculés pour respecter les calories",
   "kind": "string",
-  "where": "src/09_nutrition.js:92",
+  "where": "src/09_nutrition.js:94",
   "n": 1
  },
  {
   "h": "e2cd247a91",
   "k": "répartition corrigée pour garder au moins 50 g de glucides",
   "kind": "string",
-  "where": "src/09_nutrition.js:93",
+  "where": "src/09_nutrition.js:95",
   "n": 1
  },
  {
   "h": "1d34652456",
   "k": "garder son poids et ses performances",
   "kind": "string",
-  "where": "src/09_nutrition.js:135",
+  "where": "src/09_nutrition.js:137",
   "n": 1
  },
  {
   "h": "be2dcc4bb5",
   "k": "kg en",
   "kind": "string",
-  "where": "src/09_nutrition.js:137",
+  "where": "src/09_nutrition.js:139",
   "n": 2
  },
  {
   "h": "d85cd42e73",
   "k": "kg), départ le",
   "kind": "string",
-  "where": "src/09_nutrition.js:137",
+  "where": "src/09_nutrition.js:139",
   "n": 1
  },
  {
   "h": "a0a0d509e9",
   "k": "{} kg en {} (de {} à {} kg), départ le {}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:137",
+  "where": "src/09_nutrition.js:139",
   "n": 1
  },
  {
   "h": "d89aeb73cb",
   "k": "Aliment",
   "kind": "string",
-  "where": "src/09_nutrition.js:167",
+  "where": "src/09_nutrition.js:169",
   "n": 1
  },
  {
   "h": "c357f1bf38",
   "k": "Rien de noté pour l'instant",
   "kind": "string",
-  "where": "src/09_nutrition.js:180",
+  "where": "src/09_nutrition.js:182",
   "n": 1
  },
  {
   "h": "09e890e459",
   "k": "Ajoute ton premier repas : une photo suffit.",
   "kind": "string",
-  "where": "src/09_nutrition.js:180",
+  "where": "src/09_nutrition.js:182",
   "n": 1
  },
  {
   "h": "f6fb97559a",
   "k": "Journée très légère",
   "kind": "string",
-  "where": "src/09_nutrition.js:184",
+  "where": "src/09_nutrition.js:186",
   "n": 1
  },
  {
   "h": "7f1beb2e69",
   "k": "Tu as peu mangé : un vrai repas ou une collation protéinée t'aidera à récupérer et à garder ton muscle.",
   "kind": "string",
-  "where": "src/09_nutrition.js:184",
+  "where": "src/09_nutrition.js:186",
   "n": 1
  },
  {
   "h": "2eb0c0c961",
   "k": "Dans ta cible",
   "kind": "string",
-  "where": "src/09_nutrition.js:185",
+  "where": "src/09_nutrition.js:187",
   "n": 1
  },
  {
   "h": "e39293f620",
   "k": "Calories et protéines au rendez-vous : parfait.",
   "kind": "string",
-  "where": "src/09_nutrition.js:185",
+  "where": "src/09_nutrition.js:187",
   "n": 1
  },
  {
   "h": "b8ff949456",
   "k": "Calories dans la cible ; ajoute une source de protéines pour atteindre ton objectif.",
   "kind": "string",
-  "where": "src/09_nutrition.js:185",
+  "where": "src/09_nutrition.js:187",
   "n": 1
  },
  {
   "h": "0e81e7d288",
   "k": "Au-dessus de ta cible",
   "kind": "string",
-  "where": "src/09_nutrition.js:186",
+  "where": "src/09_nutrition.js:188",
   "n": 1
  },
  {
   "h": "31b1def1a5",
   "k": "Une journée ne change rien : regarde ce qui a fait monter (boissons, sauces, grignotage) et garde ton rythme habituel demain.",
   "kind": "string",
-  "where": "src/09_nutrition.js:186",
+  "where": "src/09_nutrition.js:188",
   "n": 1
  },
  {
   "h": "1b97a5800b",
   "k": "Un peu au-dessus",
   "kind": "string",
-  "where": "src/09_nutrition.js:187",
+  "where": "src/09_nutrition.js:189",
   "n": 1
  },
  {
   "h": "76907106b2",
   "k": "Rien de grave : garde ton rythme habituel demain.",
   "kind": "string",
-  "where": "src/09_nutrition.js:187",
+  "where": "src/09_nutrition.js:189",
   "n": 1
  },
  {
   "h": "cda4efb084",
   "k": "Journée en cours",
   "kind": "string",
-  "where": "src/09_nutrition.js:188",
+  "where": "src/09_nutrition.js:190",
   "n": 1
  },
  {
   "h": "4db738633d",
   "k": "Il te reste environ",
   "kind": "string",
-  "where": "src/09_nutrition.js:188",
+  "where": "src/09_nutrition.js:190",
   "n": 1
  },
  {
   "h": "0c46d13867",
   "k": "kcal et",
   "kind": "string",
-  "where": "src/09_nutrition.js:188",
+  "where": "src/09_nutrition.js:190",
   "n": 1
  },
  {
   "h": "523fdc2975",
   "k": "g de protéines.",
   "kind": "string",
-  "where": "src/09_nutrition.js:188",
+  "where": "src/09_nutrition.js:190",
   "n": 1
  },
  {
   "h": "f4e2a50830",
   "k": "Il te reste environ {} kcal et {} g de protéines.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:188",
+  "where": "src/09_nutrition.js:190",
   "n": 1
  },
  {
   "h": "87628479c2",
   "k": "Le client n'a pas encore défini d'objectif nutrition.",
   "kind": "string",
-  "where": "src/09_nutrition.js:191",
+  "where": "src/09_nutrition.js:193",
   "n": 1
  },
  {
   "h": "837d1a2437",
   "k": "Mode « équilibre » : ne donne aucun chiffre de calories, de macros ni de poids ; parle d'assiette équilibrée.",
   "kind": "string",
-  "where": "src/09_nutrition.js:192",
+  "where": "src/09_nutrition.js:194",
   "n": 1
  },
  {
   "h": "29b4bb57a2",
   "k": "Objectif :",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "dd03fffc92",
   "k": ". Cibles du jour :",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "bc24bd7105",
   "k": "kcal, protéines",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 2
  },
  {
   "h": "41ba201176",
   "k": "g, glucides",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "13f6d9e492",
   "k": "g, lipides",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "5a315b5a08",
   "k": "g. Déjà consommé aujourd'hui :",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "8b38c428dc",
   "k": "Préférences :",
   "kind": "string",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "7a23b50132",
   "k": "Préférences : {}.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "3e5b2a604f",
   "k": "Objectif : {}. Cibles du jour : {} kcal, protéines {} g, glucides {} g, lipides {} g. Déjà consommé aujourd'hui : {} kcal, protéines {} g.{}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:194",
+  "where": "src/09_nutrition.js:196",
   "n": 1
  },
  {
   "h": "e450eddf50",
   "k": "Idées pour ce repas",
   "kind": "string",
-  "where": "src/09_nutrition.js:252",
+  "where": "src/09_nutrition.js:254",
   "n": 1
  },
  {
   "h": "7ea8e0fe95",
   "k": "Assiettes du sportif",
   "kind": "string",
-  "where": "src/09_nutrition.js:252",
+  "where": "src/09_nutrition.js:254",
   "n": 1
  },
  {
   "h": "d7a43c6ed4",
   "k": "Plats du quotidien",
   "kind": "string",
-  "where": "src/09_nutrition.js:252",
+  "where": "src/09_nutrition.js:254",
   "n": 1
  },
  {
   "h": "7166f72520",
   "k": "Sur le pouce",
   "kind": "string",
-  "where": "src/09_nutrition.js:252",
+  "where": "src/09_nutrition.js:254",
   "n": 1
  },
  {
   "h": "c05c2d068f",
   "k": "Collations",
   "kind": "string",
-  "where": "src/09_nutrition.js:252",
+  "where": "src/09_nutrition.js:254",
   "n": 1
  },
  {
@@ -25697,7 +26313,7 @@
   "k": "Plats types",
   "kind": "text",
   "ctx": "<div className=\"stack-s plats\"> <div className=\"field-l\">Plats types</div> <div className=\"tabs-scroll\"><{} options={} value={} onChange={} /></div> {} <div className=\"sugg plat-list\">{}</div> <p className=\"muted small\">{}</p> </div>",
-  "where": "src/09_nutrition.js:278",
+  "where": "src/09_nutrition.js:280",
   "n": 1
  },
  {
@@ -25705,7 +26321,7 @@
   "k": "Pour ce repas, vise environ",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Pour ce repas, vise environ <b>{} kcal</b> : voici les plats qui s'en rapprochent le plus.</p>",
-  "where": "src/09_nutrition.js:281",
+  "where": "src/09_nutrition.js:283",
   "n": 1
  },
  {
@@ -25713,88 +26329,131 @@
   "k": ": voici les plats qui s'en rapprochent le plus.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Pour ce repas, vise environ <b>{} kcal</b> : voici les plats qui s'en rapprochent le plus.</p>",
-  "where": "src/09_nutrition.js:281",
+  "where": "src/09_nutrition.js:283",
   "n": 1
  },
  {
   "h": "7ecf6f6c38",
   "k": "kcal · P",
   "kind": "string",
-  "where": "src/09_nutrition.js:283",
+  "where": "src/09_nutrition.js:285",
   "n": 2
  },
  {
   "h": "b5e5de8b73",
   "k": "{} kcal · P {} g · G {} g · L {} g",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:283",
+  "where": "src/09_nutrition.js:285",
   "n": 1
  },
  {
   "h": "ffb964db56",
   "k": "Touche un plat pour l'ajouter, puis ajuste les quantités.",
   "kind": "string",
-  "where": "src/09_nutrition.js:284",
+  "where": "src/09_nutrition.js:286",
   "n": 1
  },
  {
   "h": "b189894a95",
   "k": "Portion habituelle ; touche un plat pour l'ajouter, puis ajuste les grammes de chaque élément. Valeurs de la table Ciqual de l'ANSES.",
   "kind": "string",
-  "where": "src/09_nutrition.js:284",
+  "where": "src/09_nutrition.js:286",
   "n": 1
  },
  {
-  "h": "27a91e4eda",
-  "k": "Ajouter un aliment",
+  "h": "073212543d",
+  "k": "{} ≈ {} {} · {} kcal",
+  "kind": "pattern",
+  "where": "src/09_nutrition.js:305",
+  "n": 1
+ },
+ {
+  "h": "0fd94f62e5",
+  "k": "Ajouter des aliments",
   "kind": "attr",
-  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter un aliment\" id=\"fd-q\" hint=\"Valeurs nutritionnelles de la table Ciqual de l'ANSES\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. riz, poulet, banane…\" autoComplete=\"off\" /></{}> {}</div>",
-  "where": "src/09_nutrition.js:294",
+  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter des aliments\" id=\"fd-q\" hint=\"Tape un aliment, ou tout ton repas avec les quantités : « 2 tranches de pain, 1 œuf, 1 c. à soupe de beurre de cacahuète »\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. 2 tranches de brioche, un œuf…\" autoComplete=\"off\" /></{}> {} {}</div>",
+  "where": "src/09_nutrition.js:306",
   "n": 1
  },
  {
-  "h": "f106712325",
-  "k": "Valeurs nutritionnelles de la table Ciqual de l'ANSES",
+  "h": "4b0fefdc66",
+  "k": "Tape un aliment, ou tout ton repas avec les quantités : « 2 tranches de pain, 1 œuf, 1 c. à soupe de beurre de cacahuète »",
   "kind": "attr",
-  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter un aliment\" id=\"fd-q\" hint=\"Valeurs nutritionnelles de la table Ciqual de l'ANSES\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. riz, poulet, banane…\" autoComplete=\"off\" /></{}> {}</div>",
-  "where": "src/09_nutrition.js:294",
+  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter des aliments\" id=\"fd-q\" hint=\"Tape un aliment, ou tout ton repas avec les quantités : « 2 tranches de pain, 1 œuf, 1 c. à soupe de beurre de cacahuète »\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. 2 tranches de brioche, un œuf…\" autoComplete=\"off\" /></{}> {} {}</div>",
+  "where": "src/09_nutrition.js:306",
   "n": 1
  },
  {
-  "h": "bfe6a4d5ff",
-  "k": "Ex. riz, poulet, banane…",
+  "h": "16fd1e1b83",
+  "k": "Ex. 2 tranches de brioche, un œuf…",
   "kind": "attr",
-  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter un aliment\" id=\"fd-q\" hint=\"Valeurs nutritionnelles de la table Ciqual de l'ANSES\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. riz, poulet, banane…\" autoComplete=\"off\" /></{}> {}</div>",
-  "where": "src/09_nutrition.js:294",
+  "ctx": "<div className=\"stack-s\"><{} label=\"Ajouter des aliments\" id=\"fd-q\" hint=\"Tape un aliment, ou tout ton repas avec les quantités : « 2 tranches de pain, 1 œuf, 1 c. à soupe de beurre de cacahuète »\"><input id=\"fd-q\" value={} onChange={} placeholder=\"Ex. 2 tranches de brioche, un œuf…\" autoComplete=\"off\" /></{}> {} {}</div>",
+  "where": "src/09_nutrition.js:306",
   "n": 1
  },
  {
-  "h": "9ef6e37b2c",
-  "k": "kcal / 100 g",
+  "h": "bcf70b9a70",
+  "k": "J'ai compris :",
   "kind": "text",
-  "ctx": "<button key={} type=\"button\" onClick={}><b>{}</b><span className=\"muted small\">{} kcal / 100 g</span></button>",
-  "where": "src/09_nutrition.js:296",
-  "n": 3
+  "ctx": "<div className=\"quick\" aria-live=\"polite\"><div className=\"field-l\">J'ai compris :</div> {} {} <p className=\"muted small\">Tu pourras changer chaque quantité juste après.</p></div>",
+  "where": "src/09_nutrition.js:307",
+  "n": 1
  },
  {
-  "h": "2ebbea87ee",
-  "k": "Pas trouvé dans la table de l'ANSES : saisis-le plus bas.",
+  "h": "5c6f8d7070",
+  "k": "Tu pourras changer chaque quantité juste après.",
+  "kind": "text",
+  "ctx": "<div className=\"quick\" aria-live=\"polite\"><div className=\"field-l\">J'ai compris :</div> {} {} <p className=\"muted small\">Tu pourras changer chaque quantité juste après.</p></div>",
+  "where": "src/09_nutrition.js:307",
+  "n": 1
+ },
+ {
+  "h": "4d539a5447",
+  "k": "pas trouvé : écris-le autrement",
   "kind": "string",
-  "where": "src/09_nutrition.js:297",
+  "where": "src/09_nutrition.js:309",
+  "n": 1
+ },
+ {
+  "h": "493a9db193",
+  "k": "Ajouter ces",
+  "kind": "string",
+  "where": "src/09_nutrition.js:310",
+  "n": 1
+ },
+ {
+  "h": "91868a9d5c",
+  "k": "Ajouter ces {} aliments",
+  "kind": "pattern",
+  "where": "src/09_nutrition.js:310",
+  "n": 1
+ },
+ {
+  "h": "518bf405a2",
+  "k": "Ajouter cet aliment",
+  "kind": "string",
+  "where": "src/09_nutrition.js:310",
+  "n": 1
+ },
+ {
+  "h": "5f52f55069",
+  "k": "Pas trouvé dans la table de l'ANSES : essaie un autre mot, ou saisis-le plus bas.",
+  "kind": "string",
+  "where": "src/09_nutrition.js:314",
   "n": 1
  },
  {
   "h": "11ca4284e8",
   "k": "Recherche dans la table de l'ANSES…",
   "kind": "string",
-  "where": "src/09_nutrition.js:297",
+  "where": "src/09_nutrition.js:314",
   "n": 1
  },
  {
   "h": "ff673dc28e",
   "k": "Produit",
   "kind": "string",
-  "where": "src/09_nutrition.js:315",
+  "where": "src/09_nutrition.js:332",
   "n": 3
  },
  {
@@ -25802,7 +26461,7 @@
   "k": "Ex. Skyr nature",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <div className=\"row2\"><{} label=\"Produit\" id=\"pf-n\"><input id=\"pf-n\" value={} onChange={} placeholder=\"Ex. Skyr nature\" /></{}> <{} label=\"Marque (facultatif)\" id=\"pf-b\"><input id=\"pf-b\" value={} onChange={} /></{}></div> {} <{} onClick={} disabled={}>Valider le produit</{}> {} </div>",
-  "where": "src/09_nutrition.js:326",
+  "where": "src/09_nutrition.js:343",
   "n": 1
  },
  {
@@ -25810,7 +26469,7 @@
   "k": "Marque (facultatif)",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <div className=\"row2\"><{} label=\"Produit\" id=\"pf-n\"><input id=\"pf-n\" value={} onChange={} placeholder=\"Ex. Skyr nature\" /></{}> <{} label=\"Marque (facultatif)\" id=\"pf-b\"><input id=\"pf-b\" value={} onChange={} /></{}></div> {} <{} onClick={} disabled={}>Valider le produit</{}> {} </div>",
-  "where": "src/09_nutrition.js:326",
+  "where": "src/09_nutrition.js:343",
   "n": 1
  },
  {
@@ -25818,7 +26477,7 @@
   "k": "Valider le produit",
   "kind": "text",
   "ctx": "<div className=\"form\"> <div className=\"row2\"><{} label=\"Produit\" id=\"pf-n\"><input id=\"pf-n\" value={} onChange={} placeholder=\"Ex. Skyr nature\" /></{}> <{} label=\"Marque (facultatif)\" id=\"pf-b\"><input id=\"pf-b\" value={} onChange={} /></{}></div> {} <{} onClick={} disabled={}>Valider le produit</{}> {} </div>",
-  "where": "src/09_nutrition.js:326",
+  "where": "src/09_nutrition.js:343",
   "n": 1
  },
  {
@@ -25826,15 +26485,23 @@
   "k": "Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
-  "where": "src/09_nutrition.js:329",
+  "where": "src/09_nutrition.js:346",
   "n": 1
+ },
+ {
+  "h": "9ef6e37b2c",
+  "k": "kcal / 100 g",
+  "kind": "attr",
+  "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
+  "where": "src/09_nutrition.js:346",
+  "n": 2
  },
  {
   "h": "31716f1a76",
   "k": "Protéines",
   "kind": "attr",
   "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
-  "where": "src/09_nutrition.js:329",
+  "where": "src/09_nutrition.js:346",
   "n": 3
  },
  {
@@ -25842,7 +26509,7 @@
   "k": "Glucides",
   "kind": "attr",
   "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
-  "where": "src/09_nutrition.js:329",
+  "where": "src/09_nutrition.js:346",
   "n": 4
  },
  {
@@ -25850,7 +26517,7 @@
   "k": "Lipides",
   "kind": "attr",
   "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
-  "where": "src/09_nutrition.js:329",
+  "where": "src/09_nutrition.js:346",
   "n": 3
  },
  {
@@ -25858,7 +26525,7 @@
   "k": "Portion habituelle (g)",
   "kind": "attr",
   "ctx": "<p className=\"muted small\">Recopie le tableau nutritionnel du paquet, colonne « pour 100 g ».</p> <div className=\"row4\"><{} label=\"kcal / 100 g\" id=\"pf-k\"><input id=\"pf-k\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Protéines\" id=\"pf-p\"><input id=\"pf-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides\" id=\"pf-c\"><input id=\"pf-c\" inputMode=\"decimal\" value={} onCh",
-  "where": "src/09_nutrition.js:329",
+  "where": "src/09_nutrition.js:346",
   "n": 1
  },
  {
@@ -25866,28 +26533,28 @@
   "k": "Le produit sera reconnu directement au prochain scan, par toi comme par les autres clients.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Le produit sera reconnu directement au prochain scan, par toi comme par les autres clients.</p>",
-  "where": "src/09_nutrition.js:336",
+  "where": "src/09_nutrition.js:353",
   "n": 1
  },
  {
   "h": "252d2b0b4c",
   "k": "avec une bonne confiance",
   "kind": "string",
-  "where": "src/09_nutrition.js:376",
+  "where": "src/09_nutrition.js:393",
   "n": 1
  },
  {
   "h": "468720e5a8",
   "k": "avec une faible confiance",
   "kind": "string",
-  "where": "src/09_nutrition.js:376",
+  "where": "src/09_nutrition.js:393",
   "n": 1
  },
  {
   "h": "f4982c1907",
   "k": "avec une confiance moyenne",
   "kind": "string",
-  "where": "src/09_nutrition.js:376",
+  "where": "src/09_nutrition.js:393",
   "n": 1
  },
  {
@@ -25895,14 +26562,14 @@
   "k": "quantités estimées",
   "kind": "text",
   "ctx": "<span className=\"muted small\">quantités estimées {}</span>",
-  "where": "src/09_nutrition.js:376",
+  "where": "src/09_nutrition.js:393",
   "n": 1
  },
  {
   "h": "de476bba67",
   "k": "Table Ciqual de l'ANSES",
   "kind": "string",
-  "where": "src/09_nutrition.js:378",
+  "where": "src/09_nutrition.js:395",
   "n": 1
  },
  {
@@ -25910,7 +26577,7 @@
   "k": "Aliment absent de la table : valeurs estimées par le coach IA",
   "kind": "attr",
   "ctx": "<span className=\"it-src est\" title=\"Aliment absent de la table : valeurs estimées par le coach IA\">estimé</span>",
-  "where": "src/09_nutrition.js:378",
+  "where": "src/09_nutrition.js:395",
   "n": 1
  },
  {
@@ -25918,35 +26585,21 @@
   "k": "estimé",
   "kind": "text",
   "ctx": "<span className=\"it-src est\" title=\"Aliment absent de la table : valeurs estimées par le coach IA\">estimé</span>",
-  "where": "src/09_nutrition.js:378",
-  "n": 1
- },
- {
-  "h": "09a38fda78",
-  "k": "Quantité",
-  "kind": "string",
-  "where": "src/09_nutrition.js:379",
-  "n": 1
- },
- {
-  "h": "953c192a7c",
-  "k": "Quantité {}",
-  "kind": "pattern",
-  "where": "src/09_nutrition.js:379",
+  "where": "src/09_nutrition.js:395",
   "n": 1
  },
  {
   "h": "54ec24a19c",
   "k": "Retirer",
   "kind": "string",
-  "where": "src/09_nutrition.js:380",
+  "where": "src/09_nutrition.js:396",
   "n": 4
  },
  {
   "h": "d39d094a22",
   "k": "Retirer {}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:380",
+  "where": "src/09_nutrition.js:396",
   "n": 1
  },
  {
@@ -25954,7 +26607,49 @@
   "k": "Aucun aliment reconnu.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Aucun aliment reconnu.</p>",
-  "where": "src/09_nutrition.js:381",
+  "where": "src/09_nutrition.js:398",
+  "n": 1
+ },
+ {
+  "h": "eb5deab321",
+  "k": "Quantité en",
+  "kind": "string",
+  "where": "src/09_nutrition.js:410",
+  "n": 1
+ },
+ {
+  "h": "db9a443080",
+  "k": "Quantité en {} : {}",
+  "kind": "pattern",
+  "where": "src/09_nutrition.js:410",
+  "n": 1
+ },
+ {
+  "h": "11bb83163e",
+  "k": "Nombre :",
+  "kind": "string",
+  "where": "src/09_nutrition.js:411",
+  "n": 1
+ },
+ {
+  "h": "5ee97d5c26",
+  "k": "Nombre : {}",
+  "kind": "pattern",
+  "where": "src/09_nutrition.js:411",
+  "n": 1
+ },
+ {
+  "h": "2a0efadd3c",
+  "k": "Portion :",
+  "kind": "string",
+  "where": "src/09_nutrition.js:412",
+  "n": 1
+ },
+ {
+  "h": "49a7e0c1fe",
+  "k": "Portion : {}",
+  "kind": "pattern",
+  "where": "src/09_nutrition.js:412",
   "n": 1
  },
  {
@@ -25962,14 +26657,14 @@
   "k": "Moment",
   "kind": "attr",
   "ctx": "<{} label=\"Moment\"><{} options={} value={} onChange={} /></{}>",
-  "where": "src/09_nutrition.js:387",
+  "where": "src/09_nutrition.js:416",
   "n": 1
  },
  {
   "h": "a2b9e50948",
   "k": "Rien à ajouter.",
   "kind": "string",
-  "where": "src/09_nutrition.js:442",
+  "where": "src/09_nutrition.js:471",
   "n": 1
  },
  {
@@ -25977,21 +26672,21 @@
   "k": "Photo du repas",
   "kind": "attr",
   "ctx": "<img className=\"prev\" src={} alt=\"Photo du repas\" />",
-  "where": "src/09_nutrition.js:450",
+  "where": "src/09_nutrition.js:479",
   "n": 3
  },
  {
   "h": "2ce43bf272",
   "k": "Changer de photo",
   "kind": "string",
-  "where": "src/09_nutrition.js:451",
+  "where": "src/09_nutrition.js:480",
   "n": 1
  },
  {
   "h": "4782c128ea",
   "k": "Prendre ou choisir une photo",
   "kind": "string",
-  "where": "src/09_nutrition.js:451",
+  "where": "src/09_nutrition.js:480",
   "n": 2
  },
  {
@@ -25999,7 +26694,7 @@
   "k": "Précision (facultatif)",
   "kind": "attr",
   "ctx": "<{} label=\"Précision (facultatif)\" id=\"meal-note\"><input id=\"meal-note\" value={} onChange={} placeholder=\"Ex. une cuillère d'huile d'olive, sauce à part\" /></{}> {}",
-  "where": "src/09_nutrition.js:452",
+  "where": "src/09_nutrition.js:481",
   "n": 1
  },
  {
@@ -26007,21 +26702,21 @@
   "k": "Ex. une cuillère d'huile d'olive, sauce à part",
   "kind": "attr",
   "ctx": "<{} label=\"Précision (facultatif)\" id=\"meal-note\"><input id=\"meal-note\" value={} onChange={} placeholder=\"Ex. une cuillère d'huile d'olive, sauce à part\" /></{}> {}",
-  "where": "src/09_nutrition.js:452",
+  "where": "src/09_nutrition.js:481",
   "n": 1
  },
  {
   "h": "466456521f",
   "k": "Analyse en cours…",
   "kind": "string",
-  "where": "src/09_nutrition.js:453",
+  "where": "src/09_nutrition.js:482",
   "n": 2
  },
  {
   "h": "c7371b4388",
   "k": "Analyser la photo",
   "kind": "string",
-  "where": "src/09_nutrition.js:453",
+  "where": "src/09_nutrition.js:482",
   "n": 1
  },
  {
@@ -26029,7 +26724,7 @@
   "k": "Ce que tu as mangé",
   "kind": "attr",
   "ctx": "<{} label=\"Ce que tu as mangé\" id=\"meal-txt\"><textarea id=\"meal-txt\" rows=\"3\" value={} onChange={} placeholder=\"Ex. 2 œufs brouillés, 2 tranches de pain complet, un yaourt grec et un café\"></textarea></{}> {}",
-  "where": "src/09_nutrition.js:454",
+  "where": "src/09_nutrition.js:483",
   "n": 1
  },
  {
@@ -26037,21 +26732,29 @@
   "k": "Ex. 2 œufs brouillés, 2 tranches de pain complet, un yaourt grec et un café",
   "kind": "attr",
   "ctx": "<{} label=\"Ce que tu as mangé\" id=\"meal-txt\"><textarea id=\"meal-txt\" rows=\"3\" value={} onChange={} placeholder=\"Ex. 2 œufs brouillés, 2 tranches de pain complet, un yaourt grec et un café\"></textarea></{}> {}",
-  "where": "src/09_nutrition.js:454",
+  "where": "src/09_nutrition.js:483",
   "n": 1
  },
  {
   "h": "8c7af7deea",
   "k": "Estimation…",
   "kind": "string",
-  "where": "src/09_nutrition.js:455",
+  "where": "src/09_nutrition.js:484",
   "n": 1
  },
  {
   "h": "606374155d",
   "k": "Estimer",
   "kind": "string",
-  "where": "src/09_nutrition.js:455",
+  "where": "src/09_nutrition.js:484",
+  "n": 1
+ },
+ {
+  "h": "fb900cc1eb",
+  "k": "Ex. Salade de pâtes",
+  "kind": "attr",
+  "ctx": "<{} eq={} onPick={} /> {} {} <{} label={} id=\"mn-n\"><input id=\"mn-n\" value={} onChange={} placeholder=\"Ex. Salade de pâtes\" /></{}> {}",
+  "where": "src/09_nutrition.js:485",
   "n": 1
  },
  {
@@ -26059,29 +26762,21 @@
   "k": "+ Ajouter un plat type",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"linkbtn\" onClick={}>+ Ajouter un plat type</button>",
-  "where": "src/09_nutrition.js:456",
-  "n": 1
- },
- {
-  "h": "fb900cc1eb",
-  "k": "Ex. Salade de pâtes",
-  "kind": "attr",
-  "ctx": "{} <{} onPick={} /> {} <{} label={} id=\"mn-n\"><input id=\"mn-n\" value={} onChange={} placeholder=\"Ex. Salade de pâtes\" /></{}> {}",
-  "where": "src/09_nutrition.js:456",
+  "where": "src/09_nutrition.js:486",
   "n": 1
  },
  {
   "h": "858d07d987",
   "k": "Mon repas",
   "kind": "string",
-  "where": "src/09_nutrition.js:458",
+  "where": "src/09_nutrition.js:487",
   "n": 1
  },
  {
   "h": "16b162b525",
   "k": "Nom du repas (facultatif)",
   "kind": "string",
-  "where": "src/09_nutrition.js:459",
+  "where": "src/09_nutrition.js:488",
   "n": 1
  },
  {
@@ -26089,7 +26784,7 @@
   "k": "Autre chose à ajouter ? Indique ses valeurs ci-dessous (facultatif).",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Autre chose à ajouter ? Indique ses valeurs ci-dessous (facultatif).</p>",
-  "where": "src/09_nutrition.js:460",
+  "where": "src/09_nutrition.js:489",
   "n": 1
  },
  {
@@ -26097,7 +26792,7 @@
   "k": "Protéines (g)",
   "kind": "attr",
   "ctx": "{}<div className=\"row4\"><{} label=\"kcal\" id=\"mn-k\"><input id=\"mn-k\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Protéines (g)\" id=\"mn-p\"><input id=\"mn-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides (g)\" id=\"mn-c\"><input id=\"mn-c\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Lipides (g)\" id=\"mn-f\"><input id=\"mn-f\" inputMode=\"decimal\" value={}",
-  "where": "src/09_nutrition.js:460",
+  "where": "src/09_nutrition.js:489",
   "n": 1
  },
  {
@@ -26105,7 +26800,7 @@
   "k": "Glucides (g)",
   "kind": "attr",
   "ctx": "{}<div className=\"row4\"><{} label=\"kcal\" id=\"mn-k\"><input id=\"mn-k\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Protéines (g)\" id=\"mn-p\"><input id=\"mn-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides (g)\" id=\"mn-c\"><input id=\"mn-c\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Lipides (g)\" id=\"mn-f\"><input id=\"mn-f\" inputMode=\"decimal\" value={}",
-  "where": "src/09_nutrition.js:460",
+  "where": "src/09_nutrition.js:489",
   "n": 1
  },
  {
@@ -26113,21 +26808,21 @@
   "k": "Lipides (g)",
   "kind": "attr",
   "ctx": "{}<div className=\"row4\"><{} label=\"kcal\" id=\"mn-k\"><input id=\"mn-k\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Protéines (g)\" id=\"mn-p\"><input id=\"mn-p\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Glucides (g)\" id=\"mn-c\"><input id=\"mn-c\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Lipides (g)\" id=\"mn-f\"><input id=\"mn-f\" inputMode=\"decimal\" value={}",
-  "where": "src/09_nutrition.js:460",
+  "where": "src/09_nutrition.js:489",
   "n": 1
  },
  {
   "h": "293d33bd1e",
   "k": "ta photo",
   "kind": "string",
-  "where": "src/09_nutrition.js:464",
+  "where": "src/09_nutrition.js:493",
   "n": 1
  },
  {
   "h": "fa49185026",
   "k": "ton repas",
   "kind": "string",
-  "where": "src/09_nutrition.js:464",
+  "where": "src/09_nutrition.js:493",
   "n": 1
  },
  {
@@ -26135,58 +26830,58 @@
   "k": "Le coach IA regarde",
   "kind": "text",
   "ctx": "<div className=\"actions\"><span className=\"muted small\">Le coach IA regarde {}… (10 à 40 s)</span><{} kind=\"quiet\" small onClick={}>Stop</{}></div>",
-  "where": "src/09_nutrition.js:464",
+  "where": "src/09_nutrition.js:493",
   "n": 1
  },
  {
   "h": "e87360d7f1",
   "k": "Valeurs nutritionnelles de la",
   "kind": "string",
-  "where": "src/09_nutrition.js:467",
+  "where": "src/09_nutrition.js:496",
   "n": 1
  },
  {
   "h": "60a942925c",
   "k": "pour les aliments marqués ANSES ; les quantités sont estimées",
   "kind": "string",
-  "where": "src/09_nutrition.js:467",
+  "where": "src/09_nutrition.js:496",
   "n": 1
  },
  {
   "h": "fceef79b34",
   "k": "à partir de la photo (compte ±20 à 30 %)",
   "kind": "string",
-  "where": "src/09_nutrition.js:467",
+  "where": "src/09_nutrition.js:496",
   "n": 1
  },
  {
   "h": "98295e015b",
   "k": ": corrige-les si besoin.",
   "kind": "string",
-  "where": "src/09_nutrition.js:467",
+  "where": "src/09_nutrition.js:496",
   "n": 1
  },
  {
   "h": "e37f648f74",
   "k": "Valeurs nutritionnelles de la {} pour les aliments marqués ANSES ; les quantités sont estimées{} : corrige-les si besoin.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:467",
+  "where": "src/09_nutrition.js:496",
   "n": 1
  },
  {
   "h": "093b888e73",
   "k": "Valeurs de la",
   "kind": "text",
-  "ctx": "<p className=\"muted small\">Valeurs de la {}. Pour un produit emballé, scanne son code-barres.</p>",
-  "where": "src/09_nutrition.js:468",
+  "ctx": "<p className=\"muted small\">Valeurs de la {}. Les portions (tranche, œuf moyen, cuillère à soupe…) sont des repères moyens : choisis « g » si tu pèses. Pour un produit emballé, scanne son code-barres.</p>",
+  "where": "src/09_nutrition.js:497",
   "n": 1
  },
  {
-  "h": "5e4770d3ff",
-  "k": ". Pour un produit emballé, scanne son code-barres.",
+  "h": "b72b4408f5",
+  "k": ". Les portions (tranche, œuf moyen, cuillère à soupe…) sont des repères moyens : choisis « g » si tu pèses. Pour un produit emballé, scanne son code-barres.",
   "kind": "text",
-  "ctx": "<p className=\"muted small\">Valeurs de la {}. Pour un produit emballé, scanne son code-barres.</p>",
-  "where": "src/09_nutrition.js:468",
+  "ctx": "<p className=\"muted small\">Valeurs de la {}. Les portions (tranche, œuf moyen, cuillère à soupe…) sont des repères moyens : choisis « g » si tu pèses. Pour un produit emballé, scanne son code-barres.</p>",
+  "where": "src/09_nutrition.js:497",
   "n": 1
  },
  {
@@ -26194,7 +26889,7 @@
   "k": "Relancer l'analyse",
   "kind": "text",
   "ctx": "<{} kind=\"quiet\" onClick={} disabled={}>Relancer l'analyse</{}>",
-  "where": "src/09_nutrition.js:469",
+  "where": "src/09_nutrition.js:498",
   "n": 1
  },
  {
@@ -26202,56 +26897,56 @@
   "k": "Ajouter au journal",
   "kind": "text",
   "ctx": "<div className=\"actions\"><{} onClick={} disabled={}>Ajouter au journal</{}>{}</div>",
-  "where": "src/09_nutrition.js:469",
+  "where": "src/09_nutrition.js:498",
   "n": 2
  },
  {
   "h": "cb34a6601f",
   "k": "Je ne vois pas le tableau des valeurs nutritionnelles.",
   "kind": "string",
-  "where": "src/09_nutrition.js:520",
+  "where": "src/09_nutrition.js:549",
   "n": 1
  },
  {
   "h": "97fc3c7829",
   "k": "Code-barres non lu : approche-toi, évite les reflets, ou photographie directement l'étiquette.",
   "kind": "string",
-  "where": "src/09_nutrition.js:530",
+  "where": "src/09_nutrition.js:559",
   "n": 1
  },
  {
   "h": "ad98e68a24",
   "k": "Code-barres non lu : approche-toi, évite les reflets, ou tape les chiffres sous le code-barres.",
   "kind": "string",
-  "where": "src/09_nutrition.js:530",
+  "where": "src/09_nutrition.js:559",
   "n": 1
  },
  {
   "h": "f21ce01943",
   "k": "Indique la quantité.",
   "kind": "string",
-  "where": "src/09_nutrition.js:534",
+  "where": "src/09_nutrition.js:563",
   "n": 1
  },
  {
   "h": "999fa577d4",
   "k": "sinon, le coach IA lit l'étiquette.",
   "kind": "string",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
   "h": "12fcaa09a4",
   "k": "sinon, il est cherché dans Open Food Facts, ou tu l'ajoutes en 20 secondes.",
   "kind": "string",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
   "h": "57aa74719c",
   "k": "sinon, tu l'ajoutes en 20 secondes.",
   "kind": "string",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26259,7 +26954,7 @@
   "k": "Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ;",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ; {}</p> {} <{} id=\"scan-bc\" label=\"Photographier le code-barres\" onFile={} /> {} <div className=\"row-end\"><{} label=\"Ou tape les chiffres du code-barres\" id=\"scan-typed\"><input id=\"scan-typed\" inputMode=\"numeric\" value={} onChange={} placeholder=\"13 chi",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26267,7 +26962,7 @@
   "k": "Photographier le code-barres",
   "kind": "attr",
   "ctx": "<p className=\"small\">Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ; {}</p> {} <{} id=\"scan-bc\" label=\"Photographier le code-barres\" onFile={} /> {} <div className=\"row-end\"><{} label=\"Ou tape les chiffres du code-barres\" id=\"scan-typed\"><input id=\"scan-typed\" inputMode=\"numeric\" value={} onChange={} placeholder=\"13 chi",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26275,7 +26970,7 @@
   "k": "Ou tape les chiffres du code-barres",
   "kind": "attr",
   "ctx": "<p className=\"small\">Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ; {}</p> {} <{} id=\"scan-bc\" label=\"Photographier le code-barres\" onFile={} /> {} <div className=\"row-end\"><{} label=\"Ou tape les chiffres du code-barres\" id=\"scan-typed\"><input id=\"scan-typed\" inputMode=\"numeric\" value={} onChange={} placeholder=\"13 chi",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26283,7 +26978,7 @@
   "k": "13 chiffres",
   "kind": "attr",
   "ctx": "<p className=\"small\">Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ; {}</p> {} <{} id=\"scan-bc\" label=\"Photographier le code-barres\" onFile={} /> {} <div className=\"row-end\"><{} label=\"Ou tape les chiffres du code-barres\" id=\"scan-typed\"><input id=\"scan-typed\" inputMode=\"numeric\" value={} onChange={} placeholder=\"13 chi",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26291,7 +26986,7 @@
   "k": "Chercher",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie le code-barres, bien à plat et net. Un produit déjà scanné par toi ou un autre client est reconnu tout de suite ; {}</p> {} <{} id=\"scan-bc\" label=\"Photographier le code-barres\" onFile={} /> {} <div className=\"row-end\"><{} label=\"Ou tape les chiffres du code-barres\" id=\"scan-typed\"><input id=\"scan-typed\" inputMode=\"numeric\" value={} onChange={} placeholder=\"13 chi",
-  "where": "src/09_nutrition.js:543",
+  "where": "src/09_nutrition.js:572",
   "n": 1
  },
  {
@@ -26299,7 +26994,7 @@
   "k": "Photographier directement l'étiquette",
   "kind": "attr",
   "ctx": "<{} id=\"scan-lab0\" kind=\"ghost\" label=\"Photographier directement l'étiquette\" onFile={} />",
-  "where": "src/09_nutrition.js:546",
+  "where": "src/09_nutrition.js:575",
   "n": 1
  },
  {
@@ -26307,7 +27002,7 @@
   "k": "Lecture du code-barres…",
   "kind": "text",
   "ctx": "<p className=\"muted\">Lecture du code-barres…</p>",
-  "where": "src/09_nutrition.js:549",
+  "where": "src/09_nutrition.js:578",
   "n": 1
  },
  {
@@ -26315,7 +27010,7 @@
   "k": "Recherche du produit",
   "kind": "text",
   "ctx": "<p className=\"muted\">Recherche du produit {}…</p>",
-  "where": "src/09_nutrition.js:550",
+  "where": "src/09_nutrition.js:579",
   "n": 1
  },
  {
@@ -26323,7 +27018,7 @@
   "k": "Code-barres",
   "kind": "text",
   "ctx": "<p className=\"small\">Code-barres <b>{}</b> : produit pas encore connu.</p>",
-  "where": "src/09_nutrition.js:551",
+  "where": "src/09_nutrition.js:580",
   "n": 1
  },
  {
@@ -26331,7 +27026,7 @@
   "k": ": produit pas encore connu.",
   "kind": "text",
   "ctx": "<p className=\"small\">Code-barres <b>{}</b> : produit pas encore connu.</p>",
-  "where": "src/09_nutrition.js:551",
+  "where": "src/09_nutrition.js:580",
   "n": 1
  },
  {
@@ -26339,7 +27034,7 @@
   "k": "Recommencer",
   "kind": "text",
   "ctx": "<div className=\"stack-s\">{} {} {} {} <{} kind=\"quiet\" onClick={}>Recommencer</{}></div>",
-  "where": "src/09_nutrition.js:551",
+  "where": "src/09_nutrition.js:580",
   "n": 1
  },
  {
@@ -26347,7 +27042,7 @@
   "k": "Photographie maintenant le",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie maintenant le <b>tableau des valeurs nutritionnelles</b> (au dos du paquet). Le produit sera ensuite reconnu directement.</p> <{} id=\"scan-lab\" label=\"Photographier l'étiquette\" onFile={} /> <button type=\"button\" className=\"linkbtn\" onClick={}>Saisir les valeurs à la main</button>",
-  "where": "src/09_nutrition.js:553",
+  "where": "src/09_nutrition.js:582",
   "n": 1
  },
  {
@@ -26355,7 +27050,7 @@
   "k": "tableau des valeurs nutritionnelles",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie maintenant le <b>tableau des valeurs nutritionnelles</b> (au dos du paquet). Le produit sera ensuite reconnu directement.</p> <{} id=\"scan-lab\" label=\"Photographier l'étiquette\" onFile={} /> <button type=\"button\" className=\"linkbtn\" onClick={}>Saisir les valeurs à la main</button>",
-  "where": "src/09_nutrition.js:553",
+  "where": "src/09_nutrition.js:582",
   "n": 1
  },
  {
@@ -26363,7 +27058,7 @@
   "k": "(au dos du paquet). Le produit sera ensuite reconnu directement.",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie maintenant le <b>tableau des valeurs nutritionnelles</b> (au dos du paquet). Le produit sera ensuite reconnu directement.</p> <{} id=\"scan-lab\" label=\"Photographier l'étiquette\" onFile={} /> <button type=\"button\" className=\"linkbtn\" onClick={}>Saisir les valeurs à la main</button>",
-  "where": "src/09_nutrition.js:553",
+  "where": "src/09_nutrition.js:582",
   "n": 1
  },
  {
@@ -26371,7 +27066,7 @@
   "k": "Photographier l'étiquette",
   "kind": "attr",
   "ctx": "<p className=\"small\">Photographie maintenant le <b>tableau des valeurs nutritionnelles</b> (au dos du paquet). Le produit sera ensuite reconnu directement.</p> <{} id=\"scan-lab\" label=\"Photographier l'étiquette\" onFile={} /> <button type=\"button\" className=\"linkbtn\" onClick={}>Saisir les valeurs à la main</button>",
-  "where": "src/09_nutrition.js:553",
+  "where": "src/09_nutrition.js:582",
   "n": 1
  },
  {
@@ -26379,7 +27074,7 @@
   "k": "Saisir les valeurs à la main",
   "kind": "text",
   "ctx": "<p className=\"small\">Photographie maintenant le <b>tableau des valeurs nutritionnelles</b> (au dos du paquet). Le produit sera ensuite reconnu directement.</p> <{} id=\"scan-lab\" label=\"Photographier l'étiquette\" onFile={} /> <button type=\"button\" className=\"linkbtn\" onClick={}>Saisir les valeurs à la main</button>",
-  "where": "src/09_nutrition.js:553",
+  "where": "src/09_nutrition.js:582",
   "n": 1
  },
  {
@@ -26387,7 +27082,7 @@
   "k": "Ajouter ce produit",
   "kind": "attr",
   "ctx": "<{} title=\"Ajouter ce produit\"><{} ean={} eq={} onSave={} /></{}>",
-  "where": "src/09_nutrition.js:556",
+  "where": "src/09_nutrition.js:585",
   "n": 1
  },
  {
@@ -26395,7 +27090,7 @@
   "k": "Le coach IA lit l'étiquette… (10 à 40 s)",
   "kind": "text",
   "ctx": "<div className=\"actions\"><span className=\"muted small\">Le coach IA lit l'étiquette… (10 à 40 s)</span><{} kind=\"quiet\" small onClick={}>Stop</{}></div>",
-  "where": "src/09_nutrition.js:558",
+  "where": "src/09_nutrition.js:587",
   "n": 1
  },
  {
@@ -26403,7 +27098,7 @@
   "k": "Quantité mangée (g)",
   "kind": "attr",
   "ctx": "<{}> <div className=\"meal-h\"><b>{}</b>{}{}{}</div> {} {} {} {}{} </{}> <div className=\"row2\"><{} label=\"Quantité mangée (g)\" id=\"scan-g\"><input id=\"scan-g\" inputMode=\"decimal\" value={} onChange={} /></{}> {}</div> <{} value={} onChange={} /> <div className=\"actions\"><{} onClick={} disabled={}>Ajouter au journal</{}><{} kind=\"quiet\" onClick={}>Scanner un autre produit</{}></div>",
-  "where": "src/09_nutrition.js:560",
+  "where": "src/09_nutrition.js:589",
   "n": 1
  },
  {
@@ -26411,7 +27106,7 @@
   "k": "Scanner un autre produit",
   "kind": "text",
   "ctx": "<{}> <div className=\"meal-h\"><b>{}</b>{}{}{}</div> {} {} {} {}{} </{}> <div className=\"row2\"><{} label=\"Quantité mangée (g)\" id=\"scan-g\"><input id=\"scan-g\" inputMode=\"decimal\" value={} onChange={} /></{}> {}</div> <{} value={} onChange={} /> <div className=\"actions\"><{} onClick={} disabled={}>Ajouter au journal</{}><{} kind=\"quiet\" onClick={}>Scanner un autre produit</{}></div>",
-  "where": "src/09_nutrition.js:560",
+  "where": "src/09_nutrition.js:589",
   "n": 1
  },
  {
@@ -26419,7 +27114,7 @@
   "k": "Nutri-Score",
   "kind": "text",
   "ctx": "<span className={}>Nutri-Score {}</span>",
-  "where": "src/09_nutrition.js:561",
+  "where": "src/09_nutrition.js:590",
   "n": 1
  },
  {
@@ -26427,7 +27122,7 @@
   "k": "Reconnu grâce au code-barres",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Reconnu grâce au code-barres {}.</p>",
-  "where": "src/09_nutrition.js:562",
+  "where": "src/09_nutrition.js:591",
   "n": 1
  },
  {
@@ -26435,7 +27130,7 @@
   "k": "Valeurs typiques estimées : vérifie l'étiquette si possible.",
   "kind": "text",
   "ctx": "<p className=\"small warn-t\">Valeurs typiques estimées : vérifie l'étiquette si possible.</p>",
-  "where": "src/09_nutrition.js:562",
+  "where": "src/09_nutrition.js:591",
   "n": 1
  },
  {
@@ -26443,28 +27138,28 @@
   "k": "Données Open Food Facts (base collaborative, licence ODbL) : vérifie l'étiquette en cas de doute.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Données Open Food Facts (base collaborative, licence ODbL) : vérifie l'étiquette en cas de doute.</p>",
-  "where": "src/09_nutrition.js:563",
+  "where": "src/09_nutrition.js:592",
   "n": 1
  },
  {
   "h": "80ae547139",
   "k": "dont sucres",
   "kind": "string",
-  "where": "src/09_nutrition.js:564",
+  "where": "src/09_nutrition.js:593",
   "n": 1
  },
  {
   "h": "649b8e1ecc",
   "k": "Fibres",
   "kind": "string",
-  "where": "src/09_nutrition.js:564",
+  "where": "src/09_nutrition.js:593",
   "n": 1
  },
  {
   "h": "7481b2e308",
   "k": "Sel",
   "kind": "string",
-  "where": "src/09_nutrition.js:564",
+  "where": "src/09_nutrition.js:593",
   "n": 1
  },
  {
@@ -26472,7 +27167,7 @@
   "k": "Alternative :",
   "kind": "text",
   "ctx": "<p className=\"small note\">Alternative : {}</p>",
-  "where": "src/09_nutrition.js:565",
+  "where": "src/09_nutrition.js:594",
   "n": 1
  },
  {
@@ -26480,49 +27175,49 @@
   "k": "Pour cette quantité",
   "kind": "text",
   "ctx": "<div className=\"field\"><span className=\"field-l\">Pour cette quantité</span><div className=\"tot-line\"><b>{} kcal</b><span>P {} g · G {} g · L {} g</span></div></div>",
-  "where": "src/09_nutrition.js:568",
+  "where": "src/09_nutrition.js:597",
   "n": 1
  },
  {
   "h": "ff564a724d",
   "k": "Nouvel objectif :",
   "kind": "string",
-  "where": "src/09_nutrition.js:593",
+  "where": "src/09_nutrition.js:622",
   "n": 1
  },
  {
   "h": "745145ffb9",
   "k": "{} de {} kg en {} mois",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:593",
+  "where": "src/09_nutrition.js:622",
   "n": 1
  },
  {
   "h": "afde27e2d7",
   "k": "Nouvel objectif : {}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:593",
+  "where": "src/09_nutrition.js:622",
   "n": 1
  },
  {
   "h": "33fc14c2fc",
   "k": "Objectif réaliste",
   "kind": "string",
-  "where": "src/09_nutrition.js:595",
+  "where": "src/09_nutrition.js:624",
   "n": 1
  },
  {
   "h": "d93101489c",
   "k": "Ambitieux mais faisable",
   "kind": "string",
-  "where": "src/09_nutrition.js:595",
+  "where": "src/09_nutrition.js:624",
   "n": 1
  },
  {
   "h": "c0aaf82c59",
   "k": "Trop rapide",
   "kind": "string",
-  "where": "src/09_nutrition.js:595",
+  "where": "src/09_nutrition.js:624",
   "n": 1
  },
  {
@@ -26530,7 +27225,7 @@
   "k": "Sexe",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26538,7 +27233,7 @@
   "k": "Âge",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26546,7 +27241,7 @@
   "k": "Activité en dehors de tes séances",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26554,7 +27249,7 @@
   "k": "Préférences et aliments à éviter (facultatif)",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26562,7 +27257,7 @@
   "k": "Ex. végétarien, pas de porc, n'aime pas le poisson",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26570,7 +27265,7 @@
   "k": "J'ai (ou j'ai eu) un trouble du comportement alimentaire, ou compter les calories me met mal à l'aise",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
@@ -26578,56 +27273,56 @@
   "k": "Enregistrer mon objectif",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <{} title=\"Toi\"> <div className=\"form\"> <{} label=\"Sexe\"><{} options={} value={} onChange={} /></{}> <div className=\"row4\"><{} label=\"Âge\" id=\"nu-a\"><input id=\"nu-a\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Taille (cm)\" id=\"nu-h\"><input id=\"nu-h\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Poids (kg)\" id=\"nu-w\"><input id=\"nu-w\" inputMode=\"",
-  "where": "src/09_nutrition.js:596",
+  "where": "src/09_nutrition.js:625",
   "n": 1
  },
  {
   "h": "bb08c468b1",
   "k": "Homme",
   "kind": "string",
-  "where": "src/09_nutrition.js:599",
+  "where": "src/09_nutrition.js:628",
   "n": 1
  },
  {
   "h": "5cb4722e8d",
   "k": "Femme",
   "kind": "string",
-  "where": "src/09_nutrition.js:599",
+  "where": "src/09_nutrition.js:628",
   "n": 1
  },
  {
   "h": "4348160ef3",
   "k": "Perdre du poids",
   "kind": "string",
-  "where": "src/09_nutrition.js:607",
+  "where": "src/09_nutrition.js:636",
   "n": 1
  },
  {
   "h": "d703d8f81c",
   "k": "Garder mon poids",
   "kind": "string",
-  "where": "src/09_nutrition.js:607",
+  "where": "src/09_nutrition.js:636",
   "n": 1
  },
  {
   "h": "f970a15eb0",
   "k": "Prendre du muscle",
   "kind": "string",
-  "where": "src/09_nutrition.js:607",
+  "where": "src/09_nutrition.js:636",
   "n": 1
  },
  {
   "h": "dce93bbb3a",
   "k": "Kilos à perdre",
   "kind": "string",
-  "where": "src/09_nutrition.js:608",
+  "where": "src/09_nutrition.js:637",
   "n": 1
  },
  {
   "h": "787d43c81c",
   "k": "Kilos à prendre",
   "kind": "string",
-  "where": "src/09_nutrition.js:608",
+  "where": "src/09_nutrition.js:637",
   "n": 1
  },
  {
@@ -26635,7 +27330,7 @@
   "k": "En combien de mois ?",
   "kind": "attr",
   "ctx": "<div className=\"row2\"><{} label={} id=\"nu-d\"><input id=\"nu-d\" inputMode=\"decimal\" value={} onChange={} placeholder={} /></{}> <{} label=\"En combien de mois ?\"><{} options={} value={} onChange={} /></{}></div>",
-  "where": "src/09_nutrition.js:608",
+  "where": "src/09_nutrition.js:637",
   "n": 1
  },
  {
@@ -26643,28 +27338,28 @@
   "k": "Je suis enceinte ou j'allaite",
   "kind": "text",
   "ctx": "<label className=\"chk\"><input type=\"checkbox\" id=\"nu-preg\" checked={} onChange={} /><span>Je suis enceinte ou j'allaite</span></label>",
-  "where": "src/09_nutrition.js:611",
+  "where": "src/09_nutrition.js:640",
   "n": 1
  },
  {
   "h": "c616448eb0",
   "k": "Avant 18 ans, pas d'objectif chiffré : on construit de bonnes habitudes.",
   "kind": "string",
-  "where": "src/09_nutrition.js:614",
+  "where": "src/09_nutrition.js:643",
   "n": 1
  },
  {
   "h": "8c41342622",
   "k": "Pas de chiffres ni de comptage : le coach t'aide à construire des repas équilibrés et réguliers. Si tu en ressens le besoin, parles-en aussi à ton médecin.",
   "kind": "string",
-  "where": "src/09_nutrition.js:614",
+  "where": "src/09_nutrition.js:643",
   "n": 1
  },
  {
   "h": "1354540b48",
   "k": "Pendant la grossesse ou l'allaitement, pas d'objectif de perte de poids : demande conseil à ta sage-femme ou à ton médecin.",
   "kind": "string",
-  "where": "src/09_nutrition.js:614",
+  "where": "src/09_nutrition.js:643",
   "n": 1
  },
  {
@@ -26672,7 +27367,7 @@
   "k": "Mode équilibre",
   "kind": "text",
   "ctx": "<div className=\"alert gold\"><div><b>Mode équilibre</b><p>{} Tes repas restent analysés, sans calories.</p></div></div>",
-  "where": "src/09_nutrition.js:614",
+  "where": "src/09_nutrition.js:643",
   "n": 2
  },
  {
@@ -26680,7 +27375,7 @@
   "k": "Tes repas restent analysés, sans calories.",
   "kind": "text",
   "ctx": "<div className=\"alert gold\"><div><b>Mode équilibre</b><p>{} Tes repas restent analysés, sans calories.</p></div></div>",
-  "where": "src/09_nutrition.js:614",
+  "where": "src/09_nutrition.js:643",
   "n": 1
  },
  {
@@ -26688,7 +27383,7 @@
   "k": "Ton plan",
   "kind": "attr",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26696,7 +27391,7 @@
   "k": "kcal par jour",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26704,7 +27399,7 @@
   "k": "protéines",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 3
  },
  {
@@ -26712,7 +27407,7 @@
   "k": "pas par jour",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26720,7 +27415,7 @@
   "k": "séances par semaine",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26728,7 +27423,7 @@
   "k": "Dépense énergétique journalière :",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26736,7 +27431,7 @@
   "k": "(métabolisme de base",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 2
  },
  {
@@ -26744,7 +27439,7 @@
   "k": "kcal + activité et séances",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 2
  },
  {
@@ -26752,7 +27447,7 @@
   "k": "g · lipides",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26760,7 +27455,7 @@
   "k": "g · eau",
   "kind": "text",
   "ctx": "<{} title=\"Ton plan\" action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>kcal par jour</span></div> <div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{}</b><span>pas par jour</span></div> <div className=\"tile\"><b>{}</b><span>séances par semaine</span></div> </div> <p className=\"small\">Dépense énergétique journalière : <b>{} kcal</b> (métabol",
-  "where": "src/09_nutrition.js:616",
+  "where": "src/09_nutrition.js:645",
   "n": 1
  },
  {
@@ -26768,7 +27463,7 @@
   "k": "Rythme :",
   "kind": "text",
   "ctx": "<p className=\"small\">Rythme : {} kg par semaine → {} kg vers le {}.</p>",
-  "where": "src/09_nutrition.js:625",
+  "where": "src/09_nutrition.js:654",
   "n": 1
  },
  {
@@ -26776,7 +27471,7 @@
   "k": "kg par semaine →",
   "kind": "text",
   "ctx": "<p className=\"small\">Rythme : {} kg par semaine → {} kg vers le {}.</p>",
-  "where": "src/09_nutrition.js:625",
+  "where": "src/09_nutrition.js:654",
   "n": 1
  },
  {
@@ -26784,7 +27479,7 @@
   "k": "kg vers le",
   "kind": "text",
   "ctx": "<p className=\"small\">Rythme : {} kg par semaine → {} kg vers le {}.</p>",
-  "where": "src/09_nutrition.js:625",
+  "where": "src/09_nutrition.js:654",
   "n": 1
  },
  {
@@ -26792,7 +27487,7 @@
   "k": "Objectif trop rapide pour être tenu sans perdre de muscle",
   "kind": "text",
   "ctx": "<div className=\"alert warn\"><div><b>Objectif trop rapide pour être tenu sans perdre de muscle</b><p>Je te propose {} : même résultat, sans régime extrême.</p></div><{} small onClick={}>Appliquer</{}></div>",
-  "where": "src/09_nutrition.js:626",
+  "where": "src/09_nutrition.js:655",
   "n": 1
  },
  {
@@ -26800,7 +27495,7 @@
   "k": "Je te propose",
   "kind": "text",
   "ctx": "<div className=\"alert warn\"><div><b>Objectif trop rapide pour être tenu sans perdre de muscle</b><p>Je te propose {} : même résultat, sans régime extrême.</p></div><{} small onClick={}>Appliquer</{}></div>",
-  "where": "src/09_nutrition.js:626",
+  "where": "src/09_nutrition.js:655",
   "n": 1
  },
  {
@@ -26808,7 +27503,7 @@
   "k": ": même résultat, sans régime extrême.",
   "kind": "text",
   "ctx": "<div className=\"alert warn\"><div><b>Objectif trop rapide pour être tenu sans perdre de muscle</b><p>Je te propose {} : même résultat, sans régime extrême.</p></div><{} small onClick={}>Appliquer</{}></div>",
-  "where": "src/09_nutrition.js:626",
+  "where": "src/09_nutrition.js:655",
   "n": 1
  },
  {
@@ -26816,7 +27511,7 @@
   "k": "Appliquer",
   "kind": "text",
   "ctx": "<div className=\"alert warn\"><div><b>Objectif trop rapide pour être tenu sans perdre de muscle</b><p>Je te propose {} : même résultat, sans régime extrême.</p></div><{} small onClick={}>Appliquer</{}></div>",
-  "where": "src/09_nutrition.js:626",
+  "where": "src/09_nutrition.js:655",
   "n": 2
  },
  {
@@ -26824,7 +27519,7 @@
   "k": "Calories au plancher de sécurité (",
   "kind": "text",
   "ctx": "<p className=\"small warn-t\">Calories au plancher de sécurité ({} kcal) : l'objectif prendra plus de temps.</p>",
-  "where": "src/09_nutrition.js:627",
+  "where": "src/09_nutrition.js:656",
   "n": 1
  },
  {
@@ -26832,21 +27527,21 @@
   "k": "kcal) : l'objectif prendra plus de temps.",
   "kind": "text",
   "ctx": "<p className=\"small warn-t\">Calories au plancher de sécurité ({} kcal) : l'objectif prendra plus de temps.</p>",
-  "where": "src/09_nutrition.js:627",
+  "where": "src/09_nutrition.js:656",
   "n": 1
  },
  {
   "h": "5b9d59c923",
   "k": "Trajectoire prévue de",
   "kind": "string",
-  "where": "src/09_nutrition.js:647",
+  "where": "src/09_nutrition.js:676",
   "n": 1
  },
  {
   "h": "5b3b312b89",
   "k": "Trajectoire prévue de {} à {} kg",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:647",
+  "where": "src/09_nutrition.js:676",
   "n": 1
  },
  {
@@ -26854,7 +27549,7 @@
   "k": "Pointillé : trajectoire prévue · points : tes pesées (bilans et tests)",
   "kind": "text",
   "ctx": "<div ref={} className=\"chart\"><svg width={} height={} role=\"img\" aria-label={}> {} <line x1={} y1={} x2={} y2={} style={}></line> {} {} <text x={} y={} className=\"ax\">{}</text><text x={} y={} textAnchor=\"end\" className=\"ax\">{}</text> </svg><div className=\"chart-val\"><span className=\"muted\">Pointillé : trajectoire prévue · points : tes pesées (bilans et tests)</span></div></div>",
-  "where": "src/09_nutrition.js:647",
+  "where": "src/09_nutrition.js:676",
   "n": 1
  },
  {
@@ -26862,7 +27557,7 @@
   "k": "Sur quoi reposent tes cibles",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> {} <{} title=\"La méthode\" sub=\"Sur quoi reposent tes cibles\"> <p className=\"small\">{} {} Valeurs nutritionnelles des aliments : {}.</p> <details><summary>Références scientifiques</summary><ol className=\"refs\">{}</ol></details></{}> <div className=\"actions\"><{} kind=\"ghost\" onClick={}>Modifier mon objectif</{}></div> <p className=\"muted small\">Ces repères ne remplacent pas u",
-  "where": "src/09_nutrition.js:660",
+  "where": "src/09_nutrition.js:689",
   "n": 1
  },
  {
@@ -26870,7 +27565,7 @@
   "k": "Valeurs nutritionnelles des aliments :",
   "kind": "text",
   "ctx": "<div className=\"stack\"> {} <{} title=\"La méthode\" sub=\"Sur quoi reposent tes cibles\"> <p className=\"small\">{} {} Valeurs nutritionnelles des aliments : {}.</p> <details><summary>Références scientifiques</summary><ol className=\"refs\">{}</ol></details></{}> <div className=\"actions\"><{} kind=\"ghost\" onClick={}>Modifier mon objectif</{}></div> <p className=\"muted small\">Ces repères ne remplacent pas u",
-  "where": "src/09_nutrition.js:660",
+  "where": "src/09_nutrition.js:689",
   "n": 1
  },
  {
@@ -26878,7 +27573,7 @@
   "k": "Modifier mon objectif",
   "kind": "text",
   "ctx": "<div className=\"stack\"> {} <{} title=\"La méthode\" sub=\"Sur quoi reposent tes cibles\"> <p className=\"small\">{} {} Valeurs nutritionnelles des aliments : {}.</p> <details><summary>Références scientifiques</summary><ol className=\"refs\">{}</ol></details></{}> <div className=\"actions\"><{} kind=\"ghost\" onClick={}>Modifier mon objectif</{}></div> <p className=\"muted small\">Ces repères ne remplacent pas u",
-  "where": "src/09_nutrition.js:660",
+  "where": "src/09_nutrition.js:689",
   "n": 1
  },
  {
@@ -26886,7 +27581,7 @@
   "k": "Ces repères ne remplacent pas un avis médical ou celui d'un diététicien, en particulier en cas de maladie ou de traitement.",
   "kind": "text",
   "ctx": "<div className=\"stack\"> {} <{} title=\"La méthode\" sub=\"Sur quoi reposent tes cibles\"> <p className=\"small\">{} {} Valeurs nutritionnelles des aliments : {}.</p> <details><summary>Références scientifiques</summary><ol className=\"refs\">{}</ol></details></{}> <div className=\"actions\"><{} kind=\"ghost\" onClick={}>Modifier mon objectif</{}></div> <p className=\"muted small\">Ces repères ne remplacent pas u",
-  "where": "src/09_nutrition.js:660",
+  "where": "src/09_nutrition.js:689",
   "n": 1
  },
  {
@@ -26894,7 +27589,7 @@
   "k": "Pas de chiffres : des repas réguliers, variés et rassasiants",
   "kind": "attr",
   "ctx": "<{} title=\"Mode équilibre\" sub=\"Pas de chiffres : des repas réguliers, variés et rassasiants\"> <ul className=\"checks\"><li>3 repas par jour, une collation si tu as faim</li><li>À chaque repas : une source de protéines, des légumes, un féculent</li><li>L'eau comme boisson principale</li><li>Le plaisir fait partie de l'équilibre</li></ul></{}>",
-  "where": "src/09_nutrition.js:661",
+  "where": "src/09_nutrition.js:690",
   "n": 1
  },
  {
@@ -26902,7 +27597,7 @@
   "k": "3 repas par jour, une collation si tu as faim",
   "kind": "text",
   "ctx": "<{} title=\"Mode équilibre\" sub=\"Pas de chiffres : des repas réguliers, variés et rassasiants\"> <ul className=\"checks\"><li>3 repas par jour, une collation si tu as faim</li><li>À chaque repas : une source de protéines, des légumes, un féculent</li><li>L'eau comme boisson principale</li><li>Le plaisir fait partie de l'équilibre</li></ul></{}>",
-  "where": "src/09_nutrition.js:661",
+  "where": "src/09_nutrition.js:690",
   "n": 1
  },
  {
@@ -26910,7 +27605,7 @@
   "k": "À chaque repas : une source de protéines, des légumes, un féculent",
   "kind": "text",
   "ctx": "<{} title=\"Mode équilibre\" sub=\"Pas de chiffres : des repas réguliers, variés et rassasiants\"> <ul className=\"checks\"><li>3 repas par jour, une collation si tu as faim</li><li>À chaque repas : une source de protéines, des légumes, un féculent</li><li>L'eau comme boisson principale</li><li>Le plaisir fait partie de l'équilibre</li></ul></{}>",
-  "where": "src/09_nutrition.js:661",
+  "where": "src/09_nutrition.js:690",
   "n": 1
  },
  {
@@ -26918,7 +27613,7 @@
   "k": "L'eau comme boisson principale",
   "kind": "text",
   "ctx": "<{} title=\"Mode équilibre\" sub=\"Pas de chiffres : des repas réguliers, variés et rassasiants\"> <ul className=\"checks\"><li>3 repas par jour, une collation si tu as faim</li><li>À chaque repas : une source de protéines, des légumes, un féculent</li><li>L'eau comme boisson principale</li><li>Le plaisir fait partie de l'équilibre</li></ul></{}>",
-  "where": "src/09_nutrition.js:661",
+  "where": "src/09_nutrition.js:690",
   "n": 1
  },
  {
@@ -26926,7 +27621,7 @@
   "k": "Le plaisir fait partie de l'équilibre",
   "kind": "text",
   "ctx": "<{} title=\"Mode équilibre\" sub=\"Pas de chiffres : des repas réguliers, variés et rassasiants\"> <ul className=\"checks\"><li>3 repas par jour, une collation si tu as faim</li><li>À chaque repas : une source de protéines, des légumes, un féculent</li><li>L'eau comme boisson principale</li><li>Le plaisir fait partie de l'équilibre</li></ul></{}>",
-  "where": "src/09_nutrition.js:661",
+  "where": "src/09_nutrition.js:690",
   "n": 1
  },
  {
@@ -26934,7 +27629,7 @@
   "k": "Mes cibles du jour",
   "kind": "attr",
   "ctx": "<{} title=\"Mes cibles du jour\" sub={}> <div className=\"tiles\"><div className=\"tile\"><b>{}</b><span>kcal</span></div><div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{} g</b><span>glucides</span></div><div className=\"tile\"><b>{} g</b><span>lipides</span></div></div> <p className=\"small\">{} pas par jour · {} L d'eau · 3 séances par semaine avec ton programme.</",
-  "where": "src/09_nutrition.js:662",
+  "where": "src/09_nutrition.js:691",
   "n": 1
  },
  {
@@ -26942,7 +27637,7 @@
   "k": "pas par jour ·",
   "kind": "text",
   "ctx": "<{} title=\"Mes cibles du jour\" sub={}> <div className=\"tiles\"><div className=\"tile\"><b>{}</b><span>kcal</span></div><div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{} g</b><span>glucides</span></div><div className=\"tile\"><b>{} g</b><span>lipides</span></div></div> <p className=\"small\">{} pas par jour · {} L d'eau · 3 séances par semaine avec ton programme.</",
-  "where": "src/09_nutrition.js:662",
+  "where": "src/09_nutrition.js:691",
   "n": 1
  },
  {
@@ -26950,28 +27645,28 @@
   "k": "L d'eau · 3 séances par semaine avec ton programme.",
   "kind": "text",
   "ctx": "<{} title=\"Mes cibles du jour\" sub={}> <div className=\"tiles\"><div className=\"tile\"><b>{}</b><span>kcal</span></div><div className=\"tile\"><b>{} g</b><span>protéines</span></div> <div className=\"tile\"><b>{} g</b><span>glucides</span></div><div className=\"tile\"><b>{} g</b><span>lipides</span></div></div> <p className=\"small\">{} pas par jour · {} L d'eau · 3 séances par semaine avec ton programme.</",
-  "where": "src/09_nutrition.js:662",
+  "where": "src/09_nutrition.js:691",
   "n": 1
  },
  {
   "h": "e210fce18b",
   "k": "(métabolisme de base {} kcal + activité et séances {} kcal)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:667",
+  "where": "src/09_nutrition.js:696",
   "n": 1
  },
  {
   "h": "ced7466f1e",
   "k": "Mesurée sur les 7 derniers jours :",
   "kind": "string",
-  "where": "src/09_nutrition.js:667",
+  "where": "src/09_nutrition.js:696",
   "n": 1
  },
  {
   "h": "28a4ac98f5",
   "k": "Mesurée sur les 7 derniers jours : {} kcal.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:667",
+  "where": "src/09_nutrition.js:696",
   "n": 1
  },
  {
@@ -26979,7 +27674,7 @@
   "k": "Dépense énergétique journalière estimée :",
   "kind": "text",
   "ctx": "<p className=\"small\">Dépense énergétique journalière estimée : <b>{} kcal</b>{}.{}</p>",
-  "where": "src/09_nutrition.js:667",
+  "where": "src/09_nutrition.js:696",
   "n": 1
  },
  {
@@ -26987,35 +27682,35 @@
   "k": "Ajusté par le coach IA le",
   "kind": "text",
   "ctx": "<p className=\"small note\">Ajusté par le coach IA le {} : {}</p>",
-  "where": "src/09_nutrition.js:668",
+  "where": "src/09_nutrition.js:697",
   "n": 1
  },
  {
   "h": "3cd75e7975",
   "k": "Prévu aujourd'hui :",
   "kind": "string",
-  "where": "src/09_nutrition.js:669",
+  "where": "src/09_nutrition.js:698",
   "n": 1
  },
  {
   "h": "3562dec8fa",
   "k": "· dernière pesée :",
   "kind": "string",
-  "where": "src/09_nutrition.js:669",
+  "where": "src/09_nutrition.js:698",
   "n": 1
  },
  {
   "h": "9be9208715",
   "k": "· dernière pesée : {} kg",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:669",
+  "where": "src/09_nutrition.js:698",
   "n": 1
  },
  {
   "h": "f28a0191e3",
   "k": "Prévu aujourd'hui : {} kg{}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:669",
+  "where": "src/09_nutrition.js:698",
   "n": 1
  },
  {
@@ -27023,105 +27718,105 @@
   "k": "Ma trajectoire",
   "kind": "attr",
   "ctx": "<{} title=\"Ma trajectoire\" sub={}><{} np={} pts={} /></{}>",
-  "where": "src/09_nutrition.js:669",
+  "where": "src/09_nutrition.js:698",
   "n": 1
  },
  {
   "h": "19e2325bd6",
   "k": "Les repas réguliers et l'écoute de la faim comptent plus que les chiffres. Noter ses repas aide à prendre conscience de ses habitudes (Burke, 2011).",
   "kind": "string",
-  "where": "src/09_nutrition.js:671",
+  "where": "src/09_nutrition.js:700",
   "n": 1
  },
  {
   "h": "e3c36dacb2",
   "k": "Dépense au repos estimée par l'équation de Mifflin-St Jeor (1990), multipliée par ton activité, plus tes séances. Déficit limité à 25 % et perte d'au plus 1 % du poids par semaine pour préserver le muscle (Helms, 2014) ; protéines autour de 1,6 à 1,8 g par kg (Morton, 2018). La perte réelle ralentit avec le temps (Hall, 2011) : le coach IA ajuste tes cibles selon tes pesées.",
   "kind": "string",
-  "where": "src/09_nutrition.js:671",
+  "where": "src/09_nutrition.js:700",
   "n": 1
  },
  {
   "h": "b6c9967c33",
   "k": "Les jours où ta montre ou tes pas montrent que tu as bougé plus que prévu, la moitié du surplus s'ajoute à ta cible (les montres se trompent souvent de 20 % ou plus sur la dépense : Fuller, 2020) ; l'effet des repas compte pour environ 10 % de la dépense (Westerterp, 2004).",
   "kind": "string",
-  "where": "src/09_nutrition.js:671",
+  "where": "src/09_nutrition.js:700",
   "n": 1
  },
  {
   "h": "e255f00993",
   "k": "Valeur hors limites.",
   "kind": "string",
-  "where": "src/09_nutrition.js:689",
+  "where": "src/09_nutrition.js:718",
   "n": 1
  },
  {
   "h": "d911003780",
   "k": "+manuel",
   "kind": "string",
-  "where": "src/09_nutrition.js:690",
+  "where": "src/09_nutrition.js:719",
   "n": 3
  },
  {
   "h": "64172b310b",
   "k": "{}+manuel",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:690",
+  "where": "src/09_nutrition.js:719",
   "n": 3
  },
  {
   "h": "e148e5cb35",
   "k": "Activité enregistrée.",
   "kind": "string",
-  "where": "src/09_nutrition.js:693",
+  "where": "src/09_nutrition.js:722",
   "n": 1
  },
  {
   "h": "1dcba2e8af",
   "k": "Ma dépense du jour",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "340a61b90d",
   "k": "Dépense de ce jour",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "018d99aaa5",
   "k": "Calories actives de ta montre ou de ton téléphone",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "97ff6d80d9",
   "k": "Estimée d'après tes pas",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "6f70470809",
   "k": ", tes séances et tes activités",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "d0ff335866",
   "k": "Estimée d'après tes pas{}",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "cfe67a75d0",
   "k": "Prévue dans ton plan",
   "kind": "string",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
@@ -27129,7 +27824,7 @@
   "k": "calories actives",
   "kind": "text",
   "ctx": "<{} title={} sub={} action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>{}</span></div> <div className=\"tile\"><b>{}</b><span>calories actives</span></div> <div className=\"tile\"><b>{}</b><span>pas · objectif {}</span></div> <div className=\"tile\"><b>{}</b><span>métabolisme de base</span></div> </div> {} {} {} {} </{}>",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
@@ -27137,7 +27832,7 @@
   "k": "pas · objectif",
   "kind": "text",
   "ctx": "<{} title={} sub={} action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>{}</span></div> <div className=\"tile\"><b>{}</b><span>calories actives</span></div> <div className=\"tile\"><b>{}</b><span>pas · objectif {}</span></div> <div className=\"tile\"><b>{}</b><span>métabolisme de base</span></div> </div> {} {} {} {} </{}>",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
@@ -27145,28 +27840,28 @@
   "k": "métabolisme de base",
   "kind": "text",
   "ctx": "<{} title={} sub={} action={}> <div className=\"tiles\"> <div className=\"tile\"><b>{}</b><span>{}</span></div> <div className=\"tile\"><b>{}</b><span>calories actives</span></div> <div className=\"tile\"><b>{}</b><span>pas · objectif {}</span></div> <div className=\"tile\"><b>{}</b><span>métabolisme de base</span></div> </div> {} {} {} {} </{}>",
-  "where": "src/09_nutrition.js:696",
+  "where": "src/09_nutrition.js:725",
   "n": 1
  },
  {
   "h": "f260e757ce",
   "k": "Modifier",
   "kind": "string",
-  "where": "src/09_nutrition.js:697",
+  "where": "src/09_nutrition.js:726",
   "n": 5
  },
  {
   "h": "faccd1a941",
   "k": "kcal dépensées",
   "kind": "string",
-  "where": "src/09_nutrition.js:699",
+  "where": "src/09_nutrition.js:728",
   "n": 1
  },
  {
   "h": "db567c380d",
   "k": "kcal prévues",
   "kind": "string",
-  "where": "src/09_nutrition.js:699",
+  "where": "src/09_nutrition.js:728",
   "n": 1
  },
  {
@@ -27174,7 +27869,7 @@
   "k": "Bonus d'activité : +",
   "kind": "text",
   "ctx": "<div className=\"alert okb\"><div><b>Bonus d'activité : +{} kcal</b><p>Tu as bougé plus que prévu ({} kcal contre {} dans ton plan) : ta cible du jour passe à {} kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.</p></div></div>",
-  "where": "src/09_nutrition.js:704",
+  "where": "src/09_nutrition.js:733",
   "n": 1
  },
  {
@@ -27182,7 +27877,7 @@
   "k": "Tu as bougé plus que prévu (",
   "kind": "text",
   "ctx": "<div className=\"alert okb\"><div><b>Bonus d'activité : +{} kcal</b><p>Tu as bougé plus que prévu ({} kcal contre {} dans ton plan) : ta cible du jour passe à {} kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.</p></div></div>",
-  "where": "src/09_nutrition.js:704",
+  "where": "src/09_nutrition.js:733",
   "n": 1
  },
  {
@@ -27190,7 +27885,7 @@
   "k": "kcal contre",
   "kind": "text",
   "ctx": "<div className=\"alert okb\"><div><b>Bonus d'activité : +{} kcal</b><p>Tu as bougé plus que prévu ({} kcal contre {} dans ton plan) : ta cible du jour passe à {} kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.</p></div></div>",
-  "where": "src/09_nutrition.js:704",
+  "where": "src/09_nutrition.js:733",
   "n": 1
  },
  {
@@ -27198,7 +27893,7 @@
   "k": "dans ton plan) : ta cible du jour passe à",
   "kind": "text",
   "ctx": "<div className=\"alert okb\"><div><b>Bonus d'activité : +{} kcal</b><p>Tu as bougé plus que prévu ({} kcal contre {} dans ton plan) : ta cible du jour passe à {} kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.</p></div></div>",
-  "where": "src/09_nutrition.js:704",
+  "where": "src/09_nutrition.js:733",
   "n": 1
  },
  {
@@ -27206,35 +27901,35 @@
   "k": "kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.",
   "kind": "text",
   "ctx": "<div className=\"alert okb\"><div><b>Bonus d'activité : +{} kcal</b><p>Tu as bougé plus que prévu ({} kcal contre {} dans ton plan) : ta cible du jour passe à {} kcal, en glucides surtout. La moitié seulement du surplus est ajoutée, car les montres surestiment souvent la dépense.</p></div></div>",
-  "where": "src/09_nutrition.js:704",
+  "where": "src/09_nutrition.js:733",
   "n": 1
  },
  {
   "h": "588ed89ed0",
   "k": "Dans ce que prévoit ton plan",
   "kind": "string",
-  "where": "src/09_nutrition.js:705",
+  "where": "src/09_nutrition.js:734",
   "n": 1
  },
  {
   "h": "baf3b1ed64",
   "k": "Pour l'instant sous ce que prévoit ton plan (",
   "kind": "string",
-  "where": "src/09_nutrition.js:705",
+  "where": "src/09_nutrition.js:734",
   "n": 1
  },
  {
   "h": "05dbc6c598",
   "k": "Pour l'instant sous ce que prévoit ton plan ({} kcal)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:705",
+  "where": "src/09_nutrition.js:734",
   "n": 1
  },
  {
   "h": "79781b8351",
   "k": ". Elle augmente si tu bouges nettement plus que prévu.",
   "kind": "string",
-  "where": "src/09_nutrition.js:705",
+  "where": "src/09_nutrition.js:734",
   "n": 1
  },
  {
@@ -27242,7 +27937,7 @@
   "k": ": ta cible reste à",
   "kind": "text",
   "ctx": "<p className=\"small muted\">{} : ta cible reste à {} kcal{}</p>",
-  "where": "src/09_nutrition.js:705",
+  "where": "src/09_nutrition.js:734",
   "n": 1
  },
  {
@@ -27250,7 +27945,7 @@
   "k": "Note tes pas ou tes calories actives, ou reçois-les automatiquement de ta montre (Ma santé du jour › Connecter ma montre) : ta dépense réelle s'affiche ici et ta cible s'ajuste les jours où tu bouges plus que prévu.",
   "kind": "text",
   "ctx": "<p className=\"small muted\">Note tes pas ou tes calories actives, ou reçois-les automatiquement de ta montre (Ma santé du jour › Connecter ma montre) : ta dépense réelle s'affiche ici et ta cible s'ajuste les jours où tu bouges plus que prévu.</p>",
-  "where": "src/09_nutrition.js:706",
+  "where": "src/09_nutrition.js:735",
   "n": 1
  },
  {
@@ -27258,7 +27953,7 @@
   "k": "Pas",
   "kind": "attr",
   "ctx": "<div className=\"row2\"><{} label=\"Pas\" id=\"en-pas\"><input id=\"en-pas\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Calories actives (kcal)\" id=\"en-kcal\" hint=\"« Énergie active » de ta montre ou de l'app Santé\"><input id=\"en-kcal\" inputMode=\"numeric\" value={} onChange={} /></{}></div> <div className=\"actions\"><{} small onClick={}>Enregistrer</{}><{} small kind=\"quiet\" onClick={}>Annul",
-  "where": "src/09_nutrition.js:707",
+  "where": "src/09_nutrition.js:736",
   "n": 5
  },
  {
@@ -27266,7 +27961,7 @@
   "k": "Calories actives (kcal)",
   "kind": "attr",
   "ctx": "<div className=\"row2\"><{} label=\"Pas\" id=\"en-pas\"><input id=\"en-pas\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Calories actives (kcal)\" id=\"en-kcal\" hint=\"« Énergie active » de ta montre ou de l'app Santé\"><input id=\"en-kcal\" inputMode=\"numeric\" value={} onChange={} /></{}></div> <div className=\"actions\"><{} small onClick={}>Enregistrer</{}><{} small kind=\"quiet\" onClick={}>Annul",
-  "where": "src/09_nutrition.js:707",
+  "where": "src/09_nutrition.js:736",
   "n": 1
  },
  {
@@ -27274,7 +27969,7 @@
   "k": "« Énergie active » de ta montre ou de l'app Santé",
   "kind": "attr",
   "ctx": "<div className=\"row2\"><{} label=\"Pas\" id=\"en-pas\"><input id=\"en-pas\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Calories actives (kcal)\" id=\"en-kcal\" hint=\"« Énergie active » de ta montre ou de l'app Santé\"><input id=\"en-kcal\" inputMode=\"numeric\" value={} onChange={} /></{}></div> <div className=\"actions\"><{} small onClick={}>Enregistrer</{}><{} small kind=\"quiet\" onClick={}>Annul",
-  "where": "src/09_nutrition.js:707",
+  "where": "src/09_nutrition.js:736",
   "n": 2
  },
  {
@@ -27282,7 +27977,7 @@
   "k": "Enregistrer",
   "kind": "text",
   "ctx": "<div className=\"row2\"><{} label=\"Pas\" id=\"en-pas\"><input id=\"en-pas\" inputMode=\"numeric\" value={} onChange={} /></{}> <{} label=\"Calories actives (kcal)\" id=\"en-kcal\" hint=\"« Énergie active » de ta montre ou de l'app Santé\"><input id=\"en-kcal\" inputMode=\"numeric\" value={} onChange={} /></{}></div> <div className=\"actions\"><{} small onClick={}>Enregistrer</{}><{} small kind=\"quiet\" onClick={}>Annul",
-  "where": "src/09_nutrition.js:707",
+  "where": "src/09_nutrition.js:736",
   "n": 8
  },
  {
@@ -27290,7 +27985,7 @@
   "k": "Moyenne des 7 derniers jours :",
   "kind": "text",
   "ctx": "<p className=\"small\">Moyenne des 7 derniers jours : <b>{} kcal</b> par jour{} (ton plan prévoit {} kcal).</p>",
-  "where": "src/09_nutrition.js:711",
+  "where": "src/09_nutrition.js:740",
   "n": 1
  },
  {
@@ -27298,7 +27993,7 @@
   "k": "par jour",
   "kind": "text",
   "ctx": "<p className=\"small\">Moyenne des 7 derniers jours : <b>{} kcal</b> par jour{} (ton plan prévoit {} kcal).</p>",
-  "where": "src/09_nutrition.js:711",
+  "where": "src/09_nutrition.js:740",
   "n": 3
  },
  {
@@ -27306,21 +28001,21 @@
   "k": "(ton plan prévoit",
   "kind": "text",
   "ctx": "<p className=\"small\">Moyenne des 7 derniers jours : <b>{} kcal</b> par jour{} (ton plan prévoit {} kcal).</p>",
-  "where": "src/09_nutrition.js:711",
+  "where": "src/09_nutrition.js:740",
   "n": 1
  },
  {
   "h": "d11d727ce2",
   "k": "Vérifie les valeurs : poids en kg, durée en minutes.",
   "kind": "string",
-  "where": "src/09_nutrition.js:764",
+  "where": "src/09_nutrition.js:793",
   "n": 1
  },
  {
   "h": "deeee09db1",
   "k": "Test de sueur enregistré : ton objectif d'eau des jours d'entraînement en tient compte.",
   "kind": "string",
-  "where": "src/09_nutrition.js:766",
+  "where": "src/09_nutrition.js:795",
   "n": 1
  },
  {
@@ -27328,7 +28023,7 @@
   "k": "Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.",
   "kind": "text",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27336,7 +28031,7 @@
   "k": "Poids avant (kg)",
   "kind": "attr",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27344,7 +28039,7 @@
   "k": "Poids après (kg)",
   "kind": "attr",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27352,7 +28047,7 @@
   "k": "Bu pendant la séance (L)",
   "kind": "attr",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27360,7 +28055,7 @@
   "k": "Durée de la séance (min)",
   "kind": "attr",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27368,7 +28063,7 @@
   "k": "Enregistrer le test",
   "kind": "text",
   "ctx": "<div className=\"stack-s\"> <p className=\"small\">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p> <div className=\"row2\"><{} label=\"Poids avant (kg)\" id=\"sw-avant\"><input id=\"sw-avant\" inputMode=\"decimal\" value={} onChange={} /></{}> <{} label=\"Poids après (kg)\" id=\"sw-apres\"><input id=",
-  "where": "src/09_nutrition.js:769",
+  "where": "src/09_nutrition.js:798",
   "n": 1
  },
  {
@@ -27376,7 +28071,7 @@
   "k": "Tu perds environ",
   "kind": "text",
   "ctx": "<div className={}><div><b>Tu perds environ {} L de sueur par heure</b> <p>Perte pendant la séance : {} % de ton poids{}.{}</p></div></div>",
-  "where": "src/09_nutrition.js:775",
+  "where": "src/09_nutrition.js:804",
   "n": 1
  },
  {
@@ -27384,7 +28079,7 @@
   "k": "L de sueur par heure",
   "kind": "text",
   "ctx": "<div className={}><div><b>Tu perds environ {} L de sueur par heure</b> <p>Perte pendant la séance : {} % de ton poids{}.{}</p></div></div>",
-  "where": "src/09_nutrition.js:775",
+  "where": "src/09_nutrition.js:804",
   "n": 1
  },
  {
@@ -27392,7 +28087,7 @@
   "k": "Perte pendant la séance :",
   "kind": "text",
   "ctx": "<div className={}><div><b>Tu perds environ {} L de sueur par heure</b> <p>Perte pendant la séance : {} % de ton poids{}.{}</p></div></div>",
-  "where": "src/09_nutrition.js:775",
+  "where": "src/09_nutrition.js:804",
   "n": 1
  },
  {
@@ -27400,63 +28095,63 @@
   "k": "% de ton poids",
   "kind": "text",
   "ctx": "<div className={}><div><b>Tu perds environ {} L de sueur par heure</b> <p>Perte pendant la séance : {} % de ton poids{}.{}</p></div></div>",
-  "where": "src/09_nutrition.js:775",
+  "where": "src/09_nutrition.js:804",
   "n": 1
  },
  {
   "h": "8dbf182935",
   "k": ", au-dessus du seuil de 2 % où la performance baisse : bois davantage pendant l'effort",
   "kind": "string",
-  "where": "src/09_nutrition.js:776",
+  "where": "src/09_nutrition.js:805",
   "n": 1
  },
  {
   "h": "2822a41b01",
   "k": ", sous le seuil de 2 % où la performance baisse",
   "kind": "string",
-  "where": "src/09_nutrition.js:776",
+  "where": "src/09_nutrition.js:805",
   "n": 1
  },
  {
   "h": "8c600d32d6",
   "k": "Pour récupérer, bois environ",
   "kind": "string",
-  "where": "src/09_nutrition.js:776",
+  "where": "src/09_nutrition.js:805",
   "n": 1
  },
  {
   "h": "2e6d0a4418",
   "k": "L dans les heures qui suivent (1,5 fois la perte), avec un repas ou une pincée de sel.",
   "kind": "string",
-  "where": "src/09_nutrition.js:776",
+  "where": "src/09_nutrition.js:805",
   "n": 1
  },
  {
   "h": "2a4b043690",
   "k": "Pour récupérer, bois environ {} L dans les heures qui suivent (1,5 fois la perte), avec un repas ou une pincée de sel.",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:776",
+  "where": "src/09_nutrition.js:805",
   "n": 1
  },
  {
   "h": "93fa2cced4",
   "k": "Entre une quantité en litres, entre 0 et 10.",
   "kind": "string",
-  "where": "src/09_nutrition.js:796",
+  "where": "src/09_nutrition.js:825",
   "n": 1
  },
  {
   "h": "64ee239734",
   "k": "Ce que tu as bu aujourd'hui (eau et boissons sans alcool)",
   "kind": "string",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
   "h": "79f982ed28",
   "k": "Ce que tu as bu ce jour-là",
   "kind": "string",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
@@ -27464,7 +28159,7 @@
   "k": "Hydratation",
   "kind": "attr",
   "ctx": "<{} title=\"Hydratation\" sub={} action={}> <div className=\"hydra-h\"><b className=\"hydra-v\">{} L</b><span className=\"muted small\">sur {} L{}</span></div> <{} value={} tone={} /> {} <p className=\"small muted\">{}{}.</p> <{} data={} unit=\"L\" digits={} target={} height={} /> <details><summary>Bien boire selon ton objectif</summary><ul className=\"small\"> <li>Urines claires ou jaune pâle : tu es bien hydr",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
@@ -27472,7 +28167,7 @@
   "k": "Bien boire selon ton objectif",
   "kind": "text",
   "ctx": "<{} title=\"Hydratation\" sub={} action={}> <div className=\"hydra-h\"><b className=\"hydra-v\">{} L</b><span className=\"muted small\">sur {} L{}</span></div> <{} value={} tone={} /> {} <p className=\"small muted\">{}{}.</p> <{} data={} unit=\"L\" digits={} target={} height={} /> <details><summary>Bien boire selon ton objectif</summary><ul className=\"small\"> <li>Urines claires ou jaune pâle : tu es bien hydr",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
@@ -27480,7 +28175,7 @@
   "k": "Urines claires ou jaune pâle : tu es bien hydraté ; foncées : bois davantage (Armstrong, 1994).",
   "kind": "text",
   "ctx": "<{} title=\"Hydratation\" sub={} action={}> <div className=\"hydra-h\"><b className=\"hydra-v\">{} L</b><span className=\"muted small\">sur {} L{}</span></div> <{} value={} tone={} /> {} <p className=\"small muted\">{}{}.</p> <{} data={} unit=\"L\" digits={} target={} height={} /> <details><summary>Bien boire selon ton objectif</summary><ul className=\"small\"> <li>Urines claires ou jaune pâle : tu es bien hydr",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
@@ -27488,7 +28183,7 @@
   "k": "Pendant l'effort : bois régulièrement pour ne pas perdre plus de 2 % de ton poids, seuil où la performance baisse (Sawka, 2007).",
   "kind": "text",
   "ctx": "<{} title=\"Hydratation\" sub={} action={}> <div className=\"hydra-h\"><b className=\"hydra-v\">{} L</b><span className=\"muted small\">sur {} L{}</span></div> <{} value={} tone={} /> {} <p className=\"small muted\">{}{}.</p> <{} data={} unit=\"L\" digits={} target={} height={} /> <details><summary>Bien boire selon ton objectif</summary><ul className=\"small\"> <li>Urines claires ou jaune pâle : tu es bien hydr",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
@@ -27496,28 +28191,28 @@
   "k": "Après : 1,5 fois l'eau perdue, avec un repas ou un peu de sel pour la garder (Shirreffs, 1996).",
   "kind": "text",
   "ctx": "<{} title=\"Hydratation\" sub={} action={}> <div className=\"hydra-h\"><b className=\"hydra-v\">{} L</b><span className=\"muted small\">sur {} L{}</span></div> <{} value={} tone={} /> {} <p className=\"small muted\">{}{}.</p> <{} data={} unit=\"L\" digits={} target={} height={} /> <details><summary>Bien boire selon ton objectif</summary><ul className=\"small\"> <li>Urines claires ou jaune pâle : tu es bien hydr",
-  "where": "src/09_nutrition.js:800",
+  "where": "src/09_nutrition.js:829",
   "n": 1
  },
  {
   "h": "18bbe61d95",
   "k": "· objectif atteint",
   "kind": "string",
-  "where": "src/09_nutrition.js:802",
+  "where": "src/09_nutrition.js:831",
   "n": 1
  },
  {
   "h": "076eaa931e",
   "k": "· encore",
   "kind": "string",
-  "where": "src/09_nutrition.js:802",
+  "where": "src/09_nutrition.js:831",
   "n": 1
  },
  {
   "h": "c75b80cb40",
   "k": "· encore {} L",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:802",
+  "where": "src/09_nutrition.js:831",
   "n": 1
  },
  {
@@ -27525,7 +28220,7 @@
   "k": "+ 250 mL",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27533,7 +28228,7 @@
   "k": "un verre",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27541,7 +28236,7 @@
   "k": "+ 500 mL",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27549,7 +28244,7 @@
   "k": "une bouteille",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27557,7 +28252,7 @@
   "k": "+ 750 mL",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27565,7 +28260,7 @@
   "k": "une gourde",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27573,7 +28268,7 @@
   "k": "− 250 mL",
   "kind": "text",
   "ctx": "<div className=\"hydra-btns\"> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 250 mL</b><small>un verre</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 500 mL</b><small>une bouteille</small></button> <button type=\"button\" className=\"addbtn\" onClick={}><b>+ 750 mL</b><small>une gourde</small></button> <button type=\"button\" className=\"addbtn\" disabled={} onClick={}>",
-  "where": "src/09_nutrition.js:804",
+  "where": "src/09_nutrition.js:833",
   "n": 1
  },
  {
@@ -27581,98 +28276,98 @@
   "k": "Total bu ce jour (L)",
   "kind": "attr",
   "ctx": "<div className=\"row2\"><{} label=\"Total bu ce jour (L)\" id=\"hy-edit\"><input id=\"hy-edit\" inputMode=\"decimal\" value={} onChange={} /></{}></div> <div className=\"actions\"><{} small onClick={}>Enregistrer</{}><{} small kind=\"quiet\" onClick={}>Annuler</{}></div>",
-  "where": "src/09_nutrition.js:809",
+  "where": "src/09_nutrition.js:838",
   "n": 1
  },
  {
   "h": "71f03bcbac",
   "k": "Repère du jour :",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "fd69fd1fa2",
   "k": "Repère du jour : {} L",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "09d2c513c6",
   "k": "Base :",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "ef0afdf48b",
   "k": "L (33 mL par kg)",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "f9f5a01b48",
   "k": "Base : {} L (33 mL par kg)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "d247db9c86",
   "k": "L pour",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "a5cda2bd90",
   "k": "d'entraînement (",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "b8533190b1",
   "k": "ton débit de sueur mesuré,",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "e479c35b9c",
   "k": "L par heure",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "a588fd6072",
   "k": "ton débit de sueur mesuré, {} L par heure",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "712c37906a",
   "k": "0,5 L par heure d'effort",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "838240b5dc",
   "k": "+ {} L pour {} d'entraînement ({})",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
   "h": "0f21881ae1",
   "k": ". Les jours d'entraînement, l'objectif augmente dès que ta séance est enregistrée",
   "kind": "string",
-  "where": "src/09_nutrition.js:811",
+  "where": "src/09_nutrition.js:840",
   "n": 1
  },
  {
@@ -27680,7 +28375,7 @@
   "k": "Avant l'entraînement : environ",
   "kind": "text",
   "ctx": "<li>Avant l'entraînement : environ {} mL dans les 4 heures qui précèdent (5 à 7 mL par kg, Thomas 2016).</li>",
-  "where": "src/09_nutrition.js:815",
+  "where": "src/09_nutrition.js:844",
   "n": 1
  },
  {
@@ -27688,7 +28383,7 @@
   "k": "mL dans les 4 heures qui précèdent (5 à 7 mL par kg, Thomas 2016).",
   "kind": "text",
   "ctx": "<li>Avant l'entraînement : environ {} mL dans les 4 heures qui précèdent (5 à 7 mL par kg, Thomas 2016).</li>",
-  "where": "src/09_nutrition.js:815",
+  "where": "src/09_nutrition.js:844",
   "n": 1
  },
  {
@@ -27696,28 +28391,28 @@
   "k": "Objectif perte de poids : un grand verre d'eau (500 mL) 30 minutes avant les deux repas principaux a aidé à perdre 1,3 kg de plus en 12 semaines (Parretti, 2015).",
   "kind": "text",
   "ctx": "<li>Objectif perte de poids : un grand verre d'eau (500 mL) 30 minutes avant les deux repas principaux a aidé à perdre 1,3 kg de plus en 12 semaines (Parretti, 2015).</li>",
-  "where": "src/09_nutrition.js:818",
+  "where": "src/09_nutrition.js:847",
   "n": 1
  },
  {
   "h": "aba906774a",
   "k": "· dernier test :",
   "kind": "string",
-  "where": "src/09_nutrition.js:820",
+  "where": "src/09_nutrition.js:849",
   "n": 1
  },
  {
   "h": "917279469d",
   "k": "L par heure (",
   "kind": "string",
-  "where": "src/09_nutrition.js:820",
+  "where": "src/09_nutrition.js:849",
   "n": 1
  },
  {
   "h": "3788c9edd2",
   "k": "· dernier test : {} L par heure ({})",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:820",
+  "where": "src/09_nutrition.js:849",
   "n": 1
  },
  {
@@ -27725,21 +28420,21 @@
   "k": "Mesurer ma perte en sueur",
   "kind": "text",
   "ctx": "<details open={}><summary onClick={}>Mesurer ma perte en sueur{}</summary> {}</details>",
-  "where": "src/09_nutrition.js:820",
+  "where": "src/09_nutrition.js:849",
   "n": 1
  },
  {
   "h": "47437ea276",
   "k": "Repas ajouté.",
   "kind": "string",
-  "where": "src/09_nutrition.js:847",
+  "where": "src/09_nutrition.js:876",
   "n": 1
  },
  {
   "h": "77778d4e60",
   "k": "Objectif enregistré.",
   "kind": "string",
-  "where": "src/09_nutrition.js:850",
+  "where": "src/09_nutrition.js:879",
   "n": 1
  },
  {
@@ -27747,7 +28442,7 @@
   "k": "La nutrition est incluse dans le Lite + Nutrition.",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
@@ -27755,7 +28450,7 @@
   "k": "Ce que l'option ajoute",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
@@ -27763,7 +28458,7 @@
   "k": "Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
@@ -27771,7 +28466,7 @@
   "k": "Le journal des repas, avec des plats types et leurs macros",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
@@ -27779,7 +28474,7 @@
   "k": "Le scan des produits par code-barres",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
@@ -27787,28 +28482,28 @@
   "k": "Le livre de recettes, filtré selon ton objectif",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"hero\"><div className=\"eyebrow\">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div> <{} title=\"Ce que l'option ajoute\" sub={}> <ul className=\"small\"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des",
-  "where": "src/09_nutrition.js:856",
+  "where": "src/09_nutrition.js:885",
   "n": 1
  },
  {
   "h": "c4a8cc808f",
   "k": "Pour",
   "kind": "string",
-  "where": "src/09_nutrition.js:858",
+  "where": "src/09_nutrition.js:887",
   "n": 2
  },
  {
   "h": "27be78ead2",
   "k": "de plus par mois",
   "kind": "string",
-  "where": "src/09_nutrition.js:858",
+  "where": "src/09_nutrition.js:887",
   "n": 1
  },
  {
   "h": "b5b84a5deb",
   "k": "Pour {} de plus par mois",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:858",
+  "where": "src/09_nutrition.js:887",
   "n": 1
  },
  {
@@ -27816,49 +28511,49 @@
   "k": "Passer au Lite + Nutrition",
   "kind": "text",
   "ctx": "<div className=\"btnrow\"><{} small onClick={}>Passer au Lite + Nutrition</{}></div>",
-  "where": "src/09_nutrition.js:861",
+  "where": "src/09_nutrition.js:890",
   "n": 1
  },
  {
   "h": "31c621f5bc",
   "k": "Des repas équilibrés, sans compter.",
   "kind": "string",
-  "where": "src/09_nutrition.js:866",
+  "where": "src/09_nutrition.js:895",
   "n": 1
  },
  {
   "h": "888cc760bc",
   "k": "Fixe ton objectif en 1 minute.",
   "kind": "string",
-  "where": "src/09_nutrition.js:866",
+  "where": "src/09_nutrition.js:895",
   "n": 1
  },
  {
   "h": "bc935a38be",
   "k": "Mon journal",
   "kind": "string",
-  "where": "src/09_nutrition.js:867",
+  "where": "src/09_nutrition.js:896",
   "n": 1
  },
  {
   "h": "4643aa8314",
   "k": "Recettes",
   "kind": "string",
-  "where": "src/09_nutrition.js:867",
+  "where": "src/09_nutrition.js:896",
   "n": 2
  },
  {
   "h": "32354e678e",
   "k": "Mon objectif",
   "kind": "string",
-  "where": "src/09_nutrition.js:867",
+  "where": "src/09_nutrition.js:896",
   "n": 2
  },
  {
   "h": "8828c6d667",
   "k": "Ajouté à ton journal d'aujourd'hui.",
   "kind": "string",
-  "where": "src/09_nutrition.js:868",
+  "where": "src/09_nutrition.js:897",
   "n": 1
  },
  {
@@ -27866,7 +28561,7 @@
   "k": "Jour précédent",
   "kind": "attr",
   "ctx": "<div className=\"daynav\"><button type=\"button\" className=\"x\" aria-label=\"Jour précédent\" onClick={}>‹</button> <b>{}</b> <button type=\"button\" className=\"x\" aria-label=\"Jour suivant\" disabled={} onClick={}>›</button></div> {} {} <div className=\"addrow\"> {} <button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">▥</span><b>Scanner un produit</b><small>code-barres</small></button>",
-  "where": "src/09_nutrition.js:871",
+  "where": "src/09_nutrition.js:900",
   "n": 2
  },
  {
@@ -27874,7 +28569,7 @@
   "k": "Jour suivant",
   "kind": "attr",
   "ctx": "<div className=\"daynav\"><button type=\"button\" className=\"x\" aria-label=\"Jour précédent\" onClick={}>‹</button> <b>{}</b> <button type=\"button\" className=\"x\" aria-label=\"Jour suivant\" disabled={} onClick={}>›</button></div> {} {} <div className=\"addrow\"> {} <button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">▥</span><b>Scanner un produit</b><small>code-barres</small></button>",
-  "where": "src/09_nutrition.js:871",
+  "where": "src/09_nutrition.js:900",
   "n": 2
  },
  {
@@ -27882,7 +28577,7 @@
   "k": "Scanner un produit",
   "kind": "text",
   "ctx": "<div className=\"daynav\"><button type=\"button\" className=\"x\" aria-label=\"Jour précédent\" onClick={}>‹</button> <b>{}</b> <button type=\"button\" className=\"x\" aria-label=\"Jour suivant\" disabled={} onClick={}>›</button></div> {} {} <div className=\"addrow\"> {} <button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">▥</span><b>Scanner un produit</b><small>code-barres</small></button>",
-  "where": "src/09_nutrition.js:871",
+  "where": "src/09_nutrition.js:900",
   "n": 2
  },
  {
@@ -27890,7 +28585,7 @@
   "k": "plats types, aliments",
   "kind": "text",
   "ctx": "<div className=\"daynav\"><button type=\"button\" className=\"x\" aria-label=\"Jour précédent\" onClick={}>‹</button> <b>{}</b> <button type=\"button\" className=\"x\" aria-label=\"Jour suivant\" disabled={} onClick={}>›</button></div> {} {} <div className=\"addrow\"> {} <button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">▥</span><b>Scanner un produit</b><small>code-barres</small></button>",
-  "where": "src/09_nutrition.js:871",
+  "where": "src/09_nutrition.js:900",
   "n": 1
  },
  {
@@ -27898,7 +28593,7 @@
   "k": "dont +",
   "kind": "text",
   "ctx": "<span className=\"small ok-t\">dont +{} kcal de bonus d'activité</span>",
-  "where": "src/09_nutrition.js:876",
+  "where": "src/09_nutrition.js:905",
   "n": 1
  },
  {
@@ -27906,7 +28601,7 @@
   "k": "kcal de bonus d'activité",
   "kind": "text",
   "ctx": "<span className=\"small ok-t\">dont +{} kcal de bonus d'activité</span>",
-  "where": "src/09_nutrition.js:876",
+  "where": "src/09_nutrition.js:905",
   "n": 1
  },
  {
@@ -27914,7 +28609,7 @@
   "k": "calories estimées",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">📷</span><b>Photo du repas</b><small>calories estimées</small></button>",
-  "where": "src/09_nutrition.js:879",
+  "where": "src/09_nutrition.js:908",
   "n": 1
  },
  {
@@ -27922,7 +28617,7 @@
   "k": "Décrire",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">✎</span><b>Décrire</b><small>en une phrase</small></button>",
-  "where": "src/09_nutrition.js:881",
+  "where": "src/09_nutrition.js:910",
   "n": 1
  },
  {
@@ -27930,21 +28625,21 @@
   "k": "en une phrase",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"addbtn\" onClick={}><span className=\"ab-i\">✎</span><b>Décrire</b><small>en une phrase</small></button>",
-  "where": "src/09_nutrition.js:881",
+  "where": "src/09_nutrition.js:910",
   "n": 1
  },
  {
   "h": "a7e47ca4ee",
   "k": "Photo, description et lecture d'étiquette demandent d'ouvrir l'application connecté à ton compte Claude.",
   "kind": "string",
-  "where": "src/09_nutrition.js:884",
+  "where": "src/09_nutrition.js:913",
   "n": 1
  },
  {
   "h": "ded73460a1",
   "k": "Ton coach a désactivé le coach IA.",
   "kind": "string",
-  "where": "src/09_nutrition.js:884",
+  "where": "src/09_nutrition.js:913",
   "n": 1
  },
  {
@@ -27952,28 +28647,28 @@
   "k": "Supprimer",
   "kind": "text",
   "ctx": "<div key={} className=\"meal\"> <div className=\"meal-h\"><b>{}</b>{}<button type=\"button\" className=\"linkbtn\" onClick={}>Supprimer</button></div> <p className=\"muted small\">{}{}</p> {}</div>",
-  "where": "src/09_nutrition.js:886",
+  "where": "src/09_nutrition.js:915",
   "n": 3
  },
  {
   "h": "cb87ac824c",
   "k": "— {} kcal · P {} g",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:888",
+  "where": "src/09_nutrition.js:917",
   "n": 1
  },
  {
   "h": "0ea3a3c09e",
   "k": "Prends ton repas en photo, scanne un produit ou décris-le.",
   "kind": "string",
-  "where": "src/09_nutrition.js:889",
+  "where": "src/09_nutrition.js:918",
   "n": 1
  },
  {
   "h": "f60f97d3fd",
   "k": "Scanne un produit ou ajoute tes aliments en quelques secondes.",
   "kind": "string",
-  "where": "src/09_nutrition.js:889",
+  "where": "src/09_nutrition.js:918",
   "n": 1
  },
  {
@@ -27981,7 +28676,7 @@
   "k": "Aucun repas noté",
   "kind": "attr",
   "ctx": "<{} title=\"Aucun repas noté\" text={} />",
-  "where": "src/09_nutrition.js:889",
+  "where": "src/09_nutrition.js:918",
   "n": 1
  },
  {
@@ -27989,7 +28684,7 @@
   "k": "7 derniers jours",
   "kind": "attr",
   "ctx": "<{} title=\"7 derniers jours\" sub=\"Calories notées par jour ; le trait indique ta cible\"><{} data={} unit=\"kcal\" target={} /></{}>",
-  "where": "src/09_nutrition.js:892",
+  "where": "src/09_nutrition.js:921",
   "n": 1
  },
  {
@@ -27997,21 +28692,21 @@
   "k": "Calories notées par jour ; le trait indique ta cible",
   "kind": "attr",
   "ctx": "<{} title=\"7 derniers jours\" sub=\"Calories notées par jour ; le trait indique ta cible\"><{} data={} unit=\"kcal\" target={} /></{}>",
-  "where": "src/09_nutrition.js:892",
+  "where": "src/09_nutrition.js:921",
   "n": 1
  },
  {
   "h": "981da77455",
   "k": "Décrire un repas",
   "kind": "string",
-  "where": "src/09_nutrition.js:894",
+  "where": "src/09_nutrition.js:923",
   "n": 1
  },
  {
   "h": "9c78b18608",
   "k": "Saisir un repas",
   "kind": "string",
-  "where": "src/09_nutrition.js:894",
+  "where": "src/09_nutrition.js:923",
   "n": 1
  },
  {
@@ -28019,7 +28714,7 @@
   "k": "Fixe ton objectif nutrition",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"srow\" onClick={}><span className=\"srow-id\">🍽</span><span className=\"srow-t\"><b>Fixe ton objectif nutrition</b><span className=\"muted small\">Calories, protéines et pas calculés pour toi en 1 minute</span></span><span className=\"srow-s\">›</span></button>",
-  "where": "src/09_nutrition.js:903",
+  "where": "src/09_nutrition.js:932",
   "n": 1
  },
  {
@@ -28027,7 +28722,7 @@
   "k": "Calories, protéines et pas calculés pour toi en 1 minute",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"srow\" onClick={}><span className=\"srow-id\">🍽</span><span className=\"srow-t\"><b>Fixe ton objectif nutrition</b><span className=\"muted small\">Calories, protéines et pas calculés pour toi en 1 minute</span></span><span className=\"srow-s\">›</span></button>",
-  "where": "src/09_nutrition.js:903",
+  "where": "src/09_nutrition.js:932",
   "n": 1
  },
  {
@@ -28035,7 +28730,7 @@
   "k": "Nutrition du jour",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:908",
+  "where": "src/09_nutrition.js:937",
   "n": 1
  },
  {
@@ -28043,7 +28738,7 @@
   "k": "noté",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:908",
+  "where": "src/09_nutrition.js:937",
   "n": 1
  },
  {
@@ -28051,7 +28746,7 @@
   "k": "Eau :",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:908",
+  "where": "src/09_nutrition.js:937",
   "n": 1
  },
  {
@@ -28059,7 +28754,7 @@
   "k": "Recette de la semaine :",
   "kind": "text",
   "ctx": "<span className=\"small\">Recette de la semaine : <b>{}</b></span>",
-  "where": "src/09_nutrition.js:910",
+  "where": "src/09_nutrition.js:939",
   "n": 1
  },
  {
@@ -28067,35 +28762,35 @@
   "k": "Ajoute tes repas pour un retour sur l'équilibre de ton assiette.",
   "kind": "text",
   "ctx": "<span className=\"small\">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
   "h": "39c89e475c",
   "k": "activité)",
   "kind": "string",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
   "h": "8d0e0d1e45",
   "k": "(+{} activité)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
   "h": "66d428c3d3",
   "k": "· dépense",
   "kind": "string",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
   "h": "634abd5c65",
   "k": "· dépense {} kcal",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
@@ -28103,7 +28798,7 @@
   "k": "· protéines",
   "kind": "text",
   "ctx": "<{} value={} /><span className=\"small\">{} / {} kcal{} · protéines {} / {} g{}</span>",
-  "where": "src/09_nutrition.js:912",
+  "where": "src/09_nutrition.js:941",
   "n": 1
  },
  {
@@ -41373,6 +42068,76 @@
   "ctx": "<p className=\"muted small\">Aucun aliment trouvé : essaie un autre mot.</p>",
   "where": "src/22_ciqual.js:115",
   "n": 1
+ },
+ {
+  "h": "ed38914710",
+  "k": "portion moyenne",
+  "kind": "string",
+  "where": "src/22_ciqual.js:124",
+  "n": 4
+ },
+ {
+  "h": "727b7b5eae",
+  "k": "petite portion",
+  "kind": "string",
+  "where": "src/22_ciqual.js:124",
+  "n": 7
+ },
+ {
+  "h": "687d551cc2",
+  "k": "grosse portion",
+  "kind": "string",
+  "where": "src/22_ciqual.js:124",
+  "n": 3
+ },
+ {
+  "h": "6a15f462a8",
+  "k": "portion habituelle",
+  "kind": "string",
+  "where": "src/22_ciqual.js:129",
+  "n": 1
+ },
+ {
+  "h": "12f13f3850",
+  "k": "cuillère à soupe",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 36
+ },
+ {
+  "h": "283f1056ff",
+  "k": "cuillère à café",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 11
+ },
+ {
+  "h": "273947e21e",
+  "k": "poignée",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 12
+ },
+ {
+  "h": "760ddda6f0",
+  "k": "assiette moyenne",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 3
+ },
+ {
+  "h": "d218aa87e9",
+  "k": "pincée",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 2
+ },
+ {
+  "h": "28d0d98bd1",
+  "k": "dose (1 scoop)",
+  "kind": "string",
+  "where": "src/22_ciqual.js:170",
+  "n": 2
  },
  {
   "h": "3c35fe7799",

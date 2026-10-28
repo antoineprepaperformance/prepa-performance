@@ -17,7 +17,7 @@ const FILES = [...fs.readdirSync(SRC).filter((f) => f.endsWith(".js") && !COACH_
   ...fs.readdirSync(path.join(SRC, "site")).filter((f) => f.endsWith(".js")).sort().map((f) => path.join(SRC, "site", f))];
 
 /* fonctions et constantes jamais vues par un client : espace coach, consignes de l'IA */
-const SKIP_FN = new Set(["PlanEditor", "CodesView", "Library", "SettingsView", "CoachRulesAlert", "rulesForCoach", "DEFAULT_AI_RULES", "clientContext",
+const SKIP_FN = new Set(["U_WORDS", "F_ALIAS", "Q_WORDS", "S_WORDS", "U_CANON", "spoons", "quickChunks", "quickParse1", "quickFood", "PlanEditor", "CodesView", "Library", "SettingsView", "CoachRulesAlert", "rulesForCoach", "DEFAULT_AI_RULES", "clientContext",
   "exerciseCatalog", "aiRules", "draftReply", "mealPrompt", "productPrompt", "weeklyReview", "TerrainLibrary", "ProfileFacts", "SiteIaStatus", "DbTestCard",
   "SiteAccessHowto", "makeTools", "recipePrompt", "videoPrompt", "COACH_NAV", "rowInfo", "accessCode", "importPackage", "deleteClient", "LiteNotice",
   "liteNoticeMail", "OwnerDash", "ClientsView", "ClientDetail", "ClientOverview", "AddClient", "DemoBar", "InboxView", "SignOutLink", "CoachMsg",

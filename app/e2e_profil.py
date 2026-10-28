@@ -132,8 +132,11 @@ async def run():
             await c.locator("button.addbtn", has_text="Saisir").click(); await c.wait_for_timeout(300)
             await c.fill("#fd-q", "riz basm"); await c.wait_for_timeout(400)
             sug = c.locator(".sugg button", has_text="Riz basmati, cuit, sans sel ajouté")
-            ok(await sug.count() >= 1 and "148 kcal / 100 g" in await sug.first.inner_text(), "recherche dans la table de l'ANSES (riz basmati cuit : 148 kcal / 100 g)")
+            st = await sug.first.inner_text() if await sug.count() else ""
+            ok("assiette moyenne" in st and "222 kcal" in st, "recherche dans la table de l'ANSES (riz basmati cuit : 1 assiette moyenne ≈ 150 g = 222 kcal)", st)
             await sug.first.click(); await c.wait_for_timeout(300)
+            w = c.locator(".modal .it-wrap").first
+            await w.locator(".it-u").select_option(label="g"); await w.locator(".it-gin").fill("100"); await c.wait_for_timeout(200)
             ok(await c.locator(".it-src", has_text="ANSES").count() == 1, "aliment ajouté avec sa source ANSES")
             await c.locator(".it-meta").get_by_role("button", name="changer").first.click(); await c.fill("#ciq-sw", "quinoa cuit"); await c.wait_for_timeout(300)
             await c.locator(".ciq-swap .sugg button", has_text="Quinoa").first.click(); await c.wait_for_timeout(300)

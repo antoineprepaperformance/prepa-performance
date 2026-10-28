@@ -272,7 +272,10 @@ async def run():
         await cl.locator("button.addbtn", has_text="Saisir").click(); await cl.wait_for_timeout(200)
         await cl.fill("#fd-q", "riz"); await cl.locator(".sugg button", has_text="Riz blanc cuit").click()
         await cl.fill("#fd-q", "poul"); await cl.locator(".sugg button", has_text="Blanc de poulet").click()
-        await cl.locator(".modal .it-g input").first.fill("200")
+        ok("assiette moyenne" in await cl.locator(".modal .it-wrap").first.inner_text(), "site : portion parlante proposée d'office (riz : 1 assiette moyenne)")
+        for i, g in ((0, "200"), (1, "150")):
+            w = cl.locator(".modal .it-wrap").nth(i)
+            await w.locator(".it-u").select_option(label="g"); await w.locator(".it-gin").fill(g)
         await shot(cl, "nutrition_saisie_aliments", full=False)
         await cl.locator(".modal").get_by_role("button", name="Ajouter au journal").click(); await cl.wait_for_timeout(500)
         today = datetime.date.today().isoformat()

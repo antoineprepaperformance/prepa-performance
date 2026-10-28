@@ -64,7 +64,8 @@ async def run():
             await cl.set_input_files("#meal-photo", T + "photo_repas.jpg"); await cl.wait_for_timeout(300)
             await btn(cl, "Analyser la photo"); await cl.wait_for_timeout(600)
             await shot(cl, "c1_photo_result", full=False)
-            await cl.locator(".it-g input").nth(1).fill("250"); await cl.wait_for_timeout(100)
+            w1 = cl.locator(".it-wrap").nth(1)
+            await w1.locator(".it-u").select_option(label="g"); await w1.locator(".it-gin").fill("250"); await cl.wait_for_timeout(100)
             await btn(cl, "Ajouter au journal"); await cl.wait_for_timeout(400)
             # scan code-barres
             await cl.locator("button.addbtn", has_text="Scanner").click()

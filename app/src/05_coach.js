@@ -108,7 +108,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
 
   const previewSrc = useMemo(() => (preview ? memSource(demo[preview === true ? "demo_lucas" : preview], "demo") : null), [preview]);
   if (preview && previewSrc) {
-    return html`<${ClientApp} key=${String(preview)} src=${previewSrc} settings=${settings} lib=${lib} exo=${exo} db=${null} demo=${true} onExit=${() => setPreview(false)}
+    return html`<${ClientApp} key=${String(preview)} src=${previewSrc} settings=${settings} lib=${lib} exo=${exo} db=${null} demo=${true} onExit=${() => { try { sessionStorage.removeItem("saison_preview"); } catch (e) {} setPreview(false); }}
       onSwitch=${() => setPreview(preview === "demo_sophie" ? "demo_lucas" : "demo_sophie")} />`;
   }
   const selRow = sel && rows.find((r) => r.cid === sel.cid);
@@ -136,7 +136,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "codes" ? html`<${CodesView} db=${db} codes=${codes.items} rows=${rows} lib=${lib} />` : null}
       ${view === "dash" && db ? html`<${FinAlert} fin=${fin} go=${go} />` : null}
       ${view === "finances" ? html`<${FinancesView} db=${db} fin=${fin} settings=${settings} rows=${rows} />` : null}
-      ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} />` : null}
+      ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} onPreview=${(d) => { try { sessionStorage.setItem("saison_preview", d); } catch (e) {} setPreview(true); }} />` : null}
     </main>
     <${Modal} open=${addOpen} title="Ajouter un client" onClose=${() => setAddOpen(false)}>${addOpen ? html`<${AddClient} db=${db} lib=${lib} settings=${settings} onDone=${(cid) => { setAddOpen(false); if (cid) openClient(cid, "plan"); }} />` : null}</${Modal}>
     <${Modal} open=${importOpen} title="Importer un envoi client" onClose=${() => setImportOpen(false)}>${importOpen ? html`<${ImportBox} db=${db} onDone=${(cid) => { setImportOpen(false); if (cid) openClient(cid, "vue"); }} />` : null}</${Modal}>

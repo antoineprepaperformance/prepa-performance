@@ -215,7 +215,7 @@ function SiteIaStatus({ relay }) {
   return html`<div className="alert"><div><b>État sur le site : ${x ? x[1] : "vérification…"}</b>${x ? html`<p>${x[2]}</p>` : null}</div>
     <div className="btnrow">${x ? html`<${Pill} tone=${x[0]}>${x[0] === "ok" ? "OK" : "À faire"}</${Pill}>` : null}<${Btn} small kind="ghost" onClick=${check}>Revérifier</${Btn}></div></div>`;
 }
-function SettingsView({ settings, db, dl, rows }) {
+function SettingsView({ settings, db, dl, rows, onPreview }) {
   const toast = useToast();
   const s0 = settings || {};
   const [coach, setCoach] = useState({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(s0.coach || {}) });
@@ -358,8 +358,44 @@ function SettingsView({ settings, db, dl, rows }) {
         <li><b>Sans compte :</b> « Ajouter un client » puis envoie-lui le lien de la page et son code d'accès (onglet Plan). Il t'envoie ses données sous forme de texte, que tu importes.</li>
         <li>Les deux modes ne se mélangent pas sur un même lien : si tu partages la page par lien public, les clients invités par e-mail passent eux aussi en mode « sans compte ».</li>
       </ol></${Card}>`}
+    <${SaisonsCard} settings=${settings} db=${db} onPreview=${onPreview} />
     ${window.IS_SITE ? html`<${Card} title="Mon compte"><${SignOutLink} /></${Card}>` : null}
     <${Card} title="Sauvegarde" sub="Télécharge toutes les données (clients, séances, bilans, tests, programmes perso)">
       <${Btn} kind="ghost" onClick=${exportAll} disabled=${busy}>${busy ? "Préparation…" : "Télécharger une sauvegarde"}</${Btn}></${Card}>
   </div>`;
+}
+
+/* ---------- thèmes de saison et défis (coach) ---------- */
+function SaisonsCard({ settings, db, onPreview }) {
+  const toast = useToast();
+  const conf = saisonConf(settings);
+  const [off, setOff] = useState(conf.off);
+  const [msg, setMsg] = useState(conf.msg);
+  const [edit, setEdit] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const list = saisonUpcoming(todayISO(), 13);
+  const cur = saisonActive(todayISO(), { saisons: { off, msg } });
+  const save = async () => {
+    setBusy(true);
+    try { await dbSet(db, "settings/app", { ...(settings || {}), saisons: { off, msg } }); toast("Thèmes et défis enregistrés.", "ok"); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<${Card} title="Thèmes et défis de saison" sub="L'application se met aux couleurs des fêtes et des grandes compétitions, avec un défi à chaque fois. Tout se fait seul aux bonnes dates : tu peux couper un événement ou changer son message.">
+    ${cur ? html`<p className="small"><b>En ce moment :</b> ${cur.ev.n}, jusqu'au ${fmtD(cur.to)}.</p>` : html`<p className="small muted">Aucun événement en ce moment.</p>`}
+    <ul className="saisons-l">${list.map((ed) => html`<li key=${ed.key} className=${off[ed.ev.id] ? "off" : ""}>
+      <span className="saison-i" style=${{ width: "40px", height: "40px" }}><${SaisonIcon} k=${ed.ev.icon} size=${22} /></span>
+      <span className="sl-t"><b>${ed.ev.n}</b><span className="muted small">${fmtD(ed.from)} → ${fmtD(ed.to)} · ${ed.ev.defi.n} (${ed.ev.defi.target} ${ed.ev.defi.type === "jours" ? "jours" : "séances"})</span>
+        ${msg[ed.ev.id] ? html`<span className="small">Ton message : ${msg[ed.ev.id]}</span>` : null}</span>
+      <span className="btnrow"><button type="button" className="linkbtn sm" onClick=${() => setEdit(ed)}>Message</button>
+        ${onPreview ? html`<button type="button" className="linkbtn sm" onClick=${() => onPreview(addDays(ed.from, Math.min(5, diffDays(ed.from, ed.to))))}>Aperçu</button>` : null}</span>
+      <button type="button" role="switch" aria-checked=${!off[ed.ev.id]} aria-label=${"Activer : " + ed.ev.n} className=${"tgl" + (!off[ed.ev.id] ? " on" : "")} onClick=${() => setOff({ ...off, [ed.ev.id]: !off[ed.ev.id] })}><span></span></button></li>`)}</ul>
+    <p className="muted small">Les compétitions des années suivantes sont ajoutées par la mise à jour de chaque semaine, avec leurs dates officielles. Elles sont annoncées sans leur nom officiel, sans équipe, sans pays et sans logo : seulement « une grande compétition arrive » et ses dates.</p>
+    <p className="muted small">Elles restent à l'intérieur de l'application, pour tes clients. La page d'accueil publique ne montre que les fêtes : une compétition utilisée pour vendre (publicité, publication, offre « spéciale Tournoi ») peut être attaquée par l'organisateur (code du sport, art. L333-1). Si tu écris ton propre message, garde la même règle ; sur Instagram, parle de ton défi sans le nom ni les images de la compétition.</p>
+    <div className="btnrow"><${Btn} onClick=${save} disabled=${busy}>Enregistrer les thèmes</${Btn}></div>
+    <${Modal} open=${!!edit} title=${edit ? "Message : " + edit.ev.n : ""} onClose=${() => setEdit(null)}>${edit ? html`<div className="stack">
+      <p className="small muted">Texte par défaut : ${edit.ev.x}</p>
+      <${Field} label="Ton message (facultatif)" id="sa-msg"><textarea id="sa-msg" rows="3" value=${msg[edit.ev.id] || ""} onChange=${(e) => setMsg({ ...msg, [edit.ev.id]: e.target.value.slice(0, 200) })}></textarea></${Field}>
+      <p className="small muted">Écris en français : tes clients en anglais ou en espagnol voient le texte par défaut traduit tant que ton message est vide.</p>
+      <div className="btnrow"><${Btn} onClick=${() => setEdit(null)}>OK</${Btn}><${Btn} kind="quiet" onClick=${() => { const m = { ...msg }; delete m[edit.ev.id]; setMsg(m); setEdit(null); }}>Revenir au texte par défaut</${Btn}></div></div>` : null}</${Modal}>
+  </${Card}>`;
 }

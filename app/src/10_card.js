@@ -174,7 +174,9 @@ function cardEvolution(data, plan, prog, lib) {
   return { now, prev, d, deltas: prev ? Object.fromEntries(now.attrs.map((a, i) => [a.k, a.v - prev.attrs[i].v])) : {} };
 }
 /* badges */
-function badgesOf(data, plan, prog, lib) {
+/* badges du programme, puis ceux des défis de saison réussis */
+function badgesOf(data, plan, prog, lib) { return [...badgesBase(data, plan, prog, lib), ...(typeof saisonBadges === "function" ? saisonBadges(data && data.profile) : [])]; }
+function badgesBase(data, plan, prog, lib) {
   const logs = Object.values(data.logs || {}).filter((l) => l && l.kind !== "presentiel").sort((a, b) => String(a.date).localeCompare(String(b.date)));
   const ps = plan ? planState(plan, todayISO()) : null;
   const curW = ps ? (ps.phase === "fini" ? plan.weeks + 1 : ps.week) : 0;

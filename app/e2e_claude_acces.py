@@ -94,7 +94,7 @@ async def run():
             await sp.close(); await c3.wait_for_timeout(500)
             ok(await has(c3, "Commande en attente de paiement") and await has(c3, "Reprendre le paiement"), "client : commande en attente, paiement reprenable")
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1000)
-            ok(await has(co, "Paiement Stripe à vérifier · 99 €"), "coach : paiement à vérifier dans Stripe")
+            ok(await has(co, "Paiement Stripe à vérifier · 119 €"), "coach : paiement à vérifier dans Stripe")
             await co.locator("ul.alerts button", has_text="Paul").first.click(); await co.wait_for_timeout(500)
             await btn(co, "Paiement reçu · activer"); await co.wait_for_timeout(600)
             await shot(co, "coach_commandes")

@@ -16,8 +16,8 @@ service cloud.firestore {
     // ---- accès au programme : créé par le coach, ou par le client avec un code ou un paiement valide ----
     function planKeysOk(p) {
       return p.keys().hasOnly(['programId', 'offer', 'weeks', 'start', 'equipment', 'status', 'niveau', 'medicalHold', 'compDate', 'message', 'extra',
-          'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite'])
-        && p.status == 'active' && p.programId is string && p.offer in ['ia', 'essentiel', 'suivi', 'hybride', 'lite']
+          'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite', 'customCycle', 'customAt'])
+        && p.status == 'active' && p.programId is string && p.offer in ['ia', 'essentiel', 'suivi', 'surmesure', 'hybride', 'lite']
         && p.weeks is int && p.weeks >= 1 && p.weeks <= 12 && p.grantWeeks is int
         && p.start is string && p.start.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && p.niveau in ['reprise', 'sportif', 'perf', 'elite'] && p.cycle is int;
@@ -49,14 +49,17 @@ service cloud.firestore {
       return p.offer == 'lite' && p.lite is map && p.startMs is int && p.untilMs is int && p.until is string
         && p.grantWeeks == 0 && p.weeks == 12 && p.untilMs > p.startMs;
     }
+    // nouvel accès Lite : daté d'aujourd'hui (la nutrition reste incluse pour les accès Lite d'avant le 28 octobre 2026, 0 h à Paris)
     function liteNewOk(p, maxMs) {
       return p.untilMs - p.startMs <= maxMs && p.startMs >= nowMs() - 2 * dayMs() && p.startMs <= nowMs() + 61 * dayMs()
+        && p.get('validatedAt', '') is string && p.get('validatedAt', '') >= '2026-10-27T23:00'
         && ((resource == null && p.cycle == 1) || (resource != null && p.cycle == resource.data.get('cycle', 1) + 1));
     }
     function liteExtOk(p, maxMs) {
       let d = resource.data;
       return d.get('offer', '') == 'lite' && d.untilMs > nowMs() && p.programId == d.programId && p.startMs == d.startMs && p.start == d.start
-        && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle == d.get('cycle', 1);
+        && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle == d.get('cycle', 1)
+        && p.get('validatedAt', '') == d.get('validatedAt', '') && (p.lite.get('nutri', false) == true) == (d.lite.get('nutri', false) == true);
     }
     function litePayGrant(pid, cid, p) {
       let before = get(/databases/$(database)/documents/payments/$(pid)).data;
@@ -64,6 +67,7 @@ service cloud.firestore {
       return before.uid == cid && before.ok == true && before.used == false && after.used == true
         && before.offer == 'lite' && before.get('renewal', false) == false && liteShapeOk(p)
         && p.lite.period == before.period && p.lite.mode == before.mode && (before.mode != 'abo' || p.lite.sub == before.sub)
+        && (p.lite.get('nutri', false) == true) == (before.get('nutri', false) == true)
         && (liteNewOk(p, perMax(before.period)) || (resource != null && liteExtOk(p, perMax(before.period))));
     }
     // renouvellement d'abonnement confirmé par le relais : seule la date de fin avance, à la date payée
@@ -79,21 +83,66 @@ service cloud.firestore {
       let before = get(/databases/$(database)/documents/codes/$(code)).data;
       let after = getAfter(/databases/$(database)/documents/codes/$(code)).data;
       return !(cid in before.usedBy) && (cid in after.usedBy) && before.offer == 'lite' && liteShapeOk(p) && p.lite.mode == 'code'
+        && (p.lite.get('nutri', false) == true) == (before.get('nutri', false) == true)
         && (before.programId == null || p.programId == before.programId)
         && (liteNewOk(p, before.weeks * 7 * dayMs() + 2 * 3600000) || (resource != null && liteExtOk(p, before.weeks * 7 * dayMs() + 2 * 3600000)));
     }
-    // programme suivant choisi par le client pendant son accès Lite (accès, paiement et avis médical inchangés)
+    // ---- formules de 6 et 12 mois, et prolongations d'un accès daté : début (startMs) → fin (untilMs), comme le Lite ----
+    function moMax(g) { return (g == 4 ? 32 : g == 12 ? 93 : g == 26 ? 186 : 367) * dayMs(); }
+    function datedShapeOk(p, g) {
+      return p.offer in ['ia', 'essentiel', 'suivi', 'surmesure'] && !('lite' in p) && g in [4, 12, 26, 52] && p.grantWeeks == g
+        && p.startMs is int && p.untilMs is int && p.until is string && p.untilMs > p.startMs;
+    }
+    function datedNewOk(p, g) {
+      return g >= 26 && p.untilMs - p.startMs <= moMax(g) && p.startMs >= nowMs() - 2 * dayMs() && p.startMs <= nowMs() + 61 * dayMs()
+        && ((resource == null && p.cycle == 1) || (resource != null && p.cycle == resource.data.get('cycle', 1) + 1));
+    }
+    // fin d'un accompagnement de 1 ou 3 mois (début + semaines)
+    function shortEndMs(d) {
+      let x = d.start.split('-');
+      return timestamp.date(int(x[0]), int(x[1]), int(x[2])).toMillis() + d.weeks * 7 * dayMs();
+    }
+    // 1 ou 3 mois en cours, même programme, passage à 6 ou 12 mois : le programme continue, l'accès daté part de sa fin
+    function datedConvOk(p, g) {
+      let d = resource.data;
+      return g >= 26 && !('untilMs' in d) && d.get('offer', '') != 'lite' && d.status == 'active' && p.programId == d.programId && p.start == d.start
+        && p.cycle == d.get('cycle', 1) && shortEndMs(d) > nowMs() - dayMs()
+        && p.startMs >= nowMs() - 2 * dayMs() && p.startMs <= nowMs() + dayMs()
+        && p.untilMs - (shortEndMs(d) > nowMs() ? shortEndMs(d) : nowMs()) <= moMax(g);
+    }
+    // accès daté en cours, même formule et même programme : seule la date de fin avance, du nombre de mois payés
+    function datedExtOk(p, g) {
+      let d = resource.data;
+      return d.get('offer', '') == p.offer && d.get('untilMs', 0) > nowMs() && d.status == 'active' && p.programId == d.programId
+        && p.startMs == d.startMs && p.start == d.start && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= moMax(g) && p.cycle == d.get('cycle', 1);
+    }
+    function datedPayGrant(pid, cid, p) {
+      let before = get(/databases/$(database)/documents/payments/$(pid)).data;
+      let after = getAfter(/databases/$(database)/documents/payments/$(pid)).data;
+      return before.uid == cid && before.ok == true && before.used == false && after.used == true
+        && p.offer == before.offer && datedShapeOk(p, before.weeks)
+        && (datedNewOk(p, before.weeks) || (resource != null && (datedConvOk(p, before.weeks) || datedExtOk(p, before.weeks))));
+    }
+    function datedCodeGrant(code, cid, p) {
+      let before = get(/databases/$(database)/documents/codes/$(code)).data;
+      let after = getAfter(/databases/$(database)/documents/codes/$(code)).data;
+      return !(cid in before.usedBy) && (cid in after.usedBy) && p.offer == before.offer && datedShapeOk(p, before.weeks)
+        && (before.programId == null || p.programId == before.programId)
+        && (datedNewOk(p, before.weeks) || (resource != null && (datedConvOk(p, before.weeks) || datedExtOk(p, before.weeks))));
+    }
+    // programme suivant choisi par le client pendant son accès Lite ou daté (accès, paiement et avis médical inchangés ; Sur mesure : écrit par le coach)
     function liteCycle() {
       let p = request.resource.data;
       let d = resource.data;
-      return d.get('offer', '') == 'lite' && d.status == 'active' && d.untilMs > nowMs()
+      return d.get('offer', '') != 'surmesure' && d.status == 'active' && d.get('untilMs', 0) > nowMs()
         && p.diff(d).affectedKeys().hasOnly(['programId', 'weeks', 'start', 'niveau', 'equipment', 'compDate', 'extra', 'message', 'cycle', 'updatedAt'])
         && p.cycle == d.get('cycle', 1) + 1 && p.weeks == 12;
     }
     function grantOk(cid) {
       let p = request.resource.data;
       return planKeysOk(p) && (
-        (p.offer != 'lite' && ((p.source.kind == 'code' && codeGrant(p.source.id, cid, p)) || (p.source.kind == 'paiement' && payGrant(p.source.id, cid, p))))
+        (p.offer != 'lite' && !('untilMs' in p) && ((p.source.kind == 'code' && codeGrant(p.source.id, cid, p)) || (p.source.kind == 'paiement' && payGrant(p.source.id, cid, p))))
+        || (p.offer != 'lite' && ('untilMs' in p) && ((p.source.kind == 'code' && datedCodeGrant(p.source.id, cid, p)) || (p.source.kind == 'paiement' && datedPayGrant(p.source.id, cid, p))))
         || (p.offer == 'lite' && ((p.source.kind == 'code' && liteCodeGrant(p.source.id, cid, p))
           || (p.source.kind == 'paiement' && (litePayGrant(p.source.id, cid, p) || liteRenew(p.source.id, cid, p)))))
         || (resource != null && liteCycle()));
@@ -187,6 +236,11 @@ service cloud.firestore {
     // notes privées du coach
     match /coachnotes/{cid} {
       allow read, write: if isCoach();
+    }
+    // registre des factures et avoirs : numérotation continue, jamais modifié ni supprimé ; compteur et paramètres de gestion
+    match /factures/{id} {
+      allow read, create: if isCoach();
+      allow update: if isCoach() && id in ['compteur', 'parametres'];
     }
   }
 }

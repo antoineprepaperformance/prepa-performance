@@ -219,14 +219,18 @@ function SettingsView({ settings, db, dl, rows }) {
   const toast = useToast();
   const s0 = settings || {};
   const [coach, setCoach] = useState({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(s0.coach || {}) });
-  const [offers, setOffers] = useState(() => Object.fromEntries(OFFERS.map((o) => [o.id, ((s0.offers && s0.offers[o.id]) || o.prix).slice()])));
+  /* prix par formule et par durée (en semaines) : réglage « tarifs » ; l'ancienne grille (« offers », 1-2-3 mois) n'est plus reprise */
+  const tarInit = (s) => Object.fromEntries(OFFERS.map((o) => [o.id, Object.fromEntries(DURS.map((d) => [d.w, String(offerPrice(s, o.id, d.w) ?? "")]))]));
+  const [offers, setOffers] = useState(() => tarInit(s0));
+  const smInit = () => ({ on: true, places: 5, ...(s0.surmesure || {}) });
+  const [smS, setSmS] = useState(smInit);
   const [busy, setBusy] = useState(false);
   const aiInit = () => { const c = aiConf(s0, null); return { on: c.on, rules: c.rules, allow: { ...c.allow }, quota: Object.fromEntries(OFFERS.map((o) => [o.id, aiQuota(s0, o.id)])) }; };
   const [aiS, setAiS] = useState(aiInit);
   const payInit = () => ({ mode: "manuel", info: "", links: {}, ...(s0.pay || {}) });
   const [pay, setPay] = useState(payInit);
   const legInit = () => ({ ...legalInfo({}), ...(s0.legal || {}) });
-  const liteInit = () => ({ on: true, mois: LITE.prix.mois, an: LITE.prix.an, portail: "", ...(s0.lite || {}) });
+  const liteInit = () => ({ on: true, mois: LITE.prix.mois, an: LITE.prix.an, nmois: (LITE.prixN || {}).mois, nan: (LITE.prixN || {}).an, portail: "", ...(s0.lite || {}) });
   const [lite, setLite] = useState(liteInit);
   const [msgS, setMsgS] = useState(() => msgConf(s0));
   const sanInit = () => ({ raccourci: "", ...(s0.sante || {}) });
@@ -234,10 +238,11 @@ function SettingsView({ settings, db, dl, rows }) {
   const santeKv = useSanteRelay(window.IS_SITE ? relayOf(settings) : "");
   const [vid, setVid] = useState((s0.video && s0.video.coach) || "suivi");
   const [leg, setLeg] = useState(legInit);
-  useEffect(() => { if (settings) { setCoach({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(settings.coach || {}) }); if (settings.offers) setOffers({ ...offers, ...settings.offers }); setAiS(aiInit()); setPay(payInit()); setLeg(legInit()); setLite(liteInit()); setSanS(sanInit()); setVid((settings.video && settings.video.coach) || "suivi"); } }, [settings && settings.updatedAt]);
+  useEffect(() => { if (settings) { setCoach({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(settings.coach || {}) }); setOffers(tarInit(settings)); setSmS(smInit()); setAiS(aiInit()); setPay(payInit()); setLeg(legInit()); setLite(liteInit()); setSanS(sanInit()); setVid((settings.video && settings.video.coach) || "suivi"); } }, [settings && settings.updatedAt]);
   const badLinks = Object.entries(pay.links || {}).filter(([, v]) => v && !/^https:\/\/(buy\.stripe\.com|checkout\.stripe\.com|[a-z0-9.-]+)\//.test(v.trim()));
   const badUrl = [pay.relay, lite.portail].some((v) => v && !/^https:\/\/[a-z0-9.-]+/i.test(String(v).trim()));
   const LITE_LINKS = [["mois_abo", "Mensuel · abonnement"], ["an_abo", "Annuel · abonnement"], ["mois_avance", "Mensuel · paiement d'avance"], ["an_avance", "Annuel · paiement d'avance"]];
+  const LITEN_LINKS = LITE_LINKS.map(([k, n]) => [k + "_n", n]);
   const setLink = (k, v) => setPay({ ...pay, links: { ...(pay.links || {}), [k]: v } });
   const save = async () => {
     if (!db) { toast("Ouvre l'application depuis claude.ai pour enregistrer.", "warn"); return; }
@@ -245,8 +250,8 @@ function SettingsView({ settings, db, dl, rows }) {
     if (badUrl) { toast("Adresse invalide : elle doit commencer par https://", "warn"); return; }
     if (String(sanS.raccourci || "").trim() && !santeRacc({ sante: { raccourci: sanS.raccourci } })) { toast("Lien du raccourci invalide : il commence par https://www.icloud.com/shortcuts/", "warn"); return; }
     const links = Object.fromEntries(Object.entries(pay.links || {}).map(([k, v]) => [k, String(v || "").trim()]).filter(([, v]) => v));
-    try { await dbSet(db, "settings/app", { ...(settings || {}), video: { coach: vid }, coach, offers: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, v.map((x) => num(x) || 0)])), ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow, quota: Object.fromEntries(OFFERS.map((o) => { const x = aiS.quota[o.id] || {}; const n = (v) => clamp(Math.round(num(v) || 0), 0, AI_QUOTA_MAX); return [o.id, { q: n(x.q), ph: n(x.ph) }]; })) },
-      msg: { on: msgS.on, lite: msgS.lite }, sante: { raccourci: String(sanS.raccourci || "").trim() }, pay: { mode: pay.mode, info: String(pay.info || "").trim(), links, relay: String(pay.relay || "").trim() }, lite: { on: lite.on !== false, mois: num(lite.mois) || LITE.prix.mois, an: num(lite.an) || LITE.prix.an, portail: String(lite.portail || "").trim() }, legal: Object.fromEntries(Object.entries(leg).map(([k, v]) => [k, String(v || "").trim()])), updatedAt: nowISO() }); toast("Réglages enregistrés.", "ok"); }
+    try { await dbSet(db, "settings/app", { ...(settings || {}), video: { coach: vid }, coach, tarifs: Object.fromEntries(Object.entries(offers).map(([k, v]) => [k, Object.fromEntries(DURS.map((d) => [d.w, num(v[d.w]) || offerPrice(null, k, d.w) || 0]))])), surmesure: { on: smS.on !== false, places: clamp(Math.round(num(smS.places) || 5), 1, 50) }, ai: { on: aiS.on, rules: aiS.rules.trim(), allow: aiS.allow, quota: Object.fromEntries(OFFERS.map((o) => { const x = aiS.quota[o.id] || {}; const n = (v) => clamp(Math.round(num(v) || 0), 0, AI_QUOTA_MAX); return [o.id, { q: n(x.q), ph: n(x.ph) }]; })) },
+      msg: { on: msgS.on, lite: msgS.lite }, sante: { raccourci: String(sanS.raccourci || "").trim() }, pay: { mode: pay.mode, info: String(pay.info || "").trim(), links, relay: String(pay.relay || "").trim() }, lite: { on: lite.on !== false, mois: num(lite.mois) || LITE.prix.mois, an: num(lite.an) || LITE.prix.an, nmois: num(lite.nmois) || LITE.prixN.mois, nan: num(lite.nan) || LITE.prixN.an, portail: String(lite.portail || "").trim() }, legal: Object.fromEntries(Object.entries(leg).map(([k, v]) => [k, String(v || "").trim()])), updatedAt: nowISO() }); toast("Réglages enregistrés.", "ok"); }
     catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); }
   };
   const lf = (k, n, ph, hint) => html`<${Field} label=${n} id=${"lg-" + k} hint=${hint}><input id=${"lg-" + k} value=${leg[k] || ""} placeholder=${ph || ""} onChange=${(e) => setLeg({ ...leg, [k]: e.target.value })} /></${Field}>`;
@@ -287,15 +292,18 @@ function SettingsView({ settings, db, dl, rows }) {
         <${Field} label="Consignes de paiement sans lien Stripe (facultatif)" id="pay-info"><textarea id="pay-info" rows="2" value=${pay.info || ""} onChange=${(e) => setPay({ ...pay, info: e.target.value })} placeholder="Ex. Je t'envoie un lien de paiement ou un RIB par e-mail sous 24 h."></textarea></${Field}>
       </div></${Card}>
     <${Card} title="Correction vidéo" sub="Le client filme son mouvement, garde 3 images et te les envoie avec ses repères">
-      <${Field} label="Envoi à toi possible pour"><${Seg} options=${[{ v: "suivi", n: "Formule Suivi" }, { v: "toutes", n: "Essentiel et Suivi" }]} value=${vid} onChange=${setVid} /></${Field}>
-      <p className="muted small">Le forfait Lite garde la fiche animée et l'autocontrôle vidéo, sans envoi au coach.</p></${Card}>
-    <${Card} title="Forfait Lite" sub=${"En autonomie : programmes, séances flash, récup, recettes et santé au quotidien, sans réponse aux bilans" + (window.IS_SITE ? " et sans correction vidéo par toi" : ", sans correction vidéo par toi et sans coach IA")}>
+      <${Field} label="Envoi à toi possible pour"><${Seg} options=${[{ v: "suivi", n: "Suivi et Sur mesure" }, { v: "toutes", n: "Essentiel, Suivi et Sur mesure" }]} value=${vid} onChange=${setVid} /></${Field}>
+      <p className="muted small">Par semaine : une vidéo en Essentiel et en Suivi, deux en Sur mesure. Le Lite et le Coach IA gardent la fiche animée et l'autocontrôle vidéo, sans envoi au coach.</p></${Card}>
+    <${Card} title="Forfait Lite" sub="En autonomie : programmes, séances terrain, flash et récup, santé au quotidien, sans réponse aux bilans, sans correction vidéo par toi et sans coach IA. Lite + Nutrition ajoute l'objectif nutrition, le journal, les plats types, le scan et les recettes.">
       <div className="form">
         <${Field} label="Proposé à l'inscription"><${Seg} options=${[{ v: true, n: "Oui" }, { v: false, n: "Non" }]} value=${lite.on !== false} onChange=${(v) => setLite({ ...lite, on: v })} /></${Field}>
         <div className="row2"><${Field} label="Prix mensuel (€)" id="lt-m"><input id="lt-m" inputMode="decimal" value=${lite.mois} onChange=${(e) => setLite({ ...lite, mois: e.target.value })} /></${Field}>
           <${Field} label="Prix annuel (€)" id="lt-a"><input id="lt-a" inputMode="decimal" value=${lite.an} onChange=${(e) => setLite({ ...lite, an: e.target.value })} /></${Field}></div>
-        <div className="tscroll"><table className="ptable linktable"><thead><tr><th>Lien Stripe Lite</th><th>Lien</th></tr></thead>
-          <tbody>${LITE_LINKS.map(([k, n]) => html`<tr key=${k}><th>${n}</th><td><input id=${"pl-lite-" + k} aria-label=${"Lien Lite " + n} placeholder="https://buy.stripe.com/…" value=${(pay.links || {})["lite_" + k] || ""} onChange=${(e) => setLink("lite_" + k, e.target.value)} /></td></tr>`)}</tbody></table></div>
+        <div className="row2"><${Field} label="Lite + Nutrition, mensuel (€)" id="lt-nm"><input id="lt-nm" inputMode="decimal" value=${lite.nmois} onChange=${(e) => setLite({ ...lite, nmois: e.target.value })} /></${Field}>
+          <${Field} label="Lite + Nutrition, annuel (€)" id="lt-na"><input id="lt-na" inputMode="decimal" value=${lite.nan} onChange=${(e) => setLite({ ...lite, nan: e.target.value })} /></${Field}></div>
+        <div className="tscroll"><table className="ptable linktable"><thead><tr><th>Lien Stripe</th><th>Lite</th><th>Lite + Nutrition</th></tr></thead>
+          <tbody>${LITE_LINKS.map(([k, n]) => html`<tr key=${k}><th>${n}</th><td><input id=${"pl-lite-" + k} aria-label=${"Lien Lite " + n} placeholder="https://buy.stripe.com/…" value=${(pay.links || {})["lite_" + k] || ""} onChange=${(e) => setLink("lite_" + k, e.target.value)} /></td>
+            <td><input id=${"pl-liten-" + k} aria-label=${"Lien Lite + Nutrition " + n} placeholder="https://buy.stripe.com/…" value=${(pay.links || {})["lite_" + k + "_n"] || ""} onChange=${(e) => setLink("lite_" + k + "_n", e.target.value)} /></td></tr>`)}</tbody></table></div>
         <p className="muted small">Abonnement : dans Stripe, crée un produit « Lite » avec un prix récurrent (mensuel et annuel) puis un lien de paiement pour chacun. Paiement d'avance : un prix unique. Même redirection après paiement que ci-dessus.</p>
         <${Field} label="Portail client Stripe (facultatif)" id="lt-portail" hint="Lien de connexion du portail client Stripe : le client y gère sa carte et ses factures."><input id="lt-portail" value=${lite.portail || ""} placeholder="https://billing.stripe.com/p/login/…" onChange=${(e) => setLite({ ...lite, portail: e.target.value })} /></${Field}>
         ${badUrl ? html`<p className="small warn-t">Une adresse doit commencer par https://</p>` : null}
@@ -313,9 +321,11 @@ function SettingsView({ settings, db, dl, rows }) {
           ${leg.tva === "assujetti" ? lf("numTva", "N° de TVA intracommunautaire") : html`<span></span>`}</div>
         ${legalMissing({ legal: leg, coach }).length ? html`<p className="small warn-t">À compléter : ${legalMissing({ legal: leg, coach }).join(", ")}.</p>` : html`<p className="small ok-t">Informations légales complètes.</p>`}
       </div></${Card}>
-    <${Card} title="Prix des formules" sub="Affichés lors de l'inscription · 2 mois ≈ −5 %, 3 mois ≈ −10 %">
+    <${Card} title="Prix des formules" sub="Affichés lors de l'inscription · paiement d'avance, sans reconduction · 3 mois ≈ −10 %, 6 mois ≈ −15 %, 12 mois ≈ −20 %">
       <div className="tscroll"><table className="ptable"><thead><tr><th>Formule</th>${DURS.map((d) => html`<th key=${d.w}>${d.n}</th>`)}</tr></thead>
-        <tbody>${OFFERS.map((o) => html`<tr key=${o.id}><th>${o.n}<small>${o.desc}</small></th>${DURS.map((d, i) => html`<td key=${d.w}><input id=${"pr-" + o.id + i} inputMode="numeric" aria-label=${o.n + " " + d.n} value=${offers[o.id][i]} onChange=${(e) => setOffers({ ...offers, [o.id]: offers[o.id].map((x, k) => (k === i ? e.target.value : x)) })} /></td>`)}</tr>`)}</tbody></table></div></${Card}>
+        <tbody>${OFFERS.map((o) => html`<tr key=${o.id}><th>${o.n}<small>${o.desc}</small></th>${DURS.map((d, i) => html`<td key=${d.w}><input id=${"pr-" + o.id + i} inputMode="numeric" aria-label=${o.n + " " + d.n} value=${(offers[o.id] || {})[d.w] ?? ""} onChange=${(e) => setOffers({ ...offers, [o.id]: { ...(offers[o.id] || {}), [d.w]: e.target.value } })} /></td>`)}</tr>`)}</tbody></table></div>
+      <div className="row2"><${Field} label="Formule Sur mesure"><${Seg} options=${[{ v: true, n: "Ouverte aux commandes" }, { v: false, n: "Complète" }]} value=${smS.on !== false} onChange=${(v) => setSmS({ ...smS, on: v })} /></${Field}>
+        <${Field} label="Places Sur mesure" id="sm-places" hint="Affiché sur la page d'accueil ; passe en « Complète » quand toutes les places sont prises."><input id="sm-places" inputMode="numeric" value=${smS.places} onChange=${(e) => setSmS({ ...smS, places: e.target.value.replace(/[^\d]/g, "").slice(0, 2) })} /></${Field}></div></${Card}>
     <${Card} title="Messagerie avec tes clients" sub="Tes clients t'écrivent depuis l'application (bulle en haut à droite) et tu réponds dans Messages ou dans leur fiche. Pas de bouton d'appel ni d'e-mail : le contact passe par écrit. Les visiteurs du site sont invités à créer leur compte gratuit pour t'écrire.">
       <div className="form">
         <${Field} label="Messagerie"><${Seg} options=${[{ v: true, n: "Activée" }, { v: false, n: "Désactivée" }]} value=${msgS.on} onChange=${(v) => setMsgS({ ...msgS, on: v })} /></${Field}>

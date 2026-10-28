@@ -174,7 +174,9 @@ CHECK_OF = {
     "plank": "plank", "side_plank": "plank", "plank_taps": "plank", "copenhagen": "plank",
 }
 
-LITE = {"id": "lite", "n": "Lite", "prix": {"mois": 9.9, "an": 89},
-        "desc": "En autonomie : tous les programmes et les profils, les séances flash, la récup, les recettes et la santé au quotidien. Sans réponse d'Antoine à tes bilans, sans correction vidéo par Antoine et sans coach IA."}
+# Lite : entraînement en autonomie ; option nutrition (Lite + Nutrition). Les accès Lite ouverts avant le 28 octobre 2026 gardent la nutrition.
+LITE = {"id": "lite", "n": "Lite", "prix": {"mois": 9.9, "an": 89}, "prixN": {"mois": 14.9, "an": 129},
+        "desc": "En autonomie : tous les programmes et les profils, les séances terrain, flash et récup, la santé au quotidien et le suivi de l'eau. Sans nutrition, sans réponse d'Antoine à tes bilans, sans correction vidéo par Antoine et sans coach IA.",
+        "descN": "Lite + la nutrition : objectif calculé, journal des repas, plats types, scan des produits et livre de recettes (sans coach IA)."}
 
 EXTRAS_CONTENT = {"LITE": LITE, "XREFS": REFS, "RECUP": RECUP, "FLASH": FLASH, "TIPS": TIPS, "CHECKS": CHECKS, "CHECK_OF": CHECK_OF}

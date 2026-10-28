@@ -3,6 +3,34 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 28 octobre 2026 · finances, factures et secrétariat
+
+- Espace coach, nouvel onglet **Finances** : factures numérotées automatiquement à chaque paiement (AAAA-NNNN, mention EI, SIRET, période, « TVA non applicable, art. 293 B du CGI », acquittée), avoir sur la facture d'origine à chaque remboursement, registre jamais modifié ni supprimé (règle Firestore `factures`). Le client télécharge sa facture et son avoir dans « Mes commandes ». Paiement direct : le moyen (virement, espèces…) se choisit à l'activation.
+- Ventes de l'application par mois (ventes, remboursements, chiffre d'affaires, cotisations estimées 26,1 % + 0,2 %, versement libératoire en option), rappel de la déclaration URSSAF mensuelle sur le tableau de bord jusqu'au clic « J'ai déclaré et payé », export CSV du livre des recettes et du registre des factures (Excel français).
+- Classeur de pilotage : taux 2026 corrigé (26,1 %, décret n° 2024-484), déclaration mensuelle, feuille « Ventes appli » additionnée au tableau de bord, déclarations URSSAF mensuelles avec statut, **Échéancier** (URSSAF, CFE, impôts, facturation électronique, renouvellements) et **Routine** du secrétaire.
+- Sources : URSSAF et décret n° 2024-484 (taux), arrêté du 3 octobre 1983 (note dès 25 €), loi du 14 février 2022 (mention EI), calendrier de la facturation électronique (réception 1er septembre 2026, émission et e-reporting des micro-entreprises 1er septembre 2027). Test ajouté : `e2e_factures.py`.
+
+## 28 octobre 2026 · nouvelle grille : 1, 3, 6 et 12 mois, Sur mesure, Lite + Nutrition
+
+- Après une étude du marché français (coachs en ligne, applications, salles ; étude jointe dans l'espace de travail d'Antoine), grille revue pour gagner plus sans prendre plus de temps : **Coach IA** 29 / 79 / 149 / 279 €, **Essentiel** 59 / 159 / 299 / 569 €, **Suivi** 119 / 319 / 599 / 1 139 € (mise en avant « Recommandé »), nouvelle formule **Sur mesure** 199 / 539 / 999 / 1 899 € (programme écrit par Antoine pour le sport, le poste et le calendrier, réécrit à chaque bloc, 2 corrections vidéo par semaine, réponses en priorité, **places limitées**, 5 par défaut, réglables, « Complète » quand c'est plein). Pour 1, 3, 6 et 12 mois ; « 2 mois » n'est plus vendu (les commandes passées restent valables).
+- **6 et 12 mois** : accès daté (début → fin) comme le Lite ; les programmes de 12 semaines s'enchaînent (le client choisit le suivant, Antoine l'écrit en Sur mesure) ; une commande de la même formule et du même programme prolonge l'accès ; un client en 1 ou 3 mois qui passe à 6 ou 12 mois garde son programme. Clause blessure ou contre-indication médicale avec certificat : pause ou remboursement au prorata, au choix du client (CGV article 7 ter, recommandation n° 87-03 de la Commission des clauses abusives). Règles Firestore : durée payée bornée (32, 93, 186 ou 367 jours), aucun allongement sans paiement ou code.
+- **Lite** (9,90 € / 89 €) sans la nutrition ; **Lite + Nutrition** (14,90 € / 129 €) l'ajoute (objectif, journal, plats types, scan, recettes). Les accès Lite d'avant le 28 octobre 2026 gardent la nutrition. Onglet Nutrition du Lite simple : présentation de l'option (Jäger 2017 cité), suivi de l'eau conservé.
+- Corrections vidéo par Antoine comptées sur 7 jours glissants (1 en Suivi, 2 en Sur mesure) ; coach IA Sur mesure : 30 questions et 8 photos par jour. Délais de réponse « sous 48 h / 24 h ouvrées » définis dans les CGV.
+- Espace coach : grille des prix 4 × 4, 16 liens Stripe (+ 8 liens Lite), places Sur mesure, option nutrition des Lite, codes de 6 et 12 mois et Lite + Nutrition, accès daté modifiable (date de fin, prolonger d'un mois ou d'un an), alerte « programme Sur mesure à écrire », revenu mensuel des 6 et 12 mois. Relais : nouvelle grille (« tarifs »), anciens prix acceptés seulement pour les liens 2 mois, Lite + Nutrition (référence « -n »).
+- Documents : guide (parties 1, 2.4, 3 et 7.8), kit client (cases de durée), bibliothèque Excel (feuille Offres 4 × 4, Lite + Nutrition), MISE_EN_LIGNE (16 liens, désactiver les anciens), CONFORMITE. Test ajouté : `e2e_tarifs.py`.
+- Écarté pour l'instant (étape 2) : abonnements mensuels des formules suivies avec frais de démarrage, ventes à l'unité.
+
+## 27 octobre 2026 (soir) · plats types
+
+- Nutrition › Saisir : **54 plats types** en portion habituelle (petit-déjeuner, assiettes du sportif, plats du quotidien, sur le pouce, collations), valeurs de la table Ciqual de l'ANSES (plats composés de la table, ou assiette d'aliments ; relues dans la table chargée comme les aliments courants : `content_nutri.py`, PLATS).
+- « Idées pour ce repas » : 6 plats du moment de la journée les plus proches des calories à viser pour ce repas (reste du jour réparti selon les repas restants, au plus 1,25 fois la part habituelle du repas), avec assez de protéines ; la restauration rapide passe après le fait maison. En mode équilibre : noms seulement, sans chiffres.
+
+## 27 octobre 2026 (soir) · hydratation
+
+- Nutrition › Mon journal : carte **Hydratation**. Objectif d'eau du jour = base de 33 mL par kg (1,5 à 3,5 L ; repère de 1,6 ou 2 L sans le poids en mode équilibre, d'après les apports de référence de l'EFSA 2010) + la sueur des séances et activités notées ce jour-là (débit mesuré par le test de pesée, sinon 0,5 L par heure ; au plus 2,5 L de plus). Boutons + 250, + 500, + 750, − 250 mL, saisie du total, 7 derniers jours. Même donnée que « Eau bue » de Ma santé du jour (et du raccourci iPhone).
+- Test de sueur (pas en mode équilibre) : poids avant et après, boisson, durée → débit en L par heure, perte en % du poids (seuil de 2 %, Sawka 2007), quantité à reboire (1,5 fois la perte, Shirreffs 1996).
+- Conseils : couleur des urines (Armstrong 1994), avant la séance 5 à 7 mL par kg (Thomas 2016), objectif perte de poids : 500 mL avant les repas principaux (Parretti 2015). Résumé sur l'écran Aujourd'hui ; le coach IA voit l'eau du jour et le débit de sueur. Politique de confidentialité et registre complétés (eau bue, test de sueur).
+
 ## 27 octobre 2026 · formule Coach IA, limites du coach IA, anglais et espagnol
 
 - Formule Hybride retirée de la vente (les commandes passées restent lisibles). Nouvelle formule **Coach IA** (25 € / 47 € / 67 € pour 1, 2, 3 mois) : programme conduit par le coach IA (réponses, repas en photo, analyse du bilan, ajustements dans des limites de sécurité), sans réponse personnelle d'Antoine, qui reste prévenu en cas de douleur. Les formules où Antoine répond restent plus chères (Essentiel 49 €, Suivi 99 €).

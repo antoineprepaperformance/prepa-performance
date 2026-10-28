@@ -27,7 +27,7 @@ function santeFlag(data, d) {
 }
 function refShort(r) { if (!r) return ""; const a = String(r).split(/[ ,]/)[0]; const y = (String(r).match(/\b(19|20)\d{2}\b/) || [""])[0]; return a + (y ? ", " + y : ""); }
 function sleepScore(h) { if (h === null || h === undefined) return null; return h >= 8 ? 5 : h >= 7 ? 4 : h >= 6 ? 3 : h >= 5 ? 2 : 1; }
-function waterTarget(data) { const np = data.nutri && data.nutri.plan; return np && np.sex === "F" ? 2.0 : 2.5; }
+function waterTarget(data) { return hydraTarget(data, data.nutri && data.nutri.plan, todayISO()).base; }
 function stepsTarget(data) { const np = data.nutri && data.nutri.plan; return (np && np.targets && np.targets.steps) || 8000; }
 function tipOfDay(data) {
   const d7 = santeDays(data, 7);

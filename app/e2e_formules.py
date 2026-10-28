@@ -39,7 +39,7 @@ async def run():
             # ---------- réglages : formules et limites ----------
             await btn(co, "Offres & réglages", exact=True)
             ok(await co.locator("#pr-ia0").count() == 1 and await co.locator("#pr-hybride0").count() == 0, "grille des prix : Coach IA présente, Hybride retirée")
-            ok(await co.input_value("#pr-ia0") == "25" and await co.input_value("#pr-essentiel0") == "49", "Coach IA moins chère que les formules avec Antoine (25 € contre 49 €)")
+            ok(await co.input_value("#pr-ia0") == "29" and await co.input_value("#pr-essentiel0") == "59", "Coach IA moins chère que les formules avec Antoine (29 € contre 59 €)")
             ok(await co.input_value("#aiq-ia") == "10" and await co.input_value("#aiph-ia") == "3" and await co.input_value("#aiq-suivi") == "20", "limites par défaut : 10 questions et 3 photos (Coach IA), 20 (Suivi)")
             await co.fill("#aiq-ia", "2"); await co.fill("#aiph-ia", "1")
             await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(600)
@@ -134,7 +134,7 @@ async def run():
             link = co.get_by_role("button", name="Conditions de vente")
             if await link.count(): await link.first.click(); await co.wait_for_timeout(400)
             t = await co.inner_text("body")
-            ok("Coach IA (programme conduit par une intelligence artificielle" in t and "Coach IA : 2 questions et 1 photo" in t and "Hybride" not in t, "CGV : formule Coach IA décrite avec ses limites, Hybride retirée", t[t.find("2. Services"):t.find("2. Services") + 300] if "2. Services" in t else t[:300])
+            ok("Coach IA (programme et nutrition conduits par une intelligence artificielle" in t and "Coach IA : 2 questions et 1 photo" in t and "Hybride" not in t, "CGV : formule Coach IA décrite avec ses limites, Hybride retirée", t[t.find("2. Services"):t.find("2. Services") + 300] if "2. Services" in t else t[:300])
             await b.close()
     finally:
         srv.terminate()

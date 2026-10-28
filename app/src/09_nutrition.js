@@ -247,6 +247,43 @@ const PROD_KEY = "app_products_v1";
 const FOODS = CONTENT.FOODS || [];
 function normTxt(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
 function foodItem(fd, g) { const q = g || fd[5]; const it = mkItem({ n: fd[0].replace(/\s*\(.*\)$/, ""), g: q, kcal: fd[1] * q / 100, p: fd[2] * q / 100, c: fd[3] * q / 100, f: fd[4] * q / 100 }); return fd[6] ? { ...it, ciq: fd[6] } : it; }
+/* ---------- plats types (portion habituelle, valeurs de la table Ciqual) ---------- */
+const PLATS = CONTENT.PLATS || [];
+const PLAT_CATS = [{ v: "idees", n: "Idées pour ce repas" }, { v: "matin", n: "Petit-déjeuner" }, { v: "sport", n: "Assiettes du sportif" }, { v: "plat", n: "Plats du quotidien" }, { v: "pouce", n: "Sur le pouce" }, { v: "collation", n: "Collations" }];
+const PLAT_SLOT = { matin: ["matin"], collation: ["collation"], midi: ["sport", "plat", "pouce"], soir: ["sport", "plat", "pouce"] };
+const SLOT_SHARE = { matin: 0.25, midi: 0.35, collation: 0.1, soir: 0.3 };
+function platItems(p) { return (p.i || []).map((fd) => foodItem(fd)); }
+function platTot(p) { return sumItems(platItems(p)); }
+/* idées pour ce repas : les plats du moment de la journée qui se rapprochent le plus de la part de calories qu'il reste
+   pour ce repas, avec assez de protéines */
+function platIdeas(slot, np, tot, n) {
+  const pool = PLATS.filter((p) => (PLAT_SLOT[slot] || []).includes(p.cat));
+  if (!np || np.mode === "equilibre" || !np.targets) return { list: pool.slice(0, n), ideal: null };
+  const t = np.targets, i0 = Math.max(0, SLOTS.findIndex((s) => s.id === slot));
+  const share = SLOT_SHARE[slot] || 0.3, rest = SLOTS.slice(i0).reduce((s, x) => s + (SLOT_SHARE[x.id] || 0), 0) || share;
+  /* jamais plus de 1,25 fois la part habituelle de ce repas, même s'il reste beaucoup de calories */
+  const ideal = clamp(Math.min(Math.max(0, (t.kcal || 0) - tot.kcal) * share / rest, (t.kcal || 0) * share * 1.25), 120, 1500);
+  const pIdeal = Math.max(8, ((t.p || 0) - tot.p) * share / rest);
+  /* la restauration rapide passe après les assiettes faites maison à valeurs égales */
+  const sc = pool.map((p) => { const x = platTot(p); return { p, s: Math.abs(x.kcal - ideal) / ideal + 0.6 * Math.max(0, (pIdeal - x.p) / pIdeal) + (p.cat === "pouce" ? 0.2 : 0) }; });
+  sc.sort((a, b) => a.s - b.s);
+  return { list: sc.slice(0, n).map((x) => x.p), ideal: Math.round(ideal / 10) * 10 };
+}
+function PlatPicker({ slot, np, tot, onPick }) {
+  const eq = !np || np.mode === "equilibre";
+  const [cat, setCat] = useState("idees");
+  useCiqual();
+  const id = platIdeas(slot, np, tot, 6);
+  const list = cat === "idees" ? id.list : PLATS.filter((p) => p.cat === cat);
+  return html`<div className="stack-s plats">
+    <div className="field-l">Plats types</div>
+    <div className="tabs-scroll"><${Seg} options=${PLAT_CATS} value=${cat} onChange=${setCat} /></div>
+    ${cat === "idees" && id.ideal ? html`<p className="muted small">Pour ce repas, vise environ <b>${fmtN(id.ideal, 0)} kcal</b> : voici les plats qui s'en rapprochent le plus.</p>` : null}
+    <div className="sugg plat-list">${list.map((p) => { const x = platTot(p); return html`<button key=${p.n} type="button" onClick=${() => onPick(p)}><b>${p.n}</b>
+      <span className="muted small">${eq ? (p.i || []).map((fd) => fd[0].replace(/\s*\(.*\)$/, "")).join(" · ") : fmtN(x.kcal, 0) + " kcal · P " + fmtN(x.p, 0) + " g · G " + fmtN(x.c, 0) + " g · L " + fmtN(x.f, 0) + " g"}</span></button>`; })}</div>
+    <p className="muted small">${eq ? "Touche un plat pour l'ajouter, puis ajuste les quantités." : "Portion habituelle ; touche un plat pour l'ajouter, puis ajuste les grammes de chaque élément. Valeurs de la table Ciqual de l'ANSES."}</p>
+  </div>`;
+}
 function FoodPicker({ onPick }) {
   const t = useCiqual();
   const [q, setQ] = useState("");
@@ -378,6 +415,7 @@ function AddMeal({ mode, np, tot, ai, onAdd, onClose }) {
   const [err, setErr] = useState("");
   const [man, setMan] = useState({ n: "", kcal: "", p: "", c: "", f: "" });
   const [fdraft, setFdraft] = useState({ title: "", items: [], src: "manuel" });
+  const [plats, setPlats] = useState(false);
   const ctl = useRef(null);
   const url = useObjectURL(file);
   useEffect(() => () => { try { ctl.current && ctl.current.abort(); } catch (e) {} }, []);
@@ -415,7 +453,8 @@ function AddMeal({ mode, np, tot, ai, onAdd, onClose }) {
         ${!draft ? html`<${Btn} onClick=${analyze} disabled=${busy}>${busy ? "Analyse en cours…" : "Analyser la photo"}</${Btn}>` : null}` : null}` : null}
     ${mode === "texte" ? html`<${Field} label="Ce que tu as mangé" id="meal-txt"><textarea id="meal-txt" rows="3" value=${note} onChange=${(e) => setNote(e.target.value)} placeholder="Ex. 2 œufs brouillés, 2 tranches de pain complet, un yaourt grec et un café"></textarea></${Field}>
       ${!draft ? html`<${Btn} onClick=${analyze} disabled=${busy || note.trim().length < 3}>${busy ? "Estimation…" : "Estimer"}</${Btn}>` : null}` : null}
-    ${mode === "manuel" ? html`<${FoodPicker} onPick=${(it) => setFdraft({ ...fdraft, items: [...fdraft.items, it] })} />
+    ${mode === "manuel" ? html`${fdraft.items.length && !plats ? html`<button type="button" className="linkbtn" onClick=${() => setPlats(true)}>+ Ajouter un plat type</button>` : html`<${PlatPicker} slot=${slot} np=${np} tot=${tot} onPick=${(p) => { setFdraft({ ...fdraft, items: [...fdraft.items, ...platItems(p)] }); if (!man.n.trim() && !fdraft.items.length) setMan({ ...man, n: p.n }); setPlats(false); }} />`}
+      <${FoodPicker} onPick=${(it) => setFdraft({ ...fdraft, items: [...fdraft.items, it] })} />
       ${fdraft.items.length ? html`<${Card}><${MealEditor} draft=${{ ...fdraft, title: man.n.trim() || "Mon repas" }} setDraft=${(d) => setFdraft({ ...fdraft, items: d.items })} eq=${eq} /></${Card}>` : null}
       <${Field} label=${fdraft.items.length ? "Nom du repas (facultatif)" : "Repas"} id="mn-n"><input id="mn-n" value=${man.n} onChange=${(e) => setMan({ ...man, n: e.target.value })} placeholder="Ex. Salade de pâtes" /></${Field}>
       ${eq ? null : html`${fdraft.items.length ? html`<p className="muted small">Autre chose à ajouter ? Indique ses valeurs ci-dessous (facultatif).</p>` : null}<div className="row4"><${Field} label="kcal" id="mn-k"><input id="mn-k" inputMode="numeric" value=${man.kcal} onChange=${(e) => setMan({ ...man, kcal: e.target.value })} /></${Field}>
@@ -673,8 +712,119 @@ function EnergyCard({ data, src, np, date }) {
   </${Card}>`;
 }
 
+/* ---------- hydratation ----------
+   Base : 33 mL par kg et par jour, entre 1,5 et 3,5 L (ordre de grandeur des apports de référence de l'EFSA, 2010 :
+   2 L chez la femme, 2,5 L chez l'homme, dont environ 80 % par les boissons). Mode équilibre : repère sans le poids.
+   Jours d'entraînement : + la sueur perdue pendant l'effort, au débit mesuré par le test de pesée, sinon 0,5 L par heure,
+   car une perte de plus de 2 % du poids de corps dégrade la performance (ACSM, Sawka 2007). */
+const HYDRA_REFS = [
+  "EFSA Panel on Dietetic Products, Nutrition, and Allergies. Scientific opinion on dietary reference values for water. EFSA Journal. 2010;8(3):1459.",
+  "Sawka MN, Burke LM, Eichner ER, Maughan RJ, Montain SJ, Stachenfeld NS. American College of Sports Medicine position stand. Exercise and fluid replacement. Med Sci Sports Exerc. 2007;39(2):377-390.",
+  "Thomas DT, Erdman KA, Burke LM. American College of Sports Medicine joint position statement. Nutrition and athletic performance. Med Sci Sports Exerc. 2016;48(3):543-568.",
+  "Shirreffs SM, Taylor AJ, Leiper JB, Maughan RJ. Post-exercise rehydration in man: effects of volume consumed and drink sodium content. Med Sci Sports Exerc. 1996;28(10):1260-1271.",
+  "Armstrong LE, Maresh CM, Castellani JW, et al. Urinary indices of hydration status. Int J Sport Nutr. 1994;4(3):265-279.",
+  "Parretti HM, Aveyard P, Blannin A, et al. Efficacy of water preloading before main meals as a strategy for weight loss in primary care patients with obesity: RCT. Obesity. 2015;23(9):1785-1791.",
+];
+const r2 = (v) => Math.round(v * 100) / 100;
+/* minutes d'entraînement du jour : séances enregistrées et activités notées */
+function hydraMinutes(data, d) {
+  let m = 0;
+  Object.values(data.logs || {}).forEach((l) => { if (l && l.date === d) m += clamp(num(l.duree) || 60, 10, 240); });
+  Object.values(data.activites || {}).forEach((a) => { if (a && a.d === d) m += clamp(num(a.duree) || 0, 0, 600); });
+  return Math.min(m, 600);
+}
+/* dernier test de sueur (moins de 6 mois) */
+function sweatTest(data) {
+  const ds = Object.keys(data.sante || {}).filter((d) => data.sante[d] && data.sante[d].sueur && num(data.sante[d].sueur.taux)).sort();
+  const d = ds[ds.length - 1];
+  return d && diffDays(d, todayISO()) <= 183 ? { d, ...data.sante[d].sueur } : null;
+}
+function hydraTarget(data, np, d) {
+  const eq = !np || np.mode === "equilibre";
+  const sex = (np && np.sex) || ((data.nutri && data.nutri.plan) || {}).sex;
+  const w = eq ? null : npWeight(data, np);
+  const base = w ? clamp(Math.round(w * 0.033 * 10) / 10, 1.5, 3.5) : sex === "F" ? 1.6 : 2.0;
+  const mins = hydraMinutes(data, d || todayISO());
+  const st = eq ? null : sweatTest(data);
+  const rate = st ? clamp(num(st.taux), 0.2, 3) : 0.5;
+  const extra = mins ? Math.round(Math.min(2.5, rate * mins / 60) * 10) / 10 : 0;
+  return { base, extra, total: Math.round((base + extra) * 10) / 10, mins, rate, measured: !!st, w };
+}
+function waterOf(data, d) { const s = data.sante && data.sante[d]; return s ? num(s.eau) || 0 : 0; }
+function SweatTest({ data, src, date, onDone }) {
+  const toast = useToast();
+  const mins0 = hydraMinutes(data, date);
+  const [f, setF] = useState({ avant: "", apres: "", bu: "", min: mins0 ? String(mins0) : "60" });
+  const a = num(f.avant), b = num(f.apres), bu = num(f.bu) || 0, mn = num(f.min);
+  const ok = a !== null && b !== null && mn !== null && a >= 30 && a <= 300 && b >= 30 && b <= 300 && Math.abs(a - b) <= 5 && mn >= 15 && mn <= 300 && bu >= 0 && bu <= 5;
+  const taux = ok ? (a - b + bu) / (mn / 60) : null;
+  const perte = ok ? (a - b) / a * 100 : null;
+  const valid = ok && taux >= 0.1 && taux <= 4;
+  const save = async () => {
+    if (!valid) { toast("Vérifie les valeurs : poids en kg, durée en minutes.", "warn"); return; }
+    const cur = (src.get().sante || {})[date] || {};
+    try { await src.saveSante(date, { ...cur, at: nowISO(), sueur: { avant: a, apres: b, bu: r2(bu), min: Math.round(mn), taux: r2(taux), perte: Math.round(perte * 10) / 10 } }); toast("Test de sueur enregistré : ton objectif d'eau des jours d'entraînement en tient compte.", "ok"); onDone(); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); }
+  };
+  return html`<div className="stack-s">
+    <p className="small">Pèse-toi juste avant et juste après une séance habituelle, en sous-vêtements, après être allé aux toilettes et en t'essuyant bien. Note ce que tu as bu pendant.</p>
+    <div className="row2"><${Field} label="Poids avant (kg)" id="sw-avant"><input id="sw-avant" inputMode="decimal" value=${f.avant} onChange=${(e) => setF({ ...f, avant: e.target.value })} /></${Field}>
+      <${Field} label="Poids après (kg)" id="sw-apres"><input id="sw-apres" inputMode="decimal" value=${f.apres} onChange=${(e) => setF({ ...f, apres: e.target.value })} /></${Field}></div>
+    <div className="row2"><${Field} label="Bu pendant la séance (L)" id="sw-bu"><input id="sw-bu" inputMode="decimal" placeholder="0" value=${f.bu} onChange=${(e) => setF({ ...f, bu: e.target.value })} /></${Field}>
+      <${Field} label="Durée de la séance (min)" id="sw-min"><input id="sw-min" inputMode="numeric" value=${f.min} onChange=${(e) => setF({ ...f, min: e.target.value })} /></${Field}></div>
+    ${valid ? html`<div className=${"alert " + (perte > 2 ? "warn" : "okb")}><div><b>Tu perds environ ${fmtN(taux, 1)} L de sueur par heure</b>
+      <p>Perte pendant la séance : ${fmtN(perte, 1)} % de ton poids${perte > 2 ? ", au-dessus du seuil de 2 % où la performance baisse : bois davantage pendant l'effort" : ", sous le seuil de 2 % où la performance baisse"}.${a - b > 0 ? " Pour récupérer, bois environ " + fmtN(Math.round((a - b) * 1.5 * 10) / 10, 1) + " L dans les heures qui suivent (1,5 fois la perte), avec un repas ou une pincée de sel." : ""}</p></div></div>` : null}
+    <div className="actions"><${Btn} small onClick=${save} disabled=${!valid}>Enregistrer le test</${Btn}><${Btn} small kind="quiet" onClick=${onDone}>Annuler</${Btn}></div>
+  </div>`;
+}
+function HydraCard({ data, src, np, date }) {
+  const toast = useToast();
+  const [edit, setEdit] = useState(null);
+  const [sw, setSw] = useState(false);
+  const eq = !np || np.mode === "equilibre";
+  const h = hydraTarget(data, np, date);
+  const drunk = waterOf(data, date);
+  const isToday = date === todayISO();
+  const st = eq ? null : sweatTest(data);
+  const setWater = async (v) => {
+    const cur = (src.get().sante || {})[date] || {};
+    const out = { ...cur, at: nowISO(), src: cur.src && !String(cur.src).includes("manuel") ? cur.src + "+manuel" : cur.src || "manuel" };
+    if (v <= 0) delete out.eau; else out.eau = r2(Math.min(10, v));
+    try { await src.saveSante(date, out); } catch (e) { toast("Enregistrement impossible.", "bad"); }
+  };
+  const add = (ml) => setWater(waterOf(src.get(), date) + ml / 1000);
+  const saveEdit = async () => { const v = num(edit); if (v === null || v < 0 || v > 10) { toast("Entre une quantité en litres, entre 0 et 10.", "warn"); return; } await setWater(v); setEdit(null); };
+  const last7 = Array.from({ length: 7 }, (_, i) => addDays(todayISO(), i - 6)).map((d) => ({ x: JOURS[parseISO(d).getDay()].slice(0, 3) + ".", y: r2(waterOf(data, d)), muted: d === todayISO() }));
+  const r = drunk / (h.total || 1);
+  const left = Math.max(0, Math.round((h.total - drunk) * 10) / 10);
+  return html`<${Card} title="Hydratation" sub=${isToday ? "Ce que tu as bu aujourd'hui (eau et boissons sans alcool)" : "Ce que tu as bu ce jour-là"}
+    action=${src && edit === null ? html`<${Btn} small kind="ghost" onClick=${() => setEdit(drunk ? String(r2(drunk)).replace(".", ",") : "")}>Saisir</${Btn}>` : null}>
+    <div className="hydra-h"><b className="hydra-v">${fmtN(drunk, 2)} L</b><span className="muted small">sur ${fmtN(h.total, 1)} L${r >= 1 ? " · objectif atteint" : isToday ? " · encore " + fmtN(left, 1) + " L" : ""}</span></div>
+    <${Bar} value=${r} tone=${r >= 1 ? "ok" : ""} />
+    ${edit === null ? html`<div className="hydra-btns">
+      <button type="button" className="addbtn" onClick=${() => add(250)}><b>+ 250 mL</b><small>un verre</small></button>
+      <button type="button" className="addbtn" onClick=${() => add(500)}><b>+ 500 mL</b><small>une bouteille</small></button>
+      <button type="button" className="addbtn" onClick=${() => add(750)}><b>+ 750 mL</b><small>une gourde</small></button>
+      <button type="button" className="addbtn" disabled=${drunk <= 0} onClick=${() => add(-250)}><b>− 250 mL</b><small>corriger</small></button></div>`
+      : html`<div className="row2"><${Field} label="Total bu ce jour (L)" id="hy-edit"><input id="hy-edit" inputMode="decimal" value=${edit} onChange=${(e) => setEdit(e.target.value)} /></${Field}></div>
+      <div className="actions"><${Btn} small onClick=${saveEdit}>Enregistrer</${Btn}><${Btn} small kind="quiet" onClick=${() => setEdit(null)}>Annuler</${Btn}></div>`}
+    <p className="small muted">${eq ? "Repère du jour : " + fmtN(h.base, 1) + " L" : "Base : " + fmtN(h.base, 1) + " L (33 mL par kg)"}${h.extra ? " + " + fmtN(h.extra, 1) + " L pour " + plural(h.mins, "minute") + " d'entraînement (" + (h.measured ? "ton débit de sueur mesuré, " + fmtN(h.rate, 1) + " L par heure" : "0,5 L par heure d'effort") + ")" : isToday ? ". Les jours d'entraînement, l'objectif augmente dès que ta séance est enregistrée" : ""}.</p>
+    <${BarChart} data=${last7} unit="L" digits=${1} target=${h.base} height=${120} />
+    <details><summary>Bien boire selon ton objectif</summary><ul className="small">
+      <li>Urines claires ou jaune pâle : tu es bien hydraté ; foncées : bois davantage (Armstrong, 1994).</li>
+      ${eq ? null : html`<li>Avant l'entraînement : environ ${fmtN(Math.round((h.w || 70) * 6 / 50) * 50, 0)} mL dans les 4 heures qui précèdent (5 à 7 mL par kg, Thomas 2016).</li>`}
+      <li>Pendant l'effort : bois régulièrement pour ne pas perdre plus de 2 % de ton poids, seuil où la performance baisse (Sawka, 2007).</li>
+      <li>Après : 1,5 fois l'eau perdue, avec un repas ou un peu de sel pour la garder (Shirreffs, 1996).</li>
+      ${np && np.goal === "perte" && !eq ? html`<li>Objectif perte de poids : un grand verre d'eau (500 mL) 30 minutes avant les deux repas principaux a aidé à perdre 1,3 kg de plus en 12 semaines (Parretti, 2015).</li>` : null}
+    </ul></details>
+    ${eq ? null : html`<details open=${sw}><summary onClick=${(e) => { e.preventDefault(); setSw(!sw); }}>Mesurer ma perte en sueur${st ? " · dernier test : " + fmtN(num(st.taux), 1) + " L par heure (" + fmtD(st.d) + ")" : ""}</summary>
+      ${sw ? html`<${SweatTest} data=${data} src=${src} date=${date} onDone=${() => setSw(false)} />` : null}</details>`}
+    <details><summary>Références scientifiques</summary><ol className="refs" data-notr>${HYDRA_REFS.map((x, i) => html`<li key=${i}>${x}</li>`)}</ol></details>
+  </${Card}>`;
+}
+
 /* ---------- onglet Nutrition du client ---------- */
-function NutritionTab({ data, src, plan, prog, settings, db }) {
+function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   const ai = useAI();
   const toast = useToast();
   const conf = aiConf(settings, data);
@@ -700,6 +850,18 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
   const saveNp = async (x) => { try { await src.saveNutri(x); setEdit(false); setSub("journal"); toast("Objectif enregistré.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } };
   const last7 = Array.from({ length: 7 }, (_, i) => addDays(todayISO(), i - 6)).map((d) => ({ x: JOURS[parseISO(d).getDay()].slice(0, 3) + ".", y: Math.round(dayTotals(data.food[d]).kcal), muted: d === todayISO() }));
   const bySlot = SLOTS.map((s) => ({ ...s, meals: (day.meals || []).filter((m) => m.slot === s.id) })).filter((s) => s.meals.length);
+  /* forfait Lite sans l'option nutrition : on présente ce qu'elle apporte, l'eau reste suivie */
+  if (!nutriOk(plan)) {
+    const dif = Math.round((litePrice(settings, "mois", true) - litePrice(settings, "mois")) * 100) / 100;
+    return html`<div className="stack">
+      <div className="hero"><div className="eyebrow">Nutrition</div><h1>La nutrition est incluse dans le Lite + Nutrition.</h1></div>
+      <${Card} title="Ce que l'option ajoute" sub=${dif > 0 ? "Pour " + eur2(dif) + " de plus par mois" : null}>
+        <ul className="small"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des produits par code-barres</li><li>Le livre de recettes, filtré selon ton objectif</li></ul>
+        <p className="muted small">Repères issus des recommandations de l'ISSN pour les sportifs (Jäger et al., 2017, protéines 1,4 à 2 g par kg et par jour).</p>
+        ${onUpgrade ? html`<div className="btnrow"><${Btn} small onClick=${onUpgrade}>Passer au Lite + Nutrition</${Btn}></div>` : null}</${Card}>
+      <${HydraCard} data=${data} src=${src} np=${null} date=${todayISO()} />
+    </div>`;
+  }
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Nutrition</div><h1>${np ? (eq ? "Des repas équilibrés, sans compter." : nutriGoalText(np).replace(/^./, (c) => c.toUpperCase()).replace(/, départ.*$/, "") + ".") : "Fixe ton objectif en 1 minute."}</h1></div>
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
@@ -717,7 +879,7 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
         ${canAI && ai.images ? html`<button type="button" className="addbtn" onClick=${() => setModal("photo")}><span className="ab-i">📷</span><b>Photo du repas</b><small>calories estimées</small></button>` : null}
         <button type="button" className="addbtn" onClick=${() => setModal("scan")}><span className="ab-i">▥</span><b>Scanner un produit</b><small>code-barres</small></button>
         ${canAI ? html`<button type="button" className="addbtn" onClick=${() => setModal("texte")}><span className="ab-i">✎</span><b>Décrire</b><small>en une phrase</small></button>` : null}
-        <button type="button" className="addbtn" onClick=${() => setModal("manuel")}><span className="ab-i">＋</span><b>Saisir</b><small>à la main</small></button>
+        <button type="button" className="addbtn" onClick=${() => setModal("manuel")}><span className="ab-i">＋</span><b>Saisir</b><small>plats types, aliments</small></button>
       </div>
       ${!canAI && ai.ready && !window.IS_SITE ? html`<p className="muted small">${conf.on ? "Photo, description et lecture d'étiquette demandent d'ouvrir l'application connecté à ton compte Claude." : "Ton coach a désactivé le coach IA."}</p>` : null}
       ${bySlot.length ? bySlot.map((s) => html`<${Card} key=${s.id} title=${s.n} action=${eq ? null : html`<span className="muted small">${fmtN(sumItems(s.meals).kcal, 0)} kcal</span>`}>
@@ -725,6 +887,7 @@ function NutritionTab({ data, src, plan, prog, settings, db }) {
           <div className="meal-h"><b>${m.title}</b>${VERDICT[m.verdict] ? html`<${Pill} tone=${VERDICT[m.verdict].t}>${VERDICT[m.verdict].n}</${Pill}>` : null}<button type="button" className="linkbtn" onClick=${() => delMeal(m.id)}>Supprimer</button></div>
           <p className="muted small">${(m.items || []).map((x) => x.n + (eq || !x.g ? "" : " " + Math.round(x.g) + " g")).join(" · ")}${eq ? "" : " — " + fmtN(m.kcal, 0) + " kcal · P " + fmtN(m.p, 0) + " g"}</p>
           ${m.comment ? html`<p className="small">${m.comment}</p>` : null}</div>`)}</${Card}>`) : html`<${Empty} title="Aucun repas noté" text=${canAI ? "Prends ton repas en photo, scanne un produit ou décris-le." : "Scanne un produit ou ajoute tes aliments en quelques secondes."} />`}
+      <${HydraCard} data=${data} src=${src} np=${np} date=${date} />
       ${eq ? null : html`<${EnergyCard} data=${data} src=${src} np=${np} date=${date} />`}
       ${eq ? null : html`<${Card} title="7 derniers jours" sub="Calories notées par jour ; le trait indique ta cible"><${BarChart} data=${last7} unit="kcal" target=${np.targets.kcal} /></${Card}>`}
     ` : null}
@@ -745,6 +908,7 @@ function NutriToday({ data, go }) {
   return html`<button type="button" className="nutri-mini" onClick=${() => go("nutrition")}>
     <div className="nm-h"><b>Nutrition du jour</b><span className="muted small">${plural(n, "repas", "repas")} noté${n > 1 ? "s" : ""}</span></div>
     ${typeof weekRecipe === "function" && weekRecipe(data, np) ? html`<span className="small">Recette de la semaine : <b>${weekRecipe(data, np).n}</b></span>` : null}
+    <span className="small">Eau : ${fmtN(waterOf(data, todayISO()), 1)} / ${fmtN(hydraTarget(data, np, todayISO()).total, 1)} L</span>
     ${np.mode === "equilibre" ? html`<span className="small">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>` : html`<${Bar} value=${tot.kcal / (tD.kcal || 1)} /><span className="small">${fmtN(tot.kcal, 0)} / ${fmtN(tD.kcal, 0)} kcal${en && en.bonus ? " (+" + fmtN(en.bonus, 0) + " activité)" : ""} · protéines ${fmtN(tot.p, 0)} / ${fmtN(np.targets.p, 0)} g${en && en.total ? " · dépense " + fmtN(en.total, 0) + " kcal" : ""}</span>`}
   </button>`;
 }

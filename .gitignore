@@ -1,0 +1,11 @@
+__pycache__/
+app/shots/
+app/site_test/
+app/dist/
+app/test/index.html
+app/test/vendor/
+app/content.json
+app/vendor/*/
+app/vendor/*.tgz
+node_modules/
+.DS_Store

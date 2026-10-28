@@ -18,16 +18,30 @@
   function changedKeys(a, b) { a = a || {}; b = b || {}; var ks = {}; Object.keys(a).concat(Object.keys(b)).forEach(function (k) { if (!same(a[k], b[k])) ks[k] = 1; }); return Object.keys(ks); }
   function getf(o, k, d) { return o && o[k] !== undefined ? o[k] : d; }
   /* ---- règles (miroir de firestore.rules) ---- */
-  var OFFERS = ["essentiel", "suivi", "hybride", "lite"], NIVS = ["reprise", "sportif", "perf", "elite"];
-  var PLAN_KEYS = ["programId", "offer", "weeks", "start", "equipment", "status", "niveau", "medicalHold", "compDate", "message", "extra", "validatedAt", "cycle", "source", "grantWeeks", "updatedAt", "reviewedAt", "aiNote", "startMs", "untilMs", "until", "lite"];
+  var OFFERS = ["ia", "essentiel", "suivi", "surmesure", "hybride", "lite"], NIVS = ["reprise", "sportif", "perf", "elite"];
+  var PLAN_KEYS = ["programId", "offer", "weeks", "start", "equipment", "status", "niveau", "medicalHold", "compDate", "message", "extra", "validatedAt", "cycle", "source", "grantWeeks", "updatedAt", "reviewedAt", "aiNote", "startMs", "untilMs", "until", "lite", "customCycle", "customAt"];
   var DAY = 86400000;
   function nowMs() { return Date.now() + (window.__CLOCK_SKEW || 0); }
   function perMax(per) { return per === "an" ? 367 * DAY : 32 * DAY; }
   function liteShapeOk(p) { return p.offer === "lite" && p.lite && typeof p.lite === "object" && isInt(p.startMs) && isInt(p.untilMs) && typeof p.until === "string" && p.grantWeeks === 0 && p.weeks === 12 && p.untilMs > p.startMs; }
-  function liteNewOk(p, maxMs, prev) { return p.untilMs - p.startMs <= maxMs && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + 61 * DAY && ((!prev && p.cycle === 1) || (!!prev && p.cycle === getf(prev, "cycle", 1) + 1)); }
-  function liteExtOk(p, maxMs, d) { return !!d && getf(d, "offer", "") === "lite" && d.untilMs > nowMs() && p.programId === d.programId && p.startMs === d.startMs && p.start === d.start && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle === getf(d, "cycle", 1); }
+  function nutriB(o) { return getf(o, "nutri", false) === true; }
+  function liteNewOk(p, maxMs, prev) { return p.untilMs - p.startMs <= maxMs && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + 61 * DAY && typeof getf(p, "validatedAt", "") === "string" && getf(p, "validatedAt", "") >= "2026-10-27T23:00" && ((!prev && p.cycle === 1) || (!!prev && p.cycle === getf(prev, "cycle", 1) + 1)); }
+  function liteExtOk(p, maxMs, d) { return !!d && getf(d, "offer", "") === "lite" && d.untilMs > nowMs() && p.programId === d.programId && p.startMs === d.startMs && p.start === d.start && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= maxMs && p.cycle === getf(d, "cycle", 1)
+    && getf(p, "validatedAt", "") === getf(d, "validatedAt", "") && nutriB(p.lite) === nutriB(d.lite); }
+  /* formules de 6 et 12 mois et prolongations d'un accès daté */
+  function moMax(g) { return (g === 4 ? 32 : g === 12 ? 93 : g === 26 ? 186 : 367) * DAY; }
+  function datedShapeOk(p, g) { return ["ia", "essentiel", "suivi", "surmesure"].indexOf(p.offer) >= 0 && !("lite" in p) && [4, 12, 26, 52].indexOf(g) >= 0 && p.grantWeeks === g && isInt(p.startMs) && isInt(p.untilMs) && typeof p.until === "string" && p.untilMs > p.startMs; }
+  function datedNewOk(p, g, prev) { return g >= 26 && p.untilMs - p.startMs <= moMax(g) && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + 61 * DAY && ((!prev && p.cycle === 1) || (!!prev && p.cycle === getf(prev, "cycle", 1) + 1)); }
+  function shortEndMs(d) { var x = d.start.split("-"); return Date.UTC(parseInt(x[0], 10), parseInt(x[1], 10) - 1, parseInt(x[2], 10)) + d.weeks * 7 * DAY; }
+  function datedConvOk(p, g, d) {
+    if (!d || g < 26 || "untilMs" in d || getf(d, "offer", "") === "lite" || d.status !== "active" || p.programId !== d.programId || p.start !== d.start || p.cycle !== getf(d, "cycle", 1)) return false;
+    var e = shortEndMs(d);
+    return e > nowMs() - DAY && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + DAY && p.untilMs - Math.max(e, nowMs()) <= moMax(g);
+  }
+  function datedExtOk(p, g, d) { return !!d && getf(d, "offer", "") === p.offer && getf(d, "untilMs", 0) > nowMs() && d.status === "active" && p.programId === d.programId && p.startMs === d.startMs && p.start === d.start && p.untilMs > d.untilMs && p.untilMs - d.untilMs <= moMax(g) && p.cycle === getf(d, "cycle", 1); }
+  function datedOk(p, g, prev) { return datedShapeOk(p, g) && (datedNewOk(p, g, prev) || datedConvOk(p, g, prev) || datedExtOk(p, g, prev)); }
   function liteCycleOk(p, d) {
-    if (!d || getf(d, "offer", "") !== "lite" || d.status !== "active" || !(d.untilMs > nowMs())) return false;
+    if (!d || getf(d, "offer", "") === "surmesure" || d.status !== "active" || !(getf(d, "untilMs", 0) > nowMs())) return false;
     var allowedK = ["programId", "weeks", "start", "niveau", "equipment", "compDate", "extra", "message", "cycle", "updatedAt"];
     return changedKeys(d, p).every(function (k) { return allowedK.indexOf(k) >= 0; }) && p.cycle === getf(d, "cycle", 1) + 1 && p.weeks === 12;
   }
@@ -53,7 +67,7 @@
         var cb = B["codes/" + s.id], ca = A["codes/" + s.id];
         if (!cb || !ca) return false;
         var mx = cb.weeks * 7 * DAY + 2 * 3600000;
-        return !(cid in (cb.usedBy || {})) && (cid in (ca.usedBy || {})) && cb.offer === "lite" && liteShapeOk(p) && p.lite.mode === "code" && (cb.programId == null || p.programId === cb.programId)
+        return !(cid in (cb.usedBy || {})) && (cid in (ca.usedBy || {})) && cb.offer === "lite" && liteShapeOk(p) && p.lite.mode === "code" && nutriB(p.lite) === nutriB(cb) && (cb.programId == null || p.programId === cb.programId)
           && (liteNewOk(p, mx, prev) || liteExtOk(p, mx, prev));
       }
       if (s.kind === "paiement") {
@@ -61,7 +75,7 @@
         if (!lb || !la || lb.uid !== cid || lb.ok !== true || lb.used !== false || la.used !== true || lb.offer !== "lite") return false;
         if (lb.renewal === true) return !!prev && getf(prev, "offer", "") === "lite" && prev.lite && prev.lite.sub === lb.sub
           && changedKeys(prev, p).every(function (k) { return ["untilMs", "until", "source", "updatedAt"].indexOf(k) >= 0; }) && p.untilMs === lb.untilMs && p.untilMs > prev.untilMs;
-        return liteShapeOk(p) && p.lite.period === lb.period && p.lite.mode === lb.mode && (lb.mode !== "abo" || p.lite.sub === lb.sub)
+        return liteShapeOk(p) && p.lite.period === lb.period && p.lite.mode === lb.mode && (lb.mode !== "abo" || p.lite.sub === lb.sub) && nutriB(p.lite) === nutriB(lb)
           && (liteNewOk(p, perMax(lb.period), prev) || liteExtOk(p, perMax(lb.period), prev));
       }
       return false;
@@ -69,12 +83,14 @@
     if (s.kind === "code") {
       var b = B["codes/" + s.id], a = A["codes/" + s.id];
       if (!b || !a) return false;
-      return !(cid in (b.usedBy || {})) && (cid in (a.usedBy || {})) && p.offer === b.offer && p.grantWeeks === b.weeks && (b.programId == null || p.programId === b.programId) && weeksOk(p, b.weeks, prev);
+      if (!(!(cid in (b.usedBy || {})) && (cid in (a.usedBy || {})) && p.offer === b.offer && (b.programId == null || p.programId === b.programId))) return false;
+      return "untilMs" in p ? datedOk(p, b.weeks, prev) : p.grantWeeks === b.weeks && weeksOk(p, b.weeks, prev);
     }
     if (s.kind === "paiement") {
       var pb = B["payments/" + s.id], pa = A["payments/" + s.id];
       if (!pb || !pa) return false;
-      return pb.uid === cid && pb.ok === true && pb.used === false && pa.used === true && p.offer === pb.offer && p.grantWeeks === pb.weeks && weeksOk(p, pb.weeks, prev);
+      if (!(pb.uid === cid && pb.ok === true && pb.used === false && pa.used === true && p.offer === pb.offer)) return false;
+      return "untilMs" in p ? datedOk(p, pb.weeks, prev) : p.grantWeeks === pb.weeks && weeksOk(p, pb.weeks, prev);
     }
     return false;
   }
@@ -137,6 +153,12 @@
           && typeof data.ref === "string" && data.ref.length <= 60 && typeof data.msg === "string" && data.msg.length <= 500 && typeof data.at === "string" && data.at.length <= 40 && data.done === false;
       case "replies": return read ? (coach || self(seg[1])) : coach;
       case "coachnotes": return coach;
+      /* registre des factures : lecture et création par le coach ; jamais modifié ni supprimé (sauf compteur et paramètres) */
+      case "factures":
+        if (read) return coach;
+        if (data === null) return false;
+        if (existed) return coach && ["compteur", "parametres"].indexOf(seg[1]) >= 0;
+        return coach;
       default: return false;
     }
   }

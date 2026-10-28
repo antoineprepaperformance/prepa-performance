@@ -36,9 +36,19 @@
      SANTE_ENVOIS_PAR_JOUR  (facultatif) envois acceptés par client et par jour, par défaut 36.
      SANTE_ECART_MIN        (facultatif) minutes entre deux envois du Raccourci iPhone pour un même jour, par défaut 15. */
 
-const DEFAULT_PRICES = { ia: [25, 47, 67], essentiel: [49, 95, 135], suivi: [99, 189, 269], hybride: [139, 265, 375] };
-const DEFAULT_LITE = { mois: 9.9, an: 89 };
-const DURATIONS = [4, 8, 12];
+/* grille en vigueur : prix par formule et par durée en semaines (1, 3, 6 et 12 mois) ; réglage « tarifs » de l'espace coach */
+const DEFAULT_TARIFS = { ia: { 4: 29, 12: 79, 26: 149, 52: 279 }, essentiel: { 4: 59, 12: 159, 26: 299, 52: 569 }, suivi: { 4: 119, 12: 319, 26: 599, 52: 1139 }, surmesure: { 4: 199, 12: 539, 26: 999, 52: 1899 } };
+/* ancienne grille (1, 2 et 3 mois) : seulement pour les liens de 2 mois encore actifs et l'ancienne formule Hybride */
+const LEGACY_PRICES = { ia: [25, 47, 67], essentiel: [49, 95, 135], suivi: [99, 189, 269], hybride: [139, 265, 375] };
+const LEGACY_W = [4, 8, 12];
+const DEFAULT_LITE = { mois: 9.9, an: 89, nmois: 14.9, nan: 129 };
+const DURATIONS = [4, 12, 26, 52];
+function expectedPrice(p, offer, weeks) {
+  const t = p.tarifs[offer];
+  if (t && DURATIONS.includes(weeks) && Number(t[weeks]) > 0) return Number(t[weeks]);
+  const old = p.offers[offer] || LEGACY_PRICES[offer], i = LEGACY_W.indexOf(weeks);
+  return old && i >= 0 && Number(old[i]) > 0 ? Number(old[i]) : 0;
+}
 const TOLERANCE_S = 300;
 
 export default {
@@ -79,10 +89,9 @@ async function checkout(event, env) {
   const [uid, offer, weeksS, orderId] = parts;
   if (offer === "lite") return liteCheckout(event, env, s, uid, weeksS, orderId);
   const weeks = Number(weeksS);
-  if (!/^[A-Za-z0-9]{6,128}$/.test(uid || "") || !DEFAULT_PRICES[offer] || !DURATIONS.includes(weeks)) return "ignoré : référence client absente ou invalide";
+  if (!/^[A-Za-z0-9]{6,128}$/.test(uid || "") || !(DEFAULT_TARIFS[offer] || LEGACY_PRICES[offer]) || !(DURATIONS.includes(weeks) || LEGACY_W.includes(weeks))) return "ignoré : référence client absente ou invalide";
   const prices = await readPrices(env);
-  const idx = DURATIONS.indexOf(weeks);
-  const expected = Math.round(Number((prices[offer] || DEFAULT_PRICES[offer])[idx]) * 100);
+  const expected = Math.round(expectedPrice(prices, offer, weeks) * 100);
   const amount = Number(s.amount_total) || 0;
   const currency = String(s.currency || "").toLowerCase();
   const amountOk = currency === "eur" && expected > 0 && amount >= expected;
@@ -98,21 +107,21 @@ async function checkout(event, env) {
 
 /* ---------- forfait Lite : première souscription ou paiement d'avance ---------- */
 async function liteCheckout(event, env, s, uid, kindS, orderId) {
-  const m = /^(mois|an)-(abo|avance)$/.exec(kindS || "");
+  const m = /^(mois|an)-(abo|avance)(-n)?$/.exec(kindS || "");
   if (!/^[A-Za-z0-9]{6,128}$/.test(uid || "") || !m) return "ignoré : référence client absente ou invalide";
-  const period = m[1], mode = m[2];
+  const period = m[1], mode = m[2], nutri = !!m[3]; // « -n » : Lite + Nutrition
   const sub = mode === "abo" ? String(s.subscription || "") : "";
   if (mode === "abo" && !/^sub_[A-Za-z0-9]{6,}$/.test(sub)) return "ignoré : abonnement absent";
   const lite = await readLite(env);
-  const expected = Math.round(Number(lite[period]) * 100);
+  const expected = Math.round(Number(lite[(nutri ? "n" : "") + period]) * 100);
   const amount = Number(s.amount_total) || 0;
   const currency = String(s.currency || "").toLowerCase();
   const ok = currency === "eur" && expected > 0 && amount >= expected;
   const oid = /^[A-Za-z0-9]{4,40}$/.test(orderId || "") ? orderId : "";
   const token = await relayToken(env);
   const at = new Date().toISOString();
-  if (mode === "abo" && !(await getDoc(env, token, "subs/" + sub))) await setDoc(env, token, "subs/" + sub, { uid, period, orderId: oid, status: "active", cancelAt: 0, customer: String(s.customer || ""), at, live: !!event.livemode });
-  const doc = { uid, offer: "lite", period, mode, sub, weeks: 0, orderId: oid, amount, expected, currency, email: (s.customer_details && s.customer_details.email) || s.customer_email || "",
+  if (mode === "abo" && !(await getDoc(env, token, "subs/" + sub))) await setDoc(env, token, "subs/" + sub, { uid, period, nutri, orderId: oid, status: "active", cancelAt: 0, customer: String(s.customer || ""), at, live: !!event.livemode });
+  const doc = { uid, offer: "lite", period, mode, nutri, sub, weeks: 0, orderId: oid, amount, expected, currency, email: (s.customer_details && s.customer_details.email) || s.customer_email || "",
     ok, used: false, at, session: s.id, live: !!event.livemode, event: event.id };
   const res = await createDoc(env, token, "payments", s.id, doc);
   return res === "exists" ? "déjà enregistré" : ok ? "paiement Lite enregistré" : "paiement Lite enregistré, montant à vérifier";
@@ -137,7 +146,7 @@ async function renewal(event, env) {
   const endS = Math.max(0, ...lines.map((l) => Number(l.period && l.period.end) || 0));
   if (!endS) return "ignoré : période absente";
   const lite = await readLite(env);
-  const expected = Math.round(Number(lite[sd.period] || 0) * 100);
+  const expected = Math.round(Number(lite[(sd.nutri ? "n" : "") + sd.period] || 0) * 100);
   const amount = Number(inv.amount_paid) || 0;
   const currency = String(inv.currency || "").toLowerCase();
   const ok = currency === "eur" && expected > 0 && amount >= expected;
@@ -210,7 +219,10 @@ function planActif(fields, now) {
   if (!fields) return null;
   const g = (k) => fromFs(fields[k]);
   const offer = String(g("offer") || "");
-  if (g("status") !== "active" || !["ia", "essentiel", "suivi", "hybride"].includes(offer)) return null;
+  if (g("status") !== "active" || !["ia", "essentiel", "suivi", "surmesure", "hybride"].includes(offer)) return null;
+  /* formules de 6 et 12 mois : accès daté (startMs → untilMs) */
+  const untilMs = Number(g("untilMs")) || 0;
+  if (untilMs) { const startMs = Number(g("startMs")) || 0; return now >= startMs - 31 * 86400000 && now <= untilMs + 86400000 ? offer : null; }
   const start = String(g("start") || ""), weeks = Number(g("weeks")) || 0;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || weeks < 1) return null;
   const t0 = Date.parse(start + "T00:00:00Z");
@@ -218,7 +230,7 @@ function planActif(fields, now) {
 }
 /* limites du coach IA par formule et par jour : réglées par le coach (settings/app › ai › quota), sinon par défaut.
    Le relais accepte 2 demandes de plus que la limite affichée au client, pour l'analyse automatique du bilan de la semaine. */
-const IA_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, hybride: { q: 10, ph: 3 } };
+const IA_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
 function iaLimites(aiFields, offer) {
   const d = IA_QUOTA_DEF[offer] || IA_QUOTA_DEF.essentiel;
   const qm = aiFields && aiFields.quota && aiFields.quota.mapValue && aiFields.quota.mapValue.fields;
@@ -576,20 +588,24 @@ function timingSafeEqual(a, b) {
 
 /* ---------- Firebase ---------- */
 const FS = (env) => "https://firestore.googleapis.com/v1/projects/" + env.FIREBASE_PROJECT_ID + "/databases/(default)/documents/";
+/* prix réglés par le coach : « tarifs » (grille en vigueur) et « offers » (ancienne grille) */
 async function readPrices(env) {
+  const out = { tarifs: { ...DEFAULT_TARIFS }, offers: {} };
   try {
     const r = await fetch(FS(env) + "settings/app");
-    if (!r.ok) return DEFAULT_PRICES;
+    if (!r.ok) return out;
     const j = await r.json();
-    const offers = j.fields && j.fields.offers && j.fields.offers.mapValue && j.fields.offers.mapValue.fields;
-    if (!offers) return DEFAULT_PRICES;
-    const out = {};
-    for (const [k, v] of Object.entries(offers)) {
-      const vals = (v.arrayValue && v.arrayValue.values) || [];
-      out[k] = vals.map((x) => Number(x.integerValue ?? x.doubleValue ?? 0));
+    const num = (x) => Number(x && (x.integerValue ?? x.doubleValue ?? x.stringValue) || 0);
+    const t = j.fields && j.fields.tarifs && j.fields.tarifs.mapValue && j.fields.tarifs.mapValue.fields;
+    for (const [k, v] of Object.entries(t || {})) {
+      const f = (v.mapValue && v.mapValue.fields) || {};
+      out.tarifs[k] = { ...(DEFAULT_TARIFS[k] || {}) };
+      for (const w of DURATIONS) if (num(f[String(w)]) > 0) out.tarifs[k][w] = num(f[String(w)]);
     }
-    return { ...DEFAULT_PRICES, ...out };
-  } catch (e) { return DEFAULT_PRICES; }
+    const o = j.fields && j.fields.offers && j.fields.offers.mapValue && j.fields.offers.mapValue.fields;
+    for (const [k, v] of Object.entries(o || {})) out.offers[k] = ((v.arrayValue && v.arrayValue.values) || []).map(num);
+    return out;
+  } catch (e) { return out; }
 }
 async function readLite(env) {
   try {
@@ -599,7 +615,7 @@ async function readLite(env) {
     const f = j.fields && j.fields.lite && j.fields.lite.mapValue && j.fields.lite.mapValue.fields;
     if (!f) return DEFAULT_LITE;
     const n = (x) => (x ? Number(x.integerValue ?? x.doubleValue ?? x.stringValue ?? 0) : 0);
-    return { mois: n(f.mois) || DEFAULT_LITE.mois, an: n(f.an) || DEFAULT_LITE.an };
+    return { mois: n(f.mois) || DEFAULT_LITE.mois, an: n(f.an) || DEFAULT_LITE.an, nmois: n(f.nmois) || DEFAULT_LITE.nmois, nan: n(f.nan) || DEFAULT_LITE.nan };
   } catch (e) { return DEFAULT_LITE; }
 }
 function fromFs(v) {

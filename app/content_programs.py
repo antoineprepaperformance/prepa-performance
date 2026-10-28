@@ -498,10 +498,12 @@ SCREENING = [
     "As-tu été opéré(e) au cours des 12 derniers mois ou es-tu enceinte ?",
 ]
 
-# Formules (par ordre de prix). « retired » : plus en vente, gardée pour les commandes déjà passées.
+# Formules (par ordre de prix). « prix » : 1, 3, 6 et 12 mois (grille du 28 octobre 2026, voir l'étude des prix).
+# « retired » : plus en vente, gardée pour les commandes déjà passées (ses prix restent ceux de l'ancienne grille : 1, 2, 3 mois).
 OFFERS = [
-    {"id": "ia", "n": "Coach IA", "desc": "Programme standardisé conduit par le coach IA (une intelligence artificielle) : il répond à tes questions, estime tes repas en photo, analyse ton bilan chaque semaine et ajuste ton programme dans des limites de sécurité. Sans réponse personnelle d'Antoine.", "prix": [25, 47, 67], "auto": True},
-    {"id": "essentiel", "n": "Essentiel", "desc": "Programme standardisé dans l'application, bilan hebdomadaire avec une réponse courte d'Antoine chaque semaine, et le coach IA au quotidien.", "prix": [49, 95, 135]},
-    {"id": "suivi", "n": "Suivi", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan, ajustements du programme et analyse vidéo d'un exercice par semaine.", "prix": [99, 189, 269]},
+    {"id": "ia", "n": "Coach IA", "desc": "Programme standardisé et nutrition, conduits par le coach IA (une intelligence artificielle) : il répond à tes questions, estime tes repas en photo, analyse ton bilan chaque semaine et ajuste ton programme dans des limites de sécurité. Sans réponse personnelle d'Antoine.", "prix": [29, 79, 149, 279], "auto": True},
+    {"id": "essentiel", "n": "Essentiel", "desc": "Coach IA + une réponse courte d'Antoine à ton bilan chaque semaine (sous 48 h ouvrées) et la messagerie avec Antoine.", "prix": [59, 159, 299, 569]},
+    {"id": "suivi", "n": "Suivi", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan (sous 24 h ouvrées), ajustements de ton programme et de tes cibles nutrition, correction vidéo d'un exercice par semaine.", "prix": [119, 319, 599, 1139], "top": True},
+    {"id": "surmesure", "n": "Sur mesure", "desc": "Suivi + un programme écrit par Antoine pour ton sport, ton poste et ton calendrier de compétition, réécrit à chaque bloc ; deux corrections vidéo par semaine ; réponses en priorité. Tout se passe par écrit.", "prix": [199, 539, 999, 1899], "places": 5},
     {"id": "hybride", "n": "Hybride", "desc": "Essentiel + 2 séances d'1 h par mois en présentiel avec Antoine (Bordeaux Métropole) : technique, tests et corrections sur place.", "prix": [139, 265, 375], "retired": True},
 ]

@@ -449,7 +449,7 @@ function demoWorld() {
   {
     const profile = { name: "Emma L.", sport: "Handball", level: "Intermédiaire", createdAt: addDays(today, -1), consent: { at: addDays(today, -1) }, demo: true,
       request: { programId: "masse", niveau: "sportif", answers: { compet: 1, xp: 2, freq: 3 }, offer: "suivi", weeks: 12, equipment: "salle", start: nextMonday() }, screening: SCREENING.map(() => false),
-      access: { lastOrder: { id: "odemo1", at: nowISO(), kind: "paiement", offer: "suivi", weeks: 12, programId: "masse", niveau: "sportif", start: nextMonday(), price: 269, status: "en_attente", cgv: { v: CGV_VERSION, at: nowISO() }, early: true } } };
+      access: { lastOrder: { id: "odemo1", at: nowISO(), kind: "paiement", offer: "suivi", weeks: 12, programId: "masse", niveau: "sportif", start: nextMonday(), price: 319, status: "en_attente", cgv: { v: CGV_VERSION, at: nowISO() }, early: true } } };
     const d = { cid: "demo_emma", profile, plan: null, logs: {}, checkins: {}, tests: {}, habits: {}, replies: {}, orders: { odemo1: clone(profile.access.lastOrder) } };
     d.profile.sum = summarize(d); W.demo_emma = d;
   }

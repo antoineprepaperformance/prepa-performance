@@ -107,7 +107,7 @@ async def run():
             await shot(c, "profil_sportif")
 
             # ---------- nutrition : pré-remplissage, dépense du jour, bonus ----------
-            await c.get_by_role("button", name="Nutrition").first.click(); await c.wait_for_timeout(400)
+            await c.locator("nav.tabbar button", has_text="Nutrition").click(); await c.wait_for_timeout(400)
             ok(await c.input_value("#nu-h") == "182" and await c.input_value("#nu-w") == "90" and await c.input_value("#nu-a") == str(age), "objectif nutrition : âge, taille et poids repris du profil")
             await c.get_by_role("radio", name="Homme").click(); await c.get_by_role("radio", name="Garder mon poids").click()
             ok(await has(c, "Dépense énergétique journalière"), "objectif : dépense énergétique journalière détaillée")

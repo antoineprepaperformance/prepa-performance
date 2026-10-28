@@ -28,7 +28,7 @@ TESTS = {**TESTS, **TESTS_SPORT}
 content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ORDER = ["00_i18n.js", "site/00_platform.js", "site/01_ia.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js",
-         "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "site/11_site.js", "07_main.js"]
+         "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "site/11_site.js", "07_main.js"]
 js = "\n".join((SRC / f).read_text() for f in ORDER)
 assert "</script" not in js
 css = (SRC / "styles.css").read_text()

@@ -3,6 +3,17 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 28 octobre 2026 (soir) · lisibilité, personnalisation, thèmes et défis de saison
+
+- **Plus lisible et plus aéré** (site et application) : texte de base à 16 px, petits textes à 13-14 px au lieu de 11-12, boutons d'au moins 40 à 46 px de haut, plus d'espace entre les cartes, barre d'onglets plus lisible. Rien n'est déplacé : les mêmes onglets, aux mêmes places.
+- **Le langage suit le profil** : athlète confirmé (niveau 2 et plus) = vocabulaire du préparateur (RIR, tempo, % du maximum, échauffement RAMP, charge en UA) avec un lien « Comprendre les consignes » (glossaire) ; remise en forme et débutants = mots simples (« 3 séries de 10 », « garde 2 répétitions en réserve », « repos 75 s »), une seule question sur la forme du jour (échelle 1 à 5 inspirée du Perceived Recovery Status, Laurent et al. 2011) au lieu des 5 questions et de la détente. Chaque client peut forcer « Simple » ou « Détaillé » dans Mon profil.
+- **Page du jour** : nouvelle carte « À faire aujourd'hui » (séance, bilan, tests de fin de bloc, repas, habitudes) qui remplace les alertes éparpillées ; chaque client affiche, masque et range les autres blocs.
+- **Apparence** (Mon profil › Apparence et affichage, enregistrée sur le compte, reprise sur tous les appareils) : thème automatique, sombre ou clair ; 6 couleurs (or par défaut, bleu, vert, rouge, violet, argent) ; texte normal, grand ou très grand.
+- **Thèmes et défis de saison**, automatiques aux bonnes dates : Halloween, Noël (calendrier de l'Avent), Nouvel an, Pâques (date calculée), rentrée, et les grandes compétitions de 2027 aux dates officielles (Mondial de handball, Tournoi des Six Nations, finale de la Coupe d'Europe de rugby, phases finales du Top 14, Tour de France, Mondiaux d'athlétisme, Coupe du monde de rugby). Couleurs de l'événement, petites décorations (immobiles si le téléphone demande moins d'animations), compte à rebours et **un défi à chaque fois** (séances ou jours actifs comptés automatiquement), avec un badge sur la carte athlète. Jamais de logo ni d'image d'une compétition : seulement le nom et les dates. Antoine coupe un événement, change son message ou en voit l'aperçu dans Offres & réglages.
+- **Droit** : la page d'accueil publique ne montre que les fêtes. Utiliser une compétition pour vendre peut porter atteinte au droit d'exploitation de l'organisateur (code du sport, art. L333-1 ; tribunal judiciaire de Paris, 6 janvier 2026, FFR c. Royaltiz, publications commerciales calées sur le Tournoi). Dans l'application, pour les clients déjà inscrits, le nom et les dates sont une information publique (Cass. com., 20 mai 2014, n° 13-12102, Fiat). Pas d'allusion à l'équipe de France.
+- Dates vérifiées sur les sites des organisateurs et fédérations (octobre 2026) ; les éditions 2028 et suivantes sont à ajouter dans `app/src/26_saisons.js` (voir CLAUDE.md, règle 12). Test ajouté : `e2e_perso.py`.
+- Écarté : réorganiser la barre d'onglets (onglet « Moi ») ; les habitudes et les tests en dépendent, et rien ne pressait.
+
 ## 28 octobre 2026 (après-midi) · nutrition : portions parlantes et saisie en une phrase
 
 - « Saisir un repas » : chaque aliment se compte en portions du quotidien (2 × tranche, 1 × œuf moyen, 1 × cuillère à soupe, 1 × bol…) au lieu de « pour 100 g ». Le poids et les calories s'affichent à côté, et « g » (ou « ml ») reste au choix pour qui pèse.

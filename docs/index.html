@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="91ca4aab1a">
+<meta name="app-build" content="452aba494c">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -901,6 +901,155 @@ h1.who { display: flex; flex-wrap: wrap; }
 .fin-table td, .fin-table th { white-space: nowrap; }
 .fin-table tr.fin-tot th, .fin-table tr.fin-tot td { border-top: 2px solid var(--gold-soft); font-weight: 700; }
 .fin-frame { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+
+/* ===================== Lisibilité, personnalisation et thèmes de saison (octobre 2026) =====================
+   Texte plus grand et plus contrasté, zones à toucher plus larges (WCAG 2.2 AA), couleur au choix du client,
+   taille du texte (zoom de la page), décorations et défis des événements. */
+body { font-size: 16px; }
+.small { font-size: 14px; }
+small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .sets-h span, .steps span, .refs, .sport-note,
+.vc-frames figcaption, .rmacros span, .ts-leg, .ic-cap, .msg-t, .brand-s { font-size: 13px; }
+.field-l { font-size: 14px; }
+.alert p { font-size: 14px; }
+.eyebrow { font-size: 13.5px; }
+.it-src { font-size: 11.5px; }
+.linkbtn { font-size: 15px; padding: 6px 0; }
+.linkbtn.sm { font-size: 13.5px; }
+.btn.sm { min-height: 40px; font-size: 14.5px; padding: 8px 14px; }
+.seg button { min-height: 42px; font-size: 15px; padding: 8px 14px; }
+.stack { gap: 18px; }
+.card { padding: 18px; gap: 14px; }
+.srow { padding: 12px 14px; }
+.tabbar button { font-size: 12px; }
+.tab-ia { font-size: 12px; }
+@media (max-width: 520px) { .tabbar button { font-size: 11.5px; } }
+@media (max-width: 400px) { .tabbar.six button, .tabbar.six .tab-ia { font-size: 11px; } }
+.next { padding: 20px; gap: 16px; }
+.next-t { font-size: 28px; }
+.next-go { padding: 14px 18px; font-size: 17px; border-radius: 12px; }
+.donebtn { min-height: 46px; }
+.tb { display: contents; }
+
+/* taille du texte choisie par le client */
+:root[data-fs="1"] { zoom: 1.12; }
+:root[data-fs="2"] { zoom: 1.25; }
+/* barre d'onglets du téléphone : jamais plus large que l'écran, et à sa taille habituelle quand le texte est agrandi */
+.tabbar, .tabbar.six { grid-template-columns: repeat(var(--tabs, 5), minmax(0, 1fr)); }
+.tabbar.six { --tabs: 6; }
+.tabbar button, .tabbar .tab-ia { min-width: 0; }
+@media (max-width: 899px) { :root[data-fs="1"] .tabbar { zoom: 0.893; } :root[data-fs="2"] .tabbar { zoom: 0.8; } }
+/* texte agrandi : rien ne dépasse de l'écran (la carte de la prochaine séance passe sur deux lignes si besoin) */
+.next { flex-wrap: wrap; }
+.next > :first-child { flex: 1 1 170px; min-width: 0; }
+.next-t { overflow-wrap: anywhere; }
+:root[data-fs="1"] .toasts { width: min(calc(92vw / 1.12), 460px); }
+:root[data-fs="2"] .toasts { width: min(calc(92vw / 1.25), 460px); }
+
+/* couleur choisie par le client (thème sombre, puis thème clair : couleurs plus foncées pour rester lisibles) */
+:root[data-accent="bleu"] { --gold: #5aa9ec; --gold-soft: rgba(90, 169, 236, 0.4); --gold-tint: rgba(90, 169, 236, 0.13); --btn-bg: #4a9be0; --btn-fg: #07121c; }
+:root[data-accent="vert"] { --gold: #4fc28a; --gold-soft: rgba(79, 194, 138, 0.4); --gold-tint: rgba(79, 194, 138, 0.13); --btn-bg: #47b780; --btn-fg: #06140d; }
+:root[data-accent="rouge"] { --gold: #f0736a; --gold-soft: rgba(240, 115, 106, 0.4); --gold-tint: rgba(240, 115, 106, 0.13); --btn-bg: #e8625a; --btn-fg: #1a0806; }
+:root[data-accent="violet"] { --gold: #a98bf0; --gold-soft: rgba(169, 139, 240, 0.42); --gold-tint: rgba(169, 139, 240, 0.14); --btn-bg: #9b7ae8; --btn-fg: #110a22; }
+:root[data-accent="argent"] { --gold: #e3ded3; --gold-soft: rgba(227, 222, 211, 0.38); --gold-tint: rgba(227, 222, 211, 0.1); --btn-bg: #e3ded3; --btn-fg: #121110; }
+@media (prefers-color-scheme: light) {
+  :root[data-accent="bleu"]:not([data-theme="dark"]) { --gold: #1d5f9e; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); --btn-bg: #2a6fb0; --btn-fg: #ffffff; }
+  :root[data-accent="vert"]:not([data-theme="dark"]) { --gold: #1d7a4e; --gold-soft: rgba(29, 122, 78, 0.35); --gold-tint: rgba(29, 122, 78, 0.1); --btn-bg: #1f7a4f; --btn-fg: #ffffff; }
+  :root[data-accent="rouge"]:not([data-theme="dark"]) { --gold: #b3362c; --gold-soft: rgba(179, 54, 44, 0.35); --gold-tint: rgba(179, 54, 44, 0.1); --btn-bg: #b3362c; --btn-fg: #ffffff; }
+  :root[data-accent="violet"]:not([data-theme="dark"]) { --gold: #6a44c2; --gold-soft: rgba(106, 68, 194, 0.35); --gold-tint: rgba(106, 68, 194, 0.1); --btn-bg: #6a44c2; --btn-fg: #ffffff; }
+  :root[data-accent="argent"]:not([data-theme="dark"]) { --gold: #3a3631; --gold-soft: rgba(58, 54, 49, 0.3); --gold-tint: rgba(58, 54, 49, 0.08); --btn-bg: #2a2723; --btn-fg: #ffffff; }
+}
+:root[data-theme="light"][data-accent="bleu"] { --gold: #1d5f9e; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); --btn-bg: #2a6fb0; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="vert"] { --gold: #1d7a4e; --gold-soft: rgba(29, 122, 78, 0.35); --gold-tint: rgba(29, 122, 78, 0.1); --btn-bg: #1f7a4f; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="rouge"] { --gold: #b3362c; --gold-soft: rgba(179, 54, 44, 0.35); --gold-tint: rgba(179, 54, 44, 0.1); --btn-bg: #b3362c; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="violet"] { --gold: #6a44c2; --gold-soft: rgba(106, 68, 194, 0.35); --gold-tint: rgba(106, 68, 194, 0.1); --btn-bg: #6a44c2; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="argent"] { --gold: #3a3631; --gold-soft: rgba(58, 54, 49, 0.3); --gold-tint: rgba(58, 54, 49, 0.08); --btn-bg: #2a2723; --btn-fg: #ffffff; }
+/* couleur de l'événement, seulement si le client a gardé l'or */
+:root[data-event="orange"]:not([data-accent]) { --gold: #f0892a; --gold-soft: rgba(240, 137, 42, 0.4); --gold-tint: rgba(240, 137, 42, 0.13); --btn-bg: #f0892a; --btn-fg: #1a0d02; }
+:root[data-event="vert"]:not([data-accent]) { --gold: #79c98b; --gold-soft: rgba(121, 201, 139, 0.4); --gold-tint: rgba(121, 201, 139, 0.13); --btn-bg: #79c98b; --btn-fg: #08160b; }
+:root[data-event="bleu"]:not([data-accent]) { --gold: #6cb2f0; --gold-soft: rgba(108, 178, 240, 0.4); --gold-tint: rgba(108, 178, 240, 0.13); --btn-bg: #5aa5e8; --btn-fg: #07121c; }
+@media (prefers-color-scheme: light) {
+  :root[data-event="orange"]:not([data-accent]):not([data-theme="dark"]) { --gold: #a5520c; --btn-bg: #b85c0e; --btn-fg: #ffffff; --gold-soft: rgba(165, 82, 12, 0.35); --gold-tint: rgba(165, 82, 12, 0.1); }
+  :root[data-event="vert"]:not([data-accent]):not([data-theme="dark"]) { --gold: #2d7a42; --btn-bg: #2d7a42; --btn-fg: #ffffff; --gold-soft: rgba(45, 122, 66, 0.35); --gold-tint: rgba(45, 122, 66, 0.1); }
+  :root[data-event="bleu"]:not([data-accent]):not([data-theme="dark"]) { --gold: #1d5f9e; --btn-bg: #2a6fb0; --btn-fg: #ffffff; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); }
+}
+:root[data-theme="light"][data-event="orange"]:not([data-accent]) { --gold: #a5520c; --btn-bg: #b85c0e; --btn-fg: #ffffff; --gold-soft: rgba(165, 82, 12, 0.35); --gold-tint: rgba(165, 82, 12, 0.1); }
+:root[data-theme="light"][data-event="vert"]:not([data-accent]) { --gold: #2d7a42; --btn-bg: #2d7a42; --btn-fg: #ffffff; --gold-soft: rgba(45, 122, 66, 0.35); --gold-tint: rgba(45, 122, 66, 0.1); }
+:root[data-theme="light"][data-event="bleu"]:not([data-accent]) { --gold: #1d5f9e; --btn-bg: #2a6fb0; --btn-fg: #ffffff; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); }
+
+/* réglages d'apparence */
+.appear { display: flex; flex-direction: column; gap: 18px; }
+.appear .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.appear .seg button { white-space: normal; line-height: 1.2; padding: 8px 6px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--line); }
+.swatch.on { box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--fg); }
+.blocks-l { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.blocks-l li { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; }
+.blocks-l li.off .bl-n { color: var(--muted); text-decoration: line-through; }
+.bl-n { flex: 1; min-width: 0; font-size: 15px; }
+.bl-mv { display: flex; gap: 4px; }
+.bl-mv .x.sm { width: 38px; height: 38px; font-size: 17px; }
+.bl-mv .x.sm:disabled { opacity: 0.3; }
+.tgl { flex: none; position: relative; width: 52px; height: 32px; border-radius: 16px; border: 0; background: var(--line); transition: background 0.15s; }
+.tgl span { position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: left 0.15s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+.tgl.on { background: var(--btn-bg); }
+.tgl.on span { left: 23px; }
+.tgl-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.tgl-row > span { display: flex; flex-direction: column; gap: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* à faire aujourd'hui */
+.todo-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.todo-l li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.todo-l li:first-child { border-top: 0; padding-top: 4px; }
+.todo-c { flex: none; width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--btn-fg); }
+.todo-l li.ok .todo-c { background: var(--gold); border-color: var(--gold); }
+.todo-l li.ok .todo-t b { color: var(--muted); font-weight: 600; }
+.todo-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.todo-t b { font-weight: 600; font-size: 16px; }
+
+/* consignes en langage simple */
+.dose-s { font-family: var(--f-display); font-size: 22px; font-weight: 700; }
+.dose-c { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dose-c span { font-size: 14px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+.dose-x summary { font-size: 14px; color: var(--muted); cursor: pointer; margin-top: 6px; }
+.gloss { display: flex; flex-direction: column; gap: 12px; margin: 0; }
+.gloss dt { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--gold); }
+.gloss dd { margin: 2px 0 0; font-size: 15px; }
+
+/* thème de saison : bandeau, défi, décorations */
+.saison { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 12px; border-radius: var(--r); padding: 18px; border: 1px solid var(--gold-soft);
+  background: linear-gradient(135deg, var(--gold-tint), var(--surface) 70%); }
+.saison.s-noel { background: linear-gradient(135deg, rgba(178, 34, 46, 0.35), var(--surface) 72%); border-color: rgba(217, 178, 68, 0.55); }
+.saison-h { display: flex; align-items: center; gap: 12px; }
+.saison-h h3 { font-size: 24px; }
+.saison-i { flex: none; width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--gold); background: var(--gold-tint); border: 1px solid var(--gold-soft); }
+.saison > p { margin: 0; font-size: 15px; }
+.saison-d { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.saison-d p { margin: 0; color: var(--muted); }
+.saison-dh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.saison-dh span { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--gold); white-space: nowrap; }
+.saison-ok { align-self: center; font-weight: 600; color: var(--ok); font-size: 15px; }
+.saison-deco { position: absolute; left: 0; right: 0; top: 0; height: 64px; pointer-events: none; overflow: hidden; z-index: 0; color: var(--gold); opacity: 0.55; }
+.saison-deco span { position: absolute; animation: s-float 6s ease-in-out infinite; }
+.client { position: relative; }
+.client > header, .client > main { position: relative; z-index: 1; }
+@keyframes s-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 8px; } }
+.d-flocon span { animation: s-snow 9s linear infinite; }
+@keyframes s-snow { 0% { translate: 0 -10px; opacity: 0; } 15% { opacity: 1; } 100% { translate: 6px 60px; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .saison-deco span { animation: none !important; } }
+.avent { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.av-d { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px solid var(--line); font-family: var(--f-display); font-size: 18px; color: var(--muted); }
+.av-d.on { background: var(--gold); color: var(--btn-fg); border-color: var(--gold); }
+.av-d.today { box-shadow: 0 0 0 2px var(--fg); }
+.eggs { display: flex; flex-wrap: wrap; gap: 8px; }
+.egg { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px dashed var(--line); color: var(--muted); }
+.egg.on { background: var(--gold-tint); border: 1px solid var(--gold); color: var(--gold); }
+.saisons-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.saisons-l li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.saisons-l li.off { opacity: 0.55; }
+.saisons-l .sl-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.l-saison { max-width: 760px; margin: 8px auto 0; width: 100%; }
 
 </style>
 </head>
@@ -2625,6 +2774,9 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   const conf = aiConf(settings, data);
   const showAI = conf.on && ai.ready && !!ai.sample && !(data.plan && data.plan.offer === "lite");
   const aiq = useAIQuota(data, src, settings, plan, !!demo);
+  /* thème, couleur et taille du texte choisis par le client ; thème de saison et son défi */
+  usePrefsApply(data.profile, !!data.ready);
+  const saison = useSaison(settings, data.profile, !!(data.ready && plan));
 
   if (!data.ready) return html`<${Splash} text="Synchronisation…" />`;
   const banner = demo ? html`<div className="demo-bar"><span>Aperçu de l'espace client avec un exemple</span><span className="btnrow">${onSwitch ? html`<button type="button" className="linkbtn" onClick=${onSwitch}>Autre exemple</button>` : null}${onExit ? html`<button type="button" className="linkbtn" onClick=${onExit}>Revenir à l'espace coach</button>` : null}</span></div>` : null;
@@ -2655,12 +2807,13 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   }
   return html`<div className=${"client has-nav" + (wide ? " wide" : "")}>
     ${banner}
+    ${tab === "today" ? html`<${SaisonDeco} ed=${saison} />` : null}
     <header className="c-top"><${Brand} sub=${prog.n} /><div className="btnrow">${data.saveFailed ? html`<${Pill} tone="bad">Non sauvegardé</${Pill}>` : null}
       ${canMsg ? html`<${MsgButton} n=${msgN} onClick=${() => setMsgs(true)} />` : null}
       <button type="button" className=${"avbtn" + (tab === "profil" ? " on" : "")} aria-label="Mon profil" onClick=${() => setTab("profil")}><${Avatar} profile=${profile} photo=${data.media && data.media.photo && data.media.photo.data} size=${38} /></button></div></header>
     <main className="c-main">
       ${tab === "today" ? html`<${Today} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} src=${src} profile=${profile} coach=${coach}
-          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} />` : null}
+          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} saison=${saison} demo=${!!demo} />` : null}
       ${tab === "programme" ? html`<${ClientProgram} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} exo=${exoAll}
           openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} />` : null}
       ${tab === "bilan" ? html`<${Bilans} data=${data} plan=${plan} prog=${prog} stats=${stats} src=${src} lib=${libAll} settings=${settings} ai=${showAI ? ai : null} openChat=${showAI ? () => setChat(true) : null} />` : null}
@@ -2698,7 +2851,7 @@ function useWide() {
   useEffect(() => { let m; try { m = window.matchMedia(q); const f = () => setW(m.matches); m.addEventListener ? m.addEventListener("change", f) : m.addListener(f); return () => { m.removeEventListener ? m.removeEventListener("change", f) : m.removeListener(f); }; } catch (e) { return undefined; } }, []);
   return w;
 }
-function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid }) {
+function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
@@ -2713,6 +2866,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div className="hero"><div className="eyebrow">Départ le ${JOURS[parseISO(plan.start).getDay()]} ${fmtD(plan.start)}</div>
         <h1>Bonjour ${name || ""}, ton programme commence dans ${plural(ps.daysToStart, "jour")}.</h1>
         <p className="muted">${prog.n} · ${durName(plan.weeks)} · formule ${offerName(plan.offer)}${dated ? " · accès jusqu'au " + fmtD(liteEnd(plan)) : ""}</p></div>
+      ${saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null}
       ${liteBan}
       ${!data.tests.t0 ? html`<${Card} title="Fais tes tests de départ" sub="Ils serviront de point de comparaison toutes les 4 semaines."><${Btn} onClick=${() => openTests(0)}>Saisir mes tests</${Btn}></${Card}>` : null}
       ${prog.prereq ? html`<${Prereq} prog=${prog} />` : null}
@@ -2770,13 +2924,25 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div><div className="eyebrow">Séance ${next.extra ? "supplémentaire" : next.sid}${next.opt ? " · optionnelle" : ""}${next.s.lieu ? " · " + next.s.lieu : ""}</div>
         <div className="next-t">${next.s.t}</div><div className="muted small">${next.s.focus || ""} · ${plural(next.s.items.length, "exercice")}</div></div>
       <span className="next-go">Commencer</span></button>` : null}`;
-  const alerts = html`${testDue ? html`<div className="alert gold"><div><b>Semaine de tests</b><p>Fais tes tests en fin de semaine et note tes résultats.</p></div><${Btn} small onClick=${() => openTests(testPoint)}>Saisir</${Btn}></div>` : null}
-    ${liteBan}
-    ${prevMissing ? html`<div className="alert warn"><div><b>Bilan de la semaine ${w - 1} en attente</b><p>${isLite ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé."}</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
-    ${!ck && (ps.day >= 6 || !next) ? html`<div className="alert gold"><div><b>Bilan de la semaine ${w}</b><p>À remplir en fin de semaine.</p></div><${Btn} small onClick=${() => go("bilan")}>Remplir</${Btn}></div>` : null}
+  /* alertes qui ne sont pas des tâches du jour (accès, avis médical) ; bilan et tests passent dans « À faire aujourd'hui » */
+  const alerts = html`${liteBan}
     ${left <= 7 && onRenew && !dated ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
     ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>${isLite ? html`Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.` : plan.offer === "surmesure" ? html`Ensuite, ${coach && coach.name || COACH_NAME_DEFAULT} t'écrit le bloc suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.` : html`Ensuite, tu choisis toi-même le suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.`}</p></div></div>` : null}
     ${hold}`;
+  const today = todayISO();
+  const doneToday = Object.values(data.logs || {}).some((l) => l && l.date === today) || Object.values(data.libres || {}).some((l) => l && l.d === today);
+  const meals = ((data.food[today] || {}).meals || []).length;
+  const habDone = prog.habits && prog.habits.length ? (((data.habits[today.slice(0, 7)] || {}).days || {})[today] || []).length : 0;
+  const todo = [
+    /* la séance à faire est déjà le grand bouton au-dessus : ici, seulement quand elle est faite */
+    doneToday ? { k: "seance", ok: true, n: "Séance du jour faite" } : !next ? { k: "seance", ok: true, n: "Séances de la semaine faites" } : null,
+    prevMissing ? { k: "bilan", n: "Ton bilan de la semaine " + (w - 1), sub: isLite ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé.", btn: "Remplir", act: () => go("bilan") }
+      : !ck && (ps.day >= 6 || !next) ? { k: "bilan", n: "Ton bilan de la semaine " + w, sub: "À remplir en fin de semaine.", btn: "Remplir", act: () => go("bilan") }
+      : ck ? { k: "bilan", ok: true, n: "Bilan de la semaine envoyé" } : null,
+    testDue ? { k: "tests", n: "Tes tests de fin de bloc", sub: "Fais-les en fin de semaine et note tes résultats.", btn: "Saisir", act: () => openTests(testPoint) } : null,
+    nutriOk(plan) && data.nutri && data.nutri.plan ? (meals ? { k: "repas", ok: true, n: plural(meals, "repas noté", "repas notés") } : { k: "repas", n: "Note tes repas", sub: "Une photo ou quelques mots suffisent.", btn: "Ouvrir", act: () => go("nutrition") }) : null,
+    prog.habits && prog.habits.length ? { k: "habitudes", ok: habDone >= prog.habits.length, n: "Mes habitudes : " + habDone + " / " + prog.habits.length } : null,
+  ].filter(Boolean);
   const ainotes = html`<${AINotes} data=${data} w=${w} openChat=${openChat} />`;
   const vReply = Object.values(data.videos || {}).filter((v) => v && v.reply && !v.seen).sort((a, b) => String(b.reply.at).localeCompare(String(a.reply.at)))[0];
   const vnote = vReply ? html`<button type="button" className="alert gold btnlike" onClick=${() => go("progres")}><div><b>${(coach && coach.name) || COACH_NAME_DEFAULT} a corrigé ta vidéo</b><p>${vReply.exName} : ${String(vReply.reply.text).slice(0, 110)}${String(vReply.reply.text).length > 110 ? "…" : ""}</p></div></button>` : null;
@@ -2788,8 +2954,13 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
   const week = html`<${Card} title=${"Semaine " + w}>${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} onOpen=${() => openSession(e)} />`)}</${Card}>`;
-  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${nextB}${alerts}${vnote}${tweek}${week}${extras}${msgs}</div><div className="stack">${ring}${cardMini}${ainotes}${nutri}${habits}</div></div></div>`;
-  return html`<div className="stack">${hero}${ring}${nextB}${alerts}${vnote}${ainotes}${tweek}${cardMini}${nutri}${extras}${habits}${msgs}${week}</div>`;
+  /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
+  const B = { todo: html`<${TodoCard} items=${todo} />`, stats: ring, coach: html`${msgs}${ainotes}`, nutri, habits, terrain: tweek, extras, carte: cardMini, week };
+  const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
+  const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
+  const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
+  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
+  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
   return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p data-notr="1">${text}</p></div></div>`;
@@ -2881,6 +3052,9 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
   const existing = data.logs[entry.key];
   const niv = effNiveau(plan, data.profile);
   const detailed = nivRank(niv) >= 2;
+  /* langage : simple (mots de tous les jours) ou détaillé (vocabulaire du préparateur), selon le profil ou le choix du client */
+  const simple = langMode(plan, data.profile) === "simple";
+  const [gloss, setGloss] = useState(false);
   const items = useMemo(() => [...entry.s.items, ...preventionFor(entry, prog, plan, niv, data.profile && data.profile.sport)], [entry.key, niv]);
   const [drillView, setDrillView] = useState(null);
   const spN = (sportOf(data.profile) || {}).n || "";
@@ -2935,17 +3109,18 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
     finally { setBusy(false); }
   };
   const del = async () => { setBusy(true); try { await src.deleteLog(entry.key); toast("Séance supprimée.", "ok"); onClose(); } finally { setBusy(false); } };
-  const wu = warmupFor(entry, prog, plan, niv);
+  const wu = simple && detailed && entry.s.wu && !(CONTENT.RAMP || {})[entry.s.wu] ? entry.s.wu : warmupFor(entry, prog, plan, niv);
   const nPrev = items.filter((x) => x.prev).length;
   const nSpec = items.filter((x) => x.spec).length;
   return html`<div className="player">
     <header className="p-top"><button type="button" className="back" onClick=${onClose} aria-label="Retour">‹</button>
-      <div><div className="eyebrow">Semaine ${entry.w} · séance ${entry.extra ? "supplémentaire" : entry.sid}${entry.opt ? " (optionnelle)" : ""}${entry.s.lieu ? " · " + entry.s.lieu : ""} · profil ${nivName(niv)}</div><h2>${entry.s.t}</h2></div></header>
+      <div><div className="eyebrow">Semaine ${entry.w} · séance ${entry.extra ? "supplémentaire" : entry.sid}${entry.opt ? " (optionnelle)" : ""}${entry.s.lieu ? " · " + entry.s.lieu : ""} · profil ${nivName(niv)}</div><h2>${entry.s.t}</h2>
+        ${!simple ? html`<button type="button" className="linkbtn sm" onClick=${() => setGloss(true)}>Comprendre les consignes</button>` : null}</div></header>
     ${entry.s.focus ? html`<p className="muted">${entry.s.focus}</p>` : null}
     ${plan.medicalHold ? html`<div className="alert warn"><div><b>Mode Reprise</b><p>En attendant l'avis de ton médecin, les charges et les intensités sont réduites.</p></div></div>` : null}
     ${taper ? html`<div className="alert gold"><div><b>Affûtage</b><p>${taper.n}</p></div></div>` : null}
-    ${detailed ? html`<${ReadinessCheck} value=${ready} onChange=${setReady} data=${data} />` : null}
-    ${wu ? html`<div className="wu"><b>${detailed ? "Échauffement RAMP" : "Échauffement"}</b><p>${wu}</p></div>` : null}
+    ${detailed ? (simple ? html`<${QuickReady} value=${ready} onChange=${setReady} data=${data} />` : html`<${ReadinessCheck} value=${ready} onChange=${setReady} data=${data} />`) : null}
+    ${wu ? html`<div className="wu"><b>${detailed && !simple ? "Échauffement RAMP" : "Échauffement"}</b><p>${wu}</p></div>` : null}
     <ol className="exlist">${items.map((it, i) => {
       const ex = exOf(it.e, plan.equipment, prog, exo);
       const d = doses[i];
@@ -2954,7 +3129,9 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
         ${it.spec && (i === 0 || !items[i - 1].spec) ? html`<div className="eyebrow prev-h">Spécifique ${spLow(spN)} · ${plural(nSpec, "exercice")}</div>` : null}
         ${it.prev && (i === 0 || !items[i - 1].prev) ? html`<div className="eyebrow prev-h">Prévention · ${plural(nPrev, "exercice")} adapté${nPrev > 1 ? "s" : ""} à ton sport</div>` : null}
         <div className="exc-h">${ex.drill && DRB[ex.drill] ? html`<button type="button" className="exc-anim exc-drill" aria-label=${"Voir le schéma : " + ex.n} onClick=${() => setDrillView(DRB[ex.drill])}><${DrillVisual} d=${DRB[ex.drill]} niveau=${niv} data=${data} compact=${true} autoplay=${false} /><span className="exc-n">${i + 1}</span></button>` : hasMotion(ex.id, ex) ? html`<button type="button" className="exc-anim" aria-label=${"Voir le mouvement : " + ex.n} onClick=${() => setSheet(ex)}><${MoveAnim} id=${ex.id} ex=${ex} compact=${true} autoplay=${false} /><span className="exc-n">${i + 1}</span></button>` : html`<span className="exc-n">${i + 1}</span>`}<div className="exc-t"><b>${ex.n}</b>${ex.subst ? html` <${Pill} tone="gold">version maison</${Pill}>` : null}
-          <div className="dose">${d.text}</div>${(d.lines || []).length ? html`<ul className="dose-l">${d.lines.map((l, k) => html`<li key=${k}>${l}</li>`)}</ul>` : null}
+          ${simple ? (() => { const ds = doseSimple(d); return html`<div className="dose dose-s">${ds.main}</div>${ds.chips.length ? html`<div className="dose-c">${ds.chips.map((c, k) => html`<span key=${k}>${c}</span>`)}</div>` : null}
+            ${(d.lines || []).length ? html`<details className="dose-x"><summary>Détails</summary><ul className="dose-l">${d.lines.map((l, k) => html`<li key=${k}>${l}</li>`)}</ul></details>` : null}`; })()
+            : html`<div className="dose">${d.text}</div>${(d.lines || []).length ? html`<ul className="dose-l">${d.lines.map((l, k) => html`<li key=${k}>${l}</li>`)}</ul>` : null}`}
           ${it.n ? html`<div className="muted small">${it.n}</div>` : null}${ex.cnote ? html`<div className="muted small">${ex.cnote}</div>` : null}
           ${it.from ? html`<div className="sport-note">Version ${spLow(spN)} : remplace « ${EXB[it.from] ? EXB[it.from].n : it.from} »</div>` : null}
           ${ex.drill && DRB[ex.drill] ? html`<button type="button" className="linkbtn" onClick=${() => setDrillView(DRB[ex.drill])}>Voir le schéma et le minuteur</button>` : null}
@@ -2982,7 +3159,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
         <${Field} label="Durée (minutes)" id="duree"><input id="duree" inputMode="numeric" value=${duree} onChange=${(e) => setDuree(e.target.value)} /></${Field}>
         <${Field} label="Date" id="date"><input id="date" type="date" value=${date} onChange=${(e) => setDate(e.target.value)} /></${Field}>
       </div>
-      ${detailed ? html`<p className="muted small">Charge de la séance (effort × durée, Foster 2001) : ${rpe !== null && rpe !== undefined ? fmtN(rpe * (num(duree) || 0), 0) + " UA" : "—"}.</p>` : null}
+      ${detailed && !simple ? html`<p className="muted small">Charge de la séance (effort × durée, Foster 2001) : ${rpe !== null && rpe !== undefined ? fmtN(rpe * (num(duree) || 0), 0) + " UA" : "—"}.</p>` : null}
       <${Field} label="Douleur pendant ou après (0 à 10)" hint="Au-dessus de 3 : allège et préviens ton coach."><${Scale} id="douleur" min=${0} max=${10} value=${douleur} onChange=${setDouleur} /></${Field}>
       ${douleur > 0 ? html`<${Field} label="Où ?" id="zone"><input id="zone" value=${zone} onChange=${(e) => setZone(e.target.value)} placeholder="Ex. genou gauche" /></${Field}>` : null}
       <${Field} label="Commentaire (facultatif)" id="comment"><textarea id="comment" rows="3" value=${comment} onChange=${(e) => setComment(e.target.value)}></textarea></${Field}>
@@ -2990,6 +3167,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
       ${existing ? html`<div className="actions">${confirmDel ? html`<span className="small">Supprimer cette séance ?</span><${Btn} kind="danger" small onClick=${del} disabled=${busy}>Oui, supprimer</${Btn}><${Btn} kind="quiet" small onClick=${() => setConfirmDel(false)}>Annuler</${Btn}>`
         : html`<button type="button" className="linkbtn" onClick=${() => setConfirmDel(true)}>Supprimer cette séance</button>`}</div>` : null}
     </section>
+    <${Modal} open=${gloss} title="Comprendre les consignes" onClose=${() => setGloss(false)}>${gloss ? html`<${Glossaire} />` : null}</${Modal}>
     <${Modal} open=${!!sheet} wide title=${sheet ? sheet.n : ""} onClose=${() => setSheet(null)}>${sheet ? html`<${ExerciseSheet} e=${sheet.id} ex=${sheet} onFilm=${() => { setFilm(sheet); setSheet(null); }} />` : null}</${Modal}>
     <${Modal} open=${!!drillView} wide title=${drillView ? drillView.n : ""} onClose=${() => setDrillView(null)}>${drillView ? html`<${DrillSheet} d=${drillView} niveau=${niv} data=${data} profile=${data.profile} />` : null}</${Modal}>
     <${Modal} open=${!!film} wide title=${film ? "Correction vidéo · " + film.n : ""} onClose=${() => setFilm(null)}>${film ? html`<${VideoCheck} e=${film.id} ex=${film} data=${data} src=${src} plan=${plan} settings=${settings} ai=${ai} onClose=${() => setFilm(null)} />` : null}</${Modal}>
@@ -3185,6 +3363,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
     <${SportCard} data=${data} src=${src} plan=${plan} />
     <${BodyRecordsCard} data=${data} src=${src} />
     <${Card} title="Langue · Language · Idioma"><${LangPicker} id="lang-profil" onSaved=${src && src.setProfile ? (l) => src.setProfile({ ...(data.profile || {}), lang: l }) : null} /></${Card}>
+    <${AppearanceCard} data=${data} src=${src} plan=${plan} />
     <${OrdersCard} data=${data} src=${src} settings=${settings} />
     ${openMsgs ? html`<${Card} title=${"Contacter " + ((coach && coach.name) || COACH_NAME_DEFAULT)}><p className="small muted">Écris-moi dans la messagerie de l'application : je te réponds dès que possible.</p>
       <div className="btnrow"><${Btn} small onClick=${openMsgs}>Écrire à ${(coach && coach.name) || COACH_NAME_DEFAULT}</${Btn}></div></${Card}>` : null}
@@ -3472,7 +3651,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
 
   const previewSrc = useMemo(() => (preview ? memSource(demo[preview === true ? "demo_lucas" : preview], "demo") : null), [preview]);
   if (preview && previewSrc) {
-    return html`<${ClientApp} key=${String(preview)} src=${previewSrc} settings=${settings} lib=${lib} exo=${exo} db=${null} demo=${true} onExit=${() => setPreview(false)}
+    return html`<${ClientApp} key=${String(preview)} src=${previewSrc} settings=${settings} lib=${lib} exo=${exo} db=${null} demo=${true} onExit=${() => { try { sessionStorage.removeItem("saison_preview"); } catch (e) {} setPreview(false); }}
       onSwitch=${() => setPreview(preview === "demo_sophie" ? "demo_lucas" : "demo_sophie")} />`;
   }
   const selRow = sel && rows.find((r) => r.cid === sel.cid);
@@ -3500,7 +3679,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "codes" ? html`<${CodesView} db=${db} codes=${codes.items} rows=${rows} lib=${lib} />` : null}
       ${view === "dash" && db ? html`<${FinAlert} fin=${fin} go=${go} />` : null}
       ${view === "finances" ? html`<${FinancesView} db=${db} fin=${fin} settings=${settings} rows=${rows} />` : null}
-      ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} />` : null}
+      ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} onPreview=${(d) => { try { sessionStorage.setItem("saison_preview", d); } catch (e) {} setPreview(true); }} />` : null}
     </main>
     <${Modal} open=${addOpen} title="Ajouter un client" onClose=${() => setAddOpen(false)}>${addOpen ? html`<${AddClient} db=${db} lib=${lib} settings=${settings} onDone=${(cid) => { setAddOpen(false); if (cid) openClient(cid, "plan"); }} />` : null}</${Modal}>
     <${Modal} open=${importOpen} title="Importer un envoi client" onClose=${() => setImportOpen(false)}>${importOpen ? html`<${ImportBox} db=${db} onDone=${(cid) => { setImportOpen(false); if (cid) openClient(cid, "vue"); }} />` : null}</${Modal}>
@@ -4393,7 +4572,7 @@ function SiteIaStatus({ relay }) {
   return html`<div className="alert"><div><b>État sur le site : ${x ? x[1] : "vérification…"}</b>${x ? html`<p>${x[2]}</p>` : null}</div>
     <div className="btnrow">${x ? html`<${Pill} tone=${x[0]}>${x[0] === "ok" ? "OK" : "À faire"}</${Pill}>` : null}<${Btn} small kind="ghost" onClick=${check}>Revérifier</${Btn}></div></div>`;
 }
-function SettingsView({ settings, db, dl, rows }) {
+function SettingsView({ settings, db, dl, rows, onPreview }) {
   const toast = useToast();
   const s0 = settings || {};
   const [coach, setCoach] = useState({ name: COACH_NAME_DEFAULT, phone: "", email: "", instagram: "", ...(s0.coach || {}) });
@@ -4536,10 +4715,46 @@ function SettingsView({ settings, db, dl, rows }) {
         <li><b>Sans compte :</b> « Ajouter un client » puis envoie-lui le lien de la page et son code d'accès (onglet Plan). Il t'envoie ses données sous forme de texte, que tu importes.</li>
         <li>Les deux modes ne se mélangent pas sur un même lien : si tu partages la page par lien public, les clients invités par e-mail passent eux aussi en mode « sans compte ».</li>
       </ol></${Card}>`}
+    <${SaisonsCard} settings=${settings} db=${db} onPreview=${onPreview} />
     ${window.IS_SITE ? html`<${Card} title="Mon compte"><${SignOutLink} /></${Card}>` : null}
     <${Card} title="Sauvegarde" sub="Télécharge toutes les données (clients, séances, bilans, tests, programmes perso)">
       <${Btn} kind="ghost" onClick=${exportAll} disabled=${busy}>${busy ? "Préparation…" : "Télécharger une sauvegarde"}</${Btn}></${Card}>
   </div>`;
+}
+
+/* ---------- thèmes de saison et défis (coach) ---------- */
+function SaisonsCard({ settings, db, onPreview }) {
+  const toast = useToast();
+  const conf = saisonConf(settings);
+  const [off, setOff] = useState(conf.off);
+  const [msg, setMsg] = useState(conf.msg);
+  const [edit, setEdit] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const list = saisonUpcoming(todayISO(), 13);
+  const cur = saisonActive(todayISO(), { saisons: { off, msg } });
+  const save = async () => {
+    setBusy(true);
+    try { await dbSet(db, "settings/app", { ...(settings || {}), saisons: { off, msg } }); toast("Thèmes et défis enregistrés.", "ok"); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<${Card} title="Thèmes et défis de saison" sub="L'application se met aux couleurs des fêtes et des grandes compétitions, avec un défi à chaque fois. Tout se fait seul aux bonnes dates : tu peux couper un événement ou changer son message.">
+    ${cur ? html`<p className="small"><b>En ce moment :</b> ${cur.ev.n}, jusqu'au ${fmtD(cur.to)}.</p>` : html`<p className="small muted">Aucun événement en ce moment.</p>`}
+    <ul className="saisons-l">${list.map((ed) => html`<li key=${ed.key} className=${off[ed.ev.id] ? "off" : ""}>
+      <span className="saison-i" style=${{ width: "40px", height: "40px" }}><${SaisonIcon} k=${ed.ev.icon} size=${22} /></span>
+      <span className="sl-t"><b>${ed.ev.n}</b><span className="muted small">${fmtD(ed.from)} → ${fmtD(ed.to)} · ${ed.ev.defi.n} (${ed.ev.defi.target} ${ed.ev.defi.type === "jours" ? "jours" : "séances"})</span>
+        ${msg[ed.ev.id] ? html`<span className="small">Ton message : ${msg[ed.ev.id]}</span>` : null}</span>
+      <span className="btnrow"><button type="button" className="linkbtn sm" onClick=${() => setEdit(ed)}>Message</button>
+        ${onPreview ? html`<button type="button" className="linkbtn sm" onClick=${() => onPreview(addDays(ed.from, Math.min(5, diffDays(ed.from, ed.to))))}>Aperçu</button>` : null}</span>
+      <button type="button" role="switch" aria-checked=${!off[ed.ev.id]} aria-label=${"Activer : " + ed.ev.n} className=${"tgl" + (!off[ed.ev.id] ? " on" : "")} onClick=${() => setOff({ ...off, [ed.ev.id]: !off[ed.ev.id] })}><span></span></button></li>`)}</ul>
+    <p className="muted small">Les compétitions des années suivantes sont ajoutées par la mise à jour de chaque semaine, avec leurs dates officielles. Jamais de logo : seulement le nom de l'événement.</p>
+    <p className="muted small">Les compétitions restent à l'intérieur de l'application, pour tes clients. La page d'accueil publique ne montre que les fêtes : une compétition utilisée pour vendre (publicité, publication, offre « spéciale Tournoi ») peut être attaquée par l'organisateur (code du sport, art. L333-1). Sur Instagram, parle de ton défi sans le nom ni les images de la compétition.</p>
+    <div className="btnrow"><${Btn} onClick=${save} disabled=${busy}>Enregistrer les thèmes</${Btn}></div>
+    <${Modal} open=${!!edit} title=${edit ? "Message : " + edit.ev.n : ""} onClose=${() => setEdit(null)}>${edit ? html`<div className="stack">
+      <p className="small muted">Texte par défaut : ${edit.ev.x}</p>
+      <${Field} label="Ton message (facultatif)" id="sa-msg"><textarea id="sa-msg" rows="3" value=${msg[edit.ev.id] || ""} onChange=${(e) => setMsg({ ...msg, [edit.ev.id]: e.target.value.slice(0, 200) })}></textarea></${Field}>
+      <p className="small muted">Écris en français : tes clients en anglais ou en espagnol voient le texte par défaut traduit tant que ton message est vide.</p>
+      <div className="btnrow"><${Btn} onClick=${() => setEdit(null)}>OK</${Btn}><${Btn} kind="quiet" onClick=${() => { const m = { ...msg }; delete m[edit.ev.id]; setMsg(m); setEdit(null); }}>Revenir au texte par défaut</${Btn}></div></div>` : null}</${Modal}>
+  </${Card}>`;
 }
 
 /* ===== Coach IA : accès à Claude, contexte du client, ajustements ===== */
@@ -6252,7 +6467,9 @@ function cardEvolution(data, plan, prog, lib) {
   return { now, prev, d, deltas: prev ? Object.fromEntries(now.attrs.map((a, i) => [a.k, a.v - prev.attrs[i].v])) : {} };
 }
 /* badges */
-function badgesOf(data, plan, prog, lib) {
+/* badges du programme, puis ceux des défis de saison réussis */
+function badgesOf(data, plan, prog, lib) { return [...badgesBase(data, plan, prog, lib), ...(typeof saisonBadges === "function" ? saisonBadges(data && data.profile) : [])]; }
+function badgesBase(data, plan, prog, lib) {
   const logs = Object.values(data.logs || {}).filter((l) => l && l.kind !== "presentiel").sort((a, b) => String(a.date).localeCompare(String(b.date)));
   const ps = plan ? planState(plan, todayISO()) : null;
   const curW = ps ? (ps.phase === "fini" ? plan.weeks + 1 : ps.week) : 0;
@@ -7433,6 +7650,7 @@ function LegalDocFr({ kind, settings }) {
       <li><b>Goûts et régime alimentaire</b> (aliments évités ou aimés, végétarien, sans gluten…) : te proposer des recettes adaptées. Base : exécution du contrat ; une allergie ou intolérance que tu indiques est traitée avec ton consentement explicite.</li>
       <li><b>Commandes, abonnements et paiements</b> (formule, montant, date, statut, identifiant d'abonnement Stripe, rétractation ou résiliation ; jamais tes coordonnées bancaires, gérées par Stripe) : gérer ta commande, tes prélèvements, ta facture, une rétractation ou une résiliation. Base : contrat et obligations comptables.</li>
       <li><b>Messages</b> échangés avec ${L.editeur} dans l'application (texte et photos que tu choisis d'envoyer) : répondre à tes questions et te suivre. Base : exécution du contrat ; une information de santé que tu y écris est traitée avec ton consentement explicite.</li>
+      <li><b>Réglages d'affichage et défis de saison</b> (thème, couleur, taille du texte, blocs de ta page du jour, jours cochés pour un défi et badges obtenus) : afficher l'application comme tu l'as choisie et compter tes défis. Base : exécution du contrat.</li>
       <li><b>Codes d'essai</b> : vérifier qu'un code n'est utilisé qu'une fois par personne. Base : contrat.</li>
       <li><b>Certificat médical</b> que tu envoies pour suspendre ou résilier une formule de 6 ou 12 mois (article 7 ter des conditions de vente) : traiter ta demande, puis il est supprimé une fois la demande traitée. Base : ton consentement explicite.</li></ul>
     <h3>Qui y accède</h3><p>Uniquement toi et ${L.editeur}. Prestataires techniques : ${window.IS_SITE ? "Google Firebase (comptes et base de données, Europe pour la base ; comptes possiblement aux États-Unis), GitHub (hébergement des pages), Stripe (paiement et abonnements), Cloudflare (relais de confirmation des paiements et des résiliations ; si tu actives l'envoi automatique depuis ton téléphone, tes valeurs du jour y attendent que ton application les récupère, au plus 14 jours, et sont effacées quand tu arrêtes l'envoi ; et coach IA s'il est activé : quand tu l'utilises, ton dossier, tes photos de repas et les images de tes vidéos sont traités par un modèle Gemma exécuté par Cloudflare Workers AI, qui ne les conserve pas après la réponse et ne les utilise pas pour entraîner de modèles), Open Food Facts (seul le code-barres scanné est envoyé)" : "Anthropic (hébergement de l'application et coach IA : ton dossier, tes photos de repas et les images de tes vidéos lui sont envoyés quand tu utilises le coach IA), Stripe (paiement et abonnements)"}. Les transferts hors de l'Union européenne reposent sur le cadre de protection des données UE–États-Unis et des clauses contractuelles types. Aucune donnée n'est vendue ni utilisée pour de la publicité.</p>
@@ -10878,6 +11096,384 @@ function FinancesView({ db, fin, settings, rows }) {
   </div>`;
 }
 
+/* ===== Personnalisation (apparence, page du jour) et langage adapté au profil =====
+   Les réglages sont dans profile.prefs : ils suivent le client sur tous ses appareils.
+   theme : auto | sombre | clair · accent : or | bleu | vert | rouge | violet | argent · fs : 0 | 1 | 2 (taille du texte)
+   lang : auto | simple | expert · saison : thèmes et défis de saison (oui par défaut) · blocks : { order: [], off: [] } */
+const ACCENTS = [{ id: "or", n: "Or", c: "#d4ad3f" }, { id: "bleu", n: "Bleu", c: "#4a9be0" }, { id: "vert", n: "Vert", c: "#47b780" },
+  { id: "rouge", n: "Rouge", c: "#e8625a" }, { id: "violet", n: "Violet", c: "#9b7ae8" }, { id: "argent", n: "Argent", c: "#d9d4ca" }];
+const FONT_SIZES = [{ v: 0, n: "Normal" }, { v: 1, n: "Grand" }, { v: 2, n: "Très grand" }];
+const THEMES = [{ v: "auto", n: "Automatique" }, { v: "sombre", n: "Sombre" }, { v: "clair", n: "Clair" }];
+const LANG_MODES = [{ v: "auto", n: "Selon mon profil" }, { v: "simple", n: "Simple" }, { v: "expert", n: "Détaillé" }];
+const TODAY_BLOCKS = [
+  { id: "todo", n: "À faire aujourd'hui" }, { id: "stats", n: "Ma régularité" }, { id: "coach", n: "Messages et conseils" },
+  { id: "nutri", n: "Nutrition et santé" }, { id: "habits", n: "Mes habitudes" }, { id: "terrain", n: "Séance terrain de la semaine" },
+  { id: "extras", n: "Séances en plus" }, { id: "carte", n: "Ma carte athlète" }, { id: "week", n: "Les séances de la semaine" }];
+const PREFS_LS = "ui_prefs_v1";
+
+function prefsOf(profile) { return { theme: "auto", accent: "or", fs: 0, lang: "auto", saison: true, ...((profile && profile.prefs) || {}) }; }
+/* langage : Performance et Haut niveau gardent le vocabulaire du préparateur ; les autres profils ont des consignes en mots simples */
+function langMode(plan, profile) {
+  const p = prefsOf(profile);
+  if (p.lang === "simple" || p.lang === "expert") return p.lang;
+  return nivRank(effNiveau(plan, profile)) >= 2 ? "expert" : "simple";
+}
+function blocksOf(prefs) {
+  const b = (prefs && prefs.blocks) || {};
+  const ids = TODAY_BLOCKS.map((x) => x.id);
+  const order = [...(b.order || []).filter((id) => ids.includes(id)), ...ids.filter((id) => !(b.order || []).includes(id))];
+  const off = new Set(b.off || []);
+  return order.map((id) => ({ id, on: !off.has(id) }));
+}
+/* appliqué sur la racine de la page : thème, couleur, taille du texte (et gardé sur l'appareil pour l'ouverture suivante) */
+function applyUiPrefs(p) {
+  try {
+    const r = document.documentElement;
+    if (p && p.theme === "sombre") r.setAttribute("data-theme", "dark"); else if (p && p.theme === "clair") r.setAttribute("data-theme", "light"); else r.removeAttribute("data-theme");
+    if (p && p.accent && p.accent !== "or" && ACCENTS.some((a) => a.id === p.accent)) r.setAttribute("data-accent", p.accent); else r.removeAttribute("data-accent");
+    if (p && Number(p.fs) > 0) r.setAttribute("data-fs", String(Math.min(2, Number(p.fs)))); else r.removeAttribute("data-fs");
+  } catch (e) {}
+}
+function usePrefsApply(profile, on) {
+  const p = prefsOf(profile);
+  const key = [p.theme, p.accent, p.fs].join("|");
+  useEffect(() => {
+    if (!on) return undefined;
+    applyUiPrefs(p);
+    try { localStorage.setItem(PREFS_LS, JSON.stringify({ theme: p.theme, accent: p.accent, fs: p.fs })); } catch (e) {}
+    return () => applyUiPrefs(null);
+  }, [key, on]);
+}
+/* au démarrage, avant la synchronisation : mêmes réglages que la dernière fois sur cet appareil */
+function applyUiPrefsEarly() { try { const j = JSON.parse(localStorage.getItem(PREFS_LS) || "null"); if (j) applyUiPrefs(j); } catch (e) {} }
+
+/* ---------- réglages : Apparence et affichage ---------- */
+function AppearanceCard({ data, src, plan }) {
+  const toast = useToast();
+  const profile = data.profile || {};
+  const p = prefsOf(profile);
+  const can = !!(src && src.setProfile);
+  const save = async (patch) => {
+    const next = { ...p, ...patch };
+    applyUiPrefs(next);
+    if (!can) return;
+    try { await src.setProfile({ ...profile, prefs: next }); } catch (e) { toast("Réglage non enregistré. Réessaie dans un instant.", "bad"); }
+  };
+  const blocks = blocksOf(p);
+  const move = (i, d) => { const o = blocks.map((b) => b.id); const j = i + d; if (j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; save({ blocks: { order: o, off: blocks.filter((b) => !b.on).map((b) => b.id) } }); };
+  const toggle = (id) => { const off = new Set(blocks.filter((b) => !b.on).map((b) => b.id)); off.has(id) ? off.delete(id) : off.add(id); save({ blocks: { order: blocks.map((b) => b.id), off: [...off] } }); };
+  const resolved = langMode(plan, profile);
+  return html`<${Card} title="Apparence et affichage" sub="Enregistré sur ton compte : tu retrouves tes réglages sur tous tes appareils.">
+    <div className="appear">
+      <${Field} label="Thème"><${Seg} id="ap-theme" options=${THEMES.map((t) => ({ v: t.v, n: t.n }))} value=${p.theme} onChange=${(v) => save({ theme: v })} /></${Field}>
+      <div className="field"><span className="field-l" id="ap-acc-l">Couleur</span>
+        <div className="swatches" role="radiogroup" aria-labelledby="ap-acc-l">${ACCENTS.map((a) => html`<button key=${a.id} type="button" role="radio" aria-checked=${p.accent === a.id} aria-label=${a.n} title=${a.n}
+          className=${"swatch" + (p.accent === a.id ? " on" : "")} style=${{ background: a.c }} onClick=${() => save({ accent: a.id })}></button>`)}</div></div>
+      <${Field} label="Taille du texte"><${Seg} id="ap-fs" options=${FONT_SIZES.map((f) => ({ v: String(f.v), n: f.n }))} value=${String(p.fs || 0)} onChange=${(v) => save({ fs: Number(v) })} /></${Field}>
+      <${Field} label="Consignes des séances" hint=${resolved === "simple" ? "Consignes en mots simples : séries, repos, effort à garder en réserve." : "Vocabulaire du préparateur : RIR, tempo, % du maximum, échauffement RAMP."}>
+        <${Seg} id="ap-lang" options=${LANG_MODES.map((l) => ({ v: l.v, n: l.n }))} value=${p.lang} onChange=${(v) => save({ lang: v })} /></${Field}>
+      <div className="field"><span className="field-l">Ma page du jour</span><span className="field-h">La séance du jour reste toujours en haut. Affiche, masque ou déplace le reste.</span>
+        <ul className="blocks-l">${blocks.map((b, i) => {
+          const def = TODAY_BLOCKS.find((x) => x.id === b.id);
+          return html`<li key=${b.id} className=${b.on ? "" : "off"}>
+            <span className="bl-n">${def.n}</span>
+            <span className="bl-mv"><button type="button" className="x sm" aria-label=${"Monter : " + def.n} disabled=${i === 0} onClick=${() => move(i, -1)}>↑</button><button type="button" className="x sm" aria-label=${"Descendre : " + def.n} disabled=${i === blocks.length - 1} onClick=${() => move(i, 1)}>↓</button></span>
+            <button type="button" role="switch" aria-checked=${b.on} aria-label=${"Afficher : " + def.n} className=${"tgl" + (b.on ? " on" : "")} onClick=${() => toggle(b.id)}><span></span></button></li>`;
+        })}</ul></div>
+      <div className="field"><div className="tgl-row"><span><span className="field-l">Thèmes et défis de saison</span><span className="field-h">Noël, Pâques, grandes compétitions : couleurs de l'événement et un défi à relever.</span></span>
+        <button type="button" role="switch" aria-checked=${p.saison !== false} aria-label="Thèmes et défis de saison" className=${"tgl" + (p.saison !== false ? " on" : "")} onClick=${() => save({ saison: p.saison === false })}><span></span></button></div></div>
+    </div>
+  </${Card}>`;
+}
+
+/* ---------- page du jour : ce qu'il reste à faire aujourd'hui ---------- */
+function TodoCard({ items }) {
+  if (!items.length) return null;
+  const done = items.filter((x) => x.ok).length;
+  return html`<section className="card todo" aria-label="À faire aujourd'hui">
+    <div className="card-h"><h3>À faire aujourd'hui</h3><span className="muted small">${done} / ${items.length}</span></div>
+    <ul className="todo-l">${items.map((x) => html`<li key=${x.k} className=${x.ok ? "ok" : ""}>
+      <span className="todo-c" aria-hidden="true">${x.ok ? "✓" : ""}</span>
+      <span className="todo-t"><b>${x.n}</b>${x.sub ? html`<span className="muted small">${x.sub}</span>` : null}</span>
+      ${x.ok ? html`<span className="sr-only">fait</span>` : x.act ? html`<${Btn} small kind=${x.primary ? "primary" : "ghost"} onClick=${x.act}>${x.btn}</${Btn}>` : null}</li>`)}</ul>
+  </section>`;
+}
+
+/* ---------- consignes en mots simples ---------- */
+function rirWords(a, b) {
+  if (a !== b) return "garde " + a + " à " + b + " répétitions en réserve";
+  return a === 1 ? "garde 1 répétition en réserve" : a === 0 ? "va jusqu'au bout de la série" : "garde " + a + " répétitions en réserve";
+}
+function simpleInt(s) {
+  const m = String(s || "").match(/^RIR\s*(\d+)(?:\s*-\s*(\d+))?$/);
+  return m ? rirWords(Number(m[1]), Number(m[2] || m[1])) : String(s || "");
+}
+/* dose d'un exercice : « 3 × 10 · RIR 2-3 · récup 75 à 90 s » devient « 3 séries de 10 » + deux repères */
+function doseSimple(d) {
+  if (!d) return { main: "", chips: [] };
+  if (!d.sets) return { main: d.text || "", chips: [] };          /* dose écrite à la main (« 30 min », « 5 × 1 min rapide »…) */
+  const reps = String(d.reps === undefined || d.reps === null ? "" : d.reps).trim();
+  const side = /\s*\/\s*côté$/.test(reps), r = reps.replace(/\s*\/\s*côté$/, "");
+  const plain = /^\d+(\s*(-|à)\s*\d+)?$/.test(r);
+  let main;
+  if (!reps) main = d.sets > 1 ? d.sets + " séries" : "1 série";
+  else if (plain && side) main = d.sets > 1 ? d.sets + " séries de " + r + " par côté" : "1 série de " + r + " par côté";
+  else if (plain) main = d.sets > 1 ? d.sets + " séries de " + r : "1 série de " + r;
+  else main = d.sets + " × " + reps;
+  const chips = [];
+  if (d.int) chips.push(simpleInt(d.int));
+  if (d.rest) chips.push("repos " + d.rest);
+  return { main, chips };
+}
+const GLOSSAIRE = [
+  ["4 × 5", "4 séries de 5 répétitions."],
+  ["RIR 2", "arrête la série quand il te reste environ 2 répétitions en réserve. RIR 4 = très facile, RIR 0 = échec."],
+  ["Récup", "temps de repos entre deux séries."],
+  ["Tempo 3-0-X-0", "descente en 3 s, pas de pause, montée explosive (X), pas de pause en haut."],
+  ["% du maximum", "charge rapportée à ton maximum estimé à partir de tes séances (formule d'Epley) ou de tes tests."],
+  ["VMA", "vitesse maximale aérobie : la vitesse de course que tu tiens environ 6 minutes, mesurée par le test demi-Cooper."],
+  ["RAMP", "échauffement en 4 temps : s'activer (Raise), mobiliser (Activate & Mobilise), puis préparer l'effort maximal (Potentiate)."],
+  ["Effort ressenti", "note de 0 (repos) à 10 (maximal) donnée 15 à 30 min après la séance."],
+];
+function Glossaire() {
+  return html`<dl className="gloss">${GLOSSAIRE.map(([t, d]) => html`<div key=${t}><dt>${t}</dt><dd>${d}</dd></div>`)}</dl>`;
+}
+/* contrôle de forme en une question (profils Performance et Haut niveau en langage simple) :
+   une seule note de récupération perçue, reportée sur les 5 critères (Laurent et al. 2011) */
+function QuickReady({ value, onChange, data }) {
+  const [full, setFull] = useState(false);
+  const v = value || {};
+  const one = READY_ITEMS.every(([k]) => num(v[k]) !== null && num(v[k]) === num(v.sommeil)) ? num(v.sommeil) : null;
+  const res = readinessOf(v, data);
+  if (full) return html`<div className="stack-s"><${ReadinessCheck} value=${value} onChange=${onChange} data=${data} /><button type="button" className="linkbtn" onClick=${() => setFull(false)}>Revenir à une seule question</button></div>`;
+  return html`<div className="ready card">
+    <div className="card-h"><div><h3>Comment tu te sens aujourd'hui ?</h3><p className="muted small">La séance s'ajuste à ta forme du jour.</p></div></div>
+    <${Scale} id="rd-one" min=${1} max=${5} value=${one} lo="Pas en forme" hi="Au top" onChange=${(x) => onChange({ ...v, ...Object.fromEntries(READY_ITEMS.map(([k]) => [k, x])) })} />
+    ${res ? html`<div className=${"alert " + (res.lvl === "ok" ? "okb" : res.lvl === "prudence" ? "gold" : "warn")}><div><b>${res.lvl === "ok" ? "Feu vert" : res.lvl === "prudence" ? "Prudence" : "Séance allégée"}</b><p>${res.txt}</p></div></div>` : null}
+    <button type="button" className="linkbtn" onClick=${() => setFull(true)}>Détailler (5 questions et détente)</button>
+  </div>`;
+}
+
+/* ===== Thèmes de saison et grands événements sportifs, avec un défi à chaque fois =====
+   Fêtes : dates fixes chaque année (Pâques calculée). Compétitions : dates officielles vérifiées, à compléter chaque année
+   (CLAUDE.md : la mise à jour hebdomadaire ajoute les prochaines). Jamais de logo ni d'emblème officiel : noms seulement.
+   Défis : « seances » = séances enregistrées (programme et séances en plus) ; « jours » = jours où le client a bougé
+   (séance, séance en plus, activité importée, 8 000 pas ou case cochée). Progression gardée dans profile.defis[clé]. */
+const SAISON_ICONS = {
+  citrouille: "M12 7c-4.4 0-8 2.9-8 6.5S7.6 20 12 20s8-2.9 8-6.5S16.4 7 12 7zM12 7V4.5M12 4.5c1-.9 2.3-1.2 3.5-1M9 7.5c-1.2 1.6-1.5 3.8-1.5 6s.3 4.4 1.5 6M15 7.5c1.2 1.6 1.5 3.8 1.5 6s-.3 4.4-1.5 6",
+  flocon: "M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M12 3l-2 2M12 3l2 2M12 21l-2-2M12 21l2-2M4.2 7.5l2.7.7M4.2 7.5l.7 2.7M19.8 16.5l-2.7-.7M19.8 16.5l-.7-2.7M4.2 16.5l.7-2.7M4.2 16.5l2.7-.7M19.8 7.5l-2.7.7M19.8 7.5l-.7 2.7",
+  etoile: "M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z",
+  oeuf: "M12 3c-3.6 0-6.5 5.4-6.5 10.2C5.5 17.4 8.4 21 12 21s6.5-3.6 6.5-7.8C18.5 8.4 15.6 3 12 3zM6 12.5l2.5-1.5 2 1.5 2-1.5 2 1.5 2.5-1.5",
+  feuille: "M5 19C5 10 10 5 20 4c0 10-5 15-14 15M5 19l9-9",
+  ovale: "M4.5 19.5c-2-2-1.5-7.3 2.6-11.4S16.5 3.5 18.5 5.5s1.5 7.3-2.6 11.4S6.5 21.5 4.5 19.5zM8.5 15.5l7-7M10 12l2 2M12 10l2 2",
+  ballon: "M12 3a9 9 0 100 18 9 9 0 000-18zM3.5 10.5c3 1 5.5 3.5 6.5 10M20.5 10.5c-3 1-5.5 3.5-6.5 10M7 4.5c2.5 2 7.5 2 10 0",
+  roue: "M12 3a9 9 0 100 18 9 9 0 000-18zM12 12V3M12 12l7.8 4.5M12 12l-7.8 4.5M12 12l7.8-4.5M12 12l-7.8-4.5M12 12v9",
+  chrono: "M12 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15zM12 13.5V9.5M10 2.5h4M12 2.5V6M18.5 6.5l1.5-1.5",
+  coupe: "M7 4h10v4a5 5 0 01-10 0V4zM7 6H4.5a2.5 2.5 0 002.5 3.5M17 6h2.5A2.5 2.5 0 0117 9.5M12 13v4M8.5 20h7M10 17h4v3h-4z",
+};
+/* m-j : mois-jour répétés chaque année ; from/to datés : une seule édition. countTo : fin du décompte du défi (sinon fin de la période) */
+const SAISONS = [
+  /* grandes compétitions (prioritaires sur les fêtes quand elles se chevauchent) */
+  { id: "hand27", kind: "sport", from: "2027-01-13", to: "2027-01-31", main: "2027-01-31", n: "Mondial de handball", court: "la finale du Mondial de handball", icon: "ballon", deco: "ballon", accent: "bleu",
+    t: "Mondial de handball", x: "Du 13 au 31 janvier en Allemagne. Mets-toi au rythme des handballeurs : sauts, sprints, changements de direction.",
+    defi: { type: "seances", target: 6, n: "Défi explosivité", d: "6 séances pendant le Mondial, du 13 au 31 janvier." }, badge: "Main de fer" },
+  { id: "tournoi27", kind: "sport", from: "2027-02-05", to: "2027-03-13", main: "2027-03-13", n: "Tournoi des Six Nations", court: "la dernière journée du Tournoi", icon: "ovale", deco: "ovale", accent: "bleu",
+    t: "Tournoi des Six Nations", x: "5 journées de rugby du 5 février au 13 mars : deux séances par semaine pendant tout le Tournoi.",
+    defi: { type: "seances", target: 10, n: "Défi du Tournoi", d: "10 séances pendant le Tournoi : deux par semaine jusqu'à la dernière journée, le 13 mars." }, badge: "Grand Chelem" },
+  { id: "europe27", kind: "sport", from: "2027-05-08", to: "2027-05-22", main: "2027-05-22", n: "Finale de la Coupe d'Europe de rugby", court: "la finale de la Coupe d'Europe", icon: "coupe", deco: "ovale",
+    t: "Finale de la Coupe d'Europe à Lyon", x: "Le 22 mai, la finale de la Coupe d'Europe de rugby se joue à Lyon.",
+    defi: { type: "seances", target: 4, n: "Défi des phases finales", d: "4 séances dans les deux semaines avant la finale." }, badge: "Champion d'Europe" },
+  { id: "top1427", kind: "sport", from: "2027-06-11", to: "2027-06-26", main: "2027-06-26", n: "Phases finales du Top 14", court: "la finale du Top 14", icon: "ovale", deco: "ovale",
+    t: "Phases finales du Top 14", x: "Demi-finales à Bordeaux, finale le 26 juin au Stade de France.",
+    defi: { type: "seances", target: 4, n: "Défi du Bouclier", d: "4 séances entre les barrages et la finale du 26 juin." }, badge: "Bouclier" },
+  { id: "tour27", kind: "sport", from: "2027-07-02", to: "2027-07-25", main: "2027-07-25", n: "Tour de France", court: "l'arrivée du Tour à Paris", icon: "roue", deco: "roue", accent: "argent",
+    t: "Tour de France", x: "21 étapes d'Édimbourg à Paris, du 2 au 25 juillet.",
+    defi: { type: "jours", target: 15, n: "Défi des 21 étapes", d: "Bouge au moins 30 minutes 15 jours sur 24 : séance, vélo, course, 8 000 pas ou case cochée." }, badge: "Maillot de l'effort" },
+  { id: "athle27", kind: "sport", from: "2027-09-11", to: "2027-09-19", main: "2027-09-19", n: "Mondiaux d'athlétisme", court: "la fin des Mondiaux d'athlétisme", icon: "chrono", deco: "chrono",
+    t: "Mondiaux d'athlétisme", x: "Du 11 au 19 septembre à Pékin : place à la vitesse.",
+    defi: { type: "seances", target: 3, n: "Défi sprint", d: "3 séances de vitesse ou de puissance pendant les Mondiaux." }, badge: "Pointes d'or" },
+  { id: "cdm27", kind: "sport", from: "2027-10-01", to: "2027-11-13", main: "2027-11-13", n: "Coupe du monde de rugby", court: "la finale de la Coupe du monde", icon: "ovale", deco: "ovale", accent: "bleu",
+    t: "Coupe du monde de rugby", x: "Du 1er octobre au 13 novembre en Australie : six semaines de rugby, six semaines de défi.",
+    defi: { type: "seances", target: 12, n: "Défi de la Coupe du monde", d: "12 séances en 6 semaines : deux par semaine jusqu'à la finale du 13 novembre." }, badge: "Mondialiste" },
+  /* fêtes et moments de l'année */
+  { id: "nouvelan", kind: "fete", md: ["12-27", "01-07"], main: "01-01", n: "Nouvel an", court: "le Nouvel an", icon: "etoile", deco: "etoile",
+    t: "Bonne année", x: "Une nouvelle année commence : on la lance en force.",
+    defi: { type: "seances", target: 3, n: "Démarrage en trombe", d: "3 séances entre le 27 décembre et le 7 janvier." }, badge: "Départ lancé" },
+  { id: "paques", kind: "fete", easter: [-14, 1], n: "Pâques", court: "Pâques", icon: "oeuf", deco: "oeuf", accent: "vert",
+    t: "La chasse aux œufs", x: "Chaque séance te rapporte un œuf : trouve-les tous avant le lundi de Pâques.",
+    defi: { type: "seances", target: 5, n: "Chasse aux œufs", d: "5 séances dans les deux semaines avant le lundi de Pâques." }, badge: "Œuf en or" },
+  { id: "rentree", kind: "fete", md: ["08-25", "09-10"], main: "09-01", n: "Rentrée", court: "la rentrée", icon: "feuille", deco: "feuille",
+    t: "C'est la rentrée", x: "Le bon moment pour reprendre un rythme régulier.",
+    defi: { type: "seances", target: 5, n: "Défi de la rentrée", d: "5 séances entre le 25 août et le 10 septembre." }, badge: "Bonne rentrée" },
+  { id: "halloween", kind: "fete", md: ["10-17", "10-31"], main: "10-31", n: "Halloween", court: "Halloween", icon: "citrouille", deco: "citrouille", accent: "orange",
+    t: "Le défi des citrouilles", x: "Fais peur à tes courbatures avant le 31 octobre.",
+    defi: { type: "seances", target: 4, n: "Défi des citrouilles", d: "4 séances entre le 17 et le 31 octobre." }, badge: "Citrouille d'or" },
+  { id: "noel", kind: "fete", md: ["12-01", "12-26"], main: "12-25", countTo: "12-24", n: "Noël", court: "Noël", icon: "flocon", deco: "flocon", accent: "noel",
+    t: "Le défi de l'Avent", x: "Une case par jour jusqu'au 24 décembre : chaque jour où tu bouges compte.",
+    defi: { type: "jours", target: 20, n: "Défi de l'Avent", d: "Bouge au moins 10 minutes 20 jours sur 24 : séance, séance flash, récup, marche ou case cochée." }, badge: "Étoile de l'Avent" },
+];
+/* dimanche de Pâques (algorithme de Meeus, calendrier grégorien) */
+function easterOf(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mo = Math.floor((h + l - 7 * m + 114) / 31), da = ((h + l - 7 * m + 114) % 31) + 1;
+  return y + "-" + String(mo).padStart(2, "0") + "-" + String(da).padStart(2, "0");
+}
+/* éditions d'un événement autour d'une année : {ev, key, from, to, main, countTo} */
+function saisonEditions(ev, year) {
+  if (ev.from) return [{ ev, key: ev.id, from: ev.from, to: ev.to, main: ev.main || ev.to, countTo: ev.to }];
+  const out = [];
+  for (const y of [year - 1, year, year + 1]) {
+    if (ev.easter) { const e = easterOf(y); out.push({ ev, key: ev.id + "-" + y, from: addDays(e, ev.easter[0]), to: addDays(e, ev.easter[1]), main: e, countTo: addDays(e, ev.easter[1]) }); continue; }
+    const [a, b] = ev.md, cross = b < a;                   /* période à cheval sur deux années (Nouvel an) */
+    const from = y + "-" + a, to = (cross ? y + 1 : y) + "-" + b;
+    const mainY = ev.main && cross && ev.main < a ? y + 1 : y;
+    out.push({ ev, key: ev.id + "-" + y, from, to, main: ev.main ? mainY + "-" + ev.main : to, countTo: ev.countTo ? y + "-" + ev.countTo : to });
+  }
+  return out;
+}
+function saisonDate() {
+  try { const q = new URLSearchParams(location.search).get("saison"); if (q && /^\d{4}-\d{2}-\d{2}$/.test(q)) return q; } catch (e) {}
+  try { const s = sessionStorage.getItem("saison_preview"); if (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) return s; } catch (e) {}
+  return todayISO();
+}
+function saisonConf(settings) { return { off: {}, msg: {}, ...((settings && settings.saisons) || {}) }; }
+/* l'événement en cours à une date (le premier de la liste l'emporte), sauf ceux désactivés par le coach ;
+   kind = "fete" pour ne garder que les fêtes (page d'accueil publique) */
+function saisonActive(date, settings, kind) {
+  const conf = saisonConf(settings), y = Number(date.slice(0, 4));
+  for (const ev of SAISONS) {
+    if (conf.off[ev.id] || (kind && ev.kind !== kind)) continue;
+    const ed = saisonEditions(ev, y).find((x) => x.from <= date && date <= x.to);
+    if (ed) return { ...ed, msg: conf.msg[ev.id] || "" };
+  }
+  return null;
+}
+/* les prochaines éditions (écran du coach) */
+function saisonUpcoming(date, months) {
+  const end = addDays(date, Math.round((months || 12) * 30.5)), y = Number(date.slice(0, 4));
+  const all = [];
+  SAISONS.forEach((ev) => saisonEditions(ev, y).forEach((ed) => { if (ed.to >= date && ed.from <= end) all.push(ed); }));
+  return all.sort((a, b) => a.from.localeCompare(b.from));
+}
+/* jours où le client a bougé, et séances enregistrées, entre deux dates */
+function activityDates(data, profile, key, from, to) {
+  const days = new Set(), n = { seances: 0 };
+  const inR = (d) => d && d >= from && d <= to;
+  Object.values(data.logs || {}).forEach((l) => { if (l && inR(l.date)) { days.add(l.date); n.seances++; } });
+  Object.values(data.libres || {}).forEach((l) => { if (l && inR(l.d)) { days.add(l.d); n.seances++; } });
+  Object.values(data.activites || {}).forEach((a) => { const d = a && (a.d || String(a.at || "").slice(0, 10)); if (inR(d)) days.add(d); });
+  Object.values(data.sante || {}).forEach((s) => { if (s && inR(s.d) && num(s.pas) !== null && num(s.pas) >= 8000) days.add(s.d); });
+  const df = ((profile && profile.defis) || {})[key];
+  ((df && df.days) || []).forEach((d) => { if (inR(d)) days.add(d); });
+  return { days, seances: n.seances };
+}
+function defiProgress(ed, data, profile, today) {
+  const end = [ed.countTo, today].sort()[0];
+  const a = activityDates(data, profile, ed.key, ed.from, end);
+  const n = ed.ev.defi.type === "jours" ? a.days.size : a.seances;
+  return { n, target: ed.ev.defi.target, done: n >= ed.ev.defi.target, days: a.days, todayDone: a.days.has(today), counting: today <= ed.countTo };
+}
+function saisonCount(ed, date) {
+  const d = diffDays(date, ed.main);
+  if (d > 0) return "J-" + d + " avant " + ed.ev.court;
+  if (d === 0) return ed.ev.kind === "sport" ? "C'est le jour J" : "C'est aujourd'hui";
+  return ed.ev.kind === "sport" ? "La compétition est terminée" : "Bonnes fêtes";
+}
+function useSaison(settings, profile, on) {
+  const date = saisonDate();
+  const ed = useMemo(() => saisonActive(date, settings), [date, settings && settings.saisons]);
+  const show = !!(on && ed && prefsOf(profile).saison !== false);
+  useEffect(() => {
+    if (!show) return undefined;
+    try { document.documentElement.setAttribute("data-event", ed.ev.accent || "neutre"); } catch (e) {}
+    return () => { try { document.documentElement.removeAttribute("data-event"); } catch (e) {} };
+  }, [show, ed && ed.key]);
+  return show ? { ...ed, date } : null;
+}
+function SaisonIcon({ k, size }) {
+  return html`<svg width=${size || 26} height=${size || 26} viewBox="0 0 24 24" aria-hidden="true"><path d=${SAISON_ICONS[k] || SAISON_ICONS.etoile} style=${{ fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round", strokeLinejoin: "round" }}></path></svg>`;
+}
+/* petites décorations qui flottent en haut de l'écran (immobiles si le téléphone demande moins d'animations) */
+function SaisonDeco({ ed }) {
+  if (!ed) return null;
+  const spots = [[6, 8, 0.9], [22, 3, 0.6], [41, 10, 0.75], [63, 4, 0.55], [80, 9, 0.85], [93, 2, 0.6], [14, 18, 0.5], [72, 17, 0.5]];
+  return html`<div className=${"saison-deco d-" + ed.ev.deco} aria-hidden="true">${spots.map(([x, y, s], i) => html`<span key=${i} style=${{ left: x + "%", top: y + "px", transform: "scale(" + s + ")", animationDelay: (i * 0.7) + "s" }}><${SaisonIcon} k=${ed.ev.deco} size=${22} /></span>`)}</div>`;
+}
+/* bandeau de la page du jour : l'événement, le compte à rebours, le défi */
+function SaisonBanner({ ed, data, src, demo }) {
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  const profile = data.profile || {};
+  const today = ed.date;
+  const pr = defiProgress(ed, data, profile, today);
+  const df = (profile.defis || {})[ed.key] || {};
+  const can = !demo && src && src.setProfile;
+  /* défi réussi : enregistré une fois (badge) */
+  useEffect(() => {
+    if (!pr.done || df.done || !can) return;
+    src.setProfile({ ...profile, defis: { ...(profile.defis || {}), [ed.key]: { ...df, done: today, ev: ed.ev.id } } }).then(() => toast("Défi réussi : badge « " + ed.ev.badge + " » débloqué !", "ok")).catch(() => {});
+  }, [pr.done, !!df.done]);
+  const tick = async () => {
+    if (!can) { toast("Aperçu : la case n'est pas enregistrée.", "warn"); return; }
+    const days = [...new Set([...(df.days || []), today])].sort();
+    try { await src.setProfile({ ...profile, defis: { ...(profile.defis || {}), [ed.key]: { ...df, days, ev: ed.ev.id } } }); toast("Journée comptée pour le défi.", "ok"); }
+    catch (e) { toast("Enregistrement impossible. Réessaie dans un instant.", "bad"); }
+  };
+  const isJours = ed.ev.defi.type === "jours";
+  const unit = isJours ? (pr.target > 1 ? "jours" : "jour") : (pr.target > 1 ? "séances" : "séance");
+  return html`<section className=${"saison s-" + ed.ev.id} aria-label=${ed.ev.n}>
+    <div className="saison-h"><span className="saison-i"><${SaisonIcon} k=${ed.ev.icon} size=${30} /></span>
+      <div><div className="eyebrow">${saisonCount(ed, today)}</div><h3>${ed.ev.t}</h3></div></div>
+    <p>${ed.msg || ed.ev.x}</p>
+    <div className="saison-d"><div className="saison-dh"><b>${ed.ev.defi.n}</b><span>${pr.n} / ${pr.target} ${unit}</span></div>
+      <${Bar} value=${pr.n / pr.target} />
+      <p className="small">${pr.done ? "Défi réussi : badge « " + ed.ev.badge + " » débloqué. Bravo !" : ed.ev.defi.d}</p></div>
+    <div className="btnrow">
+      ${isJours && pr.counting && !pr.todayDone && !pr.done ? html`<${Btn} small onClick=${tick}>J'ai bougé aujourd'hui</${Btn}>` : null}
+      ${isJours && pr.todayDone && !pr.done ? html`<span className="saison-ok">✓ Aujourd'hui compte</span>` : null}
+      <${Btn} small kind="ghost" onClick=${() => setOpen(true)}>Voir le défi</${Btn}></div>
+    <${Modal} open=${open} title=${ed.ev.defi.n} onClose=${() => setOpen(false)}>${open ? html`<${DefiDetail} ed=${ed} pr=${pr} />` : null}</${Modal}>
+  </section>`;
+}
+function DefiDetail({ ed, pr }) {
+  const days = [];
+  if (ed.ev.defi.type === "jours") for (let d = ed.from; d <= ed.countTo; d = addDays(d, 1)) days.push(d);
+  return html`<div className="stack">
+    <p>${ed.ev.defi.d}</p>
+    <p className="small muted">Du ${fmtD(ed.from)} au ${fmtD(ed.countTo)} · objectif ${pr.target} · ${pr.done ? "réussi" : "encore " + Math.max(0, pr.target - pr.n)}</p>
+    ${days.length ? html`<div className="avent">${days.map((d) => html`<span key=${d} className=${"av-d" + (pr.days.has(d) ? " on" : "") + (d === ed.date ? " today" : "")}><b>${Number(d.slice(8))}</b></span>`)}</div>` : html`<div className="eggs">${Array.from({ length: pr.target }, (_, i) => html`<span key=${i} className=${"egg" + (i < pr.n ? " on" : "")}><${SaisonIcon} k=${ed.ev.icon} size=${26} /></span>`)}</div>`}
+    <p className="small muted">Comptent : tes séances du programme et tes séances en plus${ed.ev.defi.type === "jours" ? ", tes activités importées, les jours à 8 000 pas et les cases cochées" : ""}. À la fin, un badge rejoint ta carte athlète.</p>
+  </div>`;
+}
+/* badges des défis réussis (ajoutés à « Mes badges ») */
+function saisonBadges(profile) {
+  return Object.entries((profile && profile.defis) || {}).filter(([, v]) => v && v.done).map(([k, v]) => {
+    const ev = SAISONS.find((e) => e.id === v.ev || k.indexOf(e.id) === 0);
+    return ev ? { k: "defi-" + k, i: "etoile", n: ev.badge, d: ev.defi.n + " (" + String(v.done).slice(0, 4) + ")", ok: true, saison: true } : null;
+  }).filter(Boolean);
+}
+/* page d'accueil du site : la fête du moment, pour donner envie de rejoindre le défi.
+   Jamais les compétitions sportives sur cette page publique : s'en servir pour vendre, c'est exploiter l'événement de
+   l'organisateur (code du sport, art. L333-1 ; tribunal judiciaire de Paris, 6 janvier 2026, FFR c. Royaltiz). Dans
+   l'application, elles restent une information (dates publiques) pour les clients déjà inscrits (Cass. com., 20 mai 2014, n° 13-12102). */
+function SaisonRibbon({ settings, onJoin }) {
+  const date = saisonDate();
+  const ed = saisonActive(date, settings, "fete");
+  useEffect(() => {
+    if (!ed) return undefined;
+    try { document.documentElement.setAttribute("data-event", ed.ev.accent || "neutre"); } catch (e) {}
+    return () => { try { document.documentElement.removeAttribute("data-event"); } catch (e) {} };
+  }, [ed && ed.key]);
+  if (!ed) return null;
+  return html`<section className=${"saison l-saison s-" + ed.ev.id} aria-label=${ed.ev.n}>
+    <div className="saison-h"><span className="saison-i"><${SaisonIcon} k=${ed.ev.icon} size=${30} /></span>
+      <div><div className="eyebrow">En ce moment · ${saisonCount(ed, date)}</div><h3>${ed.ev.t}</h3></div></div>
+    <p>${ed.msg || ed.ev.x} <b>${ed.ev.defi.n}</b> : ${ed.ev.defi.d}</p>
+    ${onJoin ? html`<div className="btnrow"><${Btn} small onClick=${onJoin}>Je relève le défi</${Btn}></div>` : null}
+  </section>`;
+}
+
 /* ===== Version site : accueil public, connexion, installation ===== */
 const AUTH_ERR = {
   "auth/invalid-email": "Adresse e-mail invalide.",
@@ -11052,6 +11648,7 @@ function Landing() {
       </div>
       <div className="l-card"><${AthleteCard} data=${demo} stats=${cardStats(demo, demo.plan, dprog, {})} size=${260} idp="l" /><p className="muted small center">Ta carte athlète évolue avec tes séances, tes bilans et tes tests.</p></div>
     </section>
+    <${SaisonRibbon} settings=${settings} onJoin=${() => setAuth("signup")} />
     <section className="l-sec"><h2>Comment ça marche</h2><div className="l-steps">${steps.map(([t, d], i) => html`<div key=${i} className="l-step"><span className="l-n">${i + 1}</span><b>${t}</b><p className="small muted">${d}</p></div>`)}</div></section>
     <section className="l-sec"><h2>Les programmes</h2><div className="pgrid wide">${PROGS.map((p) => html`<div key=${p.id} className="pcard"><b>${p.n}</b><span>${p.short}</span><small>${p.lieu} · 12 semaines</small></div>`)}</div></section>
     <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className=${"card l-offer" + (o.top ? " top" : "")}>${o.top ? html`<span className="l-badge">Recommandé</span>` : null}<h3>${o.n}</h3>
@@ -11116,6 +11713,7 @@ class Boundary extends React.Component {
 const Root = window.IS_SITE && typeof SiteRoot === "function" ? SiteRoot : App;
 /* langue autre que le français : on attend le dictionnaire (quelques centaines de millisecondes au plus) avant d'afficher */
 I18N_READY.finally(() => {
+  applyUiPrefsEarly();
   i18nStart();
   ReactDOM.createRoot(document.getElementById("root")).render(html`<${Boundary}><${ToastHost}><${DbWatch} /><${Root} /></${ToastHost}></${Boundary}>`);
 });

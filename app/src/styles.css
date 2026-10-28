@@ -870,3 +870,152 @@ h1.who { display: flex; flex-wrap: wrap; }
 .fin-table td, .fin-table th { white-space: nowrap; }
 .fin-table tr.fin-tot th, .fin-table tr.fin-tot td { border-top: 2px solid var(--gold-soft); font-weight: 700; }
 .fin-frame { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+
+/* ===================== Lisibilité, personnalisation et thèmes de saison (octobre 2026) =====================
+   Texte plus grand et plus contrasté, zones à toucher plus larges (WCAG 2.2 AA), couleur au choix du client,
+   taille du texte (zoom de la page), décorations et défis des événements. */
+body { font-size: 16px; }
+.small { font-size: 14px; }
+small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .sets-h span, .steps span, .refs, .sport-note,
+.vc-frames figcaption, .rmacros span, .ts-leg, .ic-cap, .msg-t, .brand-s { font-size: 13px; }
+.field-l { font-size: 14px; }
+.alert p { font-size: 14px; }
+.eyebrow { font-size: 13.5px; }
+.it-src { font-size: 11.5px; }
+.linkbtn { font-size: 15px; padding: 6px 0; }
+.linkbtn.sm { font-size: 13.5px; }
+.btn.sm { min-height: 40px; font-size: 14.5px; padding: 8px 14px; }
+.seg button { min-height: 42px; font-size: 15px; padding: 8px 14px; }
+.stack { gap: 18px; }
+.card { padding: 18px; gap: 14px; }
+.srow { padding: 12px 14px; }
+.tabbar button { font-size: 12px; }
+.tab-ia { font-size: 12px; }
+@media (max-width: 520px) { .tabbar button { font-size: 11.5px; } }
+@media (max-width: 400px) { .tabbar.six button, .tabbar.six .tab-ia { font-size: 11px; } }
+.next { padding: 20px; gap: 16px; }
+.next-t { font-size: 28px; }
+.next-go { padding: 14px 18px; font-size: 17px; border-radius: 12px; }
+.donebtn { min-height: 46px; }
+.tb { display: contents; }
+
+/* taille du texte choisie par le client */
+:root[data-fs="1"] { zoom: 1.12; }
+:root[data-fs="2"] { zoom: 1.25; }
+/* barre d'onglets du téléphone : jamais plus large que l'écran, et à sa taille habituelle quand le texte est agrandi */
+.tabbar, .tabbar.six { grid-template-columns: repeat(var(--tabs, 5), minmax(0, 1fr)); }
+.tabbar.six { --tabs: 6; }
+.tabbar button, .tabbar .tab-ia { min-width: 0; }
+@media (max-width: 899px) { :root[data-fs="1"] .tabbar { zoom: 0.893; } :root[data-fs="2"] .tabbar { zoom: 0.8; } }
+/* texte agrandi : rien ne dépasse de l'écran (la carte de la prochaine séance passe sur deux lignes si besoin) */
+.next { flex-wrap: wrap; }
+.next > :first-child { flex: 1 1 170px; min-width: 0; }
+.next-t { overflow-wrap: anywhere; }
+:root[data-fs="1"] .toasts { width: min(calc(92vw / 1.12), 460px); }
+:root[data-fs="2"] .toasts { width: min(calc(92vw / 1.25), 460px); }
+
+/* couleur choisie par le client (thème sombre, puis thème clair : couleurs plus foncées pour rester lisibles) */
+:root[data-accent="bleu"] { --gold: #5aa9ec; --gold-soft: rgba(90, 169, 236, 0.4); --gold-tint: rgba(90, 169, 236, 0.13); --btn-bg: #4a9be0; --btn-fg: #07121c; }
+:root[data-accent="vert"] { --gold: #4fc28a; --gold-soft: rgba(79, 194, 138, 0.4); --gold-tint: rgba(79, 194, 138, 0.13); --btn-bg: #47b780; --btn-fg: #06140d; }
+:root[data-accent="rouge"] { --gold: #f0736a; --gold-soft: rgba(240, 115, 106, 0.4); --gold-tint: rgba(240, 115, 106, 0.13); --btn-bg: #e8625a; --btn-fg: #1a0806; }
+:root[data-accent="violet"] { --gold: #a98bf0; --gold-soft: rgba(169, 139, 240, 0.42); --gold-tint: rgba(169, 139, 240, 0.14); --btn-bg: #9b7ae8; --btn-fg: #110a22; }
+:root[data-accent="argent"] { --gold: #e3ded3; --gold-soft: rgba(227, 222, 211, 0.38); --gold-tint: rgba(227, 222, 211, 0.1); --btn-bg: #e3ded3; --btn-fg: #121110; }
+@media (prefers-color-scheme: light) {
+  :root[data-accent="bleu"]:not([data-theme="dark"]) { --gold: #1d5f9e; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); --btn-bg: #2a6fb0; --btn-fg: #ffffff; }
+  :root[data-accent="vert"]:not([data-theme="dark"]) { --gold: #1d7a4e; --gold-soft: rgba(29, 122, 78, 0.35); --gold-tint: rgba(29, 122, 78, 0.1); --btn-bg: #1f7a4f; --btn-fg: #ffffff; }
+  :root[data-accent="rouge"]:not([data-theme="dark"]) { --gold: #b3362c; --gold-soft: rgba(179, 54, 44, 0.35); --gold-tint: rgba(179, 54, 44, 0.1); --btn-bg: #b3362c; --btn-fg: #ffffff; }
+  :root[data-accent="violet"]:not([data-theme="dark"]) { --gold: #6a44c2; --gold-soft: rgba(106, 68, 194, 0.35); --gold-tint: rgba(106, 68, 194, 0.1); --btn-bg: #6a44c2; --btn-fg: #ffffff; }
+  :root[data-accent="argent"]:not([data-theme="dark"]) { --gold: #3a3631; --gold-soft: rgba(58, 54, 49, 0.3); --gold-tint: rgba(58, 54, 49, 0.08); --btn-bg: #2a2723; --btn-fg: #ffffff; }
+}
+:root[data-theme="light"][data-accent="bleu"] { --gold: #1d5f9e; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); --btn-bg: #2a6fb0; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="vert"] { --gold: #1d7a4e; --gold-soft: rgba(29, 122, 78, 0.35); --gold-tint: rgba(29, 122, 78, 0.1); --btn-bg: #1f7a4f; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="rouge"] { --gold: #b3362c; --gold-soft: rgba(179, 54, 44, 0.35); --gold-tint: rgba(179, 54, 44, 0.1); --btn-bg: #b3362c; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="violet"] { --gold: #6a44c2; --gold-soft: rgba(106, 68, 194, 0.35); --gold-tint: rgba(106, 68, 194, 0.1); --btn-bg: #6a44c2; --btn-fg: #ffffff; }
+:root[data-theme="light"][data-accent="argent"] { --gold: #3a3631; --gold-soft: rgba(58, 54, 49, 0.3); --gold-tint: rgba(58, 54, 49, 0.08); --btn-bg: #2a2723; --btn-fg: #ffffff; }
+/* couleur de l'événement, seulement si le client a gardé l'or */
+:root[data-event="orange"]:not([data-accent]) { --gold: #f0892a; --gold-soft: rgba(240, 137, 42, 0.4); --gold-tint: rgba(240, 137, 42, 0.13); --btn-bg: #f0892a; --btn-fg: #1a0d02; }
+:root[data-event="vert"]:not([data-accent]) { --gold: #79c98b; --gold-soft: rgba(121, 201, 139, 0.4); --gold-tint: rgba(121, 201, 139, 0.13); --btn-bg: #79c98b; --btn-fg: #08160b; }
+:root[data-event="bleu"]:not([data-accent]) { --gold: #6cb2f0; --gold-soft: rgba(108, 178, 240, 0.4); --gold-tint: rgba(108, 178, 240, 0.13); --btn-bg: #5aa5e8; --btn-fg: #07121c; }
+@media (prefers-color-scheme: light) {
+  :root[data-event="orange"]:not([data-accent]):not([data-theme="dark"]) { --gold: #a5520c; --btn-bg: #b85c0e; --btn-fg: #ffffff; --gold-soft: rgba(165, 82, 12, 0.35); --gold-tint: rgba(165, 82, 12, 0.1); }
+  :root[data-event="vert"]:not([data-accent]):not([data-theme="dark"]) { --gold: #2d7a42; --btn-bg: #2d7a42; --btn-fg: #ffffff; --gold-soft: rgba(45, 122, 66, 0.35); --gold-tint: rgba(45, 122, 66, 0.1); }
+  :root[data-event="bleu"]:not([data-accent]):not([data-theme="dark"]) { --gold: #1d5f9e; --btn-bg: #2a6fb0; --btn-fg: #ffffff; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); }
+}
+:root[data-theme="light"][data-event="orange"]:not([data-accent]) { --gold: #a5520c; --btn-bg: #b85c0e; --btn-fg: #ffffff; --gold-soft: rgba(165, 82, 12, 0.35); --gold-tint: rgba(165, 82, 12, 0.1); }
+:root[data-theme="light"][data-event="vert"]:not([data-accent]) { --gold: #2d7a42; --btn-bg: #2d7a42; --btn-fg: #ffffff; --gold-soft: rgba(45, 122, 66, 0.35); --gold-tint: rgba(45, 122, 66, 0.1); }
+:root[data-theme="light"][data-event="bleu"]:not([data-accent]) { --gold: #1d5f9e; --btn-bg: #2a6fb0; --btn-fg: #ffffff; --gold-soft: rgba(29, 95, 158, 0.35); --gold-tint: rgba(29, 95, 158, 0.1); }
+
+/* réglages d'apparence */
+.appear { display: flex; flex-direction: column; gap: 18px; }
+.appear .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.appear .seg button { white-space: normal; line-height: 1.2; padding: 8px 6px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--line); }
+.swatch.on { box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--fg); }
+.blocks-l { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.blocks-l li { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; }
+.blocks-l li.off .bl-n { color: var(--muted); text-decoration: line-through; }
+.bl-n { flex: 1; min-width: 0; font-size: 15px; }
+.bl-mv { display: flex; gap: 4px; }
+.bl-mv .x.sm { width: 38px; height: 38px; font-size: 17px; }
+.bl-mv .x.sm:disabled { opacity: 0.3; }
+.tgl { flex: none; position: relative; width: 52px; height: 32px; border-radius: 16px; border: 0; background: var(--line); transition: background 0.15s; }
+.tgl span { position: absolute; left: 3px; top: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: left 0.15s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+.tgl.on { background: var(--btn-bg); }
+.tgl.on span { left: 23px; }
+.tgl-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.tgl-row > span { display: flex; flex-direction: column; gap: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* à faire aujourd'hui */
+.todo-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.todo-l li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.todo-l li:first-child { border-top: 0; padding-top: 4px; }
+.todo-c { flex: none; width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--btn-fg); }
+.todo-l li.ok .todo-c { background: var(--gold); border-color: var(--gold); }
+.todo-l li.ok .todo-t b { color: var(--muted); font-weight: 600; }
+.todo-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.todo-t b { font-weight: 600; font-size: 16px; }
+
+/* consignes en langage simple */
+.dose-s { font-family: var(--f-display); font-size: 22px; font-weight: 700; }
+.dose-c { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dose-c span { font-size: 14px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+.dose-x summary { font-size: 14px; color: var(--muted); cursor: pointer; margin-top: 6px; }
+.gloss { display: flex; flex-direction: column; gap: 12px; margin: 0; }
+.gloss dt { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--gold); }
+.gloss dd { margin: 2px 0 0; font-size: 15px; }
+
+/* thème de saison : bandeau, défi, décorations */
+.saison { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 12px; border-radius: var(--r); padding: 18px; border: 1px solid var(--gold-soft);
+  background: linear-gradient(135deg, var(--gold-tint), var(--surface) 70%); }
+.saison.s-noel { background: linear-gradient(135deg, rgba(178, 34, 46, 0.35), var(--surface) 72%); border-color: rgba(217, 178, 68, 0.55); }
+.saison-h { display: flex; align-items: center; gap: 12px; }
+.saison-h h3 { font-size: 24px; }
+.saison-i { flex: none; width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--gold); background: var(--gold-tint); border: 1px solid var(--gold-soft); }
+.saison > p { margin: 0; font-size: 15px; }
+.saison-d { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.saison-d p { margin: 0; color: var(--muted); }
+.saison-dh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.saison-dh span { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--gold); white-space: nowrap; }
+.saison-ok { align-self: center; font-weight: 600; color: var(--ok); font-size: 15px; }
+.saison-deco { position: absolute; left: 0; right: 0; top: 0; height: 64px; pointer-events: none; overflow: hidden; z-index: 0; color: var(--gold); opacity: 0.55; }
+.saison-deco span { position: absolute; animation: s-float 6s ease-in-out infinite; }
+.client { position: relative; }
+.client > header, .client > main { position: relative; z-index: 1; }
+@keyframes s-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 8px; } }
+.d-flocon span { animation: s-snow 9s linear infinite; }
+@keyframes s-snow { 0% { translate: 0 -10px; opacity: 0; } 15% { opacity: 1; } 100% { translate: 6px 60px; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .saison-deco span { animation: none !important; } }
+.avent { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.av-d { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px solid var(--line); font-family: var(--f-display); font-size: 18px; color: var(--muted); }
+.av-d.on { background: var(--gold); color: var(--btn-fg); border-color: var(--gold); }
+.av-d.today { box-shadow: 0 0 0 2px var(--fg); }
+.eggs { display: flex; flex-wrap: wrap; gap: 8px; }
+.egg { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px dashed var(--line); color: var(--muted); }
+.egg.on { background: var(--gold-tint); border: 1px solid var(--gold); color: var(--gold); }
+.saisons-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.saisons-l li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.saisons-l li.off { opacity: 0.55; }
+.saisons-l .sl-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.l-saison { max-width: 760px; margin: 8px auto 0; width: 100%; }

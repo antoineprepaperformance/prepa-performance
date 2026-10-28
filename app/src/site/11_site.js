@@ -172,6 +172,7 @@ function Landing() {
       </div>
       <div className="l-card"><${AthleteCard} data=${demo} stats=${cardStats(demo, demo.plan, dprog, {})} size=${260} idp="l" /><p className="muted small center">Ta carte athlète évolue avec tes séances, tes bilans et tes tests.</p></div>
     </section>
+    <${SaisonRibbon} settings=${settings} onJoin=${() => setAuth("signup")} />
     <section className="l-sec"><h2>Comment ça marche</h2><div className="l-steps">${steps.map(([t, d], i) => html`<div key=${i} className="l-step"><span className="l-n">${i + 1}</span><b>${t}</b><p className="small muted">${d}</p></div>`)}</div></section>
     <section className="l-sec"><h2>Les programmes</h2><div className="pgrid wide">${PROGS.map((p) => html`<div key=${p.id} className="pcard"><b>${p.n}</b><span>${p.short}</span><small>${p.lieu} · 12 semaines</small></div>`)}</div></section>
     <section className="l-sec"><h2>Les formules</h2><div className="l-offers">${offers.map((o) => html`<div key=${o.id} className=${"card l-offer" + (o.top ? " top" : "")}>${o.top ? html`<span className="l-badge">Recommandé</span>` : null}<h3>${o.n}</h3>

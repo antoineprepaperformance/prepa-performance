@@ -80,6 +80,20 @@ ex("kb_swing", "Kettlebell swing", "Chaîne postérieure", "Kettlebell",
    ["Mouvement de charnière de hanche, pas un squat", "Projeter les hanches pour envoyer la kettlebell à hauteur d'épaules", "Bras relâchés, gainage serré en haut"],
    reg="Soulevé de terre kettlebell", prog="Swing à une main")
 
+# ---- ajouts d'octobre 2026, tirés de la méthode d'Antoine (chaîne postérieure) ----
+ex("sdt_sumo", "Soulevé de terre sumo", "Chaîne postérieure", "Barre",
+   ["Pieds larges, pointes ouvertes, mains entre les genoux", "Pousser le sol en ouvrant les genoux", "Dos plat, barre collée au corps jusqu'en haut"],
+   alt="sdt_kb", reg="Sumo à la kettlebell", prog="Sumo avec pause sous les genoux")
+ex("trap_bar", "Soulevé de terre à la trap bar", "Chaîne postérieure", "Trap bar (barre hexagonale)",
+   ["Au centre de la barre, poitrine haute", "Pousser le sol / Dos plat", "Debout en serrant les fessiers, sans basculer en arrière"],
+   alt="sdt_kb", reg="Trap bar poignées hautes", prog="Trap bar dynamique : charge légère, vitesse maximale")
+ex("trap_bar_dyn", "Trap bar dynamique", "Haltérophilie", "Trap bar (barre hexagonale)",
+   ["Charge légère : 4 à 5 répétitions en réserve", "Vitesse maximale à chaque répétition", "On arrête la série dès que la barre ralentit"],
+   alt="kb_swing", reg="Saut squat sans charge", prog="Trap bar jump (saut avec la barre)")
+ex("good_morning", "Good morning à la barre", "Chaîne postérieure", "Barre",
+   ["Barre sur le haut du dos, genoux légèrement fléchis", "Bascule le buste, dos plat / Tempo 3.1.1", "Remonte en poussant les hanches devant"],
+   alt="sdt_roumain", reg="Good morning au bâton ou à l'élastique", prog="Good morning avec pause en bas")
+
 # ---------------- Haut du corps ----------------
 ex("dc_barre", "Développé couché à la barre", "Haut du corps", "Banc + barre",
    ["Omoplates serrées, pieds au sol", "Descendre la barre au bas des pectoraux", "Pousser en gardant les coudes à 45°"],
@@ -144,6 +158,29 @@ ex("extension_triceps", "Extension des triceps", "Haut du corps", "Poulie, halt�
 ex("elevations_laterales", "Élévations latérales", "Haut du corps", "Haltères ou élastique",
    ["Légère flexion des coudes", "Monter jusqu'à hauteur d'épaules", "Contrôler la descente"],
    prog="Plus de répétitions")
+
+# ---- ajouts d'octobre 2026, tirés de la méthode d'Antoine (haut du corps) ----
+ex("floor_press", "Floor press (développé au sol)", "Haut du corps", "Barre et cadre de squat",
+   ["Allongé au sol, genoux fléchis", "Pause quand les coudes touchent le sol", "Vitesse maximale à la poussée"],
+   alt="pompes", reg="Floor press aux haltères", prog="Floor press avec chaînes ou élastiques")
+ex("dc_incline_barre", "Développé incliné à la barre", "Haut du corps", "Barre et banc incliné",
+   ["Banc à 30°, omoplates serrées", "Descente contrôlée en 2 s jusqu'en haut de la poitrine", "Pousse en gardant les fesses sur le banc"],
+   alt="pompes_pieds", reg="Développé incliné aux haltères", prog="Développé incliné avec pause")
+ex("rowing_pendlay", "Rowing Pendlay", "Haut du corps", "Barre",
+   ["Buste parallèle au sol, dos plat", "Départ arrêté au sol à chaque répétition", "Tirage explosif vers le bas des côtes"],
+   alt="rowing_haltere", reg="Rowing barre buste penché", prog="Rowing Pendlay avec pause en haut")
+ex("rowing_tbar", "Rowing T-bar (landmine)", "Haut du corps", "Barre en landmine, poignée en V",
+   ["Pieds de part et d'autre de la barre, buste fixe", "Tire les coudes le long du corps / Tempo 2.1.1", "Serre les omoplates en haut"],
+   alt="rowing_haltere", reg="Rowing T-bar léger, buste plus haut", prog="Rowing T-bar avec pause de 2 s")
+ex("tractions_neutre", "Tractions prise neutre", "Haut du corps", "Barre à poignées parallèles",
+   ["Paumes face à face, épaules basses", "Menton au-dessus de la barre", "Lest si possible, descente contrôlée"],
+   alt="rowing_inverse", reg="Tractions assistées (élastique)", prog="Tractions prise neutre lestées")
+ex("tractions_serviette", "Tractions prise serviette", "Haut du corps", "Barre de traction, 2 serviettes",
+   ["Une serviette autour de la barre dans chaque main", "Serrer comme un maillot pendant toute la série", "Menton au niveau des mains"],
+   alt="rowing_inverse", reg="Suspension aux serviettes (10 à 20 s)", prog="Tractions serviette lestées")
+ex("pompes_plio", "Pompes pliométriques", "Pliométrie", "Poids du corps",
+   ["Corps gainé de la tête aux pieds", "Pousse assez fort pour décoller les mains", "Contact au sol minimal, enchaîne"],
+   alt="pompes", reg="Pompes pliométriques mains sur un banc", prog="Pompes claquées")
 
 # ---------------- Tronc ----------------
 ex("planche", "Gainage planche", "Tronc", "Poids du corps",
@@ -240,6 +277,17 @@ ex("med_ball_rotation", "Lancer rotatif de médecine-ball", "Pliométrie", "Méd
 ex("saut_unipodal", "Sauts unipodaux (hop)", "Pliométrie", "Poids du corps",
    ["Sauter et se réceptionner sur la même jambe", "Tenir la réception 2 s", "Genou dans l'axe, sans douleur"],
    reg="Sauts sur place", prog="Enchaînés")
+
+# ---- ajouts d'octobre 2026, tirés de la méthode d'Antoine (pliométrie) ----
+ex("box_jump_assis", "Saut sur box départ assis", "Pliométrie", "Banc et box",
+   ["Assis, pieds à plat, sans élan", "Jaillis directement du banc vers la box", "Réception stable, puis redescends en marchant"],
+   alt="cmj", reg="Saut vertical depuis la position assise", prog="Départ assis lesté (gilet léger)")
+ex("mb_arriere", "Lancer arrière de médecine-ball", "Pliométrie", "Médecine-ball 4 à 6 kg",
+   ["Ballon entre les jambes, hanches en arrière", "Extension complète des chevilles, genoux et hanches", "Lance par-dessus la tête, le plus loin possible"],
+   alt="kb_swing", reg="Ballon plus léger, amplitude réduite", prog="Lancer arrière depuis un départ en saut")
+ex("mb_melee", "Lancer en poussée départ mêlée", "Pliométrie", "Médecine-ball 6 kg",
+   ["Position de mêlée, ballon contre la poitrine", "Pousse avec les jambes, puis les bras", "Lance loin devant en finissant sur un appui"],
+   alt="med_ball_lancer", reg="Lancer contre un mur à 3 m", prog="Lancer après une poussée de traîneau courte")
 
 # ---------------- Vitesse ----------------
 ex("gammes", "Gammes athlétiques", "Vitesse", "Terrain",

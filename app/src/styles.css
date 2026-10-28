@@ -1019,3 +1019,6 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 .saisons-l li.off { opacity: 0.55; }
 .saisons-l .sl-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .l-saison { max-width: 760px; margin: 8px auto 0; width: 100%; }
+
+/* fiches technique (skills) */
+.obj-l { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }

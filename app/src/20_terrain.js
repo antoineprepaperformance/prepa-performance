@@ -19,6 +19,10 @@ function posteName(sp, poste) { const x = sp && (sp.postes || []).find((q) => q[
 function spLow(n) { return String(n || "").split(/(\s+)/).map((w) => (/^[A-Z0-9]{2,}$/.test(w.replace(/[^A-Za-z0-9]/g, "")) ? w : w.toLowerCase())).join(""); }
 function sportLabel(p) { const sp = sportOf(p); if (!sp) return (p && p.sport) || ""; const po = posteName(sp, p.poste); return sp.n + (po ? " · " + po : ""); }
 function drillsFor(sp) { return sp ? (sp.drills || []).map((id) => DRB[id]).filter(Boolean) : []; }
+/* fiches « Technique » (skills) : consultées ou conseillées, jamais tirées au sort pour la séance de la semaine */
+function skillsFor(sp) { return sp ? (sp.skills || []).map((id) => DRB[id]).filter(Boolean) : []; }
+const CONTACT_N = { aucun: "Sans contact", toucher: "Toucher", bouclier: "Contact au bouclier", bags: "Contact sur tackle bag", reel: "Contact réel contrôlé" };
+function contactHard(d) { return !!(d && d.contact && !["aucun", "toucher"].includes(d.contact)); }
 function sportAdaptOn(p) { return !!sportOf(p) && !(p && p.sportAdapt === false); }
 
 /* ---------- adaptation des séances du programme au sport ---------- */
@@ -394,18 +398,24 @@ function DrillSheet({ d, niveau, data, profile, onStart, onChrono, onResult, loc
   const posteNote = d.poste && profile && profile.poste ? d.poste[profile.poste] : null;
   const best = d.test ? terrainBest(data, d.test) : null;
   const canTimer = !!x.r && !x.m;
+  const age = profile ? ageOf(profile) : null;
+  const minor = !coach && ((age !== null && age < 18) || !!(profile && profile.parent));
   return html`<div className="stack">
     <p className="muted">${d.but}</p>
-    <div className="chips"><${Pill} tone="gold">${d.type}</${Pill}><${Pill}>${d.mat}</${Pill}>${mins ? html`<${Pill}>${minLabel(mins * 60)} + échauffement</${Pill}>` : null}</div>
+    <div className="chips"><${Pill} tone="gold">${d.type}</${Pill}><${Pill}>${d.mat}</${Pill}>${d.contact ? html`<${Pill} tone=${contactHard(d) ? "warn" : "muted"}>${CONTACT_N[d.contact] || d.contact}</${Pill}>` : null}${d.pub ? html`<${Pill}>${d.pub}</${Pill}>` : null}${mins ? html`<${Pill}>${minLabel(mins * 60)} + échauffement</${Pill}>` : null}</div>
     <${DrillVisual} d=${d} niveau=${niveau} data=${data} />
     <div className="alert gold"><div><b>${coach ? "Dose pour le profil " : "Pour ton profil "}${nivName(niveau)}</b><p>${x.t}${x.m === "chr" ? " · " + plural(x.n || 1, "essai") + " chronométré" + ((x.n || 1) > 1 ? "s" : "") : ""}</p>
       ${pc && pc.need ? html`<p className="small">${coach ? "Distances et allures calculées à partir de la VMA du client (test demi-Cooper)." : "Fais ton test de VMA (demi-Cooper) pour obtenir tes distances et tes allures exactes."}</p>` : null}
       ${pc && pc.m ? html`<p className="small">${coach ? "VMA du client" : "Avec ta VMA de"} ${fmtN(pc.vma, 1)} km/h, à ${pc.pct} % : place les plots à <b>${pc.m} m</b>.</p>` : null}
       ${pc && pc.perKm ? html`<p className="small">${coach ? "VMA du client" : "Avec ta VMA de"} ${fmtN(pc.vma, 1)} km/h, à ${pc.pct} % : allure de <b>${mmss(pc.perKm)} au km</b>${pc.secs ? ", soit " + mmss(pc.secs) + " par répétition" : ""}.</p>` : null}</div></div>
     ${posteNote ? html`<div className="alert okb"><div><b>${posteName(sp, profile.poste)}</b><p>${posteNote}</p></div></div>` : null}
+    ${d.warn ? html`<div className="alert warn"><div><b>${minor && contactHard(d) ? "Seulement avec ton club" : "Sécurité"}</b><p>${minor && contactHard(d) ? "Tu as moins de 18 ans : fais cet exercice uniquement à l'entraînement de ton club, avec ton éducateur. Seul, garde la version sans contact (approche et placement, arrêt avant l'impact)." : d.warn}</p></div></div>` : null}
+    ${d.obj ? html`<${Card} title="Objectifs"><ul className="small obj-l"><li><b>Physique :</b> ${d.obj.ph}</li><li><b>Technique :</b> ${d.obj.te}</li><li><b>Match :</b> ${d.obj.ma}</li></ul></${Card}>` : null}
     ${best ? html`<p className="small">${coach ? "Meilleur résultat" : "Ton meilleur résultat"} : <b>${fmtRes(d.test, best.v)}</b> (${fmtD(best.d)}).</p>` : null}
-    <${Card} title="Déroulé"><ol className="steps-l">${d.steps.map((s, k) => html`<li key=${k}>${s}</li>`)}</ol></${Card}>
-    <${Card} title="Consignes"><ul className="small">${d.cues.map((s, k) => html`<li key=${k}>${s}</li>`)}</ul></${Card}>
+    ${d.org ? html`<${Card} title="Organisation"><p className="small">${d.org}</p></${Card}>` : null}
+    <${Card} title=${d.skill ? "Consignes" : "Déroulé"}><ol className="steps-l">${d.steps.map((s, k) => html`<li key=${k}>${s}</li>`)}</ol></${Card}>
+    <${Card} title=${d.skill ? "Points clés" : "Consignes"}><ul className="small">${d.cues.map((s, k) => html`<li key=${k}>${s}</li>`)}</ul></${Card}>
+    ${d.var && d.var.length ? html`<${Card} title="Variantes et progression"><ul className="small">${d.var.map((s, k) => html`<li key=${k}>${s}</li>`)}</ul></${Card}>` : null}
     <${Card} title="Pourquoi ça marche"><p className="small">${d.science}</p>${refList2(d.refs)}</${Card}>
     <p className="muted small">Échauffe-toi 15 minutes avant (footing, gammes, 3 accélérations progressives). Arrête si une douleur dépasse 3 sur 10 ou en cas de malaise.${niveau === "reprise" ? " En profil Reprise, reste à 80-85 % de ton maximum." : ""}</p>
     ${onStart || onChrono || onResult ? html`<div className="actions sticky-go">
@@ -486,7 +496,7 @@ function TerrainScreen({ data, plan, src, onClose, locked, onLocked, open0 }) {
       <div><div className="eyebrow">Séance terrain${sp ? " · " + sp.n : ""}</div><h2>${sel.n}</h2></div></header>
     <${DrillSheet} d=${sel} niveau=${niveau} data=${data} profile=${profile} locked=${locked}
       onStart=${guard(() => setPlay({ d: sel, seq: seqDrill(sel, niveau, data) }))} onChrono=${guard(() => setChrono(sel))} onResult=${guard(() => setResult(sel))} /></div>`;
-  const all = drillsFor(sp);
+  const all = [...drillsFor(sp), ...skillsFor(sp)];
   const types = DTYPES.filter((t) => all.some((d) => d.type === t));
   const list = all.filter((d) => type === "tout" || d.type === type);
   const tests = [...new Set(all.filter((d) => d.test).map((d) => d.test))].map((t) => ({ t, b: terrainBest(data, t) })).filter((x) => x.b);
@@ -494,7 +504,7 @@ function TerrainScreen({ data, plan, src, onClose, locked, onLocked, open0 }) {
     <header className="p-top"><button type="button" className="back" onClick=${onClose} aria-label="Retour">‹</button>
       <div><div className="eyebrow">Séances terrain</div><h2>${sp ? sp.n : "Choisis un sport"}</h2></div></header>
     <${Field} label="Sport" id="tr-sport"><select id="tr-sport" value=${sid} onChange=${(e) => { setSid(e.target.value); setType("tout"); }}>
-      <option value="">— Choisir —</option>${SPORTS.filter((s) => (s.drills || []).length).map((s) => html`<option key=${s.id} value=${s.id}>${s.n}${mine && mine.id === s.id ? " (mon sport)" : ""}</option>`)}</select></${Field}>
+      <option value="">— Choisir —</option>${SPORTS.filter((s) => (s.drills || []).length || (s.skills || []).length).map((s) => html`<option key=${s.id} value=${s.id}>${s.n}${mine && mine.id === s.id ? " (mon sport)" : ""}</option>`)}</select></${Field}>
     ${sp ? html`<p className="muted small">${sp.focus} Séances adaptées à ton profil ${nivName(niveau)}${profile.poste && sp.id === (mine && mine.id) ? " et à ton poste (" + posteName(sp, profile.poste) + ")" : ""}.</p>
       ${types.length > 1 ? html`<div className="tabs-scroll"><${Seg} options=${[{ v: "tout", n: "Tout" }, ...types.map((t) => ({ v: t, n: t }))]} value=${type} onChange=${setType} /></div>` : null}
       <div className="xgrid">${list.map((d) => { const m = drillMinutes(d, niveau, data);
@@ -583,7 +593,7 @@ function CoachTerrain({ data, src, plan, prog }) {
     catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
   };
   const cancel = async (a) => { try { const { id, ...rest } = a; await src.saveAdjust(id, { ...rest, status: "annule", seen: true }); } catch (e) { toast("Annulation impossible" + errWhy(e, true), "bad"); } };
-  const options = sp ? drillsFor(sp) : DRILLS;
+  const options = sp ? [...drillsFor(sp), ...skillsFor(sp)] : DRILLS;
   return html`<div className="stack">
     <${Card} title="Sport du client"><dl className="dl"><dt>Sport</dt><dd>${sp ? sportLabel(p) : (p.sport || "non renseigné") + (p.sport ? " (non reconnu)" : "")}</dd><dt>Profil</dt><dd>${nivName(niveau)}</dd>
       <dt>Adaptation</dt><dd>${!sp ? "aucune" : p.sportAdapt === false ? "désactivée par le client" : "active : exercices spécifiques en salle, séances terrain du sport"}</dd></dl>
@@ -607,12 +617,12 @@ function TerrainLibrary() {
   const [view, setView] = useState(null);
   const sp = SPB[sid];
   return html`<div className="stack">
-    <p className="muted small">${DRILLS.length} séances terrain pour ${SPORTS.length} sports. Chaque client voit celles de son sport, adaptées à son profil ; tu peux en conseiller une depuis sa fiche (onglet Sport & terrain).</p>
+    <p className="muted small">${DRILLS.filter((d) => !d.skill).length} séances terrain et ${DRILLS.filter((d) => d.skill).length} fiches technique pour ${SPORTS.length} sports. Chaque client voit celles de son sport, adaptées à son profil ; tu peux en conseiller une depuis sa fiche (onglet Sport & terrain). Les fiches technique ne sont jamais proposées d'office dans la séance de la semaine.</p>
     <div className="row2"><${Field} label="Sport" id="tl-sport"><select id="tl-sport" value=${sid} onChange=${(e) => setSid(e.target.value)}>${SPORTS.map((s) => html`<option key=${s.id} value=${s.id}>${s.n}</option>`)}</select></${Field}>
       <${Field} label="Profil"><${Seg} options=${NIV.map((n) => ({ v: n.id, n: n.n }))} value=${niv} onChange=${setNiv} /></${Field}></div>
     ${sp ? html`<p className="small"><b>Qualités clés :</b> ${sp.focus}</p>${(sp.spec || []).length ? html`<p className="small"><b>Exercices spécifiques ajoutés en salle :</b> ${sp.spec.map((x) => (EXB[x[0]] ? EXB[x[0]].n : x[0])).join(", ")}.</p>` : null}
       ${Object.keys(sp.swap || {}).length ? html`<p className="small"><b>Remplacements dans les séances terrain :</b> ${Object.entries(sp.swap).map(([a, b]) => (EXB[a] ? EXB[a].n : a) + " → " + (EXB[b.e] ? EXB[b.e].n : b.e)).join(" ; ")}.</p>` : null}` : null}
-    <div className="xgrid">${drillsFor(sp).map((d) => html`<button key=${d.id} type="button" className="xcard tcard" onClick=${() => setView(d)}><div className="xc-anim tc-vis"><${DrillVisual} d=${d} niveau=${niv} data=${{}} compact=${true} autoplay=${false} /></div>
+    <div className="xgrid">${[...drillsFor(sp), ...skillsFor(sp)].map((d) => html`<button key=${d.id} type="button" className="xcard tcard" onClick=${() => setView(d)}><div className="xc-anim tc-vis"><${DrillVisual} d=${d} niveau=${niv} data=${{}} compact=${true} autoplay=${false} /></div>
       <div className="xc-t"><b>${d.n}</b><span className="muted small">${d.type} · ${drillDose(d, niv).t}</span></div></button>`)}</div>
     <${Modal} open=${!!view} wide title=${view ? view.n : ""} onClose=${() => setView(null)}>${view ? html`<${DrillSheet} d=${view} niveau=${niv} data=${{}} profile=${{}} coach=${true} />` : null}</${Modal}>
   </div>`;

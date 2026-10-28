@@ -493,6 +493,44 @@ MOVES.roll_back = mvRoll("dos");
 MOVES.march = { ...mvWalk(0, 0.4), n: "Marche sur place" };
 MOVES.stand_breath = { n: "Debout, respire", keys: [K(4, "Inspire", { ...STAND, ...LEGS([0.05, 0.08]), ...BOTH({ ua: 160, fa: 165 }) }), K(4, "Expire, relâche", { ...STAND, ...LEGS([0.05, 0.08]), ...BOTH({ ua: 5, fa: 10 }) })] };
 
+/* ---------- ajouts d'octobre 2026 : exercices de la méthode d'Antoine ---------- */
+MOVES.deadlift_sumo = { n: "Soulevé de terre sumo", trail: "hands", props: [{ k: "plate", at: "hands" }],
+  keys: [K(0.7, "Pieds larges, buste droit", { hip: [-0.24, 0.53], t: 46, hd: 30, ...LEGS([0.02, 0.08]), ...BOTH([0.06, 0.225]) }), K(1.5, "Pousse le sol, genoux ouverts", { ...STAND, t: -2, ...LEGS([0.02, 0.08]), ...BOTH([0.04, 0.86]) }),
+    K(0.5, "Debout, fessiers serrés", { ...STAND, t: -2, ...LEGS([0.02, 0.08]), ...BOTH([0.04, 0.86]) }), K(1.4, "Redescends, dos plat", { hip: [-0.24, 0.53], t: 46, hd: 30, ...LEGS([0.02, 0.08]), ...BOTH([0.06, 0.225]) })] };
+MOVES.trap_bar = { n: "Soulevé de terre trap bar", trail: "hands", props: [{ k: "plate", at: "hands" }],
+  keys: [K(0.6, "Dans la barre, poitrine haute", { hip: [-0.2, 0.5], t: 38, hd: 22, ...LEGS([0.02, 0.08]), ...BOTH([-0.02, 0.27]) }), K(0.9, "Pousse le sol, vite", { ...STAND, t: -2, ...LEGS([0.02, 0.08]), ...BOTH([-0.03, 0.78]) }, "out"),
+    K(0.4, "Debout", { ...STAND, t: -2, ...LEGS([0.02, 0.08]), ...BOTH([-0.03, 0.78]) }), K(1.2, "Redescends en contrôlant", { hip: [-0.2, 0.5], t: 38, hd: 22, ...LEGS([0.02, 0.08]), ...BOTH([-0.02, 0.27]) })] };
+MOVES.bench_incline_bar = { ...mvBench("incline", "bar"), n: "Développé incliné à la barre" };
+MOVES.floor_press = (() => {
+  const hipB = [0.12, 0.13], tB = -90;
+  const shp = mvAdd(hipB, mvUp(tB), MOT_L.tr);
+  const topH = [shp[0] + 0.03, shp[1] + 0.56], botH = [shp[0] + 0.1, shp[1] + 0.2];
+  const p = { hip: hipB, t: tB, hd: tB, ...LEGS([0.5, 0.08]), kb1: 1, kb2: 1 };
+  return { n: "Floor press", trail: "hands", props: [MAT(-1.1, 2.4), { k: "plate", at: "hands" }],
+    keys: [K(0.6, "Allongé au sol, bras tendus", { ...p, ...BOTH(topH), eb1: -1, eb2: -1 }), K(1.3, "Descends jusqu'aux coudes au sol", { ...p, ...BOTH(botH), eb1: -1, eb2: -1 }),
+      K(0.6, "Pause au sol", { ...p, ...BOTH(botH), eb1: -1, eb2: -1 }), K(0.6, "Pousse vite", { ...p, ...BOTH(topH), eb1: -1, eb2: -1 }, "out")] };
+})();
+MOVES.row_pendlay = { n: "Rowing Pendlay", props: [{ k: "plate", at: "hands" }],
+  keys: [K(0.6, "Buste horizontal, barre au sol", { hip: [-0.32, 0.8], t: 82, hd: 66, ...LEGS([0.03, 0.08]), ...BOTH([0.17, 0.24]) }), K(0.55, "Tire fort vers le bas des côtes", { hip: [-0.32, 0.8], t: 82, hd: 66, ...LEGS([0.03, 0.08]), ...BOTH([0.0, 0.72]) }, "out"),
+    K(0.25, "", { hip: [-0.32, 0.8], t: 82, hd: 66, ...LEGS([0.03, 0.08]), ...BOTH([0.0, 0.72]) }), K(0.9, "Repose la barre au sol", { hip: [-0.32, 0.8], t: 82, hd: 66, ...LEGS([0.03, 0.08]), ...BOTH([0.17, 0.24]) })] };
+MOVES.pushup_plyo = (() => {
+  const strip = ({ d, lab, ease, ...r }) => r;
+  const b = MOVES.pushup, up = strip(b.keys[0]), dn = strip(b.keys[1]);
+  const air = { ...up, hip: [up.hip[0], up.hip[1] + 0.08], t: up.t - 5, hd: up.hd - 5, A1: [up.A1[0] + 0.02, up.A1[1] + 0.15], A2: [up.A2[0], up.A2[1] + 0.15] };
+  return { ...b, n: "Pompes pliométriques", note: "Corps gainé, contact au sol le plus court possible.",
+    keys: [K(0.5, "Gainage, bras tendus", up), K(0.9, "Descends la poitrine", dn), K(0.22, "Pousse fort : les mains décollent", air, "out"), K(0.25, "Réception bras souples", dn, "in"), K(0.5, "", up)] };
+})();
+MOVES.box_jump_seated = { n: "Saut sur box départ assis", props: [{ k: "bench", x: -0.72, w: 0.42, h: 0.45 }, { k: "box", x: 0.35, w: 0.55, h: 0.5 }],
+  keys: [K(0.7, "Assis, pieds à plat", { hip: [-0.42, 0.5], t: 8, hd: 0, ...LEGS([0.0, 0.08]), ...BOTH({ ua: -40, fa: -30 }) }), K(0.3, "Bras devant, décolle", { hip: [-0.2, 0.62], t: 40, ...LEGS([0.0, 0.08]), ...BOTH({ ua: 60, fa: 70 }) }, "out"),
+    K(0.28, "Saute, genoux hauts", { hip: [0.32, 1.25], t: 10, ...LEGS([0.5, 0.75]), kb1: 1, kb2: 1, ...BOTH({ ua: 150, fa: 160 }) }, "out"), K(0.25, "Réception stable", { hip: [0.45, 1.02], t: 30, ...LEGS([0.62, 0.58]), ...BOTH({ ua: 70, fa: 70 }) }, "in"),
+    K(0.5, "Debout sur la box", { hip: [0.62, 1.43], t: 2, ...LEGS([0.62, 0.58]), ...BOTH({ ua: 5, fa: 10 }) }), K(0.8, "Redescends et rassieds-toi", { hip: [-0.42, 0.5], t: 8, hd: 0, ...LEGS([0.0, 0.08]), ...BOTH({ ua: -40, fa: -30 }) })] };
+MOVES.mb_back = { n: "Lancer arrière de médecine-ball", props: [{ k: "ball", at: "hands" }],
+  keys: [K(0.6, "Ballon entre les jambes", { hip: [-0.2, 0.62], t: 44, hd: 30, ...LEGS([0.06, 0.08]), ...BOTH([0.05, 0.42]) }), K(0.3, "Extension complète, lance par-dessus la tête", { ...STAND, hip: [0.02, 1.0], t: -14, hd: -25, L1: [0.06, 0.15], L2: [0.0, 0.15], F1: 40, F2: 40, ...BOTH([-0.3, 2.0]) }, "out"),
+    K(0.3, "", { ...STAND, t: -6, ...LEGS([0.06, 0.08]), ...BOTH({ ua: 150, fa: 155 }) }), K(0.8, "Récupère, recommence", { hip: [-0.2, 0.62], t: 44, hd: 30, ...LEGS([0.06, 0.08]), ...BOTH([0.05, 0.42]) })] };
+MOVES.mb_scrum = { n: "Lancer en poussée départ mêlée", props: [{ k: "ball", at: "hands" }],
+  keys: [K(0.6, "Position de mêlée, ballon à la poitrine", { hip: [-0.3, 0.62], t: 55, hd: 35, L1: [0.12, 0.08], L2: [-0.45, 0.08], F2: 30, ...BOTH([0.2, 0.95]) }), K(0.35, "Pousse avec les jambes puis les bras", { hip: [0.08, 0.86], t: 38, hd: 20, L1: [0.12, 0.08], L2: [-0.45, 0.2], F2: 50, ...BOTH([0.8, 1.15]) }, "out"),
+    K(0.8, "", { hip: [-0.3, 0.62], t: 55, hd: 35, L1: [0.12, 0.08], L2: [-0.45, 0.08], F2: 30, ...BOTH([0.2, 0.95]) })] };
+
 /* ---------- exercice -> mouvement ---------- */
 const MOTION_FOR = {
   squat_barre: "squat_back", squat_avant: "squat_front", squat_goblet: "squat_goblet", squat_pdc: "squat_bw", squat_box: "squat_box", fente_arriere: "lunge_back", fente_marchee: "lunge_fwd",
@@ -513,6 +551,8 @@ const MOTION_FOR = {
   genoux_poitrine: "knees_chest", jambes_mur: "legs_wall", flexion_avant: "forward_fold", guerrier_2: "warrior2", coherence: "breathing_seated", rouleau_mollets: "roll_calves", rouleau_quadriceps: "roll_quads", rouleau_dos: "roll_back",
   mountain_climbers: "mountain", squat_saute: "squat_jump", fentes_sautees: "jump_lunge", superman: "superman", crunch: "crunch", talons_fesses: "butt_kicks", montees_genoux: "high_knees", planche_epaules: "plank_taps",
   pompes_genoux: "pushup_knees", dips_chaise: "bench_dips", thruster: "thruster", chenille: "inchworm", fente_laterale: "lateral_lunge", pont_unipodal: "glute_bridge_single", marche_place: "march", fente_arriere_pdc: "lunge_back_bw", fente_avant_pdc: "lunge_fwd_bw", slam_ball: "mb_slam", good_morning: "good_morning",
+  sdt_sumo: "deadlift_sumo", trap_bar: "trap_bar", trap_bar_dyn: "trap_bar", dc_incline_barre: "bench_incline_bar", floor_press: "floor_press", rowing_pendlay: "row_pendlay", rowing_tbar: "row_bent",
+  tractions_neutre: "pullup", tractions_serviette: "pullup", pompes_plio: "pushup_plyo", box_jump_assis: "box_jump_seated", mb_arriere: "mb_back", mb_melee: "mb_scrum",
 };
 const MOTION_BY_CAT = { Course: "run", Conditionnement: "run", Vitesse: "sprint", Pliométrie: "cmj", Agilité: "shuffle" };
 const _motionCache = {};

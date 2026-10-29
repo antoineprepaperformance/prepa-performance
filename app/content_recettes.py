@@ -7,6 +7,7 @@ ING = {
     # protéines animales
     "poulet": ["Blanc de poulet", 110, 23.5, 0, 1.5, "boucherie", ["volaille", "viande"]],
     "dinde": ["Escalope de dinde", 105, 23, 0, 1.2, "boucherie", ["volaille", "viande"]],
+    "agneau": ["Gigot d'agneau", 128, 20, 0.5, 5.1, "boucherie", ["agneau", "viande", "viande_rouge"]],
     "boeuf5": ["Steak haché 5 %", 125, 21, 0, 5, "boucherie", ["boeuf", "viande", "viande_rouge"]],
     "jambon": ["Jambon blanc", 115, 21, 1, 3, "frais", ["porc", "viande"]],
     "saumon": ["Pavé de saumon", 200, 20, 0, 13, "poissonnerie", ["poisson"]],
@@ -59,6 +60,16 @@ ING = {
     "concombre": ["Concombre", 12, 0.6, 2, 0.1, "fruits et légumes", ["legumes"]],
     "salade": ["Salade verte", 15, 1.3, 1.7, 0.2, "fruits et légumes", ["legumes"]],
     "avocat": ["Avocat", 165, 2, 2, 15, "fruits et légumes", ["legumes"]],
+    "potiron": ["Potiron ou courge (chair)", 20, 1.1, 3.5, 0.1, "fruits et légumes", ["legumes"]],
+    "poireau": ["Poireau", 30, 1.5, 4.6, 0.3, "fruits et légumes", ["legumes"]],
+    "betterave": ["Betterave rouge cuite", 42, 1.4, 7.1, 0.4, "fruits et légumes", ["legumes"]],
+    "chou_fleur": ["Chou-fleur", 25, 1.8, 2.1, 0.7, "fruits et légumes", ["legumes"]],
+    "petits_pois": ["Petits pois (frais ou surgelés)", 78, 5.9, 9.5, 0.4, "surgelés", ["legumes"]],
+    "pdt_nouvelles": ["Pommes de terre nouvelles", 76, 1.9, 15.8, 0.3, "fruits et légumes", ["pdt"]],
+    "chataignes": ["Châtaignes cuites (bocal ou sous vide)", 145, 2, 28.8, 1.4, "épicerie", []],
+    "clementine": ["Clémentines", 46, 0.8, 9.2, 0.3, "fruits et légumes", ["fruits"]],
+    "poire": ["Poire", 57, 0.4, 12.3, 0.3, "fruits et légumes", ["fruits"]],
+    "fraise": ["Fraises", 35, 0.6, 6, 0.3, "fruits et légumes", ["fruits"]],
     "mais": ["Maïs (conserve, égoutté)", 95, 2.9, 17, 1.2, "épicerie", ["legumes"]],
     "sauce_tomate": ["Coulis de tomate", 35, 1.5, 6, 0.3, "épicerie", ["legumes"]],
     "lait_coco": ["Lait de coco allégé", 70, 0.7, 2, 7, "épicerie", []],
@@ -77,8 +88,10 @@ ING = {
     "ail": ["Ail", 0, 0, 0, 0, "fruits et légumes", []],
 }
 
-def R(id, n, cat, temps, ing, etapes, tags=None, portions=1, batch=False, astuce=None):
-    return {"id": id, "n": n, "cat": cat, "temps": temps, "ing": [[k, g] for k, g in ing], "etapes": etapes, "tags": tags or [], "portions": portions, "batch": batch, "astuce": astuce}
+def R(id, n, cat, temps, ing, etapes, tags=None, portions=1, batch=False, astuce=None, theme=None):
+    r = {"id": id, "n": n, "cat": cat, "temps": temps, "ing": [[k, g] for k, g in ing], "etapes": etapes, "tags": tags or [], "portions": portions, "batch": batch, "astuce": astuce}
+    if theme: r["theme"] = theme   # événements (src/26_saisons.js) où la recette devient « la recette du moment » ; "sport" = toute grande compétition
+    return r
 
 RECETTES = [
     # petit-déjeuner
@@ -130,7 +143,29 @@ RECETTES = [
       ["Étale le coulis sur la galette.", "Ajoute jambon, champignons et mozzarella.", "Cuis 8 minutes à 220 °C, sers avec la salade."], ["plaisir", "rapide"]),
     R("pates_match", "Pâtes au poulet, veille de match", "soir", 20, [("pates", 110), ("poulet", 100), ("sauce_tomate", 100), ("huile_olive", 5), ("parmesan", 8)],
       ["Cuis les pâtes.", "Saisis le poulet en dés.", "Mélange avec le coulis chaud et le parmesan."], ["avant_effort", "glucides"],
-      astuce="La veille et le jour d'un match, augmente la part de féculents et garde peu de fibres et de graisses."),
+      astuce="La veille et le jour d'un match, augmente la part de féculents et garde peu de fibres et de graisses.", theme=["sport"]),
+    # recettes de saison et des fêtes (octobre 2026)
+    R("veloute_potiron", "Velouté de potiron aux lentilles corail", "soir", 30, [("potiron", 350), ("lentilles", 50), ("oignon", 50), ("lait", 100), ("pain_complet", 60), ("emmental", 15)],
+      ["Fais revenir l'oignon émincé 3 minutes.", "Ajoute le potiron en cubes, les lentilles rincées et 400 ml d'eau, cuis 20 minutes.", "Mixe avec le lait, sale et poivre.", "Sers avec le pain grillé et l'emmental."],
+      ["batch", "sans_viande"], batch=True, theme=["halloween"], astuce="Se congèle très bien : prépare 4 portions d'un coup."),
+    R("dinde_chataignes", "Dinde rôtie, châtaignes et poireaux fondus", "soir", 30, [("dinde", 140), ("chataignes", 120), ("poireau", 150), ("huile_olive", 8), ("epices", 1)],
+      ["Fais fondre les poireaux émincés 10 minutes à couvert avec la moitié de l'huile.", "Dore la dinde 4 minutes par face dans le reste d'huile.", "Ajoute les châtaignes 5 minutes pour les réchauffer.", "Sers ensemble, poivre et thym."],
+      ["classique"], theme=["noel", "nouvelan"], astuce="Le repas de fête du sportif : des protéines maigres et un féculent de saison."),
+    R("agneau_printemps", "Agneau, petits pois et pommes de terre nouvelles", "soir", 35, [("agneau", 130), ("petits_pois", 150), ("pdt_nouvelles", 200), ("oignon", 30), ("huile_olive", 5), ("ail", 3)],
+      ["Cuis les pommes de terre nouvelles 15 minutes à l'eau.", "Saisis l'agneau en tranches 3 minutes par face, réserve.", "Fais revenir l'oignon et l'ail, ajoute les petits pois et 50 ml d'eau, 8 minutes.", "Sers l'agneau sur les légumes."],
+      ["classique"], theme=["paques"]),
+    R("saumon_poireaux", "Saumon et fondue de poireaux, riz", "soir", 25, [("saumon", 130), ("poireau", 200), ("riz", 70), ("huile_olive", 5), ("citron", 10)],
+      ["Fais cuire le riz.", "Fais fondre les poireaux émincés 12 minutes à couvert avec l'huile.", "Pose le saumon sur les poireaux, couvre et cuis 8 minutes.", "Arrose de citron."], ["omega3"]),
+    R("salade_lentilles", "Salade tiède de lentilles, betterave et feta", "midi", 25, [("lentilles", 70), ("betterave", 150), ("feta", 40), ("noix", 10), ("huile_olive", 8), ("epices", 1)],
+      ["Cuis les lentilles 20 minutes, égoutte.", "Coupe la betterave en dés.", "Mélange lentilles tièdes, betterave, feta émiettée et noix.", "Assaisonne d'huile, vinaigre, sel et poivre."], ["a_emporter", "sans_viande"]),
+    R("chou_fleur_roti", "Chou-fleur rôti, pois chiches et sauce skyr", "soir", 30, [("chou_fleur", 250), ("pois_chiches", 150), ("skyr", 100), ("huile_olive", 8), ("riz", 50), ("curry", 1)],
+      ["Coupe le chou-fleur en bouquets, mélange avec les pois chiches, l'huile et le curry.", "Rôtis 25 minutes à 200 °C.", "Pendant ce temps, cuis le riz.", "Sers avec le skyr salé, poivré et citronné."], ["vegetal", "epice"]),
+    R("clementines_skyr", "Clémentines, skyr et amandes", "collation", 3, [("skyr", 150), ("clementine", 150), ("amandes", 15)],
+      ["Épluche et coupe les clémentines.", "Sers sur le skyr avec les amandes concassées."], ["rapide", "sans_cuisson"]),
+    R("poire_rotie", "Poire rôtie, fromage blanc et noix", "collation", 15, [("poire", 150), ("fromage_blanc", 150), ("noix", 10), ("miel", 5), ("epices", 1)],
+      ["Coupe la poire en quartiers, saupoudre de cannelle.", "Rôtis 12 minutes à 200 °C (ou 3 minutes au micro-ondes).", "Sers chaude sur le fromage blanc, avec les noix et le miel."], ["sans_viande"]),
+    R("fraises_skyr", "Fraises, skyr et flocons d'avoine", "collation", 3, [("skyr", 150), ("fraise", 150), ("avoine", 20)],
+      ["Lave et coupe les fraises.", "Sers sur le skyr avec les flocons."], ["rapide", "sans_cuisson"]),
     # collations et récupération
     R("shake_recup", "Shake récup banane-whey", "collation", 3, [("lait", 250), ("whey", 30), ("banane", 100), ("avoine", 30)],
       ["Mixe tous les ingrédients 30 secondes.", "À boire dans l'heure qui suit l'entraînement."], ["apres_effort", "rapide"]),
@@ -156,4 +191,18 @@ RECETTES_SCIENCE = {
     "text": "Chaque repas apporte des protéines (environ 0,4 g par kilo de poids corporel, réparties sur 3 à 4 repas, Schoenfeld et Aragon, 2018), des légumes et un féculent dosé selon ta journée. La veille et le jour d'un match, les glucides augmentent (Burke, 2011). Cuisiner des aliments simples plutôt qu'ultra-transformés aide à ne pas manger plus que ses besoins (Hall, 2019).",
 }
 
-RECETTES_CONTENT = {"ING": ING, "RECETTES": RECETTES, "RECSCI": RECETTES_SCIENCE}
+# Saisons des fruits et légumes frais (P printemps, E été, A automne, H hiver), d'après « Mes produits de saison »
+# de Manger Bouger (Santé publique France). Ingrédient absent = disponible toute l'année ou non classé (surgelés,
+# conserves, pommes de terre de garde, patate douce, champignons de Paris, ail utilisé en petite quantité).
+# Pommes de terre nouvelles : primeurs du printemps.
+RECETTES_SAISON = {
+    "epinards": "PEAH", "brocoli": "EAH", "carotte": "PEAH", "courgette": "PE", "tomate": "PE", "poivron": "PE", "concombre": "PE",
+    "haricots_verts": "E", "oignon": "PEAH", "salade": "PEA", "poireau": "PEAH", "potiron": "EAH", "betterave": "PEAH", "chou_fleur": "PEAH",
+    "petits_pois": "P", "pdt_nouvelles": "P", "pomme": "PEAH", "poire": "EAH", "fraise": "PE", "citron": "H", "clementine": "AH", "avocat": "H", "banane": "PEAH",
+}
+RECETTES_SCIENCE["refs"].append("Santé publique France. Manger Bouger : mes produits de saison (printemps, été, automne, hiver). https://www.mangerbouger.fr")
+for _k in RECETTES_SAISON: assert _k in ING, _k
+for _r in RECETTES:
+    for _k, _g in _r["ing"]: assert _k in ING, (_r["id"], _k)
+
+RECETTES_CONTENT = {"ING": ING, "RECETTES": RECETTES, "RECSCI": RECETTES_SCIENCE, "RECSAISON": RECETTES_SAISON}

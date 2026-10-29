@@ -1022,3 +1022,4 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 
 /* fiches technique (skills) */
 .obj-l { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.rc-tags { display: flex; gap: 6px; flex-wrap: wrap; }

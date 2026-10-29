@@ -1,5 +1,5 @@
-/* service worker — version e60573059c */
-const V = "prepa-e60573059c";
+/* service worker — version ae794c1975 */
+const V = "prepa-ae794c1975";
 const CORE = ["./", "index.html", "config.js", "manifest.webmanifest", "icons/favicon.svg", "icons/icon-192.png", "icons/apple-touch-icon.png", "vendor/react.production.min.js", "vendor/react-dom.production.min.js", "vendor/htm.umd.js", "vendor/firebase-app-compat.js", "vendor/firebase-auth-compat.js", "vendor/firebase-firestore-compat.js", "fonts/barlow-400.woff2", "fonts/barlow-500.woff2", "fonts/barlow-600.woff2", "fonts/barlow-700.woff2", "fonts/barlow-condensed-600.woff2", "fonts/barlow-condensed-700.woff2"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(V).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== V).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });

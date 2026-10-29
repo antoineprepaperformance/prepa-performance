@@ -303,7 +303,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const extras = openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null;
   const tweek = openTerrain ? html`<${TerrainWeek} data=${data} plan=${plan} w=${w} wib=${ps.wib} open=${openTerrain} />` : null;
   const cardMini = html`<${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} compact=${true} onOpen=${() => go("profil")} />`;
-  const nutri = html`${nutriOk(plan) ? html`<${NutriToday} data=${data} go=${go} />` : null}${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}`;
+  const nutri = html`${nutriOk(plan) ? html`<${NutriToday} data=${data} go=${go} ed=${saison} cid=${src && src.cid} />` : null}${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}`;
   const habits = prog.habits && prog.habits.length ? html`<${Habits} prog=${prog} data=${data} src=${src} block=${ps.block} />` : null;
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;

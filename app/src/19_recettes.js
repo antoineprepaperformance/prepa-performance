@@ -1,5 +1,29 @@
 /* ===== Livre de recettes : recette de la semaine, goûts, portions adaptées, liste de courses, recettes IA ===== */
-const ING = CONTENT.ING || {}, RECETTES = CONTENT.RECETTES || [], RECSCI = CONTENT.RECSCI || {};
+const ING = CONTENT.ING || {}, RECETTES = CONTENT.RECETTES || [], RECSCI = CONTENT.RECSCI || {}, RECSAISON = CONTENT.RECSAISON || {};
+/* saisons des fruits et légumes (Manger Bouger) : P printemps (mars-mai), E été, A automne, H hiver (décembre-février) */
+const SAISON_MOIS = { P: [3, 4, 5], E: [6, 7, 8], A: [9, 10, 11], H: [12, 1, 2] };
+const SAISON_N = { P: "printemps", E: "été", A: "automne", H: "hiver" };
+function seasonOf(d) { const m = Number(String(d || todayISO()).slice(5, 7)); return Object.keys(SAISON_MOIS).find((k) => SAISON_MOIS[k].includes(m)) || "A"; }
+function recSeasonDate() { return typeof saisonDate === "function" ? saisonDate() : todayISO(); }
+/* true : de saison ; false : un légume ou un fruit principal (30 g et plus) n'est pas de saison ; null : sans produit de saison */
+function recSeason(r, s) {
+  const main = recIng(r).filter((x) => x.g >= 30 && RECSAISON[x.k]);
+  if (!main.length) return null;
+  return main.every((x) => RECSAISON[x.k].includes(s));
+}
+/* l'événement du moment (fêtes, grandes compétitions), sauf si le client ou Antoine l'a coupé */
+function recEvent(data, settings) {
+  if (typeof saisonActive !== "function" || (typeof prefsOf === "function" && prefsOf(data && data.profile).saison === false)) return null;
+  return saisonActive(recSeasonDate(), settings);
+}
+/* recette de l'événement : pendant toute la fête ; pour une grande compétition, seulement la dernière semaine (avant la finale) */
+function recTheme(r, ed) {
+  if (!ed || !r.theme) return false;
+  if (r.theme.includes(ed.ev.id)) return true;
+  if (ed.ev.kind !== "sport" || !r.theme.includes("sport")) return false;
+  const d = diffDays(ed.date || recSeasonDate(), ed.main);
+  return d >= 0 && d <= 6;
+}
 const REC_CAT = [{ v: "tout", n: "Tout" }, { v: "matin", n: "Petit-déjeuner" }, { v: "midi", n: "Déjeuner" }, { v: "soir", n: "Dîner" }, { v: "collation", n: "Collation" }];
 const REC_SHARE = { matin: 0.25, midi: 0.35, soir: 0.3, collation: 0.12 };
 const REC_SLOT = { matin: "matin", midi: "midi", soir: "soir", collation: "collation" };
@@ -36,9 +60,19 @@ function recScore(r, pr, np) {
 }
 function isoWeek(d) { const t = parseISO(d); const day = (t.getDay() + 6) % 7; t.setDate(t.getDate() - day + 3); const first = new Date(t.getFullYear(), 0, 4); return t.getFullYear() * 100 + 1 + Math.round(((t - first) / 86400000 - 3 + ((first.getDay() + 6) % 7)) / 7); }
 function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h); }
-function weekRecipe(data, np, cid) {
+function weekRecipe(data, np, cid, settings) { return weekRecipeEd(data, np, cid, recEvent(data, settings)).r; }
+/* recette de la semaine avec un événement déjà connu : celle de l'événement, sinon une recette de saison */
+function weekRecipeEd(data, np, cid, ed) {
   const pr = recPrefs(data);
-  const pool = RECETTES.filter((r) => (r.cat === "midi" || r.cat === "soir") && recAllowed(r, pr)).sort((a, b) => recScore(b, pr, np) - recScore(a, pr, np)).slice(0, 8);
+  const th = ed ? RECETTES.find((r) => recTheme(r, ed) && recAllowed(r, pr)) : null;
+  return th ? { r: th, th: true } : { r: seasonRecipe(data, np, cid), th: false };
+}
+function seasonRecipe(data, np, cid) {
+  const pr = recPrefs(data);
+  const s = seasonOf(recSeasonDate());
+  const rank = (r) => ({ true: 2, null: 1, false: 0 })[String(recSeason(r, s))];
+  const pool = RECETTES.filter((r) => (r.cat === "midi" || r.cat === "soir") && recAllowed(r, pr) && recSeason(r, s) !== false)
+    .sort((a, b) => rank(b) - rank(a) || recScore(b, pr, np) - recScore(a, pr, np)).slice(0, 8);
   if (!pool.length) return null;
   return pool[hashStr(String(cid || (data.profile && data.profile.name) || "") + isoWeek(todayISO())) % pool.length];
 }
@@ -57,11 +91,13 @@ const REC_ICO = {
   soir: "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z",
   collation: "M12 7c-2-2-7-1.5-7 4c0 4 3 9 5 9c1 0 1.3-.6 2-.6s1 .6 2 .6c2 0 5-5 5-9c0-5.5-5-6-7-4zM12 7c0-2 1-4 3-4",
 };
-function RecipeCard({ r, np, eq, fav, onOpen, week }) {
+function RecipeCard({ r, np, eq, fav, onOpen, week, ed }) {
   const f = recFactor(r, np), m = recMacros(r, f);
+  const sea = recSeason(r, seasonOf(recSeasonDate())) === true, th = recTheme(r, ed);
   return html`<button type="button" className=${"rcard" + (week ? " week" : "")} onClick=${onOpen}>
     <span className=${"rc-ico " + r.cat} aria-hidden="true"><${Icon} d=${REC_ICO[r.cat] || REC_ICO.midi} /></span>
-    <span className="rc-t">${week ? html`<span className="eyebrow">Recette de la semaine</span>` : null}<b>${r.n}${fav ? " ★" : ""}</b>
+    <span className="rc-t">${week ? html`<span className="eyebrow">${th ? "La recette du moment · " + ed.ev.n : "Recette de la semaine"}</span>` : null}<b>${r.n}${fav ? " ★" : ""}</b>
+      ${sea || (th && !week) ? html`<span className="rc-tags">${th && !week ? html`<${Pill} tone="gold">${ed.ev.n}</${Pill}>` : null}${sea ? html`<${Pill} tone="ok">De saison</${Pill}>` : null}</span>` : null}
       <span className="muted small">${r.temps} min${eq ? "" : " · " + fmtN(m.kcal, 0) + " kcal · " + fmtN(m.p, 0) + " g de protéines"}${r.batch ? " · à préparer d'avance" : ""}${r.kind === "ia" ? " · créée par le coach IA" : ""}</span></span></button>`;
 }
 function RecipeView({ r, np, eq, data, src, onAddMeal, onClose }) {
@@ -163,7 +199,7 @@ function AIRecipe({ data, np, ai, src, onDone }) {
     <p className="muted small">Le coach IA est une intelligence artificielle : il tient compte de ton objectif et de tes goûts. Les valeurs sont recalculées avec la table des aliments quand c'est possible.</p>
     <${Btn} onClick=${go} disabled=${busy}>${busy ? "Le coach IA cuisine… (10 à 40 s)" : "Créer ma recette"}</${Btn}></div>`;
 }
-function RecipesTab({ data, src, np, ai, cid, onAddMeal }) {
+function RecipesTab({ data, src, np, ai, cid, onAddMeal, settings }) {
   const eq = np && np.mode === "equilibre";
   const pr = recPrefs(data);
   const [cat, setCat] = useState("tout");
@@ -175,19 +211,21 @@ function RecipesTab({ data, src, np, ai, cid, onAddMeal }) {
   const all = [...mine, ...RECETTES];
   const allowed = all.filter((r) => recAllowed(r, pr));
   const hidden = all.length - allowed.length;
-  const list = allowed.filter((r) => (cat === "tout" || r.cat === cat) && (!q || normTxt(r.n + " " + recIng(r).map((x) => x.d[0]).join(" ")).includes(normTxt(q))) && (only !== "rapide" || r.temps <= 15) && (only !== "batch" || r.batch) && (only !== "fav" || (pr.fav || []).includes(r.id)))
+  const sNow = seasonOf(recSeasonDate()), ed = recEvent(data, settings);
+  const list = allowed.filter((r) => (cat === "tout" || r.cat === cat) && (!q || normTxt(r.n + " " + recIng(r).map((x) => x.d[0]).join(" ")).includes(normTxt(q))) && (only !== "rapide" || r.temps <= 15) && (only !== "batch" || r.batch) && (only !== "fav" || (pr.fav || []).includes(r.id)) && (only !== "saison" || recSeason(r, sNow) === true || recTheme(r, ed)))
     .sort((a, b) => recScore(b, pr, np) - recScore(a, pr, np));
-  const wk = weekRecipe(data, np, cid);
+  const wk = weekRecipe(data, np, cid, settings);
   const nList = ((((data.recettes || {}).liste) || {}).items || []).length;
   return html`<div className="stack">
-    ${wk ? html`<${RecipeCard} r=${wk} np=${np} eq=${eq} week=${true} onOpen=${() => setSel(wk)} />` : null}
+    ${wk ? html`<${RecipeCard} r=${wk} np=${np} eq=${eq} week=${true} ed=${ed} onOpen=${() => setSel(wk)} />` : null}
     <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => setModal("gouts")}>Mes goûts</${Btn}><${Btn} small kind="ghost" onClick=${() => setModal("liste")}>Liste de courses${nList ? " (" + nList + ")" : ""}</${Btn}>
       ${ai && ai.sample ? html`<${Btn} small onClick=${() => setModal("ia")}>Créer une recette avec l'IA</${Btn}>` : null}</div>
     <div className="tabs-scroll"><${Seg} options=${REC_CAT} value=${cat} onChange=${setCat} /></div>
     <div className="filters"><input id="rc-q" className="search" placeholder="Rechercher un plat ou un ingrédient" value=${q} onChange=${(e) => setQ(e.target.value)} />
-      <div className="chips">${[["rapide", "15 min ou moins"], ["batch", "À préparer d'avance"], ["fav", "Favoris"]].map(([k, n]) => html`<button key=${k} type="button" className=${"chipbtn" + (only === k ? " on" : "")} aria-pressed=${only === k} onClick=${() => setOnly(only === k ? null : k)}>${n}</button>`)}</div></div>
+      <div className="chips">${[["saison", "De saison"], ["rapide", "15 min ou moins"], ["batch", "À préparer d'avance"], ["fav", "Favoris"]].map(([k, n]) => html`<button key=${k} type="button" className=${"chipbtn" + (only === k ? " on" : "")} aria-pressed=${only === k} onClick=${() => setOnly(only === k ? null : k)}>${n}</button>`)}</div></div>
     ${hidden ? html`<p className="muted small">${plural(hidden, "recette masquée", "recettes masquées")} selon tes goûts.</p>` : null}
-    <div className="rgrid">${list.map((r) => html`<${RecipeCard} key=${r.id} r=${r} np=${np} eq=${eq} fav=${(pr.fav || []).includes(r.id)} onOpen=${() => setSel(r)} />`)}</div>
+    ${only === "saison" ? html`<p className="muted small">Fruits et légumes de ${SAISON_N[sNow]}, d'après le calendrier Manger Bouger (Santé publique France).</p>` : null}
+    <div className="rgrid">${list.map((r) => html`<${RecipeCard} key=${r.id} r=${r} np=${np} eq=${eq} ed=${ed} fav=${(pr.fav || []).includes(r.id)} onOpen=${() => setSel(r)} />`)}</div>
     ${!list.length ? html`<${Empty} title="Aucune recette" text="Change de filtre ou ajuste tes goûts." />` : null}
     <details className="small"><summary>Comment les recettes sont construites</summary><p>${RECSCI.text}</p><ol className="refs">${(RECSCI.refs || []).map((x, k) => html`<li key=${k}>${x}</li>`)}</ol></details>
     <${Modal} open=${!!sel} wide title=${sel ? sel.n : ""} onClose=${() => setSel(null)}>${sel ? html`<${RecipeView} r=${sel} np=${np} eq=${eq} data=${data} src=${src} onAddMeal=${onAddMeal} onClose=${() => setSel(null)} />` : null}</${Modal}>

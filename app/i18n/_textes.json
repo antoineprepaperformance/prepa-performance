@@ -1355,7 +1355,7 @@
   "k": "4 plots, un partenaire",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 1
+  "n": 2
  },
  {
   "h": "dfb78807eb",
@@ -2006,7 +2006,7 @@
   "k": "Au sol",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 1
+  "n": 3
  },
  {
   "h": "fcb336a9b2",
@@ -2139,7 +2139,7 @@
   "k": "3 séries de 6, côté annoncé au dernier moment",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 1
+  "n": 2
  },
  {
   "h": "6b5d0e93f0",
@@ -2629,7 +2629,7 @@
   "k": "2 séries de 5, départ toutes les 30 s",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 1
+  "n": 2
  },
  {
   "h": "1764b9da52",
@@ -3056,7 +3056,7 @@
   "k": "4 plots",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 1
+  "n": 2
  },
  {
   "h": "0998fe33f0",
@@ -3798,7 +3798,7 @@
   "k": "2 séries de 6",
   "kind": "content",
   "where": "content:DRILLS",
-  "n": 4
+  "n": 5
  },
  {
   "h": "74e9365cdf",
@@ -6447,6 +6447,2617 @@
   "n": 1
  },
  {
+  "h": "6e0c365fb3",
+  "k": "Savoir tomber et se relever",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b104d2639f",
+  "k": "Tapis ou herbe souple",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b84bbe7b64",
+  "k": "Encaisser une chute ou un plaquage sans se blesser, puis se relever vite dans le jeu.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "93dfeea5ca",
+  "k": "Chute avant amortie : à genoux, laisse-toi tomber vers l'avant et amortis avec les avant-bras, menton rentré.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d6df55ab85",
+  "k": "Roulade sur l'épaule : de la position à genoux, roule en diagonale de l'épaule à la hanche opposée, puis relève-toi.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "16eee139af",
+  "k": "Chute sur le côté : accroupi, bascule sur le côté, frappe le sol avec l'avant-bras, garde la tête décollée.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "81b3b95fc3",
+  "k": "Relevé en un appui : du sol, reviens debout et fais 5 m d'appuis vifs.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d12adf6ac0",
+  "k": "Menton rentré, tête jamais en premier au sol",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f2393eef87",
+  "k": "On roule sur l'épaule et le dos, pas sur la nuque",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "038885785e",
+  "k": "Relevé en moins de 2 s, premier appui explosif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "493c715ea8",
+  "k": "2 séries de 4 chutes lentes (avant, épaule, côté, relevé)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c3f67516b4",
+  "k": "1 chute + relevé, à vitesse lente",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e9963ef8e0",
+  "k": "3 séries de 4 chutes (une de chaque)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dcd03d8fb1",
+  "k": "1 chute + relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e4a1858ab5",
+  "k": "3 séries de 6, côté annoncé par le partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3bfbbbe174",
+  "k": "1 chute + relevé + 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6f207cc454",
+  "k": "3 séries de 6, chute au signal, relevé et sprint 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d3b4d946e5",
+  "k": "Chute au signal + relevé + 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2d5e44a1aa",
+  "k": "Un échauffement de 20 minutes qui inclut l'équilibre, les chutes et le renforcement du cou a réduit les blessures et les commotions chez des rugbymen scolaires, à condition d'être fait au moins 3 fois par semaine (Hislop, 2017). World Rugby place « savoir tomber » au début de sa progression du plaquage.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e9254262b4",
+  "k": "Chute",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "314c1e9e77",
+  "k": "Roulade",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "4728e12acd",
+  "k": "Chute avant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ac64e62b60",
+  "k": "Relevé + 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "fb37718408",
+  "k": "Gainage et contrôle du corps au sol",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "721e8a30e7",
+  "k": "Chutes amorties, roulade sur l'épaule, relevé rapide",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "434d08602d",
+  "k": "Encaisser un plaquage sans se blesser et rejouer tout de suite",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "997b1c6766",
+  "k": "Bande d'herbe de 15 m ou tapis. Seul ou à deux : le partenaire annonce le côté de la chute.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f6ee3a85be",
+  "k": "Chute au signal sonore",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "32e6c2be20",
+  "k": "Chute en marchant, puis en trottinant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "da8cbd0f05",
+  "k": "Relevé et sprint vers le plot annoncé (prise d'information)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b97ae3b4f9",
+  "k": "Tous",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 12
+ },
+ {
+  "h": "73317f58a2",
+  "k": "Cou solide à deux (4 directions)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "474b89e9e8",
+  "k": "Un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1cdaeca7fa",
+  "k": "Renforcer le cou dans les 4 directions pour encaisser les contacts.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "34139bd5ce",
+  "k": "À quatre pattes, dos plat, regard au sol. Le partenaire pose la main sur ton front.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5b719cb241",
+  "k": "Pousse contre sa main sans bouger la tête : il résiste à la même force (10 à 20 s).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b20f8a535e",
+  "k": "Recommence main sur l'arrière de la tête, puis sur chaque côté.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "62fa0e75e8",
+  "k": "Inversez les rôles.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "152c9823fa",
+  "k": "La tête ne bouge pas : c'est une poussée sans mouvement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cb44bda84d",
+  "k": "Monte en force sur 3 s, garde, relâche sur 3 s",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "acfb15613a",
+  "k": "Jamais de secousse : le partenaire suit ta force",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "fbf8054e73",
+  "k": "1 tour : 10 s par direction à effort moyen",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "121ff19c6a",
+  "k": "10 s par direction, effort moyen",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3cb2d727f7",
+  "k": "2 tours : 15 s par direction",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a9f3238e75",
+  "k": "15 s par direction",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "be30d84e15",
+  "k": "2 tours : 20 s par direction, effort fort",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "77f0d2e888",
+  "k": "20 s par direction",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "0300d828a8",
+  "k": "3 tours : 20 s par direction, effort fort",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9d715e4a84",
+  "k": "Un programme de renforcement isométrique du cou a été associé à beaucoup moins de blessures cervicales en match chez des rugbymen professionnels (Naish, 2013) ; le travail du cou fait partie de l'échauffement Activate qui a réduit les commotions chez les jeunes joueurs (Hislop, 2017).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9d06b59b74",
+  "k": "Joueur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d727d03bda",
+  "k": "Partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1e03a989c5",
+  "k": "Avant · arrière · gauche · droite",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d2b7757ee0",
+  "k": "Force isométrique des muscles du cou",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7b0ea3acdc",
+  "k": "Gainage cervical, tête alignée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "015ab587c3",
+  "k": "Mieux encaisser plaquages, rucks et mêlées",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7338daf834",
+  "k": "Par deux, sur l'herbe ou un tapis. Fin d'échauffement ou de séance, 5 minutes.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "33048ac64c",
+  "k": "Debout contre le partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9dd128f2f2",
+  "k": "Avec un élastique fixé derrière",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "509232a7e9",
+  "k": "Version piliers : à la fin de la séance de musculation",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2ef13bc9ac",
+  "k": "Plaquage à genoux (technique)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "afa5fc6b0a",
+  "k": "Un partenaire, tapis",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a4fc5c1b71",
+  "k": "Installer le bon placement de la tête et de l'épaule à vitesse nulle, avant tout plaquage en mouvement.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "92628e284d",
+  "k": "Face à face à genoux, à 1 m l'un de l'autre. Le porteur tient le ballon.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6d7f2d5a91",
+  "k": "Place ta tête sur le côté du porteur, joue contre sa hanche, jamais devant lui.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0a2b88c4f3",
+  "k": "Contact avec l'épaule, à la taille. Les deux bras entourent et serrent (« comme un maillot »).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "76488cf812",
+  "k": "Termine au sol sur le côté, tête protégée, puis relève-toi.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "68a368e0ff",
+  "k": "Tête sur le côté, yeux ouverts, menton haut : on ne plaque jamais tête baissée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9ad2aa8461",
+  "k": "Épaule à la taille, bras qui serrent ensemble",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8b6b5fcf79",
+  "k": "Lent et précis : la qualité avant la vitesse",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dfeacab6e8",
+  "k": "Sans contact : 6 placements tête et épaule, arrêt avant le contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c79d8371be",
+  "k": "Placement sans contact, arrêt à 10 cm",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f63a6bad9c",
+  "k": "2 séries de 6 (3 par côté), puis inversez",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "80228edc20",
+  "k": "1 plaquage à genoux par côté",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bfeba6f943",
+  "k": "1 plaquage à genoux",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "7f2658b586",
+  "k": "3 séries de 8, porteur qui bouge un peu les hanches",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "25cd4a643c",
+  "k": "Chez les professionnels, le plaqueur est blessé à la tête bien plus souvent quand sa tête percute celle ou la hanche du porteur, ou quand il plaque trop droit ; placer la tête sur le côté et plaquer plus bas réduit ce risque (Tucker, 2017). La technique s'apprend par étapes, du statique vers la vitesse (Hendricks et Lambert, 2010).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0dff28b429",
+  "k": "Plaqueur à genoux",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ee9d890942",
+  "k": "Porteur à genoux",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7cb9261fa5",
+  "k": "Épaule à la taille",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ec50301893",
+  "k": "Tête sur le côté du porteur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "12595462a9",
+  "k": "Contact : avec un coach ou en club, et un partenaire qui tient le bouclier. Jamais seul. Contact réel contrôlé seulement en début de semaine (J-5 ou J-4), jamais à J-2 ou J-1, jamais en reprise de blessure. Plaque à la taille ou plus bas : c'est la règle des compétitions amateurs en France et la plus sûre partout.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 6
+ },
+ {
+  "h": "e4065fd21b",
+  "k": "Gainage et force des bras au contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4445bf9ad2",
+  "k": "Tête du bon côté, épaule à la taille, bras qui serrent",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ce87add0ee",
+  "k": "Un plaquage sûr et efficace qui stoppe le porteur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bcb39a5620",
+  "k": "Par deux sur un tapis ou une herbe souple. On inverse les rôles après chaque série.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "34730d310f",
+  "k": "Porteur qui part en avant à 2 km/h",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "97ef260fbc",
+  "k": "Plaquage sur les deux côtés en alternance",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "206fb3f8a9",
+  "k": "Passage debout : fiche « Approche du plaquage »",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0cccf1a7a6",
+  "k": "Approche du plaquage : marche puis trottinement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bc4a0d2ad1",
+  "k": "2 plots, bouclier, un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0674d43b63",
+  "k": "Apprendre les 3 temps avant l'impact : suivre le porteur, se préparer, puis contacter et pousser.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4e337e2333",
+  "k": "Couloir de 10 m. Le partenaire avance avec le bouclier, en marchant.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "fbce3b0b56",
+  "k": "Suivre : tu avances face à lui, en restant à l'intérieur de son épaule.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "04249c5859",
+  "k": "Se préparer : à 2 m, raccourcis les appuis, baisse les hanches, dos plat, tête haute.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b852c6983b",
+  "k": "Contact épaule sur le bouclier, tête sur le côté, bras qui serrent, jambes actives sur 2 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2b8d6463b4",
+  "k": "Petits pas rapides avant le contact (« hachés »)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "eadec38de1",
+  "k": "Hanches basses, poitrine en avant, yeux sur les hanches du porteur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c6e7d25cfb",
+  "k": "Les jambes continuent de pousser après le contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "58f266a391",
+  "k": "Sans contact : 2 séries de 5 approches, arrêt à 1 m du bouclier",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7c7675eb0d",
+  "k": "Approche sans contact, arrêt à 1 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "673ecb8dad",
+  "k": "2 séries de 6, porteur en marchant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0e775b4d0e",
+  "k": "Approche en marchant + contact bouclier",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "99b70b3c9b",
+  "k": "3 séries de 6, porteur en trottinant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a3cbabfae4",
+  "k": "Approche en trottinant + contact bouclier",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e0f34f5f73",
+  "k": "3 séries de 8, porteur qui change de côté",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8e19dfc91c",
+  "k": "Trottinement + changement de côté + contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "fdd45b1a77",
+  "k": "World Rugby découpe le plaquage en 5 temps (suivre, se préparer, contacter, accélérer, finir) et les entraîne du plus lent au plus rapide. Les plaqueurs qui continuent de pousser avec les jambes après le contact laissent moins passer le porteur et ses passes après contact (Hendricks, 2018).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "200dd0713d",
+  "k": "Plaqueur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "2e1cd1d2be",
+  "k": "Bouclier tenu",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 3
+ },
+ {
+  "h": "7cca6c920b",
+  "k": "Suivre",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8dff67fab3",
+  "k": "Se préparer",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "092e1930f4",
+  "k": "Contact, jambes 2 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "6b6f13ecb8",
+  "k": "Freinage, abaissement du centre de gravité",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1874a2c1c1",
+  "k": "Les 3 temps avant l'impact : suivre, se préparer, contacter",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0698c58b54",
+  "k": "Arriver au contact en équilibre plutôt que lancé et droit",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8e2eb03d04",
+  "k": "Couloir 10 m × 5 m, 2 plots, un bouclier. Le partenaire tient le bouclier, on inverse à chaque série.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7fda3a650e",
+  "k": "Porteur qui change de côté au dernier moment",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "eab2a1cba4",
+  "k": "Plaqueur qui part du sol (relevé puis approche)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "da3d058e35",
+  "k": "Deux plaquages enchaînés à 5 m d'écart",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "56afda6f79",
+  "k": "Plaquage de face, jambes actives",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e7c63c9deb",
+  "k": "Bouclier, 3 plots, un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "eba0260760",
+  "k": "Gagner le contact de face : épaule à la taille, et des jambes qui ramènent le porteur en arrière.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "88b2b033bc",
+  "k": "Départ à 7 m du porteur qui tient le bouclier contre lui.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "aee51d81e7",
+  "k": "Avance vite, puis raccourcis les appuis à 2 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bfb8713003",
+  "k": "Contact épaule à la taille, tête sur le côté, bras qui serrent.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0c061abc5f",
+  "k": "Jambes actives : repousse le porteur 2 m en arrière, puis reviens au plot de départ en course arrière.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "adb5699c6f",
+  "k": "Aucun freinage brusque au dernier moment : on arrive en équilibre",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b99dae9797",
+  "k": "Pousser vers le haut et l'avant, jamais vers le bas sur la tête",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6678b217d7",
+  "k": "La qualité du plaquage passe avant la vitesse",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d94bdbde36",
+  "k": "Sans contact : 2 séries de 5 approches et placements",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bbdf6baa6b",
+  "k": "Approche et placement, arrêt à 1 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5a10c99808",
+  "k": "1 plaquage bouclier + 2 m de poussée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "d8cf94a0ab",
+  "k": "3 séries de 5, départ toutes les 30 s",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "2cdeac4bf3",
+  "k": "3 séries de 6 : plaquage, relevé, sprint 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cafd48790c",
+  "k": "1 plaquage + relevé + sprint 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "200512a092",
+  "k": "En matchs internationaux comme en deuxième division anglaise, les plaquages de face à l'épaule et les jambes actives du plaqueur limitent les franchissements et les passes après contact (Hendricks, 2018). La fatigue dégrade la technique de plaquage : on arrête la série quand la qualité baisse (Gabbett, 2008).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "41f6174105",
+  "k": "Avants : enchaîne avec un déblayage sur un tackle bag à 5 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7b63be9e68",
+  "k": "Trois-quarts : départ à 12 m pour arriver plus vite au contact.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ee6071d01d",
+  "k": "Puissance des jambes au contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "07df55fa72",
+  "k": "Épaule à la taille, tête sur le côté, jambes actives",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "34189d62b0",
+  "k": "Gagner la collision et ralentir le ballon adverse",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "74899a266f",
+  "k": "Couloir 10 m × 5 m. Binôme : A plaque, B tient le bouclier ; on inverse à chaque série.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "765e968b2a",
+  "k": "Porteur qui avance au trot",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bd366a2b61",
+  "k": "Relevé et sprint vers le plot annoncé (bout RHIE)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "79af908172",
+  "k": "Plaquage à deux : le second arrive sur le ballon",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "08496f7dd5",
+  "k": "Plaquage de côté (couverture)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3bea854b58",
+  "k": "Bouclier ou tackle bag, 3 plots, un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "52a6d24cdd",
+  "k": "Rattraper un porteur qui passe sur le côté : angle de course, tête derrière, bras qui descendent.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9babd8551c",
+  "k": "Le porteur part en diagonale avec le bouclier, à vitesse de jogging.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0e7fe7f654",
+  "k": "Coupe sa course en diagonale pour arriver sur son côté, pas dans son dos.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0fbe974a11",
+  "k": "Tête derrière ses fesses, joue contre sa hanche, épaule sur la cuisse.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cd86e7f1e0",
+  "k": "Les bras serrent et glissent vers les genoux, puis tu le fais tomber sur le côté.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "16652ce984",
+  "k": "Tête toujours derrière le porteur, jamais devant sa hanche",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "fca70711f8",
+  "k": "Coupe l'angle : vise l'endroit où il va, pas où il est",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "adb7887ab8",
+  "k": "Serre et descends les bras jusqu'aux genoux",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bc5672887f",
+  "k": "Sans contact : 2 séries de 4 courses d'angle par côté",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "48ef84e59d",
+  "k": "Course d'angle, arrêt à 1 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "192c6f3c63",
+  "k": "2 séries de 6, côtés alternés",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2a5589d402",
+  "k": "1 plaquage de côté (alterner gauche et droite)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6092721f8f",
+  "k": "3 séries de 6, porteur plus rapide",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3c6179cee5",
+  "k": "1 plaquage de côté",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d89a4aab11",
+  "k": "3 séries de 6 : couverture 15 m, plaquage, relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b1afaab79f",
+  "k": "Couverture + plaquage + relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "33ab668459",
+  "k": "Le risque de commotion du plaqueur est le plus élevé quand sa tête passe devant la hanche ou le genou du porteur ; la tête doit rester derrière (Tucker, 2017). Les études de terrain recommandent d'entraîner chaque type de plaquage (de face, de côté, de dos) séparément (Burger, 2020).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "65a0e65c44",
+  "k": "Porteur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 4
+ },
+ {
+  "h": "a7047acca8",
+  "k": "Angle de course",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7d205d8268",
+  "k": "Tête derrière",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "20a2b6ed9a",
+  "k": "Trois-quarts et 3e ligne : allonge la couverture à 20 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "726f39d635",
+  "k": "Avants : couverture courte (10 m), porteur au trot.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "483336aa1c",
+  "k": "Vitesse de couverture et freinage",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6e98015a5b",
+  "k": "Angle de course, tête derrière, bras qui descendent",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a00982cc6e",
+  "k": "Arrêter un porteur lancé sur l'aile",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "568ee85bd2",
+  "k": "Zone 20 m × 15 m. Le porteur tient un bouclier ou un tackle bag contre lui. Gauche puis droite.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "665e736ed5",
+  "k": "Porteur qui accélère au dernier moment",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ee4dff636b",
+  "k": "Départ du sol (relevé puis couverture)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a6ae5dbf14",
+  "k": "Plaquage de dos sur tackle bag pour les arrières",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3b99664f21",
+  "k": "Porteur au contact : jambes actives et ballon placé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "749009759a",
+  "k": "Bouclier, ballon, un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2f84924fd4",
+  "k": "Garder le ballon au contact : rester bas, pousser avec les jambes, tomber sur le côté et placer le ballon loin.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8c92656ebe",
+  "k": "Départ à 5 m du partenaire qui tient le bouclier.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c94bb69826",
+  "k": "Avance ballon contre la poitrine, à deux mains, hanches basses avant le contact.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9e8aa29044",
+  "k": "Au contact, épaule devant, petits pas : continue de pousser 2 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "58f13dad64",
+  "k": "Tombe sur le côté, dos vers l'adversaire, et place le ballon loin derrière toi, bras tendus.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c3fe91cfac",
+  "k": "Hanches plus basses que celles du défenseur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cd1a374f94",
+  "k": "Le ballon reste protégé jusqu'au sol",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8a035e37d6",
+  "k": "Placement actif : bras tendus, le plus loin possible vers ton camp",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2f8394b364",
+  "k": "Sans contact : 2 séries de 5 chutes sur le côté et placements",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d0f0016d38",
+  "k": "Chute sur le côté + placement, sans contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7d2a46fa47",
+  "k": "1 contact bouclier + placement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "a52da374f4",
+  "k": "3 séries de 6, tenant qui résiste plus",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5f9fa9a3fc",
+  "k": "3 séries de 6 : contact, placement, relevé et soutien",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e5bba0acce",
+  "k": "Contact + placement + relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d3f11efae7",
+  "k": "Au niveau international, les porteurs qui placent activement le ballon gardent plus souvent la possession, et ceux qui tombent sur le côté aussi ; les jambes actives du porteur favorisent les franchissements (Hendricks, 2018).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "00ac7030b5",
+  "k": "Ballon placé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5bfe7b6a53",
+  "k": "Ballon protégé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f94ed1c6b4",
+  "k": "Force et gainage au contact",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "64d9f17db2",
+  "k": "Hanches basses, protection et placement du ballon",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b033d2b552",
+  "k": "Garder la possession et accélérer le ruck",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8cb858098f",
+  "k": "Couloir 10 m. Binôme : un porteur, un tenant de bouclier. On inverse à chaque série.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "250d49b29b",
+  "k": "Deuxième joueur qui arrive en soutien pour déblayer",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ce162fa528",
+  "k": "Contact face à deux tenants",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7fe0428d9e",
+  "k": "Prise d'information : le coach annonce le côté de la chute",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b9cc6f8374",
+  "k": "Déblayage sur tackle bag",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cdf626ec2e",
+  "k": "2 tackle bags, 2 ballons, des tenants",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1598efa002",
+  "k": "Nettoyer le ballon : arriver bas, épaule sous le bag, et pousser au-delà du ballon.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ca778a1849",
+  "k": "Deux bags espacés de 6 m, un ballon posé au sol devant chacun.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ca4a18af18",
+  "k": "Sprint 5 m vers le bag 1, abaisse-toi avant le contact.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "48c16c9067",
+  "k": "Épaule sous le bag, dos plat, tête haute : pousse 2 m au-delà du ballon.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1da97443b4",
+  "k": "Relève-toi, sprint vers le bag 2 et recommence.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6d0764bcc3",
+  "k": "Hanches sous les épaules, dos plat, tête haute",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3ed529435c",
+  "k": "Pieds actifs au-delà du ballon : ne finis pas au sol",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6e252dab2f",
+  "k": "Sortie rapide vers la cible suivante",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d38b58931d",
+  "k": "Sans impact : 2 séries de 4, poussée lente contre le bag tenu",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2be6185114",
+  "k": "Déblayage sans impact (poussée lente)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c7e69548bc",
+  "k": "2 séries de 4 (bag 1 puis bag 2)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "93bd810e7b",
+  "k": "2 déblayages + sprints",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "d4238493de",
+  "k": "3 séries de 4, tenants qui résistent",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "30ec675883",
+  "k": "3 séries de 4 avec un 3e bag (bloc de 15-20 s)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "532a345ec7",
+  "k": "3 déblayages + sprints",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0b0ecf2190",
+  "k": "Au ruck, la position basse et les pieds actifs du joueur qui déblaie conditionnent l'efficacité comme la sécurité ; ces gestes s'entraînent d'abord contre un bag avant le contact réel (Hendricks et Lambert, 2010 ; Burger, 2020).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "752b324c6d",
+  "k": "Bag 1",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b946157cc5",
+  "k": "Bag 2",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "fbd00e76b7",
+  "k": "Sortie",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2ed812946d",
+  "k": "Avants : version complète avec 3 bags.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2f3ffcbc98",
+  "k": "Trois-quarts : 2 bags et un sprint final de 15 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d3937bf7cf",
+  "k": "Force-puissance répétée en posture basse",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "06b4edb690",
+  "k": "Déblayage : hanches basses, dos plat, pieds actifs",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "629c3ac379",
+  "k": "Enchaîner les rucks sur des temps de jeu successifs",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "226378c70e",
+  "k": "Zone 25 m × 15 m, bags en zigzag à 5-6 m, un tenant par bag. Groupes de 3 ou 4 : un travaille, les autres tiennent, rotation.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6336d9c840",
+  "k": "Déblayage à deux : le premier arrivé s'engage",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d7912c8593",
+  "k": "Tenant qui résiste activement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e7def44cb3",
+  "k": "Plaquage au bouclier avant le bag 1",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2823f59ca1",
+  "k": "Avants et 3e ligne",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8be25929ec",
+  "k": "Relevé et replacement défensif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "438353b8ab",
+  "k": "Après un plaquage, revenir debout et se replacer en ligne le plus vite possible.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "cc7aa9a2b9",
+  "k": "Allongé sur le ventre au plot de départ (comme après un plaquage).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a1ff84c74a",
+  "k": "Au signal, relève-toi en moins de 2 s.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "393dbb4bd7",
+  "k": "Recule en course arrière ou latérale jusqu'à la ligne de défense (5 m).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "899a5c76ea",
+  "k": "Remonte 5 m vers l'attaque, puis reviens en marchant.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "371d9e2037",
+  "k": "Relevé en moins de 2 s : mains sous les épaules, un pied devant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "89c27c1705",
+  "k": "Regarde le jeu pendant le replacement, pas tes pieds",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "73a9a9329d",
+  "k": "Remontée agressive, appuis courts à l'arrivée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "326d18efd7",
+  "k": "2 séries de 4 à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8c6b5afd0c",
+  "k": "Relevé + replacement à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dc2cfc7abe",
+  "k": "Relevé + replacement + remontée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 3
+ },
+ {
+  "h": "a0c6282306",
+  "k": "3 séries de 6, côté annoncé pendant le relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c0bc7cb127",
+  "k": "4 séries de 6, départ toutes les 25 s",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f724569f7f",
+  "k": "Les séquences d'au moins 3 efforts intenses enchaînés, dont des relevés après plaquage, sont les plus exigeantes du match (Austin, 2011). Réagir à un signal entraîne mieux l'agilité de match qu'un parcours appris (Sheppard et Young, 2006).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5f02383a9b",
+  "k": "Ligne",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "98833f3aa6",
+  "k": "de défense",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3f543cbff7",
+  "k": "Remontée",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "aa990d7f69",
+  "k": "Relevé",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c385e347b2",
+  "k": "Replacement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "278447c975",
+  "k": "Remontée 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e10b4c7e1a",
+  "k": "Ré-accélération après un passage au sol",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f1c78d64ad",
+  "k": "Relevé rapide, course arrière et latérale",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bbe462d3eb",
+  "k": "Être en ligne avant que l'adversaire ne relance",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ef95157f64",
+  "k": "Zone 15 m × 10 m, 4 plots. Seul ou avec un partenaire qui donne le signal et le côté.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3e8d640a47",
+  "k": "Signal visuel (main levée) plutôt que sonore",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6314b5e383",
+  "k": "Deux relevés dans le même bout",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "95b3b8acd3",
+  "k": "Plaquage au bouclier avant le relevé (avec un coach)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5df7ba7711",
+  "k": "Passe vissée des deux côtés",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a2c9846cf7",
+  "k": "Un ballon, un partenaire ou un mur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7782090849",
+  "k": "Rendre la passe aussi précise du côté faible que du côté fort.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "635444d9cc",
+  "k": "À 5 m du partenaire, de profil, mains en cible.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b04c56cbe0",
+  "k": "Ballon tenu à deux mains, pieds dans l'axe de la passe.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b6c0d7c984",
+  "k": "Passe en tournant le buste, poussée de la main arrière, doigts qui finissent vers la cible.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c882b7ade4",
+  "k": "10 passes du côté fort, 10 du côté faible, puis recule à 8 m, puis 10 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ca4e8f0dcb",
+  "k": "Les mains de ton partenaire sont la cible : vise-les",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9f4c17ef29",
+  "k": "Pousse de la main arrière, finis les doigts vers la cible",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "93bc43f4f4",
+  "k": "Deux fois plus de passes du côté faible",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2178340773",
+  "k": "2 séries de 20 passes à 5 m (moitié de chaque côté)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4797bc5744",
+  "k": "Passes à 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3d4458afcc",
+  "k": "3 séries de 20 passes, 5 puis 8 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b3e6b782f0",
+  "k": "Passes à 5 puis 8 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d64d53011c",
+  "k": "3 séries de 20 passes, 8 puis 10 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "045735cead",
+  "k": "Passes à 8 puis 10 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d9fc873f6b",
+  "k": "4 séries de 20 passes, 10 à 12 m, ballon reçu en mouvement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9aa343f5a8",
+  "k": "Passes à 10-12 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "67d1961795",
+  "k": "Chez des joueurs de première division, les passes du côté non préféré partaient bien plus souvent en avant (57 % contre 15 %) et allaient moins loin : le côté faible doit être travaillé en priorité (Pavely, 2009).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bebdb9b898",
+  "k": "Cible",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "41bc55fbea",
+  "k": "Côté fort · côté faible × 2",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "07a780b41f",
+  "k": "Trois-quarts : finis par 2 séries à 12-15 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f01ca06474",
+  "k": "Avants : passes courtes (3-5 m) après un pas de contact.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a52144a53b",
+  "k": "Rotation du tronc et des hanches",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "be74b6f039",
+  "k": "Passe vissée, précision des deux côtés",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "3bd723306f",
+  "k": "Faire vivre le ballon vite et loin, sans en-avant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "24e70dbdcf",
+  "k": "Par deux, 5 à 12 m d'écart. Seul : contre un mur, cible tracée à hauteur de poitrine.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ec6e9bc1fa",
+  "k": "Passe après une réception en course",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9d9321969d",
+  "k": "Passe sous pression : un défenseur à 3 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2de7905eaa",
+  "k": "Passe longue (15 m) pour les demis et les trois-quarts",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1431aa7bb1",
+  "k": "Passes en course à trois",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "66dcf19d4c",
+  "k": "4 plots, un ballon, 3 joueurs",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2397fa21a4",
+  "k": "Recevoir, fixer et passer en courant droit, sur toute la largeur d'un couloir.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bdf4b9cc5e",
+  "k": "Couloir de 20 m, trois joueurs alignés en escalier, 5 m entre chacun.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c620fcee36",
+  "k": "Le premier part, mains en cible du receveur suivant.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "be1e0c0ea5",
+  "k": "Reçois le ballon mains en avant, cours droit, et passe avant d'avoir fait 2 appuis.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d1e5c7e0f5",
+  "k": "Fin du couloir : on repart dans l'autre sens.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ac94a73502",
+  "k": "Mains tendues vers le passeur avant de recevoir",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "931172a023",
+  "k": "Cours droit : ne dérive pas vers le receveur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "db77e96b8b",
+  "k": "Passe dans la course, sans freiner",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4407ce095a",
+  "k": "2 séries de 4 allers en trottinant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e68e9e6b63",
+  "k": "1 aller en trottinant",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8a3d0a23e4",
+  "k": "3 séries de 4 allers à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "28e5b76f0c",
+  "k": "1 aller à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7c52e7e608",
+  "k": "3 séries de 6 allers à 85 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "280fc7b65c",
+  "k": "1 aller à 85 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "5745f1cca8",
+  "k": "4 séries de 6 allers à 90 %, passes sautées",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "aa7290ae97",
+  "k": "1 aller à 90 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f829abf745",
+  "k": "Les passes du côté faible sont plus souvent en avant : alterner les sens du couloir fait travailler les deux côtés (Pavely, 2009). La vitesse de course doit rester celle du match pour que le geste tienne en compétition.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "89024401a2",
+  "k": "Course droite",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b88f597cb0",
+  "k": "Passe",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b180e24b51",
+  "k": "Vitesse de course et coordination",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e70b3ffd93",
+  "k": "Réception mains en avant, passe dans la course",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c267bf229f",
+  "k": "Attaquer la ligne en gardant la vitesse",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ab4ae2bafc",
+  "k": "Couloir 20 m × 15 m, 4 plots. Groupes de 3, un ballon. Allers alternés vers la gauche et vers la droite.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7733fc40bf",
+  "k": "Passe sautée (du 1 au 3)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4f1c85eb0a",
+  "k": "Un défenseur passif qui oblige à fixer",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "33ae5a080d",
+  "k": "Après la passe, le passeur fait le tour pour redevenir receveur (en boucle)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c04ad2d149",
+  "k": "Appuis d'évitement face à un défenseur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "43e7e41d21",
+  "k": "Battre un défenseur sur un pas : fixer, puis crochet ou cadrage débordement.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "45fb010285",
+  "k": "Couloir de 10 m de large. Le défenseur attend à 10 m, au milieu.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2bb886d4a4",
+  "k": "Avance droit sur lui pour le fixer.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "128c2fcd43",
+  "k": "À 2 m, pose un appui fort à l'extérieur (crochet) ou accélère sur l'extérieur (cadrage).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "7864be7046",
+  "k": "Passe-le et sprinte 5 m jusqu'à la ligne. Le défenseur touche à deux mains.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "856d6560e4",
+  "k": "Va droit sur lui : un défenseur fixé ne peut plus glisser",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1037e26019",
+  "k": "Appui large et bas pour le crochet, buste qui ne penche pas",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "9a633e742a",
+  "k": "Change de vitesse juste après l'appui",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "c3dea1bee6",
+  "k": "2 séries de 4 à 70 %, défenseur passif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0e2b21c701",
+  "k": "1 évitement à 70 %, défenseur passif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "87713023c4",
+  "k": "3 séries de 5, défenseur semi-actif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e7cb45c55a",
+  "k": "1 évitement, défenseur semi-actif",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "437fc31624",
+  "k": "3 séries de 6, défenseur actif au toucher",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f0ec9a012e",
+  "k": "1 duel au toucher",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "2d6afc2bf3",
+  "k": "4 séries de 6, couloir réduit à 8 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "1895485f34",
+  "k": "Face à un défenseur, les joueurs de rugby modifient leur course : appui plus large et moins de vitesse juste avant le changement de direction. Ce geste s'entraîne en réaction à un vrai défenseur, pas sur un parcours appris (Wheeler et Sayers, 2010 ; Sheppard et Young, 2006).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "95d7264341",
+  "k": "Fixe",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "8bebb810d9",
+  "k": "Crochet + 5 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d3b6a3de8a",
+  "k": "Trois-quarts : couloir de 12 m, départ lancé.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b005c44361",
+  "k": "Avants : couloir de 6 m, fixe puis passe ou percussion au bouclier (avec un coach).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b61cd3c939",
+  "k": "Freinage et ré-accélération sur un appui",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dec89887f7",
+  "k": "Fixer, crochet, cadrage débordement",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "6a14499d98",
+  "k": "Gagner le duel et franchir la ligne",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a6a26a3d9a",
+  "k": "Couloir 10 m × 15 m, 4 plots. Par deux : attaquant et défenseur, on inverse à chaque série.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dc8329c7eb",
+  "k": "Défenseur qui part de côté (angle fermé)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "bb71331ba9",
+  "k": "Deux défenseurs décalés",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "876394ad38",
+  "k": "Avec un soutien : crochet ou passe selon le défenseur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f003e7c51f",
+  "k": "Duel 1 contre 1 en couloir (toucher)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "82b7ce3485",
+  "k": "4 plots, un ballon, un partenaire",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "534703c313",
+  "k": "Lire le défenseur et choisir : le battre au pied, ou fixer et changer de rythme.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a4e8013fec",
+  "k": "Couloir de 8 m de large sur 15 m. Attaquant et défenseur face à face à 10 m.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2a71138b12",
+  "k": "Le défenseur monte : l'attaquant le lit (épaules, appuis) et attaque son point faible.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "a743da277c",
+  "k": "Toucher à deux mains = plaqué. Ligne franchie = essai.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "f84ae5453b",
+  "k": "On inverse les rôles à chaque duel.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "d1996d674a",
+  "k": "Attaquant : vitesse avant le défenseur, appui décisif à 2 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e8c72f3826",
+  "k": "Défenseur : monte vite, freine en appuis courts, épaules face au porteur",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "14d8d975cf",
+  "k": "Un point pour chaque duel gagné : compte les scores",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e39ad9b1a5",
+  "k": "2 séries de 4 duels à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "ced248024e",
+  "k": "1 duel à 70 %",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "2e839b81bf",
+  "k": "3 séries de 4 duels (2 attaques, 2 défenses)",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "dd49419dd3",
+  "k": "1 duel",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 2
+ },
+ {
+  "h": "91d8d3bbc1",
+  "k": "3 séries de 6 duels",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b232b56030",
+  "k": "4 séries de 6 duels, couloir réduit à 6 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0feec7224c",
+  "k": "1 duel, couloir de 6 m",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "23f31e17cc",
+  "k": "Le duel en réaction à un vrai adversaire développe à la fois la prise d'information et l'agilité (Sheppard et Young, 2006) ; face au défenseur, l'attaquant adapte la largeur de ses appuis (Wheeler et Sayers, 2010).",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "413bec6251",
+  "k": "Lit et attaque",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "50ffd6f041",
+  "k": "Vitesse et agilité en réaction",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "596adacc33",
+  "k": "Lecture du défenseur, appuis décisifs",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "4d7171e56c",
+  "k": "Gagner les duels en un contre un",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "50774added",
+  "k": "Couloir 8 m × 15 m, 4 plots, un ballon. Par deux, rôles inversés à chaque duel.",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "b5a1c01ca2",
+  "k": "Le défenseur part de côté ou de dos",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "e2968b1f47",
+  "k": "2 contre 1 : fixer et passer",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
+  "h": "0f3b38595c",
+  "k": "Toucher à une main pour les plus jeunes",
+  "kind": "content",
+  "where": "content:DRILLS",
+  "n": 1
+ },
+ {
   "h": "d9e69a424f",
   "k": "Squat arrière à la barre",
   "kind": "content",
@@ -6465,7 +9076,7 @@
   "k": "Barre",
   "kind": "content",
   "where": "content:E",
-  "n": 11
+  "n": 14
  },
  {
   "h": "2ef020b855",
@@ -6584,7 +9195,7 @@
   "k": "Poids du corps",
   "kind": "content",
   "where": "content:E",
-  "n": 25
+  "n": 26
  },
  {
   "h": "c2ffded898",
@@ -7004,7 +9615,7 @@
   "k": "Chaîne postérieure",
   "kind": "content",
   "where": "content:E",
-  "n": 10
+  "n": 13
  },
  {
   "h": "0cd51226d7",
@@ -7315,6 +9926,181 @@
   "n": 1
  },
  {
+  "h": "13b171a2e7",
+  "k": "Pieds larges, pointes ouvertes, mains entre les genoux",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "bd349dd6fd",
+  "k": "Pousser le sol en ouvrant les genoux",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "f191bf61e5",
+  "k": "Dos plat, barre collée au corps jusqu'en haut",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "66930bb183",
+  "k": "Sumo à la kettlebell",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "465032923e",
+  "k": "Sumo avec pause sous les genoux",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "c30dc969a3",
+  "k": "Soulevé de terre à la trap bar",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "521e37e526",
+  "k": "Trap bar (barre hexagonale)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 2
+ },
+ {
+  "h": "d4332f5be2",
+  "k": "Au centre de la barre, poitrine haute",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "b49cb96bea",
+  "k": "Pousser le sol / Dos plat",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "af056f0331",
+  "k": "Debout en serrant les fessiers, sans basculer en arrière",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "426afdef42",
+  "k": "Trap bar poignées hautes",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "62eb435284",
+  "k": "Trap bar dynamique : charge légère, vitesse maximale",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "b3fe1aeedc",
+  "k": "Trap bar dynamique",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "1176801a40",
+  "k": "Haltérophilie",
+  "kind": "content",
+  "where": "content:E",
+  "n": 10
+ },
+ {
+  "h": "2861712e11",
+  "k": "Charge légère : 4 à 5 répétitions en réserve",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "d0a4671b28",
+  "k": "Vitesse maximale à chaque répétition",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "0c313ea909",
+  "k": "On arrête la série dès que la barre ralentit",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "dfdca0a774",
+  "k": "Saut squat sans charge",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "1845007231",
+  "k": "Trap bar jump (saut avec la barre)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "81c50985e2",
+  "k": "Good morning à la barre",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "e78309ac5e",
+  "k": "Barre sur le haut du dos, genoux légèrement fléchis",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "e970ed77c7",
+  "k": "Bascule le buste, dos plat / Tempo 3.1.1",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "b1a75e2716",
+  "k": "Remonte en poussant les hanches devant",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "3602ee27b2",
+  "k": "Good morning au bâton ou à l'élastique",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "7d01a64d30",
+  "k": "Good morning avec pause en bas",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
   "h": "48ec296136",
   "k": "Développé couché à la barre",
   "kind": "content",
@@ -7326,7 +10112,7 @@
   "k": "Haut du corps",
   "kind": "content",
   "where": "content:E",
-  "n": 23
+  "n": 29
  },
  {
   "h": "4b1aaad172",
@@ -7396,7 +10182,7 @@
   "k": "Développé incliné aux haltères",
   "kind": "content",
   "where": "content:E",
-  "n": 1
+  "n": 2
  },
  {
   "h": "b023a529a7",
@@ -7662,7 +10448,7 @@
   "k": "Tractions assistées (élastique)",
   "kind": "content",
   "where": "content:E",
-  "n": 1
+  "n": 2
  },
  {
   "h": "a869ea83d4",
@@ -7725,7 +10511,7 @@
   "k": "Rowing barre buste penché",
   "kind": "content",
   "where": "content:E",
-  "n": 1
+  "n": 2
  },
  {
   "h": "46f62cf589",
@@ -7999,6 +10785,286 @@
   "kind": "content",
   "where": "content:E",
   "n": 2
+ },
+ {
+  "h": "a96fb49ad9",
+  "k": "Floor press (développé au sol)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "d6f7344a3e",
+  "k": "Barre et cadre de squat",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "40e6b55d6d",
+  "k": "Allongé au sol, genoux fléchis",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "de16c60467",
+  "k": "Pause quand les coudes touchent le sol",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "ab65f4449f",
+  "k": "Vitesse maximale à la poussée",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "df029190a3",
+  "k": "Floor press aux haltères",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "08a07b7055",
+  "k": "Floor press avec chaînes ou élastiques",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "2cd398e24b",
+  "k": "Barre et banc incliné",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "e5132f89de",
+  "k": "Banc à 30°, omoplates serrées",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "45a7c0c383",
+  "k": "Descente contrôlée en 2 s jusqu'en haut de la poitrine",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "02f147c129",
+  "k": "Pousse en gardant les fesses sur le banc",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "32350e67ae",
+  "k": "Développé incliné avec pause",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "656dbfbbda",
+  "k": "Buste parallèle au sol, dos plat",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "39446529c5",
+  "k": "Départ arrêté au sol à chaque répétition",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "9c9d7c3486",
+  "k": "Tirage explosif vers le bas des côtes",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "121b313f66",
+  "k": "Rowing Pendlay avec pause en haut",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "ec1c580e67",
+  "k": "Rowing T-bar (landmine)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "12134b0f07",
+  "k": "Barre en landmine, poignée en V",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "7d3daf52f4",
+  "k": "Pieds de part et d'autre de la barre, buste fixe",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "7e7394bb87",
+  "k": "Tire les coudes le long du corps / Tempo 2.1.1",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "0e76626b8d",
+  "k": "Serre les omoplates en haut",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "3b21b3d048",
+  "k": "Rowing T-bar léger, buste plus haut",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "01d638a7ae",
+  "k": "Rowing T-bar avec pause de 2 s",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "82acb57839",
+  "k": "Tractions prise neutre",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "714f80879a",
+  "k": "Barre à poignées parallèles",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "d2545553f7",
+  "k": "Paumes face à face, épaules basses",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "6b5f280a7c",
+  "k": "Lest si possible, descente contrôlée",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "9a80169e7c",
+  "k": "Tractions prise neutre lestées",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "90aa841c6c",
+  "k": "Tractions prise serviette",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "c84fcc980e",
+  "k": "Barre de traction, 2 serviettes",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "c84a5eb48b",
+  "k": "Une serviette autour de la barre dans chaque main",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "8997639380",
+  "k": "Serrer comme un maillot pendant toute la série",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "59c2a47157",
+  "k": "Menton au niveau des mains",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "a6893e422a",
+  "k": "Suspension aux serviettes (10 à 20 s)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "23182e85f1",
+  "k": "Tractions serviette lestées",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "2b16882203",
+  "k": "Corps gainé de la tête aux pieds",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "aa937dcf05",
+  "k": "Pousse assez fort pour décoller les mains",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "058d0018df",
+  "k": "Contact au sol minimal, enchaîne",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "0f9c8fbc03",
+  "k": "Pompes pliométriques mains sur un banc",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "fa9e397095",
+  "k": "Pompes claquées",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
  },
  {
   "h": "5ce0f6414b",
@@ -8363,13 +11429,6 @@
   "kind": "content",
   "where": "content:E",
   "n": 1
- },
- {
-  "h": "1176801a40",
-  "k": "Haltérophilie",
-  "kind": "content",
-  "where": "content:E",
-  "n": 9
  },
  {
   "h": "e4cc6d9db3",
@@ -8997,6 +12056,132 @@
  {
   "h": "e15c350659",
   "k": "Enchaînés",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "6d79db06fd",
+  "k": "Banc et box",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "5b1b9aacb7",
+  "k": "Assis, pieds à plat, sans élan",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "cff4c73740",
+  "k": "Jaillis directement du banc vers la box",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "8e54d7b22a",
+  "k": "Réception stable, puis redescends en marchant",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "38a6901a76",
+  "k": "Saut vertical depuis la position assise",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "0523bd129e",
+  "k": "Départ assis lesté (gilet léger)",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "f085dd7ae3",
+  "k": "Médecine-ball 4 à 6 kg",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "adfc825417",
+  "k": "Ballon entre les jambes, hanches en arrière",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "b05dffe9fb",
+  "k": "Extension complète des chevilles, genoux et hanches",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "28d0f8091e",
+  "k": "Lance par-dessus la tête, le plus loin possible",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "ffa3c018cc",
+  "k": "Ballon plus léger, amplitude réduite",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "4151c408c8",
+  "k": "Lancer arrière depuis un départ en saut",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "f8a97e509b",
+  "k": "Médecine-ball 6 kg",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "121a6059d7",
+  "k": "Position de mêlée, ballon contre la poitrine",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "fd41604846",
+  "k": "Pousse avec les jambes, puis les bras",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "6d6cd049dc",
+  "k": "Lance loin devant en finissant sur un appui",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "eeeff4ed0a",
+  "k": "Lancer contre un mur à 3 m",
+  "kind": "content",
+  "where": "content:E",
+  "n": 1
+ },
+ {
+  "h": "649781f307",
+  "k": "Lancer après une poussée de traîneau courte",
   "kind": "content",
   "where": "content:E",
   "n": 1
@@ -12957,6 +16142,13 @@
   "n": 1
  },
  {
+  "h": "3c165ed960",
+  "k": "Gigot d'agneau",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
   "h": "5c7ed7dbb7",
   "k": "Steak haché 5 %",
   "kind": "content",
@@ -13225,6 +16417,76 @@
  {
   "h": "012ffdc1a0",
   "k": "Avocat",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "42292f0765",
+  "k": "Potiron ou courge (chair)",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "10e6d52abe",
+  "k": "Poireau",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "f6da67b1eb",
+  "k": "Betterave rouge cuite",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "243d983ff6",
+  "k": "Chou-fleur",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "5fdc6bd894",
+  "k": "Petits pois (frais ou surgelés)",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "be662f1b28",
+  "k": "Pommes de terre nouvelles",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "3de5185de7",
+  "k": "Châtaignes cuites (bocal ou sous vide)",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "d41cd29fe1",
+  "k": "Clémentines",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "1849b17775",
+  "k": "Poire",
+  "kind": "content",
+  "where": "content:ING",
+  "n": 1
+ },
+ {
+  "h": "9a436c0239",
+  "k": "Fraises",
   "kind": "content",
   "where": "content:ING",
   "n": 1
@@ -17518,7 +20780,7 @@
   "k": "Fais cuire le riz.",
   "kind": "content",
   "where": "content:RECETTES",
-  "n": 3
+  "n": 4
  },
  {
   "h": "1e36e9701f",
@@ -17999,6 +21261,293 @@
  {
   "h": "fc696167a7",
   "k": "La veille et le jour d'un match, augmente la part de féculents et garde peu de fibres et de graisses.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "0ba6a0e383",
+  "k": "Velouté de potiron aux lentilles corail",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "da5374a5d6",
+  "k": "Fais revenir l'oignon émincé 3 minutes.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "0aa5667f28",
+  "k": "Ajoute le potiron en cubes, les lentilles rincées et 400 ml d'eau, cuis 20 minutes.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "c4cef6b2ab",
+  "k": "Mixe avec le lait, sale et poivre.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "141c22e613",
+  "k": "Sers avec le pain grillé et l'emmental.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "41479629d9",
+  "k": "Se congèle très bien : prépare 4 portions d'un coup.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "31df08b4a6",
+  "k": "Dinde rôtie, châtaignes et poireaux fondus",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "b1516d537b",
+  "k": "Fais fondre les poireaux émincés 10 minutes à couvert avec la moitié de l'huile.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "d178bf8db6",
+  "k": "Dore la dinde 4 minutes par face dans le reste d'huile.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "57f4d2a725",
+  "k": "Ajoute les châtaignes 5 minutes pour les réchauffer.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "36059f9ac8",
+  "k": "Sers ensemble, poivre et thym.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "03675e07b8",
+  "k": "Le repas de fête du sportif : des protéines maigres et un féculent de saison.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "7e1c18c716",
+  "k": "Agneau, petits pois et pommes de terre nouvelles",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "ae4baced25",
+  "k": "Cuis les pommes de terre nouvelles 15 minutes à l'eau.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "03fb3b3d27",
+  "k": "Saisis l'agneau en tranches 3 minutes par face, réserve.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "6070eb42bd",
+  "k": "Fais revenir l'oignon et l'ail, ajoute les petits pois et 50 ml d'eau, 8 minutes.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "bc05d6e87d",
+  "k": "Sers l'agneau sur les légumes.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "a55ed5f41b",
+  "k": "Saumon et fondue de poireaux, riz",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "88d79671e5",
+  "k": "Fais fondre les poireaux émincés 12 minutes à couvert avec l'huile.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "0144a7f68d",
+  "k": "Pose le saumon sur les poireaux, couvre et cuis 8 minutes.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "d7844d9828",
+  "k": "Arrose de citron.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "cadba93583",
+  "k": "Salade tiède de lentilles, betterave et feta",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "7e56d8e8af",
+  "k": "Cuis les lentilles 20 minutes, égoutte.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "8e0b17380b",
+  "k": "Coupe la betterave en dés.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "96431f2324",
+  "k": "Mélange lentilles tièdes, betterave, feta émiettée et noix.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "7beb965937",
+  "k": "Assaisonne d'huile, vinaigre, sel et poivre.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "e21e2e4b2e",
+  "k": "Chou-fleur rôti, pois chiches et sauce skyr",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "274c30b7a0",
+  "k": "Coupe le chou-fleur en bouquets, mélange avec les pois chiches, l'huile et le curry.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "57ab1b3cb1",
+  "k": "Rôtis 25 minutes à 200 °C.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "76a0130cbe",
+  "k": "Pendant ce temps, cuis le riz.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "0b13047dc2",
+  "k": "Sers avec le skyr salé, poivré et citronné.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "0c793ed816",
+  "k": "Clémentines, skyr et amandes",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "e47d41b70f",
+  "k": "Épluche et coupe les clémentines.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "a31fb9ada3",
+  "k": "Sers sur le skyr avec les amandes concassées.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "690ee18d7f",
+  "k": "Poire rôtie, fromage blanc et noix",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "4ded79fbf2",
+  "k": "Coupe la poire en quartiers, saupoudre de cannelle.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "8d87d043c2",
+  "k": "Rôtis 12 minutes à 200 °C (ou 3 minutes au micro-ondes).",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "2a86fc3f8a",
+  "k": "Sers chaude sur le fromage blanc, avec les noix et le miel.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "5621bdac2c",
+  "k": "Fraises, skyr et flocons d'avoine",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "59d75377bd",
+  "k": "Lave et coupe les fraises.",
+  "kind": "content",
+  "where": "content:RECETTES",
+  "n": 1
+ },
+ {
+  "h": "5d4d9e6802",
+  "k": "Sers sur le skyr avec les flocons.",
   "kind": "content",
   "where": "content:RECETTES",
   "n": 1
@@ -18834,14 +22383,14 @@
   "k": "Défenseur",
   "kind": "content",
   "where": "content:SPORTS",
-  "n": 2
+  "n": 4
  },
  {
   "h": "fb90fb1713",
   "k": "Attaquant",
   "kind": "content",
   "where": "content:SPORTS",
-  "n": 3
+  "n": 4
  },
  {
   "h": "9515ff53bf",
@@ -19121,7 +22670,7 @@
   "k": "Passeur",
   "kind": "content",
   "where": "content:SPORTS",
-  "n": 1
+  "n": 2
  },
  {
   "h": "9ec8b0c53d",
@@ -19922,6 +23471,13 @@
   "n": 1
  },
  {
+  "h": "f3c6efacdf",
+  "k": "World Rugby. Tackle Ready : programme de technique du plaquage (suivi, préparation, contact, accélération, finition). World Rugby Passport, 2020.",
+  "kind": "content",
+  "where": "content:SREFS",
+  "n": 1
+ },
+ {
   "h": "b7b3367f1a",
   "k": "Force — base",
   "kind": "content",
@@ -19996,7 +23552,7 @@
   "k": "Pliométrie",
   "kind": "content",
   "where": "content:T",
-  "n": 18
+  "n": 22
  },
  {
   "h": "61e7d56734",
@@ -23110,7 +26666,7 @@
   "kind": "attr",
   "ctx": "<div className=\"player\"> <header className=\"p-top\"><button type=\"button\" className=\"back\" onClick={} aria-label=\"Retour\">‹</button> <div><div className=\"eyebrow\">Semaine {} · séance {}{}{} · profil {}</div><h2>{}</h2> {}</div></header> {} {} {} {} {} <ol className=\"exlist\">{}</ol> <section className=\"card finish\"> <h3>Fin de séance</h3> <{} label=\"Effort ressenti (0 à 10)\" hint={}><{} id=\"rpe\" min",
   "where": "src/04_client.js:469",
-  "n": 10
+  "n": 11
  },
  {
   "h": "12ec6a5d10",
@@ -23235,7 +26791,7 @@
   "kind": "text",
   "ctx": "<li key={} className={}> {} {} <div className=\"exc-h\">{}<div className=\"exc-t\"><b>{}</b>{} {} {}{} {} {} {}{}</div></div> <details className=\"cues\"><summary>Consignes{}</summary> <ul>{}</ul> {} <div className=\"btnrow\"><button type=\"button\" className=\"linkbtn\" onClick={}>Voir le mouvement</button>{} <button type=\"button\" className=\"linkbtn\" onClick={}>Me filmer et vérifier</button></div> </details>",
   "where": "src/04_client.js:482",
-  "n": 2
+  "n": 3
  },
  {
   "h": "95d0211b4b",
@@ -23856,7 +27412,7 @@
   "k": "Départ",
   "kind": "string",
   "where": "src/04_client.js:627",
-  "n": 20
+  "n": 23
  },
  {
   "h": "e42111f68e",
@@ -24152,7 +27708,7 @@
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"prof-h\"><button type=\"button\" className=\"avbtn big\" aria-label=\"Changer ma photo ou mon avatar\" onClick={}><{} profile={} photo={} size={} ring={} /><span className=\"av-edit\">✎</span></button> <div><div className=\"eyebrow\">Mon profil</div><h1>{}</h1> <p className=\"muted\">{} · formule {} · {}</p> <button type=\"button\" className=\"linkbtn\" onClick={}>Changer ma",
   "where": "src/04_client.js:701",
-  "n": 2
+  "n": 3
  },
  {
   "h": "7791ebea90",
@@ -28794,7 +32350,7 @@
   "k": "Nutrition du jour",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:937",
+  "where": "src/09_nutrition.js:938",
   "n": 1
  },
  {
@@ -28802,7 +32358,7 @@
   "k": "noté",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:937",
+  "where": "src/09_nutrition.js:938",
   "n": 1
  },
  {
@@ -28810,51 +32366,57 @@
   "k": "Eau :",
   "kind": "text",
   "ctx": "<button type=\"button\" className=\"nutri-mini\" onClick={}> <div className=\"nm-h\"><b>Nutrition du jour</b><span className=\"muted small\">{} noté{}</span></div> {} <span className=\"small\">Eau : {} / {} L</span> {} </button>",
-  "where": "src/09_nutrition.js:937",
+  "where": "src/09_nutrition.js:938",
   "n": 1
  },
  {
-  "h": "314dfa475b",
-  "k": "Recette de la semaine :",
-  "kind": "text",
-  "ctx": "<span className=\"small\">Recette de la semaine : <b>{}</b></span>",
-  "where": "src/09_nutrition.js:939",
+  "h": "acf90a5a88",
+  "k": "La recette du moment",
+  "kind": "string",
+  "where": "src/09_nutrition.js:940",
   "n": 1
+ },
+ {
+  "h": "a84ddc79ae",
+  "k": "Recette de la semaine",
+  "kind": "string",
+  "where": "src/09_nutrition.js:940",
+  "n": 2
  },
  {
   "h": "07b0a043ea",
   "k": "Ajoute tes repas pour un retour sur l'équilibre de ton assiette.",
   "kind": "text",
   "ctx": "<span className=\"small\">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
   "h": "39c89e475c",
   "k": "activité)",
   "kind": "string",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
   "h": "8d0e0d1e45",
   "k": "(+{} activité)",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
   "h": "66d428c3d3",
   "k": "· dépense",
   "kind": "string",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
   "h": "634abd5c65",
   "k": "· dépense {} kcal",
   "kind": "pattern",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
@@ -28862,7 +32424,7 @@
   "k": "· protéines",
   "kind": "text",
   "ctx": "<{} value={} /><span className=\"small\">{} / {} kcal{} · protéines {} / {} g{}</span>",
-  "where": "src/09_nutrition.js:941",
+  "where": "src/09_nutrition.js:942",
   "n": 1
  },
  {
@@ -34552,14 +38114,14 @@
   "k": "Debout, fessiers serrés",
   "kind": "string",
   "where": "src/15_moves.js:91",
-  "n": 1
+  "n": 2
  },
  {
   "h": "61ca32cbe4",
   "k": "Redescends en contrôlant",
   "kind": "string",
   "where": "src/15_moves.js:91",
-  "n": 2
+  "n": 3
  },
  {
   "h": "27ff655495",
@@ -34874,14 +38436,14 @@
   "k": "Gainage, bras tendus",
   "kind": "string",
   "where": "src/15_moves.js:168",
-  "n": 1
+  "n": 2
  },
  {
   "h": "59158c6952",
   "k": "Descends la poitrine",
   "kind": "string",
   "where": "src/15_moves.js:168",
-  "n": 1
+  "n": 2
  },
  {
   "h": "c4703a1412",
@@ -35063,7 +38625,7 @@
   "k": "Menton au-dessus de la barre",
   "kind": "string",
   "where": "src/15_moves.js:200",
-  "n": 2
+  "n": 3
  },
  {
   "h": "9cc335a886",
@@ -35868,7 +39430,7 @@
   "k": "Debout",
   "kind": "string",
   "where": "src/15_moves.js:334",
-  "n": 5
+  "n": 6
  },
  {
   "h": "03f4fabbb0",
@@ -35917,7 +39479,7 @@
   "k": "Saute, genoux hauts",
   "kind": "string",
   "where": "src/15_moves.js:338",
-  "n": 1
+  "n": 2
  },
  {
   "h": "c769581e37",
@@ -35931,7 +39493,7 @@
   "k": "Debout sur la box",
   "kind": "string",
   "where": "src/15_moves.js:339",
-  "n": 2
+  "n": 3
  },
  {
   "h": "e52b33490b",
@@ -37086,6 +40648,237 @@
   "k": "Expire, relâche",
   "kind": "string",
   "where": "src/15_moves.js:494",
+  "n": 1
+ },
+ {
+  "h": "890a9a51d8",
+  "k": "Soulevé de terre sumo",
+  "kind": "string",
+  "where": "src/15_moves.js:497",
+  "n": 2
+ },
+ {
+  "h": "8909e080d8",
+  "k": "Pieds larges, buste droit",
+  "kind": "string",
+  "where": "src/15_moves.js:498",
+  "n": 1
+ },
+ {
+  "h": "294dedddb7",
+  "k": "Pousse le sol, genoux ouverts",
+  "kind": "string",
+  "where": "src/15_moves.js:498",
+  "n": 1
+ },
+ {
+  "h": "d8da367b3e",
+  "k": "Redescends, dos plat",
+  "kind": "string",
+  "where": "src/15_moves.js:499",
+  "n": 1
+ },
+ {
+  "h": "013e04699d",
+  "k": "Soulevé de terre trap bar",
+  "kind": "string",
+  "where": "src/15_moves.js:500",
+  "n": 1
+ },
+ {
+  "h": "518e45e74e",
+  "k": "Dans la barre, poitrine haute",
+  "kind": "string",
+  "where": "src/15_moves.js:501",
+  "n": 1
+ },
+ {
+  "h": "67b8bcaea1",
+  "k": "Pousse le sol, vite",
+  "kind": "string",
+  "where": "src/15_moves.js:501",
+  "n": 1
+ },
+ {
+  "h": "b017db2d9f",
+  "k": "Développé incliné à la barre",
+  "kind": "string",
+  "where": "src/15_moves.js:503",
+  "n": 2
+ },
+ {
+  "h": "f8fd764651",
+  "k": "Floor press",
+  "kind": "string",
+  "where": "src/15_moves.js:509",
+  "n": 1
+ },
+ {
+  "h": "2874c8f867",
+  "k": "Allongé au sol, bras tendus",
+  "kind": "string",
+  "where": "src/15_moves.js:510",
+  "n": 1
+ },
+ {
+  "h": "3bcf234ffb",
+  "k": "Descends jusqu'aux coudes au sol",
+  "kind": "string",
+  "where": "src/15_moves.js:510",
+  "n": 1
+ },
+ {
+  "h": "30da4c8cb2",
+  "k": "Pause au sol",
+  "kind": "string",
+  "where": "src/15_moves.js:511",
+  "n": 1
+ },
+ {
+  "h": "42c421fd9b",
+  "k": "Pousse vite",
+  "kind": "string",
+  "where": "src/15_moves.js:511",
+  "n": 1
+ },
+ {
+  "h": "9caa207190",
+  "k": "Rowing Pendlay",
+  "kind": "string",
+  "where": "src/15_moves.js:513",
+  "n": 2
+ },
+ {
+  "h": "856160c507",
+  "k": "Buste horizontal, barre au sol",
+  "kind": "string",
+  "where": "src/15_moves.js:514",
+  "n": 1
+ },
+ {
+  "h": "f5b6359efa",
+  "k": "Tire fort vers le bas des côtes",
+  "kind": "string",
+  "where": "src/15_moves.js:514",
+  "n": 1
+ },
+ {
+  "h": "cf7d0e4141",
+  "k": "Repose la barre au sol",
+  "kind": "string",
+  "where": "src/15_moves.js:515",
+  "n": 1
+ },
+ {
+  "h": "d1237fed3e",
+  "k": "Pompes pliométriques",
+  "kind": "string",
+  "where": "src/15_moves.js:520",
+  "n": 2
+ },
+ {
+  "h": "9caf426853",
+  "k": "Corps gainé, contact au sol le plus court possible.",
+  "kind": "string",
+  "where": "src/15_moves.js:520",
+  "n": 1
+ },
+ {
+  "h": "c51c245c16",
+  "k": "Pousse fort : les mains décollent",
+  "kind": "string",
+  "where": "src/15_moves.js:521",
+  "n": 1
+ },
+ {
+  "h": "20c789c154",
+  "k": "Réception bras souples",
+  "kind": "string",
+  "where": "src/15_moves.js:521",
+  "n": 1
+ },
+ {
+  "h": "4dc35ecc5f",
+  "k": "Saut sur box départ assis",
+  "kind": "string",
+  "where": "src/15_moves.js:523",
+  "n": 2
+ },
+ {
+  "h": "deafac63de",
+  "k": "Assis, pieds à plat",
+  "kind": "string",
+  "where": "src/15_moves.js:524",
+  "n": 1
+ },
+ {
+  "h": "43cb766a05",
+  "k": "Bras devant, décolle",
+  "kind": "string",
+  "where": "src/15_moves.js:524",
+  "n": 1
+ },
+ {
+  "h": "81b3d66749",
+  "k": "Réception stable",
+  "kind": "string",
+  "where": "src/15_moves.js:525",
+  "n": 1
+ },
+ {
+  "h": "08b3130425",
+  "k": "Redescends et rassieds-toi",
+  "kind": "string",
+  "where": "src/15_moves.js:526",
+  "n": 1
+ },
+ {
+  "h": "172f806b3d",
+  "k": "Lancer arrière de médecine-ball",
+  "kind": "string",
+  "where": "src/15_moves.js:527",
+  "n": 2
+ },
+ {
+  "h": "c08deafaf4",
+  "k": "Ballon entre les jambes",
+  "kind": "string",
+  "where": "src/15_moves.js:528",
+  "n": 1
+ },
+ {
+  "h": "b360521965",
+  "k": "Extension complète, lance par-dessus la tête",
+  "kind": "string",
+  "where": "src/15_moves.js:528",
+  "n": 1
+ },
+ {
+  "h": "f37efa2a4b",
+  "k": "Récupère, recommence",
+  "kind": "string",
+  "where": "src/15_moves.js:529",
+  "n": 1
+ },
+ {
+  "h": "e156451d28",
+  "k": "Lancer en poussée départ mêlée",
+  "kind": "string",
+  "where": "src/15_moves.js:530",
+  "n": 2
+ },
+ {
+  "h": "79ae411e8e",
+  "k": "Position de mêlée, ballon à la poitrine",
+  "kind": "string",
+  "where": "src/15_moves.js:531",
+  "n": 1
+ },
+ {
+  "h": "c5ab4a35de",
+  "k": "Pousse avec les jambes puis les bras",
+  "kind": "string",
+  "where": "src/15_moves.js:531",
   "n": 1
  },
  {
@@ -40143,249 +43936,270 @@
   "n": 1
  },
  {
+  "h": "64d0cbc5f0",
+  "k": "été",
+  "kind": "string",
+  "where": "src/19_recettes.js:5",
+  "n": 1
+ },
+ {
   "h": "7cc5245b0f",
   "k": "Je mange de tout",
   "kind": "string",
-  "where": "src/19_recettes.js:6",
+  "where": "src/19_recettes.js:30",
   "n": 1
  },
  {
   "h": "1c997271a4",
   "k": "Sans porc",
   "kind": "string",
-  "where": "src/19_recettes.js:6",
+  "where": "src/19_recettes.js:30",
   "n": 1
  },
  {
   "h": "d631ea094f",
   "k": "Pescétarien",
   "kind": "string",
-  "where": "src/19_recettes.js:6",
+  "where": "src/19_recettes.js:30",
   "n": 1
  },
  {
   "h": "640854c7f2",
   "k": "Végétarien",
   "kind": "string",
-  "where": "src/19_recettes.js:6",
+  "where": "src/19_recettes.js:30",
   "n": 1
  },
  {
   "h": "a1e7c25639",
   "k": "Végétalien",
   "kind": "string",
-  "where": "src/19_recettes.js:6",
+  "where": "src/19_recettes.js:30",
   "n": 1
  },
  {
   "h": "7f6c43edfe",
   "k": "Poisson",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 2
  },
  {
   "h": "55f7474e79",
   "k": "Fruits de mer",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "22b52f8d93",
   "k": "Viande rouge",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "e46c5a8c74",
   "k": "Œufs",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 3
  },
  {
   "h": "6e3a7eb184",
   "k": "Produits laitiers",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "309618cd0c",
   "k": "Gluten",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "b7f8f33867",
   "k": "Fruits à coque",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "e9e7780fa6",
   "k": "Arachide",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "bc8ffe74e2",
   "k": "Soja",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "6b6dbbd4a0",
   "k": "Champignons",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "fc81b69ea7",
   "k": "Épicé",
   "kind": "string",
-  "where": "src/19_recettes.js:7",
+  "where": "src/19_recettes.js:31",
   "n": 1
  },
  {
   "h": "9aaaccb14d",
   "k": "Volaille",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "c18bc3f687",
   "k": "Bœuf",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "834c514f09",
   "k": "Légumineuses",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "99333209a5",
   "k": "Tofu",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "58cf8d19d6",
   "k": "Pâtes",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "ab5d1e569d",
   "k": "Riz",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "f6259fea0d",
   "k": "Pommes de terre",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 2
  },
  {
   "h": "f448b45009",
   "k": "Fromage",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "cb05f92ab1",
   "k": "Fruits",
   "kind": "string",
-  "where": "src/19_recettes.js:8",
+  "where": "src/19_recettes.js:32",
   "n": 1
  },
  {
   "h": "11d39e9c16",
   "k": "fruits et légumes",
   "kind": "string",
-  "where": "src/19_recettes.js:9",
-  "n": 19
+  "where": "src/19_recettes.js:33",
+  "n": 27
  },
  {
   "h": "f5ad9edb00",
   "k": "épicerie",
   "kind": "string",
-  "where": "src/19_recettes.js:9",
-  "n": 28
+  "where": "src/19_recettes.js:33",
+  "n": 29
  },
  {
   "h": "3ecbc2fd0f",
   "k": "surgelés",
   "kind": "string",
-  "where": "src/19_recettes.js:9",
-  "n": 2
+  "where": "src/19_recettes.js:33",
+  "n": 3
  },
  {
-  "h": "a84ddc79ae",
-  "k": "Recette de la semaine",
-  "kind": "text",
-  "ctx": "<span className=\"eyebrow\">Recette de la semaine</span>",
-  "where": "src/19_recettes.js:64",
+  "h": "74899c2a57",
+  "k": "La recette du moment ·",
+  "kind": "string",
+  "where": "src/19_recettes.js:99",
   "n": 1
+ },
+ {
+  "h": "8d29c2379b",
+  "k": "La recette du moment · {}",
+  "kind": "pattern",
+  "where": "src/19_recettes.js:99",
+  "n": 1
+ },
+ {
+  "h": "a8c3e0e812",
+  "k": "De saison",
+  "kind": "text",
+  "ctx": "<{} tone=\"ok\">De saison</{}>",
+  "where": "src/19_recettes.js:100",
+  "n": 2
  },
  {
   "h": "4e11ae3723",
   "k": "kcal ·",
   "kind": "string",
-  "where": "src/19_recettes.js:65",
+  "where": "src/19_recettes.js:101",
   "n": 1
  },
  {
   "h": "f71e7ef2a2",
   "k": "g de protéines",
   "kind": "string",
-  "where": "src/19_recettes.js:65",
+  "where": "src/19_recettes.js:101",
   "n": 1
  },
  {
   "h": "95631af424",
   "k": "· {} kcal · {} g de protéines",
   "kind": "pattern",
-  "where": "src/19_recettes.js:65",
+  "where": "src/19_recettes.js:101",
   "n": 1
  },
  {
   "h": "bc508a616b",
   "k": "· à préparer d'avance",
   "kind": "string",
-  "where": "src/19_recettes.js:65",
+  "where": "src/19_recettes.js:101",
   "n": 1
  },
  {
   "h": "4a6b7a6ac4",
   "k": "· créée par le coach IA",
   "kind": "string",
-  "where": "src/19_recettes.js:65",
+  "where": "src/19_recettes.js:101",
   "n": 1
  },
  {
   "h": "04c065a041",
   "k": "Ajouté à ta liste de courses.",
   "kind": "string",
-  "where": "src/19_recettes.js:79",
+  "where": "src/19_recettes.js:115",
   "n": 1
  },
  {
@@ -40393,7 +44207,7 @@
   "k": "Ingrédients",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <div className=\"chips\"><{} tone=\"gold\">{} min</{}>{}{}{}</div> {} {} <{} title=\"Ingrédients\" sub={}> <ul className=\"ring\">{}</ul> <p className=\"muted small\">Poids crus. Vérifie la composition de tes produits (allergènes).</p></{}> <{} title=\"Préparation\"><ol className=\"small rsteps\">{}</ol>{}</{}> <div className=\"row-end\"><{} label=\"Repas\" id=\"rc-slot\"><select id=\"rc-slot\"",
-  "where": "src/19_recettes.js:81",
+  "where": "src/19_recettes.js:117",
   "n": 1
  },
  {
@@ -40401,7 +44215,7 @@
   "k": "Poids crus. Vérifie la composition de tes produits (allergènes).",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"chips\"><{} tone=\"gold\">{} min</{}>{}{}{}</div> {} {} <{} title=\"Ingrédients\" sub={}> <ul className=\"ring\">{}</ul> <p className=\"muted small\">Poids crus. Vérifie la composition de tes produits (allergènes).</p></{}> <{} title=\"Préparation\"><ol className=\"small rsteps\">{}</ol>{}</{}> <div className=\"row-end\"><{} label=\"Repas\" id=\"rc-slot\"><select id=\"rc-slot\"",
-  "where": "src/19_recettes.js:81",
+  "where": "src/19_recettes.js:117",
   "n": 1
  },
  {
@@ -40409,7 +44223,7 @@
   "k": "Préparation",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <div className=\"chips\"><{} tone=\"gold\">{} min</{}>{}{}{}</div> {} {} <{} title=\"Ingrédients\" sub={}> <ul className=\"ring\">{}</ul> <p className=\"muted small\">Poids crus. Vérifie la composition de tes produits (allergènes).</p></{}> <{} title=\"Préparation\"><ol className=\"small rsteps\">{}</ol>{}</{}> <div className=\"row-end\"><{} label=\"Repas\" id=\"rc-slot\"><select id=\"rc-slot\"",
-  "where": "src/19_recettes.js:81",
+  "where": "src/19_recettes.js:117",
   "n": 1
  },
  {
@@ -40417,7 +44231,7 @@
   "k": "Ajouter à mon journal",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"chips\"><{} tone=\"gold\">{} min</{}>{}{}{}</div> {} {} <{} title=\"Ingrédients\" sub={}> <ul className=\"ring\">{}</ul> <p className=\"muted small\">Poids crus. Vérifie la composition de tes produits (allergènes).</p></{}> <{} title=\"Préparation\"><ol className=\"small rsteps\">{}</ol>{}</{}> <div className=\"row-end\"><{} label=\"Repas\" id=\"rc-slot\"><select id=\"rc-slot\"",
-  "where": "src/19_recettes.js:81",
+  "where": "src/19_recettes.js:117",
   "n": 1
  },
  {
@@ -40425,7 +44239,7 @@
   "k": "Ajouter à ma liste de courses",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <div className=\"chips\"><{} tone=\"gold\">{} min</{}>{}{}{}</div> {} {} <{} title=\"Ingrédients\" sub={}> <ul className=\"ring\">{}</ul> <p className=\"muted small\">Poids crus. Vérifie la composition de tes produits (allergènes).</p></{}> <{} title=\"Préparation\"><ol className=\"small rsteps\">{}</ol>{}</{}> <div className=\"row-end\"><{} label=\"Repas\" id=\"rc-slot\"><select id=\"rc-slot\"",
-  "where": "src/19_recettes.js:81",
+  "where": "src/19_recettes.js:117",
   "n": 1
  },
  {
@@ -40433,7 +44247,7 @@
   "k": "à préparer d'avance",
   "kind": "text",
   "ctx": "<{}>à préparer d'avance</{}>",
-  "where": "src/19_recettes.js:82",
+  "where": "src/19_recettes.js:118",
   "n": 1
  },
  {
@@ -40441,7 +44255,7 @@
   "k": "avant l'effort",
   "kind": "text",
   "ctx": "<{}>avant l'effort</{}>",
-  "where": "src/19_recettes.js:82",
+  "where": "src/19_recettes.js:118",
   "n": 1
  },
  {
@@ -40449,21 +44263,21 @@
   "k": "Une assiette équilibrée : sers-toi selon ta faim.",
   "kind": "text",
   "ctx": "<p className=\"small\">Une assiette équilibrée : sers-toi selon ta faim.</p>",
-  "where": "src/19_recettes.js:83",
+  "where": "src/19_recettes.js:119",
   "n": 1
  },
  {
   "h": "2098becc26",
   "k": "adaptée à ton objectif (×",
   "kind": "string",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
   "h": "087bf70094",
   "k": "adaptée à ton objectif (×{})",
   "kind": "pattern",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
@@ -40471,7 +44285,7 @@
   "k": "Portion",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Portion {} : environ {} % de tes {} kcal du jour. <button type=\"button\" className=\"linkbtn\" onClick={}>{}</button></p>",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
@@ -40479,7 +44293,7 @@
   "k": ": environ",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Portion {} : environ {} % de tes {} kcal du jour. <button type=\"button\" className=\"linkbtn\" onClick={}>{}</button></p>",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
@@ -40487,7 +44301,7 @@
   "k": "% de tes",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Portion {} : environ {} % de tes {} kcal du jour. <button type=\"button\" className=\"linkbtn\" onClick={}>{}</button></p>",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
@@ -40495,21 +44309,21 @@
   "k": "kcal du jour.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Portion {} : environ {} % de tes {} kcal du jour. <button type=\"button\" className=\"linkbtn\" onClick={}>{}</button></p>",
-  "where": "src/19_recettes.js:84",
+  "where": "src/19_recettes.js:120",
   "n": 1
  },
  {
   "h": "eb7cf2fe02",
   "k": "Adapter à mon objectif",
   "kind": "string",
-  "where": "src/19_recettes.js:85",
+  "where": "src/19_recettes.js:121",
   "n": 1
  },
  {
   "h": "ef265c1985",
   "k": "Portion standard",
   "kind": "string",
-  "where": "src/19_recettes.js:85",
+  "where": "src/19_recettes.js:121",
   "n": 1
  },
  {
@@ -40517,35 +44331,35 @@
   "k": "Nombre de portions à préparer",
   "kind": "attr",
   "ctx": "<{} label=\"Nombre de portions à préparer\"><{} options={} value={} onChange={} /></{}>",
-  "where": "src/19_recettes.js:86",
+  "where": "src/19_recettes.js:122",
   "n": 1
  },
  {
   "h": "c896d70100",
   "k": "Pour {} portions",
   "kind": "pattern",
-  "where": "src/19_recettes.js:87",
+  "where": "src/19_recettes.js:123",
   "n": 1
  },
  {
   "h": "44a51746c8",
   "k": "Pour 1 portion",
   "kind": "string",
-  "where": "src/19_recettes.js:87",
+  "where": "src/19_recettes.js:123",
   "n": 1
  },
  {
   "h": "dcaac849fc",
   "k": "Retirer des favoris",
   "kind": "string",
-  "where": "src/19_recettes.js:94",
+  "where": "src/19_recettes.js:130",
   "n": 1
  },
  {
   "h": "cc8f75fbb0",
   "k": "Mettre en favori",
   "kind": "string",
-  "where": "src/19_recettes.js:94",
+  "where": "src/19_recettes.js:130",
   "n": 1
  },
  {
@@ -40553,14 +44367,14 @@
   "k": "Valeurs estimées par le coach IA pour les ingrédients absents de la table : elles peuvent varier de ±20 %.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">Valeurs estimées par le coach IA pour les ingrédients absents de la table : elles peuvent varier de ±20 %.</p>",
-  "where": "src/19_recettes.js:96",
+  "where": "src/19_recettes.js:132",
   "n": 1
  },
  {
   "h": "0ffb24648e",
   "k": "Goûts enregistrés.",
   "kind": "string",
-  "where": "src/19_recettes.js:104",
+  "where": "src/19_recettes.js:140",
   "n": 1
  },
  {
@@ -40568,7 +44382,7 @@
   "k": "Mon alimentation",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Mon alimentation\"><select id=\"rc-reg\" value={} onChange={}>{}</select></{}> <div className=\"field\"><span className=\"field-l\">J'évite</span><div className=\"chips\" role=\"group\" aria-label=\"J'évite\">{}</div></div> <div className=\"field\"><span className=\"field-l\">J'aime</span><div className=\"chips\" role=\"group\" aria-label=\"J'aime\">{}</div></div> <p className=\"muted sm",
-  "where": "src/19_recettes.js:105",
+  "where": "src/19_recettes.js:141",
   "n": 1
  },
  {
@@ -40576,7 +44390,7 @@
   "k": "J'évite",
   "kind": "text",
   "ctx": "<div className=\"form\"> <{} label=\"Mon alimentation\"><select id=\"rc-reg\" value={} onChange={}>{}</select></{}> <div className=\"field\"><span className=\"field-l\">J'évite</span><div className=\"chips\" role=\"group\" aria-label=\"J'évite\">{}</div></div> <div className=\"field\"><span className=\"field-l\">J'aime</span><div className=\"chips\" role=\"group\" aria-label=\"J'aime\">{}</div></div> <p className=\"muted sm",
-  "where": "src/19_recettes.js:105",
+  "where": "src/19_recettes.js:141",
   "n": 2
  },
  {
@@ -40584,7 +44398,7 @@
   "k": "J'aime",
   "kind": "text",
   "ctx": "<div className=\"form\"> <{} label=\"Mon alimentation\"><select id=\"rc-reg\" value={} onChange={}>{}</select></{}> <div className=\"field\"><span className=\"field-l\">J'évite</span><div className=\"chips\" role=\"group\" aria-label=\"J'évite\">{}</div></div> <div className=\"field\"><span className=\"field-l\">J'aime</span><div className=\"chips\" role=\"group\" aria-label=\"J'aime\">{}</div></div> <p className=\"muted sm",
-  "where": "src/19_recettes.js:105",
+  "where": "src/19_recettes.js:141",
   "n": 2
  },
  {
@@ -40592,7 +44406,7 @@
   "k": "Pour une allergie ou une intolérance, vérifie toujours les étiquettes : ce filtre ne remplace pas un avis médical.",
   "kind": "text",
   "ctx": "<div className=\"form\"> <{} label=\"Mon alimentation\"><select id=\"rc-reg\" value={} onChange={}>{}</select></{}> <div className=\"field\"><span className=\"field-l\">J'évite</span><div className=\"chips\" role=\"group\" aria-label=\"J'évite\">{}</div></div> <div className=\"field\"><span className=\"field-l\">J'aime</span><div className=\"chips\" role=\"group\" aria-label=\"J'aime\">{}</div></div> <p className=\"muted sm",
-  "where": "src/19_recettes.js:105",
+  "where": "src/19_recettes.js:141",
   "n": 1
  },
  {
@@ -40600,7 +44414,7 @@
   "k": "Enregistrer mes goûts",
   "kind": "text",
   "ctx": "<div className=\"form\"> <{} label=\"Mon alimentation\"><select id=\"rc-reg\" value={} onChange={}>{}</select></{}> <div className=\"field\"><span className=\"field-l\">J'évite</span><div className=\"chips\" role=\"group\" aria-label=\"J'évite\">{}</div></div> <div className=\"field\"><span className=\"field-l\">J'aime</span><div className=\"chips\" role=\"group\" aria-label=\"J'aime\">{}</div></div> <p className=\"muted sm",
-  "where": "src/19_recettes.js:105",
+  "where": "src/19_recettes.js:141",
   "n": 1
  },
  {
@@ -40608,7 +44422,7 @@
   "k": "Liste de courses vide",
   "kind": "attr",
   "ctx": "<{} title=\"Liste de courses vide\" text=\"Ouvre une recette et choisis « Ajouter à ma liste de courses ».\" />",
-  "where": "src/19_recettes.js:120",
+  "where": "src/19_recettes.js:156",
   "n": 1
  },
  {
@@ -40616,7 +44430,7 @@
   "k": "Ouvre une recette et choisis « Ajouter à ma liste de courses ».",
   "kind": "attr",
   "ctx": "<{} title=\"Liste de courses vide\" text=\"Ouvre une recette et choisis « Ajouter à ma liste de courses ».\" />",
-  "where": "src/19_recettes.js:120",
+  "where": "src/19_recettes.js:156",
   "n": 1
  },
  {
@@ -40624,7 +44438,7 @@
   "k": "Recettes de la liste",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> <{} title=\"Recettes de la liste\">{}</{}> {} <div className=\"btnrow\"><{} kind=\"ghost\" small onClick={}>Copier la liste</{}> <{} kind=\"ghost\" small onClick={}>Télécharger</{}> <{} kind=\"quiet\" small onClick={}>Vider la liste</{}></div> </div>",
-  "where": "src/19_recettes.js:121",
+  "where": "src/19_recettes.js:157",
   "n": 1
  },
  {
@@ -40632,7 +44446,7 @@
   "k": "Copier la liste",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <{} title=\"Recettes de la liste\">{}</{}> {} <div className=\"btnrow\"><{} kind=\"ghost\" small onClick={}>Copier la liste</{}> <{} kind=\"ghost\" small onClick={}>Télécharger</{}> <{} kind=\"quiet\" small onClick={}>Vider la liste</{}></div> </div>",
-  "where": "src/19_recettes.js:121",
+  "where": "src/19_recettes.js:157",
   "n": 1
  },
  {
@@ -40640,7 +44454,7 @@
   "k": "Télécharger",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <{} title=\"Recettes de la liste\">{}</{}> {} <div className=\"btnrow\"><{} kind=\"ghost\" small onClick={}>Copier la liste</{}> <{} kind=\"ghost\" small onClick={}>Télécharger</{}> <{} kind=\"quiet\" small onClick={}>Vider la liste</{}></div> </div>",
-  "where": "src/19_recettes.js:121",
+  "where": "src/19_recettes.js:157",
   "n": 1
  },
  {
@@ -40648,210 +44462,210 @@
   "k": "Vider la liste",
   "kind": "text",
   "ctx": "<div className=\"stack\"> <{} title=\"Recettes de la liste\">{}</{}> {} <div className=\"btnrow\"><{} kind=\"ghost\" small onClick={}>Copier la liste</{}> <{} kind=\"ghost\" small onClick={}>Télécharger</{}> <{} kind=\"quiet\" small onClick={}>Vider la liste</{}></div> </div>",
-  "where": "src/19_recettes.js:121",
+  "where": "src/19_recettes.js:157",
   "n": 1
  },
  {
   "h": "75ccd305a9",
   "k": "1 portion",
   "kind": "string",
-  "where": "src/19_recettes.js:122",
+  "where": "src/19_recettes.js:158",
   "n": 1
  },
  {
   "h": "a326f567bb",
   "k": "Liste copiée.",
   "kind": "string",
-  "where": "src/19_recettes.js:125",
+  "where": "src/19_recettes.js:161",
   "n": 1
  },
  {
   "h": "2edc7ec3a0",
   "k": "Copie impossible ici : utilise le téléchargement.",
   "kind": "string",
-  "where": "src/19_recettes.js:125",
+  "where": "src/19_recettes.js:161",
   "n": 1
  },
  {
   "h": "1a3aec5f6f",
   "k": "Copie impossible ici.",
   "kind": "string",
-  "where": "src/19_recettes.js:125",
+  "where": "src/19_recettes.js:161",
   "n": 1
  },
  {
   "h": "6f2e93de0f",
   "k": "Tu es le coach nutrition (intelligence artificielle) d'Antoine Limousi, préparateur physique. Propose UNE recette simple pour un sportif, en français.",
   "kind": "string",
-  "where": "src/19_recettes.js:140",
+  "where": "src/19_recettes.js:176",
   "n": 1
  },
  {
   "h": "3796539713",
   "k": "Repas :",
   "kind": "string",
-  "where": "src/19_recettes.js:141",
+  "where": "src/19_recettes.js:177",
   "n": 1
  },
  {
   "h": "a06e638862",
   "k": ". Temps maximum :",
   "kind": "string",
-  "where": "src/19_recettes.js:141",
+  "where": "src/19_recettes.js:177",
   "n": 1
  },
  {
   "h": "f7222107b7",
   "k": "Repas : {}. Temps maximum : {} minutes.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:141",
+  "where": "src/19_recettes.js:177",
   "n": 1
  },
  {
   "h": "b011893aad",
   "k": "Vise environ",
   "kind": "string",
-  "where": "src/19_recettes.js:142",
+  "where": "src/19_recettes.js:178",
   "n": 1
  },
  {
   "h": "9d0428685c",
   "k": "kcal et au moins",
   "kind": "string",
-  "where": "src/19_recettes.js:142",
+  "where": "src/19_recettes.js:178",
   "n": 1
  },
  {
   "h": "8886f54171",
   "k": "g de protéines pour la portion.",
   "kind": "string",
-  "where": "src/19_recettes.js:142",
+  "where": "src/19_recettes.js:178",
   "n": 1
  },
  {
   "h": "492a7448fe",
   "k": "Vise environ {} kcal et au moins {} g de protéines pour la portion.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:142",
+  "where": "src/19_recettes.js:178",
   "n": 1
  },
  {
   "h": "86689b3aa4",
   "k": "Portion normale, sans chiffres de calories (mode équilibre).",
   "kind": "string",
-  "where": "src/19_recettes.js:142",
+  "where": "src/19_recettes.js:178",
   "n": 1
  },
  {
   "h": "144449129c",
   "k": "Régime :",
   "kind": "string",
-  "where": "src/19_recettes.js:143",
+  "where": "src/19_recettes.js:179",
   "n": 1
  },
  {
   "h": "73d42a6d0a",
   "k": ". À éviter absolument :",
   "kind": "string",
-  "where": "src/19_recettes.js:143",
+  "where": "src/19_recettes.js:179",
   "n": 1
  },
  {
   "h": "9788d59804",
   "k": ". Aime :",
   "kind": "string",
-  "where": "src/19_recettes.js:143",
+  "where": "src/19_recettes.js:179",
   "n": 1
  },
  {
   "h": "986a66f7aa",
   "k": "Régime : {}. À éviter absolument : {}. Aime : {}.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:143",
+  "where": "src/19_recettes.js:179",
   "n": 1
  },
  {
   "h": "051cb40194",
   "k": "Ingrédients disponibles :",
   "kind": "string",
-  "where": "src/19_recettes.js:144",
+  "where": "src/19_recettes.js:180",
   "n": 1
  },
  {
   "h": "6b520298ff",
   "k": "Ingrédients disponibles : {}.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:144",
+  "where": "src/19_recettes.js:180",
   "n": 1
  },
  {
   "h": "7b63b6f46e",
   "k": "Envie :",
   "kind": "string",
-  "where": "src/19_recettes.js:144",
+  "where": "src/19_recettes.js:180",
   "n": 1
  },
  {
   "h": "36d9df8bc4",
   "k": "Envie : {}.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:144",
+  "where": "src/19_recettes.js:180",
   "n": 1
  },
  {
   "h": "c41402407b",
   "k": "Aliments simples, peu transformés. Pas de compléments alimentaires. Poids en grammes, crus.",
   "kind": "string",
-  "where": "src/19_recettes.js:145",
+  "where": "src/19_recettes.js:181",
   "n": 1
  },
  {
   "h": "21c3bc6178",
   "k": "« n », « etapes » et « astuce » sont dans cette langue ; garde le « nom » de chaque ingrédient en français (il sert à retrouver ses valeurs nutritionnelles).",
   "kind": "string",
-  "where": "src/19_recettes.js:146",
+  "where": "src/19_recettes.js:182",
   "n": 1
  },
  {
   "h": "631e4691e1",
   "k": "Recette du coach IA",
   "kind": "string",
-  "where": "src/19_recettes.js:153",
+  "where": "src/19_recettes.js:189",
   "n": 1
  },
  {
   "h": "1cec1db91d",
   "k": "Aussi :",
   "kind": "string",
-  "where": "src/19_recettes.js:153",
+  "where": "src/19_recettes.js:189",
   "n": 1
  },
  {
   "h": "0c23fd5d22",
   "k": "Aussi : {}.",
   "kind": "pattern",
-  "where": "src/19_recettes.js:153",
+  "where": "src/19_recettes.js:189",
   "n": 1
  },
  {
   "h": "4ef8319e7c",
   "k": "Recette ajoutée à ton livre.",
   "kind": "string",
-  "where": "src/19_recettes.js:155",
+  "where": "src/19_recettes.js:191",
   "n": 1
  },
  {
   "h": "76b8c12b0b",
   "k": "Recette inutilisable : réessaie.",
   "kind": "string",
-  "where": "src/19_recettes.js:156",
+  "where": "src/19_recettes.js:192",
   "n": 1
  },
  {
   "h": "a2c5736a0a",
   "k": "Réessaie.",
   "kind": "string",
-  "where": "src/19_recettes.js:156",
+  "where": "src/19_recettes.js:192",
   "n": 1
  },
  {
@@ -40859,7 +44673,7 @@
   "k": "Pour quel repas ?",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40867,7 +44681,7 @@
   "k": "Temps maximum",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40875,7 +44689,7 @@
   "k": "Ce que tu as dans le frigo (facultatif)",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40883,7 +44697,7 @@
   "k": "Ex. poulet, courgettes, riz, feta",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40891,7 +44705,7 @@
   "k": "Une envie ? (facultatif)",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40899,7 +44713,7 @@
   "k": "Ex. quelque chose d'épicé, un plat chaud",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
@@ -40907,21 +44721,21 @@
   "k": "Le coach IA est une intelligence artificielle : il tient compte de ton objectif et de tes goûts. Les valeurs sont recalculées avec la table des aliments quand c'est possible.",
   "kind": "text",
   "ctx": "<div className=\"form\"> <{} label=\"Pour quel repas ?\"><{} options={} value={} onChange={} /></{}> <{} label=\"Temps maximum\"><{} options={} value={} onChange={} /></{}> <{} label=\"Ce que tu as dans le frigo (facultatif)\" id=\"ai-frigo\"><input id=\"ai-frigo\" value={} onChange={} placeholder=\"Ex. poulet, courgettes, riz, feta\" /></{}> <{} label=\"Une envie ? (facultatif)\" id=\"ai-envie\"><input id=\"ai-envi",
-  "where": "src/19_recettes.js:158",
+  "where": "src/19_recettes.js:194",
   "n": 1
  },
  {
   "h": "a87c626691",
   "k": "Le coach IA cuisine… (10 à 40 s)",
   "kind": "string",
-  "where": "src/19_recettes.js:164",
+  "where": "src/19_recettes.js:200",
   "n": 1
  },
  {
   "h": "74ae03845c",
   "k": "Créer ma recette",
   "kind": "string",
-  "where": "src/19_recettes.js:164",
+  "where": "src/19_recettes.js:200",
   "n": 1
  },
  {
@@ -40929,7 +44743,7 @@
   "k": "Liste de courses",
   "kind": "text",
   "ctx": "<div className=\"stack\"> {} <div className=\"btnrow\"><{} small kind=\"ghost\" onClick={}>Mes goûts</{}><{} small kind=\"ghost\" onClick={}>Liste de courses{}</{}> {}</div> <div className=\"tabs-scroll\"><{} options={} value={} onChange={} /></div> <div className=\"filters\"><input id=\"rc-q\" className=\"search\" placeholder=\"Rechercher un plat ou un ingrédient\" value={} onChange={} /> <div className=\"chips\">{}",
-  "where": "src/19_recettes.js:182",
+  "where": "src/19_recettes.js:219",
   "n": 1
  },
  {
@@ -40937,7 +44751,7 @@
   "k": "Rechercher un plat ou un ingrédient",
   "kind": "attr",
   "ctx": "<div className=\"stack\"> {} <div className=\"btnrow\"><{} small kind=\"ghost\" onClick={}>Mes goûts</{}><{} small kind=\"ghost\" onClick={}>Liste de courses{}</{}> {}</div> <div className=\"tabs-scroll\"><{} options={} value={} onChange={} /></div> <div className=\"filters\"><input id=\"rc-q\" className=\"search\" placeholder=\"Rechercher un plat ou un ingrédient\" value={} onChange={} /> <div className=\"chips\">{}",
-  "where": "src/19_recettes.js:182",
+  "where": "src/19_recettes.js:219",
   "n": 1
  },
  {
@@ -40945,7 +44759,7 @@
   "k": "Comment les recettes sont construites",
   "kind": "text",
   "ctx": "<div className=\"stack\"> {} <div className=\"btnrow\"><{} small kind=\"ghost\" onClick={}>Mes goûts</{}><{} small kind=\"ghost\" onClick={}>Liste de courses{}</{}> {}</div> <div className=\"tabs-scroll\"><{} options={} value={} onChange={} /></div> <div className=\"filters\"><input id=\"rc-q\" className=\"search\" placeholder=\"Rechercher un plat ou un ingrédient\" value={} onChange={} /> <div className=\"chips\">{}",
-  "where": "src/19_recettes.js:182",
+  "where": "src/19_recettes.js:219",
   "n": 1
  },
  {
@@ -40953,42 +44767,42 @@
   "k": "Créer une recette avec l'IA",
   "kind": "text",
   "ctx": "<{} small onClick={}>Créer une recette avec l'IA</{}>",
-  "where": "src/19_recettes.js:185",
+  "where": "src/19_recettes.js:222",
   "n": 1
  },
  {
   "h": "b97650124b",
   "k": "15 min ou moins",
   "kind": "string",
-  "where": "src/19_recettes.js:188",
+  "where": "src/19_recettes.js:225",
   "n": 1
  },
  {
   "h": "4f95b48abb",
   "k": "À préparer d'avance",
   "kind": "string",
-  "where": "src/19_recettes.js:188",
+  "where": "src/19_recettes.js:225",
   "n": 1
  },
  {
   "h": "1020d9085c",
   "k": "Favoris",
   "kind": "string",
-  "where": "src/19_recettes.js:188",
+  "where": "src/19_recettes.js:225",
   "n": 1
  },
  {
   "h": "e15c6b33ab",
   "k": "recette masquée",
   "kind": "string",
-  "where": "src/19_recettes.js:189",
+  "where": "src/19_recettes.js:226",
   "n": 1
  },
  {
   "h": "b195278ca6",
   "k": "recettes masquées",
   "kind": "string",
-  "where": "src/19_recettes.js:189",
+  "where": "src/19_recettes.js:226",
   "n": 1
  },
  {
@@ -40996,7 +44810,23 @@
   "k": "selon tes goûts.",
   "kind": "text",
   "ctx": "<p className=\"muted small\">{} selon tes goûts.</p>",
-  "where": "src/19_recettes.js:189",
+  "where": "src/19_recettes.js:226",
+  "n": 1
+ },
+ {
+  "h": "37458f9e85",
+  "k": "Fruits et légumes de",
+  "kind": "text",
+  "ctx": "<p className=\"muted small\">Fruits et légumes de {}, d'après le calendrier Manger Bouger (Santé publique France).</p>",
+  "where": "src/19_recettes.js:227",
+  "n": 1
+ },
+ {
+  "h": "c0bb992c9e",
+  "k": ", d'après le calendrier Manger Bouger (Santé publique France).",
+  "kind": "text",
+  "ctx": "<p className=\"muted small\">Fruits et légumes de {}, d'après le calendrier Manger Bouger (Santé publique France).</p>",
+  "where": "src/19_recettes.js:227",
   "n": 1
  },
  {
@@ -41004,7 +44834,7 @@
   "k": "Aucune recette",
   "kind": "attr",
   "ctx": "<{} title=\"Aucune recette\" text=\"Change de filtre ou ajuste tes goûts.\" />",
-  "where": "src/19_recettes.js:191",
+  "where": "src/19_recettes.js:229",
   "n": 1
  },
  {
@@ -41012,28 +44842,28 @@
   "k": "Change de filtre ou ajuste tes goûts.",
   "kind": "attr",
   "ctx": "<{} title=\"Aucune recette\" text=\"Change de filtre ou ajuste tes goûts.\" />",
-  "where": "src/19_recettes.js:191",
+  "where": "src/19_recettes.js:229",
   "n": 1
  },
  {
   "h": "afb501696f",
   "k": "Mes goûts",
   "kind": "string",
-  "where": "src/19_recettes.js:194",
+  "where": "src/19_recettes.js:232",
   "n": 2
  },
  {
   "h": "7be8becdab",
   "k": "Ma liste de courses",
   "kind": "string",
-  "where": "src/19_recettes.js:194",
+  "where": "src/19_recettes.js:232",
   "n": 1
  },
  {
   "h": "e9a4bf6fa6",
   "k": "Créer une recette avec le coach IA",
   "kind": "string",
-  "where": "src/19_recettes.js:194",
+  "where": "src/19_recettes.js:232",
   "n": 1
  },
  {
@@ -41058,136 +44888,171 @@
   "n": 1
  },
  {
+  "h": "316a320821",
+  "k": "Sans contact",
+  "kind": "string",
+  "where": "src/20_terrain.js:24",
+  "n": 1
+ },
+ {
+  "h": "eeb2a67e1f",
+  "k": "Toucher",
+  "kind": "string",
+  "where": "src/20_terrain.js:24",
+  "n": 1
+ },
+ {
+  "h": "b70ff1a799",
+  "k": "Contact au bouclier",
+  "kind": "string",
+  "where": "src/20_terrain.js:24",
+  "n": 1
+ },
+ {
+  "h": "bde15be830",
+  "k": "Contact sur tackle bag",
+  "kind": "string",
+  "where": "src/20_terrain.js:24",
+  "n": 1
+ },
+ {
+  "h": "264f830b54",
+  "k": "Contact réel contrôlé",
+  "kind": "string",
+  "where": "src/20_terrain.js:24",
+  "n": 1
+ },
+ {
   "h": "e2192b531d",
   "k": "Répétition",
   "kind": "string",
-  "where": "src/20_terrain.js:92",
+  "where": "src/20_terrain.js:96",
   "n": 1
  },
  {
   "h": "13ac373cdf",
   "k": "· départ toutes les",
   "kind": "string",
-  "where": "src/20_terrain.js:92",
+  "where": "src/20_terrain.js:96",
   "n": 1
  },
  {
   "h": "e4eaa25d45",
   "k": "· départ toutes les {} s",
   "kind": "pattern",
-  "where": "src/20_terrain.js:92",
+  "where": "src/20_terrain.js:96",
   "n": 1
  },
  {
   "h": "d70c167707",
   "k": "Répétition {}/{}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:92",
+  "where": "src/20_terrain.js:96",
   "n": 1
  },
  {
   "h": "f80583914f",
   "k": "Fin de la série",
   "kind": "string",
-  "where": "src/20_terrain.js:95",
+  "where": "src/20_terrain.js:99",
   "n": 1
  },
  {
   "h": "5e19710957",
   "k": "Fin de la série {}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:95",
+  "where": "src/20_terrain.js:99",
   "n": 1
  },
  {
   "h": "3958516134",
   "k": "Sprint / course rapide",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 1
  },
  {
   "h": "47a7a0518b",
   "k": "Course lente, trot",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 1
  },
  {
   "h": "e9967a23c4",
   "k": "Course arrière",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 3
  },
  {
   "h": "7807c5c770",
   "k": "Pas chassés, déplacement latéral",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 1
  },
  {
   "h": "e02c69fcba",
   "k": "Marche, récupération",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 1
  },
  {
   "h": "efd6a3aacf",
   "k": "Passe ou trajet du ballon",
   "kind": "string",
-  "where": "src/20_terrain.js:105",
+  "where": "src/20_terrain.js:109",
   "n": 1
  },
  {
   "h": "a0c314494d",
   "k": "En-but",
   "kind": "string",
-  "where": "src/20_terrain.js:154",
+  "where": "src/20_terrain.js:158",
   "n": 2
  },
  {
   "h": "1f9a47cf90",
   "k": "Milieu",
   "kind": "string",
-  "where": "src/20_terrain.js:154",
+  "where": "src/20_terrain.js:158",
   "n": 6
  },
  {
   "h": "cda05ca6d8",
   "k": "Surface",
   "kind": "string",
-  "where": "src/20_terrain.js:163",
+  "where": "src/20_terrain.js:167",
   "n": 2
  },
  {
   "h": "2ed20b34ce",
   "k": "Filet",
   "kind": "string",
-  "where": "src/20_terrain.js:183",
+  "where": "src/20_terrain.js:187",
   "n": 8
  },
  {
   "h": "329cb8b6ba",
   "k": "Service",
   "kind": "string",
-  "where": "src/20_terrain.js:186",
+  "where": "src/20_terrain.js:190",
   "n": 2
  },
  {
   "h": "d65caa0e44",
   "k": "Fond",
   "kind": "string",
-  "where": "src/20_terrain.js:186",
+  "where": "src/20_terrain.js:190",
   "n": 4
  },
  {
   "h": "9b998f730a",
   "k": "Vitre",
   "kind": "string",
-  "where": "src/20_terrain.js:190",
+  "where": "src/20_terrain.js:194",
   "n": 1
  },
  {
@@ -41195,56 +45060,56 @@
   "k": "Pente de 5 à 10 % (dessin exagéré)",
   "kind": "text",
   "ctx": "<text x={} y={} className=\"ts-fl\" style={} textAnchor=\"end\">Pente de 5 à 10 % (dessin exagéré)</text>",
-  "where": "src/20_terrain.js:233",
+  "where": "src/20_terrain.js:237",
   "n": 1
  },
  {
   "h": "ce125fce65",
   "k": "Schéma de la séance",
   "kind": "string",
-  "where": "src/20_terrain.js:314",
+  "where": "src/20_terrain.js:318",
   "n": 1
  },
  {
   "h": "eb947af8dc",
   "k": "min(100%, {}px)",
   "kind": "pattern",
-  "where": "src/20_terrain.js:316",
+  "where": "src/20_terrain.js:320",
   "n": 1
  },
  {
   "h": "ddbc4f5b25",
   "k": "0 auto",
   "kind": "string",
-  "where": "src/20_terrain.js:316",
+  "where": "src/20_terrain.js:320",
   "n": 1
  },
  {
   "h": "cab5633294",
   "k": "Mettre en pause le schéma",
   "kind": "string",
-  "where": "src/20_terrain.js:342",
+  "where": "src/20_terrain.js:346",
   "n": 1
  },
  {
   "h": "e0c3f2287e",
   "k": "Animer le schéma",
   "kind": "string",
-  "where": "src/20_terrain.js:342",
+  "where": "src/20_terrain.js:346",
   "n": 1
  },
  {
   "h": "b84cf7bf78",
   "k": "Profil de la séance :",
   "kind": "string",
-  "where": "src/20_terrain.js:368",
+  "where": "src/20_terrain.js:372",
   "n": 1
  },
  {
   "h": "39f37f97d5",
   "k": "Profil de la séance : {}, {}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:368",
+  "where": "src/20_terrain.js:372",
   "n": 1
  },
  {
@@ -41252,23 +45117,15 @@
   "k": "Récupération",
   "kind": "text",
   "ctx": "<div className=\"ic-cap\"><span>0</span><span><b className=\"ic-kw\">Effort</b> {} · <b className=\"ic-kr\">Récupération</b></span><span>{}</span></div>",
-  "where": "src/20_terrain.js:373",
+  "where": "src/20_terrain.js:377",
   "n": 18
- },
- {
-  "h": "bed9bab828",
-  "k": "Déroulé",
-  "kind": "attr",
-  "ctx": "<div className=\"stack\"> <p className=\"muted\">{}</p> <div className=\"chips\"><{} tone=\"gold\">{}</{}><{}>{}</{}>{}</div> <{} d={} niveau={} data={} /> <div className=\"alert gold\"><div><b>{}{}</b><p>{}{}</p> {} {} {}</div></div> {} {} <{} title=\"Déroulé\"><ol className=\"steps-l\">{}</ol></{}> <{} title=\"Consignes\"><ul className=\"small\">{}</ul></{}> <{} title=\"Pourquoi ça marche\"><p className=\"small\">{}<",
-  "where": "src/20_terrain.js:397",
-  "n": 1
  },
  {
   "h": "be8b9d4696",
   "k": "Échauffe-toi 15 minutes avant (footing, gammes, 3 accélérations progressives). Arrête si une douleur dépasse 3 sur 10 ou en cas de malaise.",
   "kind": "text",
-  "ctx": "<div className=\"stack\"> <p className=\"muted\">{}</p> <div className=\"chips\"><{} tone=\"gold\">{}</{}><{}>{}</{}>{}</div> <{} d={} niveau={} data={} /> <div className=\"alert gold\"><div><b>{}{}</b><p>{}{}</p> {} {} {}</div></div> {} {} <{} title=\"Déroulé\"><ol className=\"steps-l\">{}</ol></{}> <{} title=\"Consignes\"><ul className=\"small\">{}</ul></{}> <{} title=\"Pourquoi ça marche\"><p className=\"small\">{}<",
-  "where": "src/20_terrain.js:397",
+  "ctx": "<div className=\"stack\"> <p className=\"muted\">{}</p> <div className=\"chips\"><{} tone=\"gold\">{}</{}><{}>{}</{}>{}{}{}</div> <{} d={} niveau={} data={} /> <div className=\"alert gold\"><div><b>{}{}</b><p>{}{}</p> {} {} {}</div></div> {} {} {} {} {} <{} title={}><ol className=\"steps-l\">{}</ol></{}> <{} title={}><ul className=\"small\">{}</ul></{}> {} <{} title=\"Pourquoi ça marche\"><p className=\"small\">{}<",
+  "where": "src/20_terrain.js:403",
   "n": 1
  },
  {
@@ -41276,63 +45133,63 @@
   "k": "+ échauffement",
   "kind": "text",
   "ctx": "<{}>{} + échauffement</{}>",
-  "where": "src/20_terrain.js:399",
+  "where": "src/20_terrain.js:405",
   "n": 1
  },
  {
   "h": "108ca1393d",
   "k": "Dose pour le profil",
   "kind": "string",
-  "where": "src/20_terrain.js:401",
+  "where": "src/20_terrain.js:407",
   "n": 1
  },
  {
   "h": "d1ae8a96a2",
   "k": "Pour ton profil",
   "kind": "string",
-  "where": "src/20_terrain.js:401",
+  "where": "src/20_terrain.js:407",
   "n": 1
  },
  {
   "h": "34125fecb3",
   "k": "chronométré",
   "kind": "string",
-  "where": "src/20_terrain.js:401",
+  "where": "src/20_terrain.js:407",
   "n": 1
  },
  {
   "h": "c9f430e0a0",
   "k": "· {} chronométré{}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:401",
+  "where": "src/20_terrain.js:407",
   "n": 1
  },
  {
   "h": "014793e516",
   "k": "Distances et allures calculées à partir de la VMA du client (test demi-Cooper).",
   "kind": "string",
-  "where": "src/20_terrain.js:402",
+  "where": "src/20_terrain.js:408",
   "n": 1
  },
  {
   "h": "a7499c067b",
   "k": "Fais ton test de VMA (demi-Cooper) pour obtenir tes distances et tes allures exactes.",
   "kind": "string",
-  "where": "src/20_terrain.js:402",
+  "where": "src/20_terrain.js:408",
   "n": 1
  },
  {
   "h": "569ec98890",
   "k": "VMA du client",
   "kind": "string",
-  "where": "src/20_terrain.js:403",
+  "where": "src/20_terrain.js:409",
   "n": 2
  },
  {
   "h": "25169258ac",
   "k": "Avec ta VMA de",
   "kind": "string",
-  "where": "src/20_terrain.js:403",
+  "where": "src/20_terrain.js:409",
   "n": 2
  },
  {
@@ -41340,7 +45197,7 @@
   "k": "km/h, à",
   "kind": "text",
   "ctx": "<p className=\"small\">{} {} km/h, à {} % : place les plots à <b>{} m</b>.</p>",
-  "where": "src/20_terrain.js:403",
+  "where": "src/20_terrain.js:409",
   "n": 2
  },
  {
@@ -41348,28 +45205,28 @@
   "k": "% : place les plots à",
   "kind": "text",
   "ctx": "<p className=\"small\">{} {} km/h, à {} % : place les plots à <b>{} m</b>.</p>",
-  "where": "src/20_terrain.js:403",
+  "where": "src/20_terrain.js:409",
   "n": 1
  },
  {
   "h": "0eb5b79e62",
   "k": ", soit",
   "kind": "string",
-  "where": "src/20_terrain.js:404",
+  "where": "src/20_terrain.js:410",
   "n": 1
  },
  {
   "h": "e07a66a6f0",
   "k": "par répétition",
   "kind": "string",
-  "where": "src/20_terrain.js:404",
+  "where": "src/20_terrain.js:410",
   "n": 1
  },
  {
   "h": "3417584d51",
   "k": ", soit {} par répétition",
   "kind": "pattern",
-  "where": "src/20_terrain.js:404",
+  "where": "src/20_terrain.js:410",
   "n": 1
  },
  {
@@ -41377,7 +45234,7 @@
   "k": "% : allure de",
   "kind": "text",
   "ctx": "<p className=\"small\">{} {} km/h, à {} % : allure de <b>{} au km</b>{}.</p>",
-  "where": "src/20_terrain.js:404",
+  "where": "src/20_terrain.js:410",
   "n": 1
  },
  {
@@ -41385,42 +45242,125 @@
   "k": "au km",
   "kind": "text",
   "ctx": "<p className=\"small\">{} {} km/h, à {} % : allure de <b>{} au km</b>{}.</p>",
-  "where": "src/20_terrain.js:404",
+  "where": "src/20_terrain.js:410",
+  "n": 1
+ },
+ {
+  "h": "9fc08731c3",
+  "k": "Seulement avec ton club",
+  "kind": "string",
+  "where": "src/20_terrain.js:412",
+  "n": 1
+ },
+ {
+  "h": "33e96f0274",
+  "k": "Sécurité",
+  "kind": "string",
+  "where": "src/20_terrain.js:412",
+  "n": 2
+ },
+ {
+  "h": "330da2ac4f",
+  "k": "Tu as moins de 18 ans : fais cet exercice uniquement à l'entraînement de ton club, avec ton éducateur. Seul, garde la version sans contact (approche et placement, arrêt avant l'impact).",
+  "kind": "string",
+  "where": "src/20_terrain.js:412",
+  "n": 1
+ },
+ {
+  "h": "5702830759",
+  "k": "Objectifs",
+  "kind": "attr",
+  "ctx": "<{} title=\"Objectifs\"><ul className=\"small obj-l\"><li><b>Physique :</b> {}</li><li><b>Technique :</b> {}</li><li><b>Match :</b> {}</li></ul></{}>",
+  "where": "src/20_terrain.js:413",
+  "n": 1
+ },
+ {
+  "h": "b1477537fc",
+  "k": "Physique :",
+  "kind": "text",
+  "ctx": "<{} title=\"Objectifs\"><ul className=\"small obj-l\"><li><b>Physique :</b> {}</li><li><b>Technique :</b> {}</li><li><b>Match :</b> {}</li></ul></{}>",
+  "where": "src/20_terrain.js:413",
+  "n": 1
+ },
+ {
+  "h": "69aa31ec42",
+  "k": "Technique :",
+  "kind": "text",
+  "ctx": "<{} title=\"Objectifs\"><ul className=\"small obj-l\"><li><b>Physique :</b> {}</li><li><b>Technique :</b> {}</li><li><b>Match :</b> {}</li></ul></{}>",
+  "where": "src/20_terrain.js:413",
+  "n": 1
+ },
+ {
+  "h": "315ced291c",
+  "k": "Match :",
+  "kind": "text",
+  "ctx": "<{} title=\"Objectifs\"><ul className=\"small obj-l\"><li><b>Physique :</b> {}</li><li><b>Technique :</b> {}</li><li><b>Match :</b> {}</li></ul></{}>",
+  "where": "src/20_terrain.js:413",
   "n": 1
  },
  {
   "h": "852fd18a31",
   "k": "Meilleur résultat",
   "kind": "string",
-  "where": "src/20_terrain.js:406",
+  "where": "src/20_terrain.js:414",
   "n": 1
  },
  {
   "h": "d8ecd1feaa",
   "k": "Ton meilleur résultat",
   "kind": "string",
-  "where": "src/20_terrain.js:406",
+  "where": "src/20_terrain.js:414",
+  "n": 1
+ },
+ {
+  "h": "6e99c1d3b1",
+  "k": "Organisation",
+  "kind": "attr",
+  "ctx": "<{} title=\"Organisation\"><p className=\"small\">{}</p></{}>",
+  "where": "src/20_terrain.js:415",
+  "n": 1
+ },
+ {
+  "h": "bed9bab828",
+  "k": "Déroulé",
+  "kind": "string",
+  "where": "src/20_terrain.js:416",
+  "n": 1
+ },
+ {
+  "h": "15e463c856",
+  "k": "Points clés",
+  "kind": "string",
+  "where": "src/20_terrain.js:417",
+  "n": 1
+ },
+ {
+  "h": "f43f87e003",
+  "k": "Variantes et progression",
+  "kind": "attr",
+  "ctx": "<{} title=\"Variantes et progression\"><ul className=\"small\">{}</ul></{}>",
+  "where": "src/20_terrain.js:418",
   "n": 1
  },
  {
   "h": "6b54a4cd0d",
   "k": "En profil Reprise, reste à 80-85 % de ton maximum.",
   "kind": "string",
-  "where": "src/20_terrain.js:410",
+  "where": "src/20_terrain.js:420",
   "n": 1
  },
  {
   "h": "671a12316c",
   "k": "Lancer le minuteur",
   "kind": "string",
-  "where": "src/20_terrain.js:412",
+  "where": "src/20_terrain.js:422",
   "n": 1
  },
  {
   "h": "246eca6e18",
   "k": "Chronométrer",
   "kind": "string",
-  "where": "src/20_terrain.js:413",
+  "where": "src/20_terrain.js:423",
   "n": 1
  },
  {
@@ -41428,14 +45368,14 @@
   "k": "Chronométrer un essai",
   "kind": "text",
   "ctx": "<{} kind=\"ghost\" onClick={}>Chronométrer un essai</{}>",
-  "where": "src/20_terrain.js:414",
+  "where": "src/20_terrain.js:424",
   "n": 1
  },
  {
   "h": "0f6f4c49ec",
   "k": "Noter mon résultat",
   "kind": "string",
-  "where": "src/20_terrain.js:415",
+  "where": "src/20_terrain.js:425",
   "n": 1
  },
  {
@@ -41443,42 +45383,42 @@
   "k": "Chronomètre",
   "kind": "text",
   "ctx": "<div className=\"player timer\"> <header className=\"p-top\"><button type=\"button\" className=\"back\" onClick={} aria-label=\"Quitter\">‹</button><div><div className=\"eyebrow\">Chronomètre</div><h2>{}</h2></div></header> <section className=\"tm-main work\"><div className=\"tm-k\">{}</div> <div className=\"tm-clock\" id=\"chr-clock\">{}</div> {} <div className=\"tm-anim\"><{} d={} niveau=\"sportif\" data={} compact={}",
-  "where": "src/20_terrain.js:442",
+  "where": "src/20_terrain.js:452",
   "n": 1
  },
  {
   "h": "bc9b533a43",
   "k": "En cours",
   "kind": "string",
-  "where": "src/20_terrain.js:444",
+  "where": "src/20_terrain.js:454",
   "n": 1
  },
  {
   "h": "0998a01378",
   "k": "Essai {} enregistré",
   "kind": "pattern",
-  "where": "src/20_terrain.js:444",
+  "where": "src/20_terrain.js:454",
   "n": 1
  },
  {
   "h": "c5e3c29f88",
   "k": "Prêt",
   "kind": "string",
-  "where": "src/20_terrain.js:444",
+  "where": "src/20_terrain.js:454",
   "n": 1
  },
  {
   "h": "32697d7a01",
   "k": "· dernier à",
   "kind": "string",
-  "where": "src/20_terrain.js:446",
+  "where": "src/20_terrain.js:456",
   "n": 1
  },
  {
   "h": "235f54ad1f",
   "k": "· dernier à {}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:446",
+  "where": "src/20_terrain.js:456",
   "n": 1
  },
  {
@@ -41486,7 +45426,7 @@
   "k": "Tours :",
   "kind": "text",
   "ctx": "<p className=\"tm-next\">Tours : <b>{}</b> / {}{}</p>",
-  "where": "src/20_terrain.js:446",
+  "where": "src/20_terrain.js:456",
   "n": 1
  },
  {
@@ -41494,21 +45434,21 @@
   "k": "Tour",
   "kind": "text",
   "ctx": "<{} kind=\"ghost\" small onClick={} disabled={}>Tour</{}>",
-  "where": "src/20_terrain.js:448",
+  "where": "src/20_terrain.js:458",
   "n": 1
  },
  {
   "h": "d176886848",
   "k": "Nouvel essai",
   "kind": "string",
-  "where": "src/20_terrain.js:449",
+  "where": "src/20_terrain.js:459",
   "n": 1
  },
  {
   "h": "492a46cd94",
   "k": "· meilleur",
   "kind": "string",
-  "where": "src/20_terrain.js:450",
+  "where": "src/20_terrain.js:460",
   "n": 1
  },
  {
@@ -41516,21 +45456,21 @@
   "k": "Mes essais",
   "kind": "attr",
   "ctx": "<{} title=\"Mes essais\"><ol className=\"small\">{}</ol> <div className=\"actions\"><{} block onClick={} disabled={}>Enregistrer {}</{}></div></{}>",
-  "where": "src/20_terrain.js:450",
+  "where": "src/20_terrain.js:460",
   "n": 1
  },
  {
   "h": "0bce0b5df9",
   "k": ", 2 min de récupération entre chaque.",
   "kind": "string",
-  "where": "src/20_terrain.js:451",
+  "where": "src/20_terrain.js:461",
   "n": 1
  },
  {
   "h": "c87b7ba375",
   "k": "{}, 2 min de récupération entre chaque.",
   "kind": "pattern",
-  "where": "src/20_terrain.js:451",
+  "where": "src/20_terrain.js:461",
   "n": 1
  },
  {
@@ -41538,7 +45478,7 @@
   "k": "Démarre au signal, arrête à l'arrivée.",
   "kind": "text",
   "ctx": "<p className=\"muted small center\">{}Démarre au signal, arrête à l'arrivée.</p>",
-  "where": "src/20_terrain.js:451",
+  "where": "src/20_terrain.js:461",
   "n": 1
  },
  {
@@ -41546,7 +45486,7 @@
   "k": "Mon résultat",
   "kind": "text",
   "ctx": "<div className=\"player\"><header className=\"p-top\"><button type=\"button\" className=\"back\" onClick={} aria-label=\"Retour\">‹</button><div><div className=\"eyebrow\">Mon résultat</div><h2>{}</h2></div></header> <{}><{} label={} hint={} id=\"tr-res\"><input id=\"tr-res\" inputMode=\"decimal\" value={} onChange={} /></{}> <div className=\"actions\"><{} block disabled={} onClick={}>Continuer</{}></div></{}></div>",
-  "where": "src/20_terrain.js:458",
+  "where": "src/20_terrain.js:468",
   "n": 1
  },
  {
@@ -41554,7 +45494,7 @@
   "k": "Séances terrain",
   "kind": "text",
   "ctx": "<div className=\"player\"> <header className=\"p-top\"><button type=\"button\" className=\"back\" onClick={} aria-label=\"Retour\">‹</button> <div><div className=\"eyebrow\">Séances terrain</div><h2>{}</h2></div></header> <{} label=\"Sport\" id=\"tr-sport\"><select id=\"tr-sport\" value={} onChange={}> <option value=\"\">— Choisir —</option>{}</select></{}> {} {} </div>",
-  "where": "src/20_terrain.js:493",
+  "where": "src/20_terrain.js:503",
   "n": 1
  },
  {
@@ -41562,35 +45502,35 @@
   "k": "— Choisir —",
   "kind": "text",
   "ctx": "<div className=\"player\"> <header className=\"p-top\"><button type=\"button\" className=\"back\" onClick={} aria-label=\"Retour\">‹</button> <div><div className=\"eyebrow\">Séances terrain</div><h2>{}</h2></div></header> <{} label=\"Sport\" id=\"tr-sport\"><select id=\"tr-sport\" value={} onChange={}> <option value=\"\">— Choisir —</option>{}</select></{}> {} {} </div>",
-  "where": "src/20_terrain.js:493",
+  "where": "src/20_terrain.js:503",
   "n": 1
  },
  {
   "h": "5fc950969d",
   "k": "Choisis un sport",
   "kind": "string",
-  "where": "src/20_terrain.js:495",
+  "where": "src/20_terrain.js:505",
   "n": 1
  },
  {
   "h": "63bfec806f",
   "k": "(mon sport)",
   "kind": "string",
-  "where": "src/20_terrain.js:497",
+  "where": "src/20_terrain.js:507",
   "n": 1
  },
  {
   "h": "b2a0932cf6",
   "k": "et à ton poste (",
   "kind": "string",
-  "where": "src/20_terrain.js:498",
+  "where": "src/20_terrain.js:508",
   "n": 1
  },
  {
   "h": "72b29b0391",
   "k": "et à ton poste ({})",
   "kind": "pattern",
-  "where": "src/20_terrain.js:498",
+  "where": "src/20_terrain.js:508",
   "n": 1
  },
  {
@@ -41598,7 +45538,7 @@
   "k": "Séances adaptées à ton profil",
   "kind": "text",
   "ctx": "<p className=\"muted small\">{} Séances adaptées à ton profil {}{}.</p> {} <div className=\"xgrid\">{}</div> {}",
-  "where": "src/20_terrain.js:498",
+  "where": "src/20_terrain.js:508",
   "n": 1
  },
  {
@@ -41606,7 +45546,7 @@
   "k": "Mes records terrain",
   "kind": "attr",
   "ctx": "<{} title=\"Mes records terrain\">{}</{}>",
-  "where": "src/20_terrain.js:504",
+  "where": "src/20_terrain.js:514",
   "n": 1
  },
  {
@@ -41614,7 +45554,7 @@
   "k": "Choisis ton sport",
   "kind": "attr",
   "ctx": "<{} title=\"Choisis ton sport\" text=\"Les séances terrain sont construites pour chaque sport : rugby, football, handball, basket, tennis, bobsleigh, course…\" />",
-  "where": "src/20_terrain.js:505",
+  "where": "src/20_terrain.js:515",
   "n": 1
  },
  {
@@ -41622,7 +45562,7 @@
   "k": "Les séances terrain sont construites pour chaque sport : rugby, football, handball, basket, tennis, bobsleigh, course…",
   "kind": "attr",
   "ctx": "<{} title=\"Choisis ton sport\" text=\"Les séances terrain sont construites pour chaque sport : rugby, football, handball, basket, tennis, bobsleigh, course…\" />",
-  "where": "src/20_terrain.js:505",
+  "where": "src/20_terrain.js:515",
   "n": 1
  },
  {
@@ -41630,28 +45570,28 @@
   "k": "Mes dernières séances terrain",
   "kind": "attr",
   "ctx": "<{} title=\"Mes dernières séances terrain\">{}</{}>",
-  "where": "src/20_terrain.js:506",
+  "where": "src/20_terrain.js:516",
   "n": 1
  },
  {
   "h": "4c8569fe0a",
   "k": "Conseillée par Antoine",
   "kind": "string",
-  "where": "src/20_terrain.js:517",
+  "where": "src/20_terrain.js:527",
   "n": 1
  },
  {
   "h": "dd34613db1",
   "k": "Conseillée par le coach IA",
   "kind": "string",
-  "where": "src/20_terrain.js:517",
+  "where": "src/20_terrain.js:527",
   "n": 1
  },
  {
   "h": "a76b98a3bf",
   "k": "Séance terrain de la semaine",
   "kind": "string",
-  "where": "src/20_terrain.js:517",
+  "where": "src/20_terrain.js:527",
   "n": 2
  },
  {
@@ -41659,7 +45599,7 @@
   "k": "Voir la séance",
   "kind": "text",
   "ctx": "<section className=\"card tweek\"><div className=\"tw-vis\"><{} d={} niveau={} data={} compact={} autoplay={} /></div> <div className=\"tw-t\"><div className=\"eyebrow\">{}</div><b>{}</b><span className=\"muted small\">{}{} · {}</span> {} <div className=\"btnrow\"><{} small onClick={}>Voir la séance</{}><{} small kind=\"ghost\" onClick={}>Toutes les séances</{}></div></div></section>",
-  "where": "src/20_terrain.js:518",
+  "where": "src/20_terrain.js:528",
   "n": 1
  },
  {
@@ -41667,7 +45607,7 @@
   "k": "Toutes les séances",
   "kind": "text",
   "ctx": "<section className=\"card tweek\"><div className=\"tw-vis\"><{} d={} niveau={} data={} compact={} autoplay={} /></div> <div className=\"tw-t\"><div className=\"eyebrow\">{}</div><b>{}</b><span className=\"muted small\">{}{} · {}</span> {} <div className=\"btnrow\"><{} small onClick={}>Voir la séance</{}><{} small kind=\"ghost\" onClick={}>Toutes les séances</{}></div></div></section>",
-  "where": "src/20_terrain.js:518",
+  "where": "src/20_terrain.js:528",
   "n": 1
  },
  {
@@ -41675,14 +45615,14 @@
   "k": "Sports",
   "kind": "attr",
   "ctx": "<div className=\"spchips\" role=\"radiogroup\" aria-label=\"Sports\">{}</div>",
-  "where": "src/20_terrain.js:526",
+  "where": "src/20_terrain.js:536",
   "n": 1
  },
  {
   "h": "09fe5794fc",
   "k": "Sport enregistré.",
   "kind": "string",
-  "where": "src/20_terrain.js:540",
+  "where": "src/20_terrain.js:550",
   "n": 1
  },
  {
@@ -41690,7 +45630,7 @@
   "k": "Mon sport",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Mon sport\" id=\"se-sport\" hint={}><input id=\"se-sport\" value={} onChange={} placeholder=\"Rugby, football, tennis…\" /></{}> <{} value={} onPick={} /> {} {} <div className=\"actions\"><{} block onClick={} disabled={}>Enregistrer</{}></div></div>",
-  "where": "src/20_terrain.js:543",
+  "where": "src/20_terrain.js:553",
   "n": 3
  },
  {
@@ -41698,14 +45638,14 @@
   "k": "Rugby, football, tennis…",
   "kind": "attr",
   "ctx": "<div className=\"form\"> <{} label=\"Mon sport\" id=\"se-sport\" hint={}><input id=\"se-sport\" value={} onChange={} placeholder=\"Rugby, football, tennis…\" /></{}> <{} value={} onPick={} /> {} {} <div className=\"actions\"><{} block onClick={} disabled={}>Enregistrer</{}></div></div>",
-  "where": "src/20_terrain.js:543",
+  "where": "src/20_terrain.js:553",
   "n": 1
  },
  {
   "h": "9e12290dfa",
   "k": "Sport non reconnu : choisis le plus proche ci-dessous.",
   "kind": "string",
-  "where": "src/20_terrain.js:544",
+  "where": "src/20_terrain.js:554",
   "n": 1
  },
  {
@@ -41713,7 +45653,7 @@
   "k": "Mon poste",
   "kind": "attr",
   "ctx": "<{} label=\"Mon poste\"><{} id=\"se-poste\" options={} value={} onChange={} /></{}>",
-  "where": "src/20_terrain.js:546",
+  "where": "src/20_terrain.js:556",
   "n": 1
  },
  {
@@ -41721,7 +45661,7 @@
   "k": "Adapter mes séances à mon sport",
   "kind": "attr",
   "ctx": "<{} label=\"Adapter mes séances à mon sport\" hint=\"Exercices spécifiques en salle et séances terrain de ton sport à la place des séances génériques.\"><{} id=\"se-adapt\" options={} value={} onChange={} /></{}>",
-  "where": "src/20_terrain.js:547",
+  "where": "src/20_terrain.js:557",
   "n": 1
  },
  {
@@ -41729,7 +45669,7 @@
   "k": "Exercices spécifiques en salle et séances terrain de ton sport à la place des séances génériques.",
   "kind": "attr",
   "ctx": "<{} label=\"Adapter mes séances à mon sport\" hint=\"Exercices spécifiques en salle et séances terrain de ton sport à la place des séances génériques.\"><{} id=\"se-adapt\" options={} value={} onChange={} /></{}>",
-  "where": "src/20_terrain.js:547",
+  "where": "src/20_terrain.js:557",
   "n": 1
  },
  {
@@ -41737,133 +45677,133 @@
   "k": "Adaptation",
   "kind": "text",
   "ctx": "<dl className=\"dl\"><dt>Sport</dt><dd>{}</dd><dt>Niveau</dt><dd>{}</dd> <dt>Adaptation</dt><dd>{}</dd></dl> <p className=\"muted small\">{}</p>",
-  "where": "src/20_terrain.js:557",
+  "where": "src/20_terrain.js:567",
   "n": 1
  },
  {
   "h": "72423e8466",
   "k": "désactivée",
   "kind": "string",
-  "where": "src/20_terrain.js:558",
+  "where": "src/20_terrain.js:568",
   "n": 1
  },
  {
   "h": "6f6ce59763",
   "k": "exercices spécifiques et",
   "kind": "string",
-  "where": "src/20_terrain.js:558",
+  "where": "src/20_terrain.js:568",
   "n": 1
  },
  {
   "h": "84e5d33230",
   "k": "séance terrain",
   "kind": "string",
-  "where": "src/20_terrain.js:558",
+  "where": "src/20_terrain.js:568",
   "n": 2
  },
  {
   "h": "d8614c819d",
   "k": "séances terrain",
   "kind": "string",
-  "where": "src/20_terrain.js:558",
+  "where": "src/20_terrain.js:568",
   "n": 2
  },
  {
   "h": "69fc990a29",
   "k": "exercices spécifiques et {}",
   "kind": "pattern",
-  "where": "src/20_terrain.js:558",
+  "where": "src/20_terrain.js:568",
   "n": 1
  },
  {
   "h": "74e2bf34d8",
   "k": "» n'est pas encore reconnu : choisis le sport le plus proche pour recevoir tes séances terrain.",
   "kind": "string",
-  "where": "src/20_terrain.js:559",
+  "where": "src/20_terrain.js:569",
   "n": 1
  },
  {
   "h": "cefbb299a6",
   "k": "« {} » n'est pas encore reconnu : choisis le sport le plus proche pour recevoir tes séances terrain.",
   "kind": "pattern",
-  "where": "src/20_terrain.js:559",
+  "where": "src/20_terrain.js:569",
   "n": 1
  },
  {
   "h": "efe072df07",
   "k": "Indique ton sport pour adapter tes séances et recevoir des séances terrain.",
   "kind": "string",
-  "where": "src/20_terrain.js:559",
+  "where": "src/20_terrain.js:569",
   "n": 1
  },
  {
   "h": "d66156f169",
   "k": "» devient «",
   "kind": "string",
-  "where": "src/20_terrain.js:627",
+  "where": "src/20_terrain.js:637",
   "n": 1
  },
  {
   "h": "a04b38afe3",
   "k": "« {} » devient « {} »",
   "kind": "pattern",
-  "where": "src/20_terrain.js:627",
+  "where": "src/20_terrain.js:637",
   "n": 1
  },
  {
   "h": "a2100b63f5",
   "k": "En salle, tes séances gagnent",
   "kind": "string",
-  "where": "src/20_terrain.js:628",
+  "where": "src/20_terrain.js:638",
   "n": 1
  },
  {
   "h": "f3c5b7793a",
   "k": "exercice spécifique",
   "kind": "string",
-  "where": "src/20_terrain.js:628",
+  "where": "src/20_terrain.js:638",
   "n": 1
  },
  {
   "h": "15c4d0cac5",
   "k": "exercices spécifiques",
   "kind": "string",
-  "where": "src/20_terrain.js:628",
+  "where": "src/20_terrain.js:638",
   "n": 1
  },
  {
   "h": "5b949fc6c2",
   "k": "En salle, tes séances gagnent {} : {}.",
   "kind": "pattern",
-  "where": "src/20_terrain.js:628",
+  "where": "src/20_terrain.js:638",
   "n": 1
  },
  {
   "h": "2728bcd9e2",
   "k": "{} de ton sport t'attendent dans « Séances en plus ».",
   "kind": "pattern",
-  "where": "src/20_terrain.js:628",
+  "where": "src/20_terrain.js:638",
   "n": 1
  },
  {
   "h": "b4a4197ce0",
   "k": "Sur le terrain :",
   "kind": "string",
-  "where": "src/20_terrain.js:629",
+  "where": "src/20_terrain.js:639",
   "n": 1
  },
  {
   "h": "56c5a5f89f",
   "k": "Sur le terrain : {}.",
   "kind": "pattern",
-  "where": "src/20_terrain.js:629",
+  "where": "src/20_terrain.js:639",
   "n": 1
  },
  {
   "h": "e4039b7f4e",
   "k": "de ton sport t'attendent dans « Séances en plus ».",
   "kind": "string",
-  "where": "src/20_terrain.js:629",
+  "where": "src/20_terrain.js:639",
   "n": 1
  },
  {
@@ -43790,14 +47730,6 @@
   "h": "086de0103b",
   "k": "Espace coach",
   "kind": "attr",
-  "ctx": "<div className=\"client onboard\"><header className=\"c-top\"><{} sub=\"Espace coach\" /></header> <div className=\"stack\"><div className=\"hero\"><div className=\"eyebrow\">Sécurité</div><h1>Confirme ton adresse e-mail.</h1> <p className=\"muted\">Un lien a été envoyé à {}. L'espace coach s'ouvre une fois l'adresse confirmée.</p></div> <div className=\"actions\"><{} onClick={} disabled={}>J'ai confirmé mon adre",
-  "where": "src/site/11_site.js:46",
-  "n": 1
- },
- {
-  "h": "33e96f0274",
-  "k": "Sécurité",
-  "kind": "text",
   "ctx": "<div className=\"client onboard\"><header className=\"c-top\"><{} sub=\"Espace coach\" /></header> <div className=\"stack\"><div className=\"hero\"><div className=\"eyebrow\">Sécurité</div><h1>Confirme ton adresse e-mail.</h1> <p className=\"muted\">Un lien a été envoyé à {}. L'espace coach s'ouvre une fois l'adresse confirmée.</p></div> <div className=\"actions\"><{} onClick={} disabled={}>J'ai confirmé mon adre",
   "where": "src/site/11_site.js:46",
   "n": 1

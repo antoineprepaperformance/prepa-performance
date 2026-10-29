@@ -29,7 +29,7 @@ FAIL=0
 # traductions : chaque texte visible doit exister en anglais et en espagnol (voir CLAUDE.md, « Langues »)
 [ -d tools/node_modules/acorn ] || npm install --prefix tools --silent > "$LOG/npm.txt" 2>&1
 if node tools/i18n_extract.mjs --manque > "$LOG/i18n.txt" 2>&1; then echo "ok    traductions (anglais, espagnol) complètes"; else FAIL=1; echo "ÉCHEC traductions manquantes :"; head -20 "$LOG/i18n.txt"; fi
-for t in unit_niveau.py smoke.py e2e.py e2e_claude_acces.py e2e_nutri.py e2e_features.py e2e_lite_claude.py e2e_terrain.py e2e_messages.py e2e_profil.py e2e_formules.py e2e_langues.py e2e_hydra.py e2e_plats.py e2e_perso.py \
+for t in unit_niveau.py smoke.py e2e.py e2e_claude_acces.py e2e_nutri.py e2e_features.py e2e_lite_claude.py e2e_terrain.py e2e_messages.py e2e_profil.py e2e_formules.py e2e_langues.py e2e_hydra.py e2e_plats.py e2e_perso.py e2e_contenu.py \
          e2e_site.py e2e_site2.py e2e_pay.py e2e_pwa.py e2e_features_site.py e2e_lite.py e2e_terrain_site.py e2e_rules_site.py e2e_messages_site.py e2e_sante_site.py e2e_tarifs.py e2e_factures.py; do
   timeout 900 python3 "$t" > "$LOG/$t.txt" 2>&1; c=$?
   r=$(grep -E "[0-9]+ OK, [0-9]+ échecs|^[0-9]+ / [0-9]+$" "$LOG/$t.txt" | tail -1)

@@ -894,7 +894,7 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Nutrition</div><h1>${np ? (eq ? "Des repas équilibrés, sans compter." : nutriGoalText(np).replace(/^./, (c) => c.toUpperCase()).replace(/, départ.*$/, "") + ".") : "Fixe ton objectif en 1 minute."}</h1></div>
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
-    ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
+    ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
     ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />` : null}
     ${sub === "journal" && np ? html`
@@ -927,16 +927,17 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   </div>`;
 }
 /* résumé sur l'écran Aujourd'hui */
-function NutriToday({ data, go }) {
+function NutriToday({ data, go, ed, cid }) {
   const np = data.nutri && data.nutri.plan;
   if (!np) return html`<button type="button" className="srow" onClick=${() => go("nutrition")}><span className="srow-id">🍽</span><span className="srow-t"><b>Fixe ton objectif nutrition</b><span className="muted small">Calories, protéines et pas calculés pour toi en 1 minute</span></span><span className="srow-s">›</span></button>`;
   const tot = dayTotals(data.food[todayISO()]);
   const n = ((data.food[todayISO()] || {}).meals || []).length;
   const en = np.mode === "equilibre" ? null : dayEnergy(data, np, todayISO());
   const tD = np.mode === "equilibre" ? np.targets : dayTargets(np, en);
+  const wk = typeof weekRecipeEd === "function" ? weekRecipeEd(data, np, cid, ed || null) : null;
   return html`<button type="button" className="nutri-mini" onClick=${() => go("nutrition")}>
     <div className="nm-h"><b>Nutrition du jour</b><span className="muted small">${plural(n, "repas", "repas")} noté${n > 1 ? "s" : ""}</span></div>
-    ${typeof weekRecipe === "function" && weekRecipe(data, np) ? html`<span className="small">Recette de la semaine : <b>${weekRecipe(data, np).n}</b></span>` : null}
+    ${wk && wk.r ? html`<span className="small">${wk.th ? "La recette du moment" : "Recette de la semaine"} : <b>${wk.r.n}</b></span>` : null}
     <span className="small">Eau : ${fmtN(waterOf(data, todayISO()), 1)} / ${fmtN(hydraTarget(data, np, todayISO()).total, 1)} L</span>
     ${np.mode === "equilibre" ? html`<span className="small">Ajoute tes repas pour un retour sur l'équilibre de ton assiette.</span>` : html`<${Bar} value=${tot.kcal / (tD.kcal || 1)} /><span className="small">${fmtN(tot.kcal, 0)} / ${fmtN(tD.kcal, 0)} kcal${en && en.bonus ? " (+" + fmtN(en.bonus, 0) + " activité)" : ""} · protéines ${fmtN(tot.p, 0)} / ${fmtN(np.targets.p, 0)} g${en && en.total ? " · dépense " + fmtN(en.total, 0) + " kcal" : ""}</span>`}
   </button>`;

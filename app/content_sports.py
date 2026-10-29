@@ -113,10 +113,15 @@ def T(t, m="test", n=1):
     return {"t": t, "m": m, "n": n}
 
 DRILLS = []
-def D(id, n, sports, typ, mat, but, steps, cues, dose, science, refs, sc=None, test=None, pace=None, poste=None, z=4, dur=None, warn=None):
+def D(id, n, sports, typ, mat, but, steps, cues, dose, science, refs, sc=None, test=None, pace=None, poste=None, z=4, dur=None, warn=None,
+      obj=None, org=None, var=None, contact=None, pub=None, skill=None):
+    """Fiche « skill » (format des fiches terrain d'Antoine) : obj = objectifs {ph, te, ma}, org = organisation,
+    var = variantes et progression, contact = aucun | toucher | bouclier | bags | reel, pub = public, skill = True
+    (bibliothèque Technique : jamais tirée au sort pour la séance terrain de la semaine)."""
     d = {"id": id, "n": n, "sports": sports, "type": typ, "mat": mat, "but": but, "steps": steps, "cues": cues, "dose": dose,
          "science": science, "refs": refs, "z": z}
-    for k, v in (("sc", sc), ("test", test), ("pace", pace), ("poste", poste), ("dur", dur), ("warn", warn)):
+    for k, v in (("sc", sc), ("test", test), ("pace", pace), ("poste", poste), ("dur", dur), ("warn", warn),
+                 ("obj", obj), ("org", org), ("var", var), ("contact", contact), ("pub", pub), ("skill", skill)):
         if v is not None: d[k] = v
     DRILLS.append(d)
 
@@ -1006,9 +1011,312 @@ TESTS_SPORT = {
     "home1b": {"n": "Home → 1re base", "u": "s", "b": "low", "type": "num", "help": "Du contact (ou du swing) au pied sur la 1re base. Meilleur de 3."},
 }
 
+# ---------------------------------------------------------------------------------------------
+# Skills (bibliothèque « Technique ») : format des fiches terrain d'Antoine
+# objectifs physique / technique / match, organisation, consignes numérotées (mêmes numéros que
+# le schéma), points clés, variantes. Jamais tirées au sort pour la séance terrain de la semaine :
+# le client les ouvre lui-même, ou Antoine les conseille depuis sa fiche.
+# ---------------------------------------------------------------------------------------------
+REFS.update({
+    "hendricks10": "Hendricks S, Lambert M. Tackling in rugby: coaching strategies for effective technique and injury prevention. Int J Sports Sci Coach. 2010;5(1):117-135.",
+    "hendricks18": "Hendricks S, van Niekerk T, Sin DW, et al. Technical determinants of tackle and ruck performance in International rugby union. J Sports Sci. 2018;36(5):522-528.",
+    "tucker17": "Tucker R, Raftery M, Kemp S, et al. Risk factors for head injury events in professional rugby union: a video analysis of 464 head injury events to inform proposed injury prevention strategies. Br J Sports Med. 2017;51(15):1152-1157.",
+    "hislop17": "Hislop MD, Stokes KA, Williams S, et al. Reducing musculoskeletal injury and concussion risk in schoolboy rugby players with a pre-activity movement control exercise programme: a cluster randomised controlled trial. Br J Sports Med. 2017;51(15):1140-1146.",
+    "burger20": "Burger N, Lambert M, Hendricks S. Lay of the land: narrative synthesis of tackle research in rugby union and rugby sevens. BMJ Open Sport Exerc Med. 2020;6(1):e000645.",
+    "gabbett08": "Gabbett TJ. Influence of fatigue on tackling technique in rugby league players. J Strength Cond Res. 2008;22(2):625-632.",
+    "pavely09": "Pavely S, Adams RD, Di Francesco T, Larkham S, Maher CG. Execution and outcome differences between passes to the left and right made by first-grade rugby union players. Phys Ther Sport. 2009;10(4):136-141.",
+    "wheeler10": "Wheeler KW, Sayers MGL. Modification of agility running technique in reaction to a defender in rugby union. J Sports Sci Med. 2010;9(3):445-451.",
+    "wr_tackle": "World Rugby. Tackle Ready : programme de technique du plaquage (suivi, préparation, contact, accélération, finition). World Rugby Passport, 2020.",
+})
+
+CONTACT_WARN = ("Contact : avec un coach ou en club, et un partenaire qui tient le bouclier. Jamais seul. Contact réel contrôlé "
+                "seulement en début de semaine (J-5 ou J-4), jamais à J-2 ou J-1, jamais en reprise de blessure. "
+                "Plaque à la taille ou plus bas : c'est la règle des compétitions amateurs en France et la plus sûre partout.")
+
+D("sk_chute", "Savoir tomber et se relever", ["rugby", "rugby7"], "Technique", "Tapis ou herbe souple",
+  "Encaisser une chute ou un plaquage sans se blesser, puis se relever vite dans le jeu.",
+  ["Chute avant amortie : à genoux, laisse-toi tomber vers l'avant et amortis avec les avant-bras, menton rentré.",
+   "Roulade sur l'épaule : de la position à genoux, roule en diagonale de l'épaule à la hanche opposée, puis relève-toi.",
+   "Chute sur le côté : accroupi, bascule sur le côté, frappe le sol avec l'avant-bras, garde la tête décollée.",
+   "Relevé en un appui : du sol, reviens debout et fais 5 m d'appuis vifs."],
+  ["Menton rentré, tête jamais en premier au sol", "On roule sur l'épaule et le dos, pas sur la nuque", "Relevé en moins de 2 s, premier appui explosif"],
+  {"reprise": I(2, 4, 10, 20, 90, "1 chute + relevé, à vitesse lente", "2 séries de 4 chutes lentes (avant, épaule, côté, relevé)"),
+   "sportif": I(3, 4, 10, 20, 90, "1 chute + relevé", "3 séries de 4 chutes (une de chaque)"),
+   "perf": I(3, 6, 10, 15, 90, "1 chute + relevé + 5 m", "3 séries de 6, côté annoncé par le partenaire"),
+   "elite": I(3, 6, 8, 12, 90, "Chute au signal + relevé + 5 m", "3 séries de 6, chute au signal, relevé et sprint 5 m")},
+  "Un échauffement de 20 minutes qui inclut l'équilibre, les chutes et le renforcement du cou a réduit les blessures et les commotions chez des rugbymen scolaires, à condition d'être fait au moins 3 fois par semaine (Hislop, 2017). World Rugby place « savoir tomber » au début de sa progression du plaquage.",
+  ["hislop17", "wr_tackle"],
+  sc={"f": "rugby", "v": [14, 26, 36, 44], "o": [[17, 35, "start", "Départ"], [24, 35, "x", "Chute"], [28, 35, "x", "Roulade"], [33, 35, "c", "5 m"]],
+      "p": [{"k": "walk", "p": [[17, 35], [24, 35]], "l": "Chute avant", "n": 1, "e": "down", "w": 0.8}, {"k": "walk", "p": [[24, 35], [28, 35]], "l": "Roulade", "lo": -1, "n": 2, "e": "down", "w": 0.8},
+            {"k": "sprint", "p": [[28, 37.5], [33, 37.5]], "l": "Relevé + 5 m", "lo": 1, "n": 4}]},
+  obj={"ph": "Gainage et contrôle du corps au sol", "te": "Chutes amorties, roulade sur l'épaule, relevé rapide", "ma": "Encaisser un plaquage sans se blesser et rejouer tout de suite"},
+  org="Bande d'herbe de 15 m ou tapis. Seul ou à deux : le partenaire annonce le côté de la chute.",
+  var=["Chute au signal sonore", "Chute en marchant, puis en trottinant", "Relevé et sprint vers le plot annoncé (prise d'information)"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_cou", "Cou solide à deux (4 directions)", ["rugby", "rugby7"], "Technique", "Un partenaire",
+  "Renforcer le cou dans les 4 directions pour encaisser les contacts.",
+  ["À quatre pattes, dos plat, regard au sol. Le partenaire pose la main sur ton front.",
+   "Pousse contre sa main sans bouger la tête : il résiste à la même force (10 à 20 s).",
+   "Recommence main sur l'arrière de la tête, puis sur chaque côté.",
+   "Inversez les rôles."],
+  ["La tête ne bouge pas : c'est une poussée sans mouvement", "Monte en force sur 3 s, garde, relâche sur 3 s", "Jamais de secousse : le partenaire suit ta force"],
+  {"reprise": I(1, 4, 10, 20, 60, "10 s par direction, effort moyen", "1 tour : 10 s par direction à effort moyen"),
+   "sportif": I(2, 4, 15, 15, 60, "15 s par direction", "2 tours : 15 s par direction"),
+   "perf": I(2, 4, 20, 15, 60, "20 s par direction", "2 tours : 20 s par direction, effort fort"),
+   "elite": I(3, 4, 20, 15, 60, "20 s par direction", "3 tours : 20 s par direction, effort fort")},
+  "Un programme de renforcement isométrique du cou a été associé à beaucoup moins de blessures cervicales en match chez des rugbymen professionnels (Naish, 2013) ; le travail du cou fait partie de l'échauffement Activate qui a réduit les commotions chez les jeunes joueurs (Hislop, 2017).",
+  ["naish13", "hislop17"],
+  sc={"f": "rugby", "v": [18, 28, 34, 42], "o": [[23, 35, "pa", "Joueur"], [27, 35, "pb", "Partenaire"]],
+      "t": [[25, 31, "Avant · arrière · gauche · droite"], [25, 39.5, "10-20 s chacune"]]},
+  obj={"ph": "Force isométrique des muscles du cou", "te": "Gainage cervical, tête alignée", "ma": "Mieux encaisser plaquages, rucks et mêlées"},
+  org="Par deux, sur l'herbe ou un tapis. Fin d'échauffement ou de séance, 5 minutes.",
+  var=["Debout contre le partenaire", "Avec un élastique fixé derrière", "Version piliers : à la fin de la séance de musculation"],
+  contact="aucun", pub="Tous", skill=True, z=3)
+
+D("sk_plaq_genoux", "Plaquage à genoux (technique)", ["rugby", "rugby7"], "Technique", "Un partenaire, tapis",
+  "Installer le bon placement de la tête et de l'épaule à vitesse nulle, avant tout plaquage en mouvement.",
+  ["Face à face à genoux, à 1 m l'un de l'autre. Le porteur tient le ballon.",
+   "Place ta tête sur le côté du porteur, joue contre sa hanche, jamais devant lui.",
+   "Contact avec l'épaule, à la taille. Les deux bras entourent et serrent (« comme un maillot »).",
+   "Termine au sol sur le côté, tête protégée, puis relève-toi."],
+  ["Tête sur le côté, yeux ouverts, menton haut : on ne plaque jamais tête baissée", "Épaule à la taille, bras qui serrent ensemble", "Lent et précis : la qualité avant la vitesse"],
+  {"reprise": I(1, 6, 6, 20, 90, "Placement sans contact, arrêt à 10 cm", "Sans contact : 6 placements tête et épaule, arrêt avant le contact"),
+   "sportif": I(2, 6, 6, 20, 90, "1 plaquage à genoux par côté", "2 séries de 6 (3 par côté), puis inversez"),
+   "perf": I(3, 6, 6, 15, 90, "1 plaquage à genoux", "3 séries de 6, côté annoncé au dernier moment"),
+   "elite": I(3, 8, 6, 15, 90, "1 plaquage à genoux", "3 séries de 8, porteur qui bouge un peu les hanches")},
+  "Chez les professionnels, le plaqueur est blessé à la tête bien plus souvent quand sa tête percute celle ou la hanche du porteur, ou quand il plaque trop droit ; placer la tête sur le côté et plaquer plus bas réduit ce risque (Tucker, 2017). La technique s'apprend par étapes, du statique vers la vitesse (Hendricks et Lambert, 2010).",
+  ["tucker17", "hendricks10", "wr_tackle"],
+  sc={"f": "rugby", "v": [15, 29, 35, 42], "o": [[20, 35, "pa", "Plaqueur à genoux"], [28, 35, "pb", "Porteur à genoux"]],
+      "p": [{"k": "walk", "p": [[20.8, 35], [27, 35]], "l": "Épaule à la taille", "lo": -1, "n": 3, "e": "hit", "w": 0.6}, {"k": "walk", "p": [[27, 35.3], [27.6, 38.8]], "l": "Au sol", "lo": 1, "lp": 0.7, "n": 4, "e": "down"}],
+      "t": [[24, 31, "Tête sur le côté du porteur"]]},
+  obj={"ph": "Gainage et force des bras au contact", "te": "Tête du bon côté, épaule à la taille, bras qui serrent", "ma": "Un plaquage sûr et efficace qui stoppe le porteur"},
+  org="Par deux sur un tapis ou une herbe souple. On inverse les rôles après chaque série.",
+  var=["Porteur qui part en avant à 2 km/h", "Plaquage sur les deux côtés en alternance", "Passage debout : fiche « Approche du plaquage »"],
+  contact="reel", pub="Tous", skill=True, warn=CONTACT_WARN, z=4)
+
+D("sk_plaq_marche", "Approche du plaquage : marche puis trottinement", ["rugby", "rugby7"], "Technique", "2 plots, bouclier, un partenaire",
+  "Apprendre les 3 temps avant l'impact : suivre le porteur, se préparer, puis contacter et pousser.",
+  ["Couloir de 10 m. Le partenaire avance avec le bouclier, en marchant.",
+   "Suivre : tu avances face à lui, en restant à l'intérieur de son épaule.",
+   "Se préparer : à 2 m, raccourcis les appuis, baisse les hanches, dos plat, tête haute.",
+   "Contact épaule sur le bouclier, tête sur le côté, bras qui serrent, jambes actives sur 2 m."],
+  ["Petits pas rapides avant le contact (« hachés »)", "Hanches basses, poitrine en avant, yeux sur les hanches du porteur", "Les jambes continuent de pousser après le contact"],
+  {"reprise": I(2, 5, 8, 22, 90, "Approche sans contact, arrêt à 1 m", "Sans contact : 2 séries de 5 approches, arrêt à 1 m du bouclier"),
+   "sportif": I(2, 6, 8, 22, 120, "Approche en marchant + contact bouclier", "2 séries de 6, porteur en marchant"),
+   "perf": I(3, 6, 8, 22, 120, "Approche en trottinant + contact bouclier", "3 séries de 6, porteur en trottinant"),
+   "elite": I(3, 8, 8, 20, 120, "Trottinement + changement de côté + contact", "3 séries de 8, porteur qui change de côté")},
+  "World Rugby découpe le plaquage en 5 temps (suivre, se préparer, contacter, accélérer, finir) et les entraîne du plus lent au plus rapide. Les plaqueurs qui continuent de pousser avec les jambes après le contact laissent moins passer le porteur et ses passes après contact (Hendricks, 2018).",
+  ["wr_tackle", "hendricks18", "hendricks10"],
+  sc={"f": "rugby", "v": [12, 29, 38, 41], "o": [[15, 35, "start", "Plaqueur"], [33, 35, "shield", "Bouclier tenu"]],
+      "p": [{"k": "jog", "p": [[15, 35], [25, 35]], "l": "Suivre", "lo": -1, "n": 2}, {"k": "walk", "p": [[25, 35], [31.6, 35]], "l": "Se préparer", "lo": 1, "lp": 0.4, "n": 3},
+            {"k": "walk", "p": [[31.6, 35], [32.6, 35]], "l": "Contact, jambes 2 m", "lo": -1, "lp": 0.0, "e": "hit", "w": 0.6}]},
+  obj={"ph": "Freinage, abaissement du centre de gravité", "te": "Les 3 temps avant l'impact : suivre, se préparer, contacter", "ma": "Arriver au contact en équilibre plutôt que lancé et droit"},
+  org="Couloir 10 m × 5 m, 2 plots, un bouclier. Le partenaire tient le bouclier, on inverse à chaque série.",
+  var=["Porteur qui change de côté au dernier moment", "Plaqueur qui part du sol (relevé puis approche)", "Deux plaquages enchaînés à 5 m d'écart"],
+  contact="bouclier", pub="Tous", skill=True, warn=CONTACT_WARN, z=4)
+
+D("sk_plaq_face", "Plaquage de face, jambes actives", ["rugby", "rugby7"], "Technique", "Bouclier, 3 plots, un partenaire",
+  "Gagner le contact de face : épaule à la taille, et des jambes qui ramènent le porteur en arrière.",
+  ["Départ à 7 m du porteur qui tient le bouclier contre lui.",
+   "Avance vite, puis raccourcis les appuis à 2 m.",
+   "Contact épaule à la taille, tête sur le côté, bras qui serrent.",
+   "Jambes actives : repousse le porteur 2 m en arrière, puis reviens au plot de départ en course arrière."],
+  ["Aucun freinage brusque au dernier moment : on arrive en équilibre", "Pousser vers le haut et l'avant, jamais vers le bas sur la tête", "La qualité du plaquage passe avant la vitesse"],
+  {"reprise": I(2, 5, 8, 22, 120, "Approche et placement, arrêt à 1 m", "Sans contact : 2 séries de 5 approches et placements"),
+   "sportif": I(2, 5, 8, 30, 150, "1 plaquage bouclier + 2 m de poussée", "2 séries de 5, départ toutes les 30 s"),
+   "perf": I(3, 5, 8, 30, 150, "1 plaquage bouclier + 2 m de poussée", "3 séries de 5, départ toutes les 30 s"),
+   "elite": I(3, 6, 8, 25, 150, "1 plaquage + relevé + sprint 5 m", "3 séries de 6 : plaquage, relevé, sprint 5 m")},
+  "En matchs internationaux comme en deuxième division anglaise, les plaquages de face à l'épaule et les jambes actives du plaqueur limitent les franchissements et les passes après contact (Hendricks, 2018). La fatigue dégrade la technique de plaquage : on arrête la série quand la qualité baisse (Gabbett, 2008).",
+  ["hendricks18", "gabbett08", "tucker17"],
+  sc={"f": "rugby", "v": [12, 29, 38, 42], "o": [[15, 34, "start", "Départ"], [28, 34, "shield", "Bouclier tenu"]],
+      "p": [{"k": "sprint", "p": [[15, 34], [23, 34]], "l": "7 m", "lo": -1, "n": 1}, {"k": "walk", "p": [[23, 34], [27.3, 34]], "n": 2, "e": "hit", "w": 0.4},
+            {"k": "walk", "p": [[27.3, 34], [30, 34]], "l": "Contact, jambes 2 m", "lo": -1, "lp": 0.3}, {"k": "back", "p": [[30, 38.5], [15, 38.5]], "l": "Retour", "lo": 1, "n": 4}]},
+  obj={"ph": "Puissance des jambes au contact", "te": "Épaule à la taille, tête sur le côté, jambes actives", "ma": "Gagner la collision et ralentir le ballon adverse"},
+  org="Couloir 10 m × 5 m. Binôme : A plaque, B tient le bouclier ; on inverse à chaque série.",
+  var=["Porteur qui avance au trot", "Relevé et sprint vers le plot annoncé (bout RHIE)", "Plaquage à deux : le second arrive sur le ballon"],
+  contact="bouclier", pub="Tous", skill=True, warn=CONTACT_WARN, z=5,
+  poste={"avant": "Avants : enchaîne avec un déblayage sur un tackle bag à 5 m.", "trois-quarts": "Trois-quarts : départ à 12 m pour arriver plus vite au contact."})
+
+D("sk_plaq_cote", "Plaquage de côté (couverture)", ["rugby", "rugby7"], "Technique", "Bouclier ou tackle bag, 3 plots, un partenaire",
+  "Rattraper un porteur qui passe sur le côté : angle de course, tête derrière, bras qui descendent.",
+  ["Le porteur part en diagonale avec le bouclier, à vitesse de jogging.",
+   "Coupe sa course en diagonale pour arriver sur son côté, pas dans son dos.",
+   "Tête derrière ses fesses, joue contre sa hanche, épaule sur la cuisse.",
+   "Les bras serrent et glissent vers les genoux, puis tu le fais tomber sur le côté."],
+  ["Tête toujours derrière le porteur, jamais devant sa hanche", "Coupe l'angle : vise l'endroit où il va, pas où il est", "Serre et descends les bras jusqu'aux genoux"],
+  {"reprise": I(2, 4, 8, 25, 120, "Course d'angle, arrêt à 1 m", "Sans contact : 2 séries de 4 courses d'angle par côté"),
+   "sportif": I(2, 6, 8, 30, 150, "1 plaquage de côté (alterner gauche et droite)", "2 séries de 6, côtés alternés"),
+   "perf": I(3, 6, 8, 30, 150, "1 plaquage de côté", "3 séries de 6, porteur plus rapide"),
+   "elite": I(3, 6, 8, 25, 150, "Couverture + plaquage + relevé", "3 séries de 6 : couverture 15 m, plaquage, relevé")},
+  "Le risque de commotion du plaqueur est le plus élevé quand sa tête passe devant la hanche ou le genou du porteur ; la tête doit rester derrière (Tucker, 2017). Les études de terrain recommandent d'entraîner chaque type de plaquage (de face, de côté, de dos) séparément (Burger, 2020).",
+  ["tucker17", "burger20", "wr_tackle"],
+  sc={"f": "rugby", "v": [12, 22, 40, 48], "o": [[15, 27, "start", "Plaqueur"], [20, 44, "pb", "Porteur"]],
+      "p": [{"k": "jog", "p": [[20, 44], [33, 31]], "r": 1, "l": "Porteur", "lo": 1, "lp": 0.35}, {"k": "sprint", "p": [[15, 27], [32, 29.6]], "l": "Angle de course", "lo": -1, "n": 2, "e": "hit", "w": 0.4},
+            {"k": "walk", "p": [[32, 29.6], [34.5, 32.5]], "n": 4, "e": "down"}],
+      "t": [[35.5, 26.5, "Tête derrière"]]},
+  obj={"ph": "Vitesse de couverture et freinage", "te": "Angle de course, tête derrière, bras qui descendent", "ma": "Arrêter un porteur lancé sur l'aile"},
+  org="Zone 20 m × 15 m. Le porteur tient un bouclier ou un tackle bag contre lui. Gauche puis droite.",
+  var=["Porteur qui accélère au dernier moment", "Départ du sol (relevé puis couverture)", "Plaquage de dos sur tackle bag pour les arrières"],
+  contact="bouclier", pub="Tous", skill=True, warn=CONTACT_WARN, z=5,
+  poste={"trois-quarts": "Trois-quarts et 3e ligne : allonge la couverture à 20 m.", "avant": "Avants : couverture courte (10 m), porteur au trot."})
+
+D("sk_porteur", "Porteur au contact : jambes actives et ballon placé", ["rugby", "rugby7"], "Technique", "Bouclier, ballon, un partenaire",
+  "Garder le ballon au contact : rester bas, pousser avec les jambes, tomber sur le côté et placer le ballon loin.",
+  ["Départ à 5 m du partenaire qui tient le bouclier.",
+   "Avance ballon contre la poitrine, à deux mains, hanches basses avant le contact.",
+   "Au contact, épaule devant, petits pas : continue de pousser 2 m.",
+   "Tombe sur le côté, dos vers l'adversaire, et place le ballon loin derrière toi, bras tendus."],
+  ["Hanches plus basses que celles du défenseur", "Le ballon reste protégé jusqu'au sol", "Placement actif : bras tendus, le plus loin possible vers ton camp"],
+  {"reprise": I(2, 5, 6, 24, 90, "Chute sur le côté + placement, sans contact", "Sans contact : 2 séries de 5 chutes sur le côté et placements"),
+   "sportif": I(2, 6, 8, 25, 120, "1 contact bouclier + placement", "2 séries de 6"),
+   "perf": I(3, 6, 8, 25, 120, "1 contact bouclier + placement", "3 séries de 6, tenant qui résiste plus"),
+   "elite": I(3, 6, 8, 22, 120, "Contact + placement + relevé", "3 séries de 6 : contact, placement, relevé et soutien")},
+  "Au niveau international, les porteurs qui placent activement le ballon gardent plus souvent la possession, et ceux qui tombent sur le côté aussi ; les jambes actives du porteur favorisent les franchissements (Hendricks, 2018).",
+  ["hendricks18", "hendricks10"],
+  sc={"f": "rugby", "v": [12, 29, 36, 42], "o": [[15, 35, "start", "Porteur"], [27, 35, "shield", "Bouclier tenu"], [22.2, 38.6, "ball", "Ballon placé"]],
+      "p": [{"k": "jog", "p": [[15, 35], [24, 35]], "l": "Ballon protégé", "lo": -1, "n": 2}, {"k": "walk", "p": [[24, 35], [26.3, 35]], "n": 3, "e": "hit", "w": 0.4},
+            {"k": "walk", "p": [[26, 35.6], [24, 38.2]], "n": 4, "e": "down"}]},
+  obj={"ph": "Force et gainage au contact", "te": "Hanches basses, protection et placement du ballon", "ma": "Garder la possession et accélérer le ruck"},
+  org="Couloir 10 m. Binôme : un porteur, un tenant de bouclier. On inverse à chaque série.",
+  var=["Deuxième joueur qui arrive en soutien pour déblayer", "Contact face à deux tenants", "Prise d'information : le coach annonce le côté de la chute"],
+  contact="bouclier", pub="Tous", skill=True, warn=CONTACT_WARN, z=4)
+
+D("sk_deblayage", "Déblayage sur tackle bag", ["rugby", "rugby7"], "Technique", "2 tackle bags, 2 ballons, des tenants",
+  "Nettoyer le ballon : arriver bas, épaule sous le bag, et pousser au-delà du ballon.",
+  ["Deux bags espacés de 6 m, un ballon posé au sol devant chacun.",
+   "Sprint 5 m vers le bag 1, abaisse-toi avant le contact.",
+   "Épaule sous le bag, dos plat, tête haute : pousse 2 m au-delà du ballon.",
+   "Relève-toi, sprint vers le bag 2 et recommence."],
+  ["Hanches sous les épaules, dos plat, tête haute", "Pieds actifs au-delà du ballon : ne finis pas au sol", "Sortie rapide vers la cible suivante"],
+  {"reprise": I(2, 4, 12, 45, 150, "Déblayage sans impact (poussée lente)", "Sans impact : 2 séries de 4, poussée lente contre le bag tenu"),
+   "sportif": I(2, 4, 15, 45, 180, "2 déblayages + sprints", "2 séries de 4 (bag 1 puis bag 2)"),
+   "perf": I(3, 4, 15, 45, 180, "2 déblayages + sprints", "3 séries de 4, tenants qui résistent"),
+   "elite": I(3, 4, 18, 45, 180, "3 déblayages + sprints", "3 séries de 4 avec un 3e bag (bloc de 15-20 s)")},
+  "Au ruck, la position basse et les pieds actifs du joueur qui déblaie conditionnent l'efficacité comme la sécurité ; ces gestes s'entraînent d'abord contre un bag avant le contact réel (Hendricks et Lambert, 2010 ; Burger, 2020).",
+  ["hendricks10", "burger20", "austin11"],
+  sc={"f": "rugby", "v": [14, 26, 40, 44], "o": [[17, 31, "start", "Départ"], [23, 31, "shield", "Bag 1"], [22.2, 29.9, "ball", ""], [29, 37, "shield", "Bag 2"], [28.2, 35.9, "ball", ""], [36, 37, "c", "Fin"]],
+      "p": [{"k": "sprint", "p": [[17, 31], [22.5, 31]], "l": "5 m", "n": 2, "e": "hit", "w": 0.5}, {"k": "walk", "p": [[22.5, 31], [24.5, 31]], "l": "2 m", "lo": -1, "n": 3},
+            {"k": "sprint", "p": [[24.5, 32], [28.5, 37]], "l": "Bag 2", "lo": 1, "n": 4, "e": "hit", "w": 0.5}, {"k": "sprint", "p": [[30, 37], [36, 37]], "l": "Sortie", "lo": 1}]},
+  obj={"ph": "Force-puissance répétée en posture basse", "te": "Déblayage : hanches basses, dos plat, pieds actifs", "ma": "Enchaîner les rucks sur des temps de jeu successifs"},
+  org="Zone 25 m × 15 m, bags en zigzag à 5-6 m, un tenant par bag. Groupes de 3 ou 4 : un travaille, les autres tiennent, rotation.",
+  var=["Déblayage à deux : le premier arrivé s'engage", "Tenant qui résiste activement", "Plaquage au bouclier avant le bag 1"],
+  contact="bags", pub="Avants et 3e ligne", skill=True, warn=CONTACT_WARN, z=5,
+  poste={"avant": "Avants : version complète avec 3 bags.", "trois-quarts": "Trois-quarts : 2 bags et un sprint final de 15 m."})
+
+D("sk_releve", "Relevé et replacement défensif", ["rugby", "rugby7"], "Technique", "4 plots",
+  "Après un plaquage, revenir debout et se replacer en ligne le plus vite possible.",
+  ["Allongé sur le ventre au plot de départ (comme après un plaquage).",
+   "Au signal, relève-toi en moins de 2 s.",
+   "Recule en course arrière ou latérale jusqu'à la ligne de défense (5 m).",
+   "Remonte 5 m vers l'attaque, puis reviens en marchant."],
+  ["Relevé en moins de 2 s : mains sous les épaules, un pied devant", "Regarde le jeu pendant le replacement, pas tes pieds", "Remontée agressive, appuis courts à l'arrivée"],
+  {"reprise": I(2, 4, 8, 22, 120, "Relevé + replacement à 70 %", "2 séries de 4 à 70 %"),
+   "sportif": I(3, 5, 8, 22, 120, "Relevé + replacement + remontée", "3 séries de 5, départ toutes les 30 s"),
+   "perf": I(3, 6, 8, 22, 120, "Relevé + replacement + remontée", "3 séries de 6, côté annoncé pendant le relevé"),
+   "elite": I(4, 6, 8, 17, 120, "Relevé + replacement + remontée", "4 séries de 6, départ toutes les 25 s")},
+  "Les séquences d'au moins 3 efforts intenses enchaînés, dont des relevés après plaquage, sont les plus exigeantes du match (Austin, 2011). Réagir à un signal entraîne mieux l'agilité de match qu'un parcours appris (Sheppard et Young, 2006).",
+  ["austin11", "sheppard06"],
+  sc={"f": "rugby", "v": [16, 26, 36, 44], "o": [[20, 35, "x", "Au sol"], [25, 30, "c", "Ligne"], [25, 40, "c", "de défense"], [30, 35, "c", "Remontée"]],
+      "p": [{"k": "walk", "p": [[20, 35], [20.2, 35]], "l": "Relevé", "n": 2, "w": 0.6}, {"k": "lat", "p": [[20.5, 35], [25, 32]], "l": "Replacement", "lo": -1, "n": 3},
+            {"k": "sprint", "p": [[25, 32], [30, 35]], "l": "Remontée 5 m", "lo": 1, "n": 4}]},
+  obj={"ph": "Ré-accélération après un passage au sol", "te": "Relevé rapide, course arrière et latérale", "ma": "Être en ligne avant que l'adversaire ne relance"},
+  org="Zone 15 m × 10 m, 4 plots. Seul ou avec un partenaire qui donne le signal et le côté.",
+  var=["Signal visuel (main levée) plutôt que sonore", "Deux relevés dans le même bout", "Plaquage au bouclier avant le relevé (avec un coach)"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_passe", "Passe vissée des deux côtés", ["rugby", "rugby7"], "Technique", "Un ballon, un partenaire ou un mur",
+  "Rendre la passe aussi précise du côté faible que du côté fort.",
+  ["À 5 m du partenaire, de profil, mains en cible.",
+   "Ballon tenu à deux mains, pieds dans l'axe de la passe.",
+   "Passe en tournant le buste, poussée de la main arrière, doigts qui finissent vers la cible.",
+   "10 passes du côté fort, 10 du côté faible, puis recule à 8 m, puis 10 m."],
+  ["Les mains de ton partenaire sont la cible : vise-les", "Pousse de la main arrière, finis les doigts vers la cible", "Deux fois plus de passes du côté faible"],
+  {"reprise": I(2, 20, 2, 3, 60, "Passes à 5 m", "2 séries de 20 passes à 5 m (moitié de chaque côté)"),
+   "sportif": I(3, 20, 2, 3, 60, "Passes à 5 puis 8 m", "3 séries de 20 passes, 5 puis 8 m"),
+   "perf": I(3, 20, 2, 3, 60, "Passes à 8 puis 10 m", "3 séries de 20 passes, 8 puis 10 m"),
+   "elite": I(4, 20, 2, 3, 60, "Passes à 10-12 m", "4 séries de 20 passes, 10 à 12 m, ballon reçu en mouvement")},
+  "Chez des joueurs de première division, les passes du côté non préféré partaient bien plus souvent en avant (57 % contre 15 %) et allaient moins loin : le côté faible doit être travaillé en priorité (Pavely, 2009).",
+  ["pavely09"],
+  sc={"f": "rugby", "v": [16, 28, 36, 42], "o": [[20, 35, "pa", "Passeur"], [30, 35, "pb", "Cible"]],
+      "p": [{"k": "ball", "p": [[20.8, 34.6], [29.2, 34.6]], "l": "5 à 10 m", "n": 3}],
+      "t": [[25, 39.5, "Côté fort · côté faible × 2"]]},
+  obj={"ph": "Rotation du tronc et des hanches", "te": "Passe vissée, précision des deux côtés", "ma": "Faire vivre le ballon vite et loin, sans en-avant"},
+  org="Par deux, 5 à 12 m d'écart. Seul : contre un mur, cible tracée à hauteur de poitrine.",
+  var=["Passe après une réception en course", "Passe sous pression : un défenseur à 3 m", "Passe longue (15 m) pour les demis et les trois-quarts"],
+  contact="aucun", pub="Tous", skill=True, z=3,
+  poste={"trois-quarts": "Trois-quarts : finis par 2 séries à 12-15 m.", "avant": "Avants : passes courtes (3-5 m) après un pas de contact."})
+
+D("sk_passe_course", "Passes en course à trois", ["rugby", "rugby7"], "Technique", "4 plots, un ballon, 3 joueurs",
+  "Recevoir, fixer et passer en courant droit, sur toute la largeur d'un couloir.",
+  ["Couloir de 20 m, trois joueurs alignés en escalier, 5 m entre chacun.",
+   "Le premier part, mains en cible du receveur suivant.",
+   "Reçois le ballon mains en avant, cours droit, et passe avant d'avoir fait 2 appuis.",
+   "Fin du couloir : on repart dans l'autre sens."],
+  ["Mains tendues vers le passeur avant de recevoir", "Cours droit : ne dérive pas vers le receveur", "Passe dans la course, sans freiner"],
+  {"reprise": I(2, 4, 12, 30, 90, "1 aller en trottinant", "2 séries de 4 allers en trottinant"),
+   "sportif": I(3, 4, 10, 30, 120, "1 aller à 70 %", "3 séries de 4 allers à 70 %"),
+   "perf": I(3, 6, 8, 25, 120, "1 aller à 85 %", "3 séries de 6 allers à 85 %"),
+   "elite": I(4, 6, 7, 23, 120, "1 aller à 90 %", "4 séries de 6 allers à 90 %, passes sautées")},
+  "Les passes du côté faible sont plus souvent en avant : alterner les sens du couloir fait travailler les deux côtés (Pavely, 2009). La vitesse de course doit rester celle du match pour que le geste tienne en compétition.",
+  ["pavely09"],
+  sc={"f": "rugby", "v": [18, 22, 46, 40], "o": [[22, 26, "pa", "1"], [24, 31, "pa", "2"], [26, 36, "pa", "3"], [42, 26, "c", ""], [42, 36, "c", "20 m"]],
+      "p": [{"k": "jog", "p": [[22, 26], [30, 26]], "l": "Course droite", "lo": -1, "n": 2}, {"k": "ball", "p": [[30, 26], [32, 31]], "n": 3}, {"k": "jog", "p": [[24, 31], [32, 31]], "r": 1},
+            {"k": "ball", "p": [[34, 31], [36, 36]], "l": "Passe", "lo": 1}]},
+  obj={"ph": "Vitesse de course et coordination", "te": "Réception mains en avant, passe dans la course", "ma": "Attaquer la ligne en gardant la vitesse"},
+  org="Couloir 20 m × 15 m, 4 plots. Groupes de 3, un ballon. Allers alternés vers la gauche et vers la droite.",
+  var=["Passe sautée (du 1 au 3)", "Un défenseur passif qui oblige à fixer", "Après la passe, le passeur fait le tour pour redevenir receveur (en boucle)"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_evitement", "Appuis d'évitement face à un défenseur", ["rugby", "rugby7"], "Technique", "4 plots, un partenaire",
+  "Battre un défenseur sur un pas : fixer, puis crochet ou cadrage débordement.",
+  ["Couloir de 10 m de large. Le défenseur attend à 10 m, au milieu.",
+   "Avance droit sur lui pour le fixer.",
+   "À 2 m, pose un appui fort à l'extérieur (crochet) ou accélère sur l'extérieur (cadrage).",
+   "Passe-le et sprinte 5 m jusqu'à la ligne. Le défenseur touche à deux mains."],
+  ["Va droit sur lui : un défenseur fixé ne peut plus glisser", "Appui large et bas pour le crochet, buste qui ne penche pas", "Change de vitesse juste après l'appui"],
+  {"reprise": I(2, 4, 4, 26, 90, "1 évitement à 70 %, défenseur passif", "2 séries de 4 à 70 %, défenseur passif"),
+   "sportif": I(3, 5, 4, 26, 120, "1 évitement, défenseur semi-actif", "3 séries de 5, défenseur semi-actif"),
+   "perf": I(3, 6, 4, 26, 120, "1 duel au toucher", "3 séries de 6, défenseur actif au toucher"),
+   "elite": I(4, 6, 4, 21, 120, "1 duel au toucher", "4 séries de 6, couloir réduit à 8 m")},
+  "Face à un défenseur, les joueurs de rugby modifient leur course : appui plus large et moins de vitesse juste avant le changement de direction. Ce geste s'entraîne en réaction à un vrai défenseur, pas sur un parcours appris (Wheeler et Sayers, 2010 ; Sheppard et Young, 2006).",
+  ["wheeler10", "sheppard06"],
+  sc={"f": "rugby", "v": [16, 24, 42, 46], "o": [[20, 35, "start", "Porteur"], [30, 35, "pb", "Défenseur"], [37, 30, "c", ""], [37, 40, "c", "Ligne"]],
+      "p": [{"k": "jog", "p": [[20, 35], [28, 35]], "l": "Fixe", "n": 2}, {"k": "sprint", "p": [[28, 35], [29, 39], [37, 39]], "l": "Crochet + 5 m", "lo": 1, "n": 3}]},
+  obj={"ph": "Freinage et ré-accélération sur un appui", "te": "Fixer, crochet, cadrage débordement", "ma": "Gagner le duel et franchir la ligne"},
+  org="Couloir 10 m × 15 m, 4 plots. Par deux : attaquant et défenseur, on inverse à chaque série.",
+  var=["Défenseur qui part de côté (angle fermé)", "Deux défenseurs décalés", "Avec un soutien : crochet ou passe selon le défenseur"],
+  contact="toucher", pub="Tous", skill=True, z=4,
+  poste={"trois-quarts": "Trois-quarts : couloir de 12 m, départ lancé.", "avant": "Avants : couloir de 6 m, fixe puis passe ou percussion au bouclier (avec un coach)."})
+
+D("sk_1c1", "Duel 1 contre 1 en couloir (toucher)", ["rugby", "rugby7"], "Technique", "4 plots, un ballon, un partenaire",
+  "Lire le défenseur et choisir : le battre au pied, ou fixer et changer de rythme.",
+  ["Couloir de 8 m de large sur 15 m. Attaquant et défenseur face à face à 10 m.",
+   "Le défenseur monte : l'attaquant le lit (épaules, appuis) et attaque son point faible.",
+   "Toucher à deux mains = plaqué. Ligne franchie = essai.",
+   "On inverse les rôles à chaque duel."],
+  ["Attaquant : vitesse avant le défenseur, appui décisif à 2 m", "Défenseur : monte vite, freine en appuis courts, épaules face au porteur", "Un point pour chaque duel gagné : compte les scores"],
+  {"reprise": I(2, 4, 5, 25, 120, "1 duel à 70 %", "2 séries de 4 duels à 70 %"),
+   "sportif": I(3, 4, 5, 25, 150, "1 duel", "3 séries de 4 duels (2 attaques, 2 défenses)"),
+   "perf": I(3, 6, 5, 25, 150, "1 duel", "3 séries de 6 duels"),
+   "elite": I(4, 6, 5, 20, 150, "1 duel, couloir de 6 m", "4 séries de 6 duels, couloir réduit à 6 m")},
+  "Le duel en réaction à un vrai adversaire développe à la fois la prise d'information et l'agilité (Sheppard et Young, 2006) ; face au défenseur, l'attaquant adapte la largeur de ses appuis (Wheeler et Sayers, 2010).",
+  ["sheppard06", "wheeler10"],
+  sc={"f": "rugby", "v": [16, 24, 42, 46], "o": [[19, 31, "c", ""], [19, 39, "c", ""], [37, 31, "c", ""], [37, 39, "c", "15 m"], [20, 35, "pa", "Attaquant"], [31, 36, "pb", "Défenseur"]],
+      "p": [{"k": "sprint", "p": [[20, 35], [26.5, 35], [28, 31.8], [37, 31.8]], "l": "Lit et attaque", "lo": -1, "lp": 0.75, "n": 2}, {"k": "sprint", "p": [[31, 36], [29, 36]], "r": 1}]},
+  obj={"ph": "Vitesse et agilité en réaction", "te": "Lecture du défenseur, appuis décisifs", "ma": "Gagner les duels en un contre un"},
+  org="Couloir 8 m × 15 m, 4 plots, un ballon. Par deux, rôles inversés à chaque duel.",
+  var=["Le défenseur part de côté ou de dos", "2 contre 1 : fixer et passer", "Toucher à une main pour les plus jeunes"],
+  contact="toucher", pub="Tous", skill=True, z=4)
+
+for _sid in ("rugby", "rugby7"):
+    _sp = next(x for x in SPORTS if x["id"] == _sid)
+    _sp["skills"] = [d["id"] for d in DRILLS if d.get("skill") and _sid in d["sports"]]
+
 SPORTS_CONTENT = {"SPORTS": SPORTS, "DRILLS": DRILLS, "SREFS": REFS}
 
 # ---------- vérifications ----------
+DRB_SKILL = lambda i: any(d["id"] == i and d.get("skill") for d in DRILLS)
 _ids = {d["id"] for d in DRILLS}
 assert len(_ids) == len(DRILLS), "identifiant de séance terrain en double"
 for s in SPORTS:
@@ -1022,3 +1330,11 @@ for d in DRILLS:
     assert set(d["dose"]) == {"reprise", "sportif", "perf", "elite"}, d["id"]
 for e in EX_SPORT:
     if e.get("drill"): assert e["drill"] in _ids, e["id"]
+for s in SPORTS:
+    for d in s.get("skills", []):
+        assert d in _ids and DRB_SKILL(d), (s["id"], d)
+for d in DRILLS:
+    if d.get("skill"):
+        assert d["contact"] in ("aucun", "toucher", "bouclier", "bags", "reel") and d.get("obj") and d.get("org") and d.get("var") and d.get("sc"), d["id"]
+        assert d["contact"] in ("aucun", "toucher") or d.get("warn"), ("contact sans avertissement", d["id"])
+        assert all(d["id"] not in s["drills"] for s in SPORTS), ("skill dans la rotation de la semaine", d["id"])

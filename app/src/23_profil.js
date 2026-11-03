@@ -130,11 +130,11 @@ function BodyRecordsCard({ data, src }) {
   const p = data.profile || {};
   const [f, setF] = useState(null);
   const age = ageOf(p);
-  const open = () => setF({ height: p.height ?? "", weight: p.weight ?? "", birthYear: p.birthYear ?? "", records: clone(p.records || {}) || {} });
+  const open = () => setF({ height: p.height ?? "", weight: p.weight ?? "", birthYear: p.birthYear ?? "", sex: p.sex || "", records: clone(p.records || {}) || {} });
   const yOk = (y) => { const n = num(y); return n && n > 1900 && n <= new Date().getFullYear() - 8; };
   const save = async () => {
     if (!bodyOk("height", f.height) || !bodyOk("weight", f.weight) || !yOk(f.birthYear)) { toast("Vérifie ta taille (cm), ton poids (kg) et ton année de naissance.", "warn"); return; }
-    try { await src.setProfile({ ...p, height: num(f.height), weight: num(f.weight), weightAt: num(f.weight) !== num(p.weight) ? todayISO() : (p.weightAt || null), birthYear: num(f.birthYear), records: recClean(f.records), recordsAt: todayISO() }); toast("Profil enregistré.", "ok"); setF(null); }
+    try { await src.setProfile({ ...p, height: num(f.height), weight: num(f.weight), weightAt: num(f.weight) !== num(p.weight) ? todayISO() : (p.weightAt || null), birthYear: num(f.birthYear), sex: f.sex === "F" || f.sex === "H" ? f.sex : (p.sex || null), records: recClean(f.records), recordsAt: todayISO() }); toast("Profil enregistré.", "ok"); setF(null); }
     catch (e) { toast("Enregistrement impossible.", "bad"); }
   };
   return html`<${Card} title="Mon profil sportif" sub="Taille, poids, âge et records : ton programme s'en sert pour tes charges et tes allures" action=${src ? html`<${Btn} small kind="ghost" onClick=${open}>Modifier</${Btn}>` : null}>
@@ -144,6 +144,7 @@ function BodyRecordsCard({ data, src }) {
       <div className="row4"><${Field} label="Taille (cm)" id="pr-h"><input id="pr-h" inputMode="numeric" value=${f.height} onChange=${(e) => setF({ ...f, height: e.target.value })} /></${Field}>
         <${Field} label="Poids (kg)" id="pr-w"><input id="pr-w" inputMode="decimal" value=${f.weight} onChange=${(e) => setF({ ...f, weight: e.target.value })} /></${Field}>
         <${Field} label="Année de naissance" id="pr-y"><input id="pr-y" inputMode="numeric" value=${f.birthYear} onChange=${(e) => setF({ ...f, birthYear: e.target.value.replace(/\D/g, "").slice(0, 4) })} /></${Field}></div>
+      <${Field} label="Sexe" hint="Facultatif : ta carte athlète compare tes tests aux records du monde masculins ou féminins."><${Seg} options=${[{ v: "H", n: "Homme" }, { v: "F", n: "Femme" }]} value=${f.sex} onChange=${(v) => setF({ ...f, sex: v })} /></${Field}>
       <div className="field"><span className="field-l">Mes records</span><span className="field-h">Remplis seulement ce que tu connais. Une charge levée plusieurs fois suffit : le maximum est estimé (formule d'Epley).</span></div>
       <${RecordsEditor} value=${f.records} onChange=${(r) => setF({ ...f, records: r })} sportId=${p.sportId} minor=${age !== null && age < 18} />
       <div className="actions"><${Btn} onClick=${save}>Enregistrer</${Btn}><${Btn} kind="quiet" onClick=${() => setF(null)}>Annuler</${Btn}></div></div>` : null}</${Modal}>

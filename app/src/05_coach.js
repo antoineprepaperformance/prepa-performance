@@ -295,7 +295,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
   const p = data.profile || row.profile || {};
   const info = rowInfo({ profile: p, plan: data.plan, replies: data.replies }, lib, today, settings);
   const msgNew = !row.demo && msgUnreadCoach(p, msgSeen);
-  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "messages", n: "Messages" + (msgNew ? " (nouveau)" : "") }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "terrain", n: "Sport & terrain" }, { v: "tests", n: "Tests" }, { v: "videos", n: "Vidéos" + ((info.sum.videoPending || 0) ? " (" + info.sum.videoPending + ")" : "") }, { v: "nutrition", n: "Nutrition" }, { v: "sante", n: "Santé" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
+  const tabs = [{ v: "vue", n: "Vue d'ensemble" }, { v: "messages", n: "Messages" + (msgNew ? " (nouveau)" : "") }, { v: "bilans", n: "Bilans" }, { v: "seances", n: "Séances" }, { v: "terrain", n: "Sport & terrain" }, { v: "tests", n: "Tests" }, { v: "videos", n: "Vidéos" + ((info.sum.videoPending || 0) ? " (" + info.sum.videoPending + ")" : "") }, { v: "pdf", n: "Fichiers PDF" + (Object.keys(data.pdfs || {}).length ? " (" + Object.keys(data.pdfs || {}).length + ")" : "") }, { v: "nutrition", n: "Nutrition" }, { v: "sante", n: "Santé" }, { v: "ia", n: "Coach IA" + ((info.sum.aiPending || 0) ? " (" + info.sum.aiPending + ")" : "") }, { v: "plan", n: "Plan" }, { v: "notes", n: "Notes" }]
     .filter((t) => !(t.v === "ia" && window.IS_SITE && !row.demo && !Object.values(data.ai || {}).some((a) => a && a.by !== "coach")));
   if (!src) return html`<${Empty} title="Données indisponibles" text="Ouvre l'application depuis claude.ai." />`;
   return html`<div className="stack">
@@ -315,6 +315,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
+    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} />` : null}
     ${tab === "sante" ? html`<${CoachSante} data=${data} />` : null}
     ${tab === "plan" ? html`<${PlanEditor} data=${data} src=${src} lib=${lib} settings=${settings} cid=${row.cid} exo=${exo} demo=${row.demo} />` : null}
     ${tab === "notes" ? html`<${CoachNotes} db=${db} cid=${row.cid} note=${note} demo=${row.demo} name=${p.name} onDeleted=${onBack} relay=${p.santeSync ? relayOf(settings) : ""} />` : null}

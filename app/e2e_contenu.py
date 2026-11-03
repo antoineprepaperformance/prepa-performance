@@ -21,6 +21,9 @@ async def btn(page, text, exact=False):
 async def mdb_set(page, path, patch):
     await page.evaluate("([p, x]) => { const db = JSON.parse(localStorage.getItem('__mockdb') || '{}'); db[p] = { ...(db[p] || {}), ...x }; localStorage.setItem('__mockdb', JSON.stringify(db)); }", [path, patch])
 
+NEW_SK_RUGBY = ["sk_pied_place", "sk_offload", "sk_passe_sol"]
+NEW_SK_FOOT = ["sk_foot_controle", "sk_foot_frappe", "sk_foot_une_deux"]
+NEW_SK_HAND = ["sk_hand_tir", "sk_hand_reception"]
 NEW_EX = ["sdt_sumo", "trap_bar", "trap_bar_dyn", "good_morning", "floor_press", "dc_incline_barre", "rowing_pendlay", "rowing_tbar", "tractions_neutre",
           "tractions_serviette", "pompes_plio", "box_jump_assis", "mb_arriere", "mb_melee"]
 
@@ -36,12 +39,17 @@ async def run():
             # ---------- fiches technique (fonctions pures) ----------
             r = await co.evaluate("""() => {
               const sk = DRILLS.filter((d) => d.skill), rug = SPB.rugby;
-              const weeks = []; for (let w = 1; w <= 60; w++) { const x = terrainOfWeek({ profile: { sportId: "rugby" } }, w, (w - 1) % 4 + 1); weeks.push(x && x.d.id); }
-              return { n: sk.length, ids: sk.map((d) => d.id), inRug: skillsFor(rug).length, inWeek: weeks.filter((id) => sk.some((d) => d.id === id)).length,
+              const weeks = []; for (const sp of ["rugby", "rugby7", "foot", "hand"]) for (let w = 1; w <= 60; w++) { const x = terrainOfWeek({ profile: { sportId: sp } }, w, (w - 1) % 4 + 1); weeks.push(x && x.d.id); }
+              return { n: sk.length, ids: sk.map((d) => d.id), inRug: skillsFor(rug).length, nRug: sk.filter((d) => d.sports.includes("rugby")).length, nR7: sk.filter((d) => d.sports.includes("rugby7")).length,
+                foot: skillsFor(SPB.foot).map((d) => d.id), hand: skillsFor(SPB.hand).map((d) => d.id), inWeek: weeks.filter((id) => sk.some((d) => d.id === id)).length,
+                noRef: sk.filter((d) => !d.refs.length || d.refs.some((r) => !SREFS[r])).map((d) => d.id),
                 hardNoWarn: sk.filter((d) => contactHard(d) && !d.warn).map((d) => d.id), fiche: sk.filter((d) => !(d.obj && d.org && d.var && d.sc && d.steps.length >= 3 && d.cues.length >= 2)).map((d) => d.id),
                 rugby7: skillsFor(SPB.rugby7).length, hard: sk.filter(contactHard).length }; }""")
-            ok(r["n"] >= 13 and r["inRug"] == r["n"] and r["rugby7"] == r["n"], "13 fiches technique rugby (XV et 7)", r)
-            ok(r["inWeek"] == 0, "jamais de fiche technique tirée au sort pour la séance terrain de la semaine (60 semaines)", r["inWeek"])
+            ok(r["nRug"] >= 16 and r["inRug"] == r["nRug"] and r["rugby7"] == r["nR7"] and r["nR7"] >= 15, "fiches technique rugby (XV et 7) : 13 + 3 du 3 novembre 2026", r)
+            ok(set(NEW_SK_FOOT) <= set(r["foot"]) and set(NEW_SK_HAND) <= set(r["hand"]), "fiches technique football et handball (3 novembre 2026)", [r["foot"], r["hand"]])
+            ok(all(i in r["ids"] for i in NEW_SK_RUGBY), "nouvelles fiches rugby : coup de pied placé, passe après contact, passe du sol", r["ids"])
+            ok(not r["noRef"], "chaque fiche technique cite au moins une étude", r["noRef"])
+            ok(r["inWeek"] == 0, "jamais de fiche technique tirée au sort pour la séance terrain de la semaine (rugby, football, handball, 60 semaines)", r["inWeek"])
             ok(not r["hardNoWarn"] and r["hard"] >= 6, "chaque fiche avec contact porte son avertissement de sécurité", r)
             ok(not r["fiche"], "format des fiches d'Antoine : objectifs, organisation, consignes, points clés, variantes, schéma", r["fiche"])
 
@@ -60,6 +68,12 @@ async def run():
                 cdm_fin: weekRecipeEd({ profile: {} }, null, "c1", ed("2027-11-10")).r.id, noel_veg: weekRecipeEd(veg, null, "c1", ed("2026-12-10")).r.id,
                 nov: weekRecipeEd({ profile: {} }, null, "c1", null).th, saisons: Object.keys(CONTENT.RECSAISON).length }; }""")
             ok(r["veloute"] == [True, False] and r["agneau"] == [False, True] and r["fraises"] == [False, True] and r["pates"] is None, "saison des recettes (calendrier Manger Bouger)", r)
+            r2 = await co.evaluate("""() => { const R = Object.fromEntries(RECETTES.map((x) => [x.id, x]));
+              const ids = ["endives_jambon", "poulet_panais", "kiwis_noisettes"];
+              return { ok: ids.map((i) => [i, !!R[i], R[i] ? recSeason(R[i], "A") : null, R[i] ? recSeason(R[i], "E") : null]),
+                ciq: ["endive", "panais", "kiwi", "noisettes", "potiron", "poireau", "agneau", "clementine"].map((k) => [k, CONTENT.ING[k] && CONTENT.ING[k][7]]) }; }""")
+            ok(all(x[1] and x[2] is True and x[3] is False for x in r2["ok"]), "3 recettes de novembre : de saison en automne, pas en été", r2["ok"])
+            ok(all(isinstance(x[1], int) for x in r2["ciq"]), "ingrédients des recettes de saison reliés à la table Ciqual (code)", r2["ciq"])
             ok(r["hal"] == "veloute_potiron" and r["noel"] == "dinde_chataignes" and r["paques"] == "agneau_printemps", "recette du moment : Halloween, Noël, Pâques", r)
             ok(r["cdm_debut"] is False and r["cdm_fin"] == "pates_match", "grande compétition : pâtes de veille de match seulement la dernière semaine", r)
             ok(r["noel_veg"] != "dinde_chataignes" and r["nov"] is False, "client végétarien : pas de dinde à Noël ; hors événement, recette de saison", r)
@@ -110,6 +124,25 @@ async def run():
             t = await c.inner_text("body")
             ok("Sans contact" in t and "Seulement avec ton club" not in t, "fiche sans contact : pas d'avertissement")
             await mdb_set(c, "clients/u_p1", {"birthYear": 1998})
+            # nouvelle fiche rugby (coup de pied placé), puis un client footballeur : ses fiches technique
+            await c.goto(URL + "?as=p1"); await c.wait_for_timeout(1300)
+            await c.get_by_role("button", name="Terrain", exact=True).first.click(); await c.wait_for_timeout(500)
+            await c.get_by_role("radio", name="Technique").click(); await c.wait_for_timeout(300)
+            await c.locator("button.tcard", has_text="Coup de pied placé").click(); await c.wait_for_timeout(600)
+            t = await c.inner_text("body")
+            ok("Bezodis" in t and "Routine" in t and "Sans contact" in t, "fiche coup de pied placé : étude citée, schéma, sans contact")
+            await c.screenshot(path=f"{OUT}/03_fiche_pied_place.png", full_page=True)
+            await mdb_set(c, "clients/u_p1", {"sportId": "foot", "sport": "Football"})
+            await c.goto(URL + "?as=p1"); await c.wait_for_timeout(1300)
+            await c.get_by_role("button", name="Terrain", exact=True).first.click(); await c.wait_for_timeout(500)
+            await c.get_by_role("radio", name="Technique").click(); await c.wait_for_timeout(300)
+            n = await c.locator("button.tcard").count()
+            ok(n >= 3, "client footballeur : ses fiches technique", n)
+            await c.locator("button.tcard", has_text="Contrôle orienté").click(); await c.wait_for_timeout(600)
+            t = await c.inner_text("body")
+            ok("McGuckian" in t and "Points clés" in t, "fiche contrôle orienté : étude citée et points clés")
+            await c.screenshot(path=f"{OUT}/04_fiche_controle.png", full_page=True)
+            await mdb_set(c, "clients/u_p1", {"sportId": "rugby", "sport": "Rugby à XV"})
 
             # ---------- recettes de saison côté client ----------
             await c.goto(URL + "?as=p1&saison=2026-10-25"); await c.wait_for_timeout(1300)

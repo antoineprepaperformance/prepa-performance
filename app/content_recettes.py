@@ -70,6 +70,9 @@ ING = {
     "clementine": ["Clémentines", 46, 0.8, 9.2, 0.3, "fruits et légumes", ["fruits"]],
     "poire": ["Poire", 57, 0.4, 12.3, 0.3, "fruits et légumes", ["fruits"]],
     "fraise": ["Fraises", 35, 0.6, 6, 0.3, "fruits et légumes", ["fruits"]],
+    "endive": ["Endives", 16.6, 1.2, 2.8, 0.3, "fruits et légumes", ["legumes"]],
+    "panais": ["Panais", 67.9, 1.2, 12.6, 0.3, "fruits et légumes", ["legumes"]],
+    "kiwi": ["Kiwis", 60.9, 0.9, 11, 0.6, "fruits et légumes", ["fruits"]],
     "mais": ["Maïs (conserve, égoutté)", 95, 2.9, 17, 1.2, "épicerie", ["legumes"]],
     "sauce_tomate": ["Coulis de tomate", 35, 1.5, 6, 0.3, "épicerie", ["legumes"]],
     "lait_coco": ["Lait de coco allégé", 70, 0.7, 2, 7, "épicerie", []],
@@ -77,6 +80,7 @@ ING = {
     "huile_olive": ["Huile d'olive", 900, 0, 0, 100, "épicerie", []],
     "amandes": ["Amandes", 600, 21, 8, 52, "épicerie", ["fruits_coque"]],
     "noix": ["Cerneaux de noix", 690, 15, 7, 65, "épicerie", ["fruits_coque"]],
+    "noisettes": ["Noisettes", 632, 14.4, 7.2, 56.9, "épicerie", ["fruits_coque"]],
     "beurre_cacahuete": ["Beurre de cacahuète", 600, 25, 15, 50, "épicerie", ["arachide"]],
     "chia": ["Graines de chia", 490, 17, 8, 31, "épicerie", []],
     "miel": ["Miel", 320, 0.3, 80, 0, "épicerie", ["miel"]],
@@ -166,6 +170,15 @@ RECETTES = [
       ["Coupe la poire en quartiers, saupoudre de cannelle.", "Rôtis 12 minutes à 200 °C (ou 3 minutes au micro-ondes).", "Sers chaude sur le fromage blanc, avec les noix et le miel."], ["sans_viande"]),
     R("fraises_skyr", "Fraises, skyr et flocons d'avoine", "collation", 3, [("skyr", 150), ("fraise", 150), ("avoine", 20)],
       ["Lave et coupe les fraises.", "Sers sur le skyr avec les flocons."], ["rapide", "sans_cuisson"]),
+    # recettes de saison (novembre 2026)
+    R("endives_jambon", "Endives braisées au jambon, gratinées", "soir", 35, [("endive", 250), ("jambon", 80), ("lait", 100), ("emmental", 25), ("pdt", 200), ("huile_olive", 5)],
+      ["Cuis les pommes de terre 20 minutes à l'eau.", "Braise les endives coupées en deux 15 minutes à couvert dans l'huile, avec un fond d'eau.", "Enroule chaque demi-endive dans une demi-tranche de jambon, dispose dans un plat, verse le lait et parsème d'emmental.", "Gratine 10 minutes à 220 °C et sers avec les pommes de terre."],
+      ["classique"], astuce="Un plat d'hiver complet sans béchamel : le lait et l'emmental suffisent à gratiner."),
+    R("poulet_panais", "Poulet, panais et carottes rôtis, quinoa", "soir", 35, [("poulet", 130), ("panais", 150), ("carotte", 100), ("quinoa", 60), ("huile_olive", 8), ("epices", 1)],
+      ["Coupe panais et carottes en bâtonnets, mélange avec l'huile et le thym, rôtis 25 minutes à 200 °C.", "Pendant ce temps, cuis le quinoa 12 minutes.", "Ajoute le poulet en lanières sur la plaque pour les 12 dernières minutes.", "Sers sur le quinoa."],
+      ["batch", "classique"], batch=True, astuce="Tout cuit sur une seule plaque : prépare 3 portions d'un coup, elles se gardent 3 jours au réfrigérateur."),
+    R("kiwis_noisettes", "Kiwis, fromage blanc et noisettes", "collation", 3, [("fromage_blanc", 150), ("kiwi", 150), ("avoine", 15), ("noisettes", 15)],
+      ["Épluche et coupe les kiwis.", "Sers sur le fromage blanc avec les flocons et les noisettes concassées."], ["rapide", "sans_cuisson"]),
     # collations et récupération
     R("shake_recup", "Shake récup banane-whey", "collation", 3, [("lait", 250), ("whey", 30), ("banane", 100), ("avoine", 30)],
       ["Mixe tous les ingrédients 30 secondes.", "À boire dans l'heure qui suit l'entraînement."], ["apres_effort", "rapide"]),
@@ -198,7 +211,8 @@ RECETTES_SCIENCE = {
 RECETTES_SAISON = {
     "epinards": "PEAH", "brocoli": "EAH", "carotte": "PEAH", "courgette": "PE", "tomate": "PE", "poivron": "PE", "concombre": "PE",
     "haricots_verts": "E", "oignon": "PEAH", "salade": "PEA", "poireau": "PEAH", "potiron": "EAH", "betterave": "PEAH", "chou_fleur": "PEAH",
-    "petits_pois": "P", "pdt_nouvelles": "P", "pomme": "PEAH", "poire": "EAH", "fraise": "PE", "citron": "H", "clementine": "AH", "avocat": "H", "banane": "PEAH",
+    "petits_pois": "P", "pdt_nouvelles": "P", "pomme": "PEAH", "poire": "EAH", "fraise": "PE", "citron": "H", "clementine": "AH", "avocat": "H",
+    "endive": "AH", "panais": "AH", "kiwi": "AH", "banane": "PEAH",
 }
 RECETTES_SCIENCE["refs"].append("Santé publique France. Manger Bouger : mes produits de saison (printemps, été, automne, hiver). https://www.mangerbouger.fr")
 for _k in RECETTES_SAISON: assert _k in ING, _k

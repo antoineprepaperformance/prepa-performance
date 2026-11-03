@@ -29,7 +29,7 @@ function scoped(raw) {
   return { ...raw, logs: scopeMap(raw.logs, pre), checkins: scopeMap(raw.checkins, pre), tests: scopeMap(raw.tests, pre), replies: scopeMap(raw.replies, pre), cycle: cycOf(raw.plan),
     allLogs: raw.logs || {} };
 }
-function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, videos: {}, sante: {}, aiuse: {}, activites: {}, libres: {}, recettes: {}, messages: {}, msgseen: null, ready: false }; }
+function emptyData() { return { profile: null, plan: null, replies: {}, logs: {}, checkins: {}, tests: {}, habits: {}, food: {}, nutri: {}, ai: {}, chat: {}, media: {}, orders: {}, videos: {}, sante: {}, aiuse: {}, activites: {}, libres: {}, recettes: {}, messages: {}, msgseen: null, pdfs: {}, pdfparts: {}, ready: false }; }
 
 /* ---------- base partagée (capability db) ---------- */
 function dbSource(db, cid) {
@@ -37,7 +37,7 @@ function dbSource(db, cid) {
   let data = scoped(raw);
   const em = emitter();
   const unsubs = [];
-  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1, videos: 1, sante: 1, aiuse: 1, activites: 1, libres: 1, recettes: 1, messages: 1, msgseen: 1 };
+  const need = { profile: 1, plan: 1, replies: 1, logs: 1, checkins: 1, tests: 1, habits: 1, food: 1, nutri: 1, ai: 1, chat: 1, media: 1, orders: 1, videos: 1, sante: 1, aiuse: 1, activites: 1, libres: 1, recettes: 1, messages: 1, msgseen: 1, pdfs: 1 };
   const got = {};
   const push = (k, v) => { raw = { ...raw, [k]: v }; got[k] = 1; raw.ready = Object.keys(need).every((x) => got[x]); data = scoped(raw); em.emit(data); };
   const pre = () => cpre(raw.plan);
@@ -64,6 +64,8 @@ function dbSource(db, cid) {
   /* messagerie avec le coach : une année de messages, et la date de dernière lecture côté client */
   colSub(base + "/messages", "messages", (q) => (q.where ? q.where("at", ">=", new Date(Date.now() - 365 * 86400000).toISOString()) : q));
   docSub(base + "/msgstate/seen", "msgseen");
+  /* séances en PDF déposées par le coach : la liste seulement ; le fichier (en morceaux) est lu à l'ouverture */
+  colSub(base + "/pdfs", "pdfs");
 
   async function writeSummary(next) {
     const prof = next.profile || data.profile;
@@ -104,6 +106,19 @@ function dbSource(db, cid) {
       await writeSummary({ ...data, ai: { ...data.ai, [id]: a } });
     },
     async saveChat(month, doc) { await qwrite(base + "/chat/" + month, () => db.doc(base + "/chat/" + month).set(clone(doc))); },
+    async savePdf(id, meta, parts) {
+      for (let i = 0; i < parts.length; i++) await qwrite(base + "/pdfparts/" + id + "_" + i, () => db.doc(base + "/pdfparts/" + id + "_" + i).set({ d: parts[i] }));
+      await qwrite(base + "/pdfs/" + id, () => db.doc(base + "/pdfs/" + id).set(clone({ ...meta, parts: parts.length })));
+    },
+    async deletePdf(id, n) {
+      await qwrite(base + "/pdfs/" + id, () => db.doc(base + "/pdfs/" + id).delete());
+      for (let i = 0; i < (n || 0); i++) { try { await db.doc(base + "/pdfparts/" + id + "_" + i).delete(); } catch (e) {} }
+    },
+    async loadPdf(id, n) {
+      const out = [];
+      for (let i = 0; i < n; i++) { const s = await db.doc(base + "/pdfparts/" + id + "_" + i).get(); if (!s.exists) return null; out.push(s.data().d || ""); }
+      return out.join("");
+    },
     async saveVideo(id, doc) { await qwrite(base + "/videos/" + id, () => (doc ? db.doc(base + "/videos/" + id).set(clone(doc)) : db.doc(base + "/videos/" + id).delete())); await writeSummary({ ...data, videos: { ...data.videos, [id]: doc || undefined } }); },
     async saveSante(date, doc) { await qwrite(base + "/sante/" + date, () => (doc ? db.doc(base + "/sante/" + date).set(clone({ ...doc, d: date })) : db.doc(base + "/sante/" + date).delete())); },
     async saveAiUse(date, doc) { await qwrite(base + "/aiuse/" + date, () => db.doc(base + "/aiuse/" + date).set(clone({ ...doc, d: date }))); },
@@ -155,6 +170,9 @@ function localSource(initial) {
     async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
     async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
     async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
+    async savePdf(id, meta, parts) { const pp = { ...(data.pdfparts || {}), [id]: parts.join("") }; data = { ...data, pdfparts: pp }; set("pdfs", { ...(data.pdfs || {}), [id]: clone({ ...meta, parts: parts.length }) }); },
+    async deletePdf(id) { const m = { ...(data.pdfs || {}) }; delete m[id]; const pp = { ...(data.pdfparts || {}) }; delete pp[id]; data = { ...data, pdfparts: pp }; set("pdfs", m); },
+    async loadPdf(id) { return (data.pdfparts || {})[id] || null; },
     async setReply() {},
     applyCode(code) {
       data = { ...data, cid: code.cid || data.cid, plan: code.plan || data.plan, lib: { ...(data.lib || {}), ...(code.lib || {}) },
@@ -201,6 +219,9 @@ function memSource(seed, mode) {
     async saveActivite(id, doc) { const m = { ...(data.activites || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("activites", m); },
     async saveLibre(id, doc) { const m = { ...(data.libres || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("libres", m); },
     async saveRecette(id, doc) { const m = { ...(data.recettes || {}) }; if (doc) m[id] = clone(doc); else delete m[id]; set("recettes", m); },
+    async savePdf(id, meta, parts) { const pp = { ...(data.pdfparts || {}), [id]: parts.join("") }; data = { ...data, pdfparts: pp }; set("pdfs", { ...(data.pdfs || {}), [id]: clone({ ...meta, parts: parts.length }) }); },
+    async deletePdf(id) { const m = { ...(data.pdfs || {}) }; delete m[id]; const pp = { ...(data.pdfparts || {}) }; delete pp[id]; data = { ...data, pdfparts: pp }; set("pdfs", m); },
+    async loadPdf(id) { return (data.pdfparts || {})[id] || null; },
     async setReply(w, text) { set("replies", { ...(data.replies || {}), [pre() + "w" + w]: { text, at: nowISO() } }); },
     async sendMessage(id, m) { const messages = { ...(data.messages || {}), [id]: clone(m) }; data = { ...data, messages }; data = { ...data, profile: { ...data.profile, sum: summarize(scoped(data)) } }; emit(); },
     async setMsgSeen(at) { set("msgseen", { at }); },
@@ -283,7 +304,7 @@ function errWhy(e, coach) {
 /* droit à l'effacement : supprime toutes les données d'un client */
 async function deleteClient(db, cid) {
   const base = "clients/" + cid;
-  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders", "videos", "sante", "aiuse", "activites", "libres", "recettes", "messages", "msgstate"]) {
+  for (const sub of ["logs", "checkins", "tests", "habits", "food", "nutri", "ai", "chat", "media", "orders", "videos", "sante", "aiuse", "activites", "libres", "recettes", "messages", "msgstate", "pdfs", "pdfparts"]) {
     try { const s = await db.collection(base + "/" + sub).get(); for (const doc of s.docs) await dbDel(db, base + "/" + sub + "/" + doc.id); } catch (e) {}
   }
   for (const p of ["plans/" + cid, "replies/" + cid, "coachnotes/" + cid, base]) { try { await dbDel(db, p); } catch (e) {} }

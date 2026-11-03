@@ -13,6 +13,15 @@ on y lit ce qui a déjà été fait et ce qui a été écarté.
 - Compétitions 2028 (règle 12) : pas encore de dates officielles publiées pour le grand tournoi de rugby d'hiver 2028 ; rien d'ajouté.
 - Sources : Bezodis 2007 ; Wheeler, Askew et Sayers 2010 ; Gabbett, Jenkins et Abernethy 2009 ; Pavely 2009 ; Hendricks 2018 ; McGuckian 2018 ; Lees 2010 ; Ali 2011 ; Wagner 2011 ; Andersson 2017 ; Olsen 2005 ; Myklebust 2003 ; Jaric 2002 ; Helene et Yamashita (arXiv:0911.1952) ; World Athletics ; résultats IPF 2025 ; Manger Bouger. Tests ajoutés : `e2e_pdf_carte.py`, `e2e_contenu.py` complété.
 
+## 3 novembre 2026 · robot Instagram : publication après validation d'Antoine
+
+- À la demande d'Antoine, qui crée un compte Instagram pour l'activité, l'agence prépare chaque semaine une pull request « Instagram · semaine du … » (images JPEG et `planning.json` dans `docs/reseaux/AAAA-MM-JJ/`). **Fusionner = valider.** Le robot `.github/workflows/instagram.yml` publie alors chaque post et chaque carrousel à l'heure prévue (passage toutes les 30 minutes de 6 h à 22 h).
+- Les stories restent publiées par Antoine : l'API de Meta n'ajoute ni musique ni sticker, et la musique est choisie par Antoine (décision du 28 octobre).
+- Sûretés : rien sans le secret `INSTAGRAM_JETON` ; jamais deux fois (`docs/reseaux/publie.json`) ; rien après 36 h de retard ; une issue s'ouvre en cas d'échec ; jeton renouvelé chaque lundi si `JETON_GITHUB` est fourni, sinon une issue prévient quand il faut le recréer.
+- Première semaine : 9 au 15 novembre (sueur et test des 2 pesées, carrousel « Savoir tomber », l'application).
+- Sources techniques : Meta, Instagram Platform, « Content Publishing » (Instagram API with Instagram Login : compte professionnel, images JPEG en ligne, carrousels de 10 images au plus, stories `media_type=STORIES`, 100 publications par 24 h). Test ajouté : `unit_instagram.py`.
+- Gratuit : API de Meta et GitHub Actions (dépôt public). Aucun service tiers de programmation.
+
 ## 3 novembre 2026 · suivi sur mesure : matériel, modules, sujet des messages
 
 - **Matériel** (demande d'Antoine) : à l'inscription et dans Mon profil › « Mon suivi sur mesure », le client indique ce qu'il a (salle complète, barre, haltères, kettlebell, banc, barre de traction, élastiques, box, médecine-ball, machine de cardio, traîneau, espace dehors), avec trois raccourcis (salle, maison sans matériel, maison équipée). Chaque exercice impossible est remplacé à l'affichage par l'équivalent choisi par le préparateur (même geste, même effet : squat à la barre → goblet squat → split squat → fente arrière ; tractions → tractions assistées → rowing inversé → tirage élastique…), puis par sa variante, puis par un exercice de secours au poids du corps. La séance montre « adapté à ton matériel » et l'exercice d'origine.

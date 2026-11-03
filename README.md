@@ -8,6 +8,7 @@ Préparation physique en ligne par Antoine Limousi : page d'accueil publique, co
 - **Les règles de sécurité** de la base sont dans `firestore.rules` (à coller dans la console Firebase).
 - **Le relais de paiement** (facultatif) est dans `relais/worker.js` (Cloudflare Workers, gratuit) : paiements, coach IA du site et envoi automatique des montres.
 - **Le robot des valeurs nutritionnelles** est dans `outils/robot-ciqual.yml` (à installer dans `.github/workflows/`, étape 11 de MISE_EN_LIGNE.md).
+- **Le robot Instagram** (`.github/workflows/instagram.yml`, mode d'emploi dans [outils/INSTAGRAM.md](outils/INSTAGRAM.md)) publie à l'heure prévue les posts des semaines que tu as validées (pull request fusionnée) ; images et planning dans `docs/reseaux/`.
 - **Les sources** sont dans `app/` : c'est là que Claude fait les modifications, puis reconstruit `docs/`.
 - **Mises à jour chaque semaine** : une tâche programmée de Claude propose chaque mardi une pull request (étape 12 de MISE_EN_LIGNE.md). Ses règles sont dans `CLAUDE.md`, l'historique dans `JOURNAL.md`, ses consignes dans `outils/TACHE_HEBDO.md`.
 

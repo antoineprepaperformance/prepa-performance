@@ -3,6 +3,14 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 3 novembre 2026 (nuit) · carte athlète : la note générale ne doit plus être plombée par régularité et engagement
+
+- **Demande d'Antoine** : même avec le repère par sport, la carte d'un athlète de haut niveau ne montait pas de palier. En cause : régularité (RÉG) et engagement (ENG) comptent jusqu'à 35 % de la note générale (profil « prépa ») et démarrent à une valeur neutre tant qu'il n'y a pas d'historique d'utilisation de l'appli — un champion tout juste inscrit, ou qui remplit peu les bilans, reste donc coincé en bas malgré des tests au niveau du record du monde.
+- **Corrigé** : RÉG et ENG ne comptent plus dans la moyenne tant qu'ils n'ont aucune donnée (le reste des poids est redistribué) ; les autres qualités (force, vitesse, endurance, physique) gardent leur poids même sans donnée, puisque ne rien savoir du niveau physique reste un repère neutre légitime, pas un historique à ignorer.
+- Exemple vérifié par test : un profil Confirmé, plan pas encore commencé, un seul test déjà au niveau du record du monde → la note passe de 65 (palier Argent, la valeur neutre de départ) à 78 (palier **Or**) directement. Un client simplement assidu (bilans et habitudes à jour) sans aucun test de performance ne bouge pas : ce correctif ne récompense que des tests réels, pas la seule présence dans l'appli.
+- Test ajouté dans `e2e_pdf_carte.py` (`cardStats` appelé directement, palier avant/après).
+- Pas de carte spéciale « athlète professionnel » ajoutée : plutôt corriger le calcul pour tout le monde que créer un statut à régler à la main pour chaque client.
+
 ## 3 novembre 2026 (soir, correctif) · carte athlète par sport : la note ne doit jamais baisser
 
 - **Erreur corrigée** dans la mise à jour précédente (carte par sport et par poste) : quand le repère « haut niveau » spécifique au sport est plus exigeant que le repère générique (trois-quarts de rugby, pousseurs de bobsleigh), la note calculée pouvait être plus basse qu'avant la mise à jour pour un athlète déjà performant — l'inverse du but recherché. En cause : le même écart de 9 points (90 à 99) était étiré sur un intervalle de temps plus court, ce qui pénalisait quiconque se trouvait entre le nouveau repère et le record du monde.

@@ -121,7 +121,8 @@ function adjItems(entry, data, prog) {
     let out = it;
     subs.forEach((s) => { if (out.e === s.from && entry.w >= (s.fromW || 1) && (!s.sid || s.sid === "*" || s.sid === entry.sid)) out = { ...out, e: s.to, adj: "Remplacé par le coach IA" + (s.reason ? " : " + s.reason : "") }; });
     charges.forEach((c) => { if (out.e === c.e && entry.w >= (c.fromW || 1) && entry.w <= (c.toW || 99)) out = { ...out, adjNote: c.text }; });
-    return out;
+    /* matériel du client : un exercice impossible devient son équivalent (27_materiel.js) */
+    return typeof matItem === "function" ? matItem(out, prog) : out;
   });
 }
 function adjLabel(a) {
@@ -154,6 +155,7 @@ function clientContext({ data, plan, prog, stats, lib }) {
     const tdone = Object.values(data.libres || {}).filter((l) => l && l.kind === "terrain").sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 5);
     if (tdone.length) L.push("Dernières séances terrain : " + tdone.map((l) => fmtD(l.d) + " « " + l.n + " » effort " + l.rpe + "/10" + (l.res ? ", résultat " + fmtRes(l.res.t, l.res.v) : "")).join(" ; "));
   } else if (p.sport) L.push("Sport déclaré mais non reconnu dans la liste : « " + p.sport + " ».");
+  if (typeof persoLine === "function" && persoLine(p)) L.push(persoLine(p) + ".");
   const ps = stats && stats.ps;
   if (plan && prog && ps) {
     const b = blockOf(prog, Math.max(1, ps.week));

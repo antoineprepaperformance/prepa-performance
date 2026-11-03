@@ -1,6 +1,13 @@
 /* ===== Messagerie coach ↔ client et contacts directs ===== */
 const MSG_ICON = "M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5";
 const CAM_ICON = "M4 8h3.5l2-2.5h5l2 2.5H20v11H4zM12 16.5a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z";
+/* sujet choisi par le client : Antoine trie sa boîte (mêmes rubriques que les libellés Gmail de l'agence) ; santé et rétractation en tête */
+const MSG_SUJETS = [
+  { id: "seances", n: "Séances et conseils" }, { id: "nutrition", n: "Nutrition" }, { id: "sante", n: "Santé", hot: true },
+  { id: "acces", n: "Accès et paiement" }, { id: "tarifs", n: "Tarifs et offres" }, { id: "retractation", n: "Rétractation et résiliation", hot: true }, { id: "autre", n: "Autre" },
+];
+const MSG_SUJ_B = Object.fromEntries(MSG_SUJETS.map((x) => [x.id, x]));
+function sujetName(id) { return (MSG_SUJ_B[id] || {}).n || ""; }
 function msgId() { return "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function msgConf(settings) { const m = (settings && settings.msg) || {}; return { on: m.on !== false, lite: m.lite === true }; }
 /* Lite et Coach IA : messagerie fermée sauf si le coach l'ouvre (réglage « lite ») */
@@ -55,6 +62,7 @@ function MessageThread({ data, src, me, other, onSeen, demo, lang }) {
   const [img, setImg] = useState("");
   const [busy, setBusy] = useState(false);
   const [zoom, setZoom] = useState(null);
+  const [sujet, setSujet] = useState("");
   const endRef = useRef(null);
   const fileRef = useRef(null);
   const list = msgList(data);
@@ -72,7 +80,7 @@ function MessageThread({ data, src, me, other, onSeen, demo, lang }) {
     if (demo) { toast("Les exemples ne sont pas enregistrés.", "warn"); return; }
     setBusy(true);
     const id = msgId();
-    try { await src.sendMessage(id, { from: me, text: t, ...(img ? { img } : {}), at: nowISO() }); setTxt(""); setImg(""); }
+    try { await src.sendMessage(id, { from: me, text: t, ...(img ? { img } : {}), ...(me === "client" ? { sujet: sujet || "autre" } : {}), at: nowISO() }); setTxt(""); setImg(""); }
     catch (e) { toast("Message non envoyé" + errWhy(e, me === "coach"), "bad"); }
     finally { setBusy(false); }
   };
@@ -83,11 +91,13 @@ function MessageThread({ data, src, me, other, onSeen, demo, lang }) {
         ${m.img ? html`<button type="button" className="msg-img" onClick=${() => setZoom(m.img)} aria-label="Agrandir la photo"><img src=${m.img} alt="Photo envoyée" /></button>` : null}
         ${m.text ? String(m.text).split(/\n{2,}/).map((para, k) => html`<p key=${k} data-notr="1">${para}</p>`) : null}
         ${foreign && m.text && m.from !== me ? html`<${TrLink} text=${m.text} />` : null}
-        <span className="msg-t">${m.from === me ? "Toi" : other} · ${msgTime(m.at)}</span></div>`)}
+        <span className="msg-t">${m.from === me ? "Toi" : other} · ${msgTime(m.at)}${m.sujet && MSG_SUJ_B[m.sujet] ? html` · <span className=${"msg-s" + (MSG_SUJ_B[m.sujet].hot ? " hot" : "")}>${sujetName(m.sujet)}</span>` : null}</span></div>`)}
       <div ref=${endRef}></div>
     </div>
     ${img ? html`<div className="msg-prev"><img src=${img} alt="Photo à envoyer" /><button type="button" className="linkbtn" onClick=${() => setImg("")}>Retirer la photo</button></div>` : null}
     ${foreign ? html`<${TrSend} text=${txt} setText=${setTxt} to=${lang} id="msg-trad" />` : null}
+    ${me === "client" ? html`<div className="msg-suj"><span className="small muted">Sujet :</span><div className="chips" role="radiogroup" aria-label="Sujet du message">${MSG_SUJETS.map((x) => html`<button key=${x.id} type="button" role="radio" aria-checked=${sujet === x.id} id=${"msg-suj-" + x.id} className=${"chipbtn" + (sujet === x.id ? " on" : "")} onClick=${() => setSujet(sujet === x.id ? "" : x.id)}>${x.n}</button>`)}</div>
+      ${sujet === "sante" ? html`<p className="small warn-t">Dis où tu as mal, depuis quand et combien sur 10. Pour une urgence, appelle le 15 ou le 112.</p>` : sujet === "retractation" ? html`<p className="small muted">Précise la commande concernée : la réponse te sera faite par écrit.</p>` : null}</div>` : null}
     <div className="composer">
       <input ref=${fileRef} type="file" accept="image/*" className="sr-only" id=${"msg-file-" + me} onChange=${pick} />
       <button type="button" className="msgbtn msg-photo" aria-label="Joindre une photo" title="Joindre une photo" onClick=${() => fileRef.current && fileRef.current.click()} disabled=${busy}><${Icon} d=${CAM_ICON} /></button>
@@ -120,14 +130,21 @@ function MsgButton({ n, onClick }) {
 }
 /* boîte de réception du coach */
 function CoachInbox({ rows, seen, openClient }) {
-  const list = rows.filter((r) => !r.demo).map((r) => ({ r, at: (r.profile.sum && r.profile.sum.msgAt) || "", unread: msgUnreadCoach(r.profile, seen[r.cid]) }))
-    .filter((x) => x.at).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  const [suj, setSuj] = useState("");
+  const all = rows.filter((r) => !r.demo).map((r) => ({ r, at: (r.profile.sum && r.profile.sum.msgAt) || "", sujet: (r.profile.sum && r.profile.sum.msgSujet) || "", unread: msgUnreadCoach(r.profile, seen[r.cid]) }))
+    .filter((x) => x.at);
+  /* non lus santé et rétractation en premier, puis les plus récents */
+  const hot = (x) => (x.unread && MSG_SUJ_B[x.sujet] && MSG_SUJ_B[x.sujet].hot ? 1 : 0);
+  const list = all.filter((x) => !suj || (x.sujet || "autre") === suj).sort((a, b) => hot(b) - hot(a) || String(b.at).localeCompare(String(a.at)));
+  const cnt = (id) => all.filter((x) => (x.sujet || "autre") === id).length;
+  const segs = [{ v: "", n: "Tous (" + all.length + ")" }, ...MSG_SUJETS.filter((x) => cnt(x.id)).map((x) => ({ v: x.id, n: x.n + " (" + cnt(x.id) + ")" }))];
   const others = rows.filter((r) => !r.demo && !(r.profile.sum && r.profile.sum.msgAt)).sort((a, b) => String((a.profile.name || "")).localeCompare(String(b.profile.name || "")));
   return html`<div className="stack">
     <header className="page-h"><div><h1>Messages</h1><p className="muted">Tes échanges avec tes clients, dans l'application. Ils voient ta réponse dès qu'ils l'ouvrent.</p></div></header>
-    ${list.length ? html`<div className="slist">${list.map(({ r, at, unread }) => html`<button key=${r.cid} type="button" className=${"srow inbox-row" + (unread ? " unread" : "")} onClick=${() => openClient(r.cid, "messages")}>
+    ${all.length > 1 && segs.length > 2 ? html`<div className="tabs-scroll"><${Seg} options=${segs} value=${suj} onChange=${setSuj} /></div>` : null}
+    ${list.length ? html`<div className="slist">${list.map(({ r, at, unread, sujet }) => html`<button key=${r.cid} type="button" className=${"srow inbox-row" + (unread ? " unread" : "")} onClick=${() => openClient(r.cid, "messages")}>
       <span className="srow-id"><${Avatar} profile=${r.profile} size=${34} /></span>
-      <span className="srow-t"><b>${r.profile.name || "Client"}${unread ? html` <${Pill} tone="gold">Nouveau</${Pill}>` : null}</b><span className="muted small">${(r.profile.sum && r.profile.sum.msgText) || ""}</span></span>
+      <span className="srow-t"><b>${r.profile.name || "Client"}${unread ? html` <${Pill} tone="gold">Nouveau</${Pill}>` : null}${sujet && sujet !== "autre" && MSG_SUJ_B[sujet] ? html` <${Pill} tone=${MSG_SUJ_B[sujet].hot ? "bad" : "muted"}>${sujetName(sujet)}</${Pill}>` : null}</b><span className="muted small">${(r.profile.sum && r.profile.sum.msgText) || ""}</span></span>
       <span className="srow-s small muted">${msgTime(at)}</span></button>`)}</div>` : html`<${Empty} title="Aucun message reçu" text="Quand un client t'écrit depuis son application, la conversation apparaît ici." />`}
     ${others.length ? html`<${Card} title="Écrire à un client"><div className="chips">${others.map((r) => html`<button key=${r.cid} type="button" className="chipbtn" onClick=${() => openClient(r.cid, "messages")}>${r.profile.name || "Client"}</button>`)}</div></${Card}>` : null}
   </div>`;

@@ -213,7 +213,7 @@ function doseFor(it, wib, ctx) {
   let reps = it.r || t.reps[i];
   let int = t.int[i];
   let rest = t.rest;
-  const loadT = !!t.load;
+  const loadT = !!t.load && !it.bw; /* exercice au poids du corps qui remplace un exercice chargé (27_materiel.js) */
   const main = /^F|^P$/.test(it.t);
   let rir = rirOf(int);
   /* profil */
@@ -278,7 +278,7 @@ function warmupFor(entry, prog, plan, niv) {
   if (prog && prog.id === "run") return R.course;
   const items = entry.s.items || [];
   if (items.some((x) => x.t === "S")) return R.terrain;
-  if (plan && plan.equipment === "maison") return R.maison;
+  if (prog && prog.mat ? !prog.mat.includes("salle") : plan && plan.equipment === "maison") return R.maison; /* matériel indiqué par le client (27_materiel.js) */
   return R.salle;
 }
 function preventionFor(entry, prog, plan, niv, sport) {

@@ -290,7 +290,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
   const [tab, setTab] = useState(tab0 || "vue");
   const today = todayISO();
   const plan = data.plan && data.plan.status !== "pending" ? data.plan : null;
-  const prog = sportProg(progOf(plan ? plan.programId : (data.profile && data.profile.request && data.profile.request.programId), lib), data.profile);
+  const prog = persoProg(sportProg(progOf(plan ? plan.programId : (data.profile && data.profile.request && data.profile.request.programId), lib), data.profile), data.profile);
   const stats = useMemo(() => computeStats(data, plan, prog, lib, today), [data, plan, prog, lib, today]);
   const p = data.profile || row.profile || {};
   const info = rowInfo({ profile: p, plan: data.plan, replies: data.replies }, lib, today, settings);
@@ -302,7 +302,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Tous les clients</button>
     <header className="page-h"><div><div className="eyebrow">${prog ? prog.n : "Sans programme"}${plan ? " · " + offerName(plan.offer) + " · " + planDur(plan) : ""}</div>
       <h1 className="who"><${Avatar} profile=${p} photo=${data.media && data.media.photo && data.media.photo.data} size=${48} /><span>${p.name || "Client"}</span>${row.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}</h1>
-      <div className="chips"><${Pill} tone=${info.status.tone}>${info.status.n}</${Pill}>${p.lang && p.lang !== "fr" ? html`<${Pill} tone="gold">Langue : ${langFr(p.lang)}</${Pill}>` : null}${info.alerts.map((a, i) => html`<${Pill} key=${i} tone=${a.tone}>${a.n}</${Pill}>`)}</div></div>
+      <div className="chips"><${Pill} tone=${info.status.tone}>${info.status.n}</${Pill}>${p.lang && p.lang !== "fr" ? html`<${Pill} tone="gold">Langue : ${langFr(p.lang)}</${Pill}>` : null}${modsOf(p) && !modsAll(modsOf(p)) ? html`<${Pill} tone="gold">${modsLabel(modsOf(p))}</${Pill}>` : null}${info.alerts.map((a, i) => html`<${Pill} key=${i} tone=${a.tone}>${a.n}</${Pill}>`)}</div></div>
       <div className="contactcol">${p.email ? html`<div className="contact"><span>${p.email}</span><${CopyBtn} text=${p.email} /></div>` : null}${p.phone ? html`<div className="contact"><span>${p.phone}</span><${CopyBtn} text=${p.phone} /></div>` : null}</div></header>
     <div className="tabs-scroll"><${Seg} options=${tabs} value=${tab} onChange=${setTab} /></div>
     ${!data.ready ? html`<p className="muted">Chargement…</p>` : null}
@@ -311,7 +311,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "bilans" ? html`<${CoachBilans} data=${data} src=${src} plan=${plan} prog=${prog} lib=${lib} settings=${settings} />` : null}
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
-    ${tab === "terrain" ? html`<${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
+    ${tab === "terrain" ? html`<${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}

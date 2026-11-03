@@ -373,7 +373,8 @@ function SaisonsCard({ settings, db, onPreview }) {
   const [msg, setMsg] = useState(conf.msg);
   const [edit, setEdit] = useState(null);
   const [busy, setBusy] = useState(false);
-  const list = saisonUpcoming(todayISO(), 13);
+  /* une ligne par événement (sa prochaine édition) : l'interrupteur et le message valent pour toutes ses éditions */
+  const list = saisonUpcoming(todayISO(), 13).filter((ed, i, a) => a.findIndex((x) => x.ev.id === ed.ev.id) === i);
   const cur = saisonActive(todayISO(), { saisons: { off, msg } });
   const save = async () => {
     setBusy(true);

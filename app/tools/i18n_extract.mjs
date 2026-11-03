@@ -21,7 +21,7 @@ const SKIP_FN = new Set(["U_WORDS", "F_ALIAS", "Q_WORDS", "S_WORDS", "U_CANON", 
   "exerciseCatalog", "aiRules", "draftReply", "mealPrompt", "productPrompt", "weeklyReview", "TerrainLibrary", "ProfileFacts", "SiteIaStatus", "DbTestCard",
   "SiteAccessHowto", "makeTools", "recipePrompt", "videoPrompt", "COACH_NAV", "rowInfo", "accessCode", "importPackage", "deleteClient", "LiteNotice",
   "liteNoticeMail", "OwnerDash", "ClientsView", "ClientDetail", "ClientOverview", "AddClient", "DemoBar", "InboxView", "SignOutLink", "CoachMsg",
-  "QUOTA_DOC", "IA_REGLES", "aiLang", "LANG_NAME", "aiTranslate", "TrLink", "TrSend", "LANG_FR", "langFr", "LEGAL_TR_NOTE", "siteSystemPrompt"]);
+  "QUOTA_DOC", "IA_REGLES", "aiLang", "LANG_NAME", "aiTranslate", "TrLink", "TrSend", "LANG_FR", "langFr", "LEGAL_TR_NOTE", "siteSystemPrompt", "persoLine", "matSwap"]);
 const SKIP_CALL = /^(console\.\w+|localStorage\.\w+|sessionStorage\.\w+|document\.(getElementById|querySelector|querySelectorAll|createElement)|\w+\.addEventListener|\w+\.removeEventListener|fetch|require|new RegExp|RegExp|\w*\.?collection|\w*\.?doc|dbSet|dbDel|dbWrite|qwrite|lsGet|lsSet|lsDel|setItem|getItem|removeItem|ciqLoad|matchMedia|new CustomEvent|CustomEvent|new Error|Error|postMessage|importScripts|caches\.open|navigator\.\w+|JSON\.parse|parseISO|Date\.parse|new Date|Intl\.\w+)$/;
 const SKIP_PROP = new Set(["className", "id", "key", "type", "inputMode", "autoComplete", "rel", "target", "href", "src", "role", "viewBox", "fill", "stroke",
   "kind", "code", "k", "v", "icon", "mode", "status", "period", "offer", "lmode", "model", "modelTier", "description", "inputSchema", "name", "tone", "anim",

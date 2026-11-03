@@ -120,6 +120,7 @@ function screeningLines(p) {
 /* fiche côté coach : âge, taille, poids et records */
 function ProfileFacts({ p }) {
   return html`<div className="stack-s"><p className="small"><b>${bodyLine(p) || "Âge, taille et poids non renseignés"}</b>${p && p.weightAt ? html` <span className="muted">(poids du ${fmtD(p.weightAt)})</span>` : null}</p>
+    ${p && (p.materiel || p.modules) ? html`<p className="small">Suivi : <b>${modsLabel(modsOf(p))}</b>${trainOn(modsOf(p)) && matOf(p) ? html` · matériel : ${matLabel(matOf(p))}` : null}</p>` : null}
     <${RecordsView} p=${p} empty="Aucun record déclaré." /></div>`;
 }
 

@@ -79,7 +79,7 @@ function weekSessions(prog, plan, w, lib) {
     if (s && s.kind === "session") out.push({ key: "w" + w + "-X" + x.sid, w, sid: "X" + x.sid, s: { ...s, id: "+" }, extra: true });
   });
   /* séance D optionnelle du profil Haut niveau */
-  if (plan && plan.niveau === "elite" && !plan.medicalHold && typeof sessionD === "function" && PB[prog.id]) {
+  if (plan && plan.niveau === "elite" && !plan.medicalHold && typeof sessionD === "function" && PB[prog.id] && !(prog.mods && !prog.mods.muscu)) {
     const d = sessionD(prog, plan);
     if (d) out.push({ key: "w" + w + "-D", w, sid: "D", s: d, extra: false, opt: true });
   }
@@ -100,7 +100,8 @@ function exOf(id, equipment, prog, exo) {
   const custom = exo && exo[id] && exo[id].custom ? exo[id] : null;
   let base = custom || EXB[id] || { id, n: id, c: "Autre", eq: "", cues: [] };
   let subst = false;
-  if (equipment === "maison" && prog && prog.maison && base.alt && EXB[base.alt]) { base = EXB[base.alt]; subst = true; }
+  /* version maison du programme, quand le client n'a pas indiqué son matériel (sinon : matItem, 27_materiel.js) */
+  if (equipment === "maison" && prog && prog.maison && !prog.mat && base.alt && EXB[base.alt]) { base = EXB[base.alt]; subst = true; }
   const ov = exo && exo[base.id];
   return { ...base, video: ov && ov.video || base.video || "", cnote: ov && ov.note || "", subst };
 }
@@ -176,7 +177,7 @@ function computeStats(data, plan, prog, lib, today) {
 /* dernier message du client, pour la boîte de réception du coach */
 function msgSummary(data) {
   const last = Object.values(data.messages || {}).filter((m) => m && m.from === "client").sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
-  return last ? { msgAt: last.at, msgText: String(last.text || (last.img ? "Photo" : "")).slice(0, 140) } : {};
+  return last ? { msgAt: last.at, msgText: String(last.text || (last.img ? "Photo" : "")).slice(0, 140), msgSujet: last.sujet || "" } : {};
 }
 function summarize(data) {
   const logs = Object.values(data.logs || {}).filter(Boolean);

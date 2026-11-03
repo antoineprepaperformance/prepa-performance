@@ -12,17 +12,18 @@ from content_recettes import RECETTES_CONTENT
 from content_nutri import NUTRI_CONTENT, CIQ   # valeurs de la table Ciqual (ANSES) : aliments courants et ingrédients des recettes
 from content_sports import SPORTS_CONTENT, EX_SPORT, TESTS_SPORT
 from content_materiel import MATERIEL_CONTENT
+from content_cartes import CARTES_CONTENT
 LIB = LIB + EX_SPORT
 TESTS = {**TESTS, **TESTS_SPORT}
 
-content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT}
+content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ciqjson = json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 (ROOT / "content.json").write_text(json.dumps(content, ensure_ascii=False, indent=1))
 from i18n_build import dictionaries
 I18N = dictionaries()
 i18njs = {l: json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c") for l, d in I18N.items()}
-js = "\n".join((SRC / f).read_text() for f in ["00_i18n.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "27_materiel.js", "07_main.js"])
+js = "\n".join((SRC / f).read_text() for f in ["00_i18n.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "27_materiel.js", "28_pdf.js", "07_main.js"])
 css = (SRC / "styles.css").read_text()
 assert "</script" not in js
 

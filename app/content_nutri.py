@@ -45,6 +45,10 @@ ING_CIQUAL = {
     "concombre": 20019, "salade": 25604, "avocat": 13004, "mais": 20066, "sauce_tomate": 20260, "huile_olive": 17270, "amandes": 15000,
     "noix": 15005, "beurre_cacahuete": 15202, "chia": 15047, "miel": 31008, "cacao": 18100, "sauce_soja": 11104, "pesto": 11179,
     "epices": 11081, "curry": 11005, "ail": 11000,
+    # légumes, fruits et viandes des recettes de saison (reliés à la table le 3 novembre 2026 : leurs valeurs suivent ses mises à jour)
+    "potiron": 20044, "poireau": 20039, "betterave": 20003, "chou_fleur": 20016, "petits_pois": 20084, "pdt_nouvelles": 4023,
+    "chataignes": 15039, "clementine": 13024, "poire": 13037, "fraise": 13014, "agneau": 21502,
+    "endive": 20026, "panais": 20181, "kiwi": 13021, "noisettes": 15004,
 }
 
 

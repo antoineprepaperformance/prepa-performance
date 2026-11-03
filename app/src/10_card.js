@@ -104,6 +104,41 @@ const CARD_TESTS = {
   vma: ["end", 2], t5km: ["end", 3], navette: ["end", 1], course_continue: ["end", 0.3], fc_repos: ["end", 2], planche: ["end", 0.3],
   poids: ["phy", 2], taille: ["phy", 3], hanches: ["phy", 3], bras: ["phy", 3], cuisse: ["phy", 3],
 };
+/* notes absolues : chaque test comparé au record du monde connu (content_cartes.py) ; débutant 40, haut niveau 90, record 99 */
+const CARD_REF = CONTENT.CARDREF || {}, CARD_REF_SCI = CONTENT.CARDREFSCI || { text: "", refs: [] };
+function cardSex(data) { const p = (data && data.profile) || {}; const s = p.sex || (((data && data.nutri) || {}).plan || {}).sex; return s === "F" || s === "H" ? s : null; }
+function cardBw(data, cut) {
+  const pts = Object.values((data && data.tests) || {}).filter((t) => t && t.values && num(t.values.poids) && String(t.at).slice(0, 10) <= (cut || "9999")).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  const p = (data && data.profile) || {};
+  return pts.length ? num(pts[pts.length - 1].values.poids) : num(p.weight);
+}
+function refAnchors(tid, sex, bw) {
+  const r = CARD_REF[tid]; if (!r) return null;
+  if (r.lift) { const [kg, cls] = r.lift[sex]; if (!bw) return null; const ref = kg * Math.pow(bw / cls, 0.67); return r.frac.map((f) => f * ref); }
+  return r[sex];
+}
+function refScore(tid, val, sex, bw) {
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
+  if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
+  const sg = r.dir === "low" ? -1 : 1, x = sg * val, [a0, a1, a2] = a.map((y) => sg * y);
+  let v;
+  if (x <= a0) v = Math.max(25, 40 - 20 * (a0 - x) / (a1 - a0));
+  else if (x < a1) v = 40 + 50 * (x - a0) / (a1 - a0);
+  else if (x < a2) v = 90 + 9 * (x - a1) / (a2 - a1);
+  else v = 99;
+  const wr = a[2];
+  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100) };
+}
+/* dernier résultat de chaque test (jusqu'à la date « cut »), noté face au record du monde */
+function cardAbs(data, cut) {
+  const sex = cardSex(data) || "H", bw = cardBw(data, cut), p = (data && data.profile) || {};
+  const pts = Object.values((data && data.tests) || {}).filter((t) => t && t.values && String(t.at).slice(0, 10) <= (cut || "9999")).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  const last = {};
+  pts.forEach((t) => Object.keys(CARD_REF).forEach((tid) => { const v = testValue(tid, t.values[tid], p.side); if (typeof v === "number" && v > 0) last[tid] = v; }));
+  const scores = Object.entries(last).map(([tid, v]) => refScore(tid, v, sex, bw)).filter(Boolean);
+  const byAttr = {}; scores.forEach((x) => { (byAttr[x.a] = byAttr[x.a] || []).push(x.v); });
+  return { sex, sexKnown: !!cardSex(data), bw, scores, byAttr };
+}
 const TIERS = [{ min: 85, k: "elite", n: "Élite" }, { min: 75, k: "or", n: "Or" }, { min: 65, k: "argent", n: "Argent" }, { min: 0, k: "bronze", n: "Bronze" }];
 function tierOf(v) { return TIERS.find((t) => v >= t.min); }
 function weekEnd(plan, w) { return addDays(plan.start, w * 7 - 1); }
@@ -160,10 +195,13 @@ function cardStats(data, plan, prog, lib, cut) {
     if (g.length) gains.for = [clamp(g.reduce((x, y) => x + y, 0) / g.length * 1.2, -15, 30)];
   }
   Object.entries(gains).forEach(([attr, arr]) => { v[attr] = clamp(Math.round(base + arr.reduce((a, b) => a + b, 0) / arr.length), 40, 99); has[attr] = true; });
+  // tests comparés au record du monde : ils remplacent les progrès relatifs pour la vitesse, la force et l'endurance
+  const abs = cardAbs(data, cutD);
+  Object.entries(abs.byAttr).forEach(([attr, arr]) => { v[attr] = clamp(Math.round(arr.reduce((a, b) => a + b, 0) / arr.length), 25, 99); has[attr] = true; });
   const W = CARD_W[prog.id] || CARD_W.forme;
   const bonus = Math.round(4 * Math.min(1, curW / (plan.weeks || 12)));
   const overall = clamp(Math.round(CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0) * v[a.k], 0) / (CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0), 0) || 1)) + bonus, 40, 99);
-  return { overall, tier: tierOf(overall), attrs: CARD_ATTRS.map((a) => ({ ...a, v: v[a.k], live: !!has[a.k] })), pos: CARD_POS[prog.id] || "ATHLÈTE", week: curW };
+  return { overall, tier: tierOf(overall), attrs: CARD_ATTRS.map((a) => ({ ...a, v: v[a.k], live: !!has[a.k], wr: !!abs.byAttr[a.k] })), pos: CARD_POS[prog.id] || "ATHLÈTE", week: curW, abs };
 }
 function cardEvolution(data, plan, prog, lib) {
   const now = cardStats(data, plan, prog, lib);
@@ -312,11 +350,27 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
     <div className="card-wrap" ref=${ref}><${AthleteCard} data=${data} stats=${st} evo=${evo} size=${300} idp="f" /></div>
     <p className="small center">${next ? "Encore " + plural(next.min - st.overall, "point") + " pour passer " + next.n + "." : "Niveau maximal atteint : garde-le !"} ${evo.d > 0 ? "Cette semaine : +" + evo.d + "." : ""}</p>
     <div className="btnrow center"><${Btn} kind="ghost" small onClick=${save}>Télécharger ma carte</${Btn}></div>
+    <${CardRecords} abs=${st.abs} />
     <details><summary>Comment ma carte évolue</summary><ul className="small">
       <li><b>RÉG</b> : séances faites sur séances prévues.</li><li><b>ENG</b> : bilans envoyés, habitudes et repas notés.</li>
-      <li><b>FOR, VIT, END, PHY</b> : tes progrès aux tests (force, vitesse, endurance, silhouette) depuis le départ ; sans test, tes charges en séance.</li>
+      <li><b>VIT, FOR, END</b> : ton dernier résultat à chaque test comparé au record du monde (sprint 10 et 30 m, saut en longueur, squat, développé couché, soulevé de terre, demi-Cooper, 5 km). Débutant = 40, haut niveau = 90, record du monde = 99. Les charges sont ramenées à ton poids de corps.</li>
+      <li><b>PHY</b>, et les qualités sans test de référence : tes progrès depuis le départ ; sans test, tes charges en séance.</li>
       <li>La note générale pèse surtout les qualités de ton programme, avec un bonus de fidélité semaine après semaine.</li>
       <li>Bronze → Argent à 65 → Or à 75 → Élite à 85.</li></ul></details>
+  </div>`;
+}
+/* détail des tests notés face au record du monde */
+function CardRecords({ abs }) {
+  if (!abs) return null;
+  const fmt = (tid, x) => (CARD_REF[tid].u === "min" ? fmtTemps(x) : fmtN(x, CARD_REF[tid].u === "s" ? 2 : 0) + " " + CARD_REF[tid].u);
+  const attrN = { vit: "VIT", for: "FOR", end: "END" };
+  return html`<div className="stack-s">
+    <div className="eyebrow">Mes tests face aux records du monde</div>
+    ${abs.scores.length ? html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`
+      : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
+    ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
+    ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}.</li>`)}</ul>
+      <p className="small muted">${CARD_REF_SCI.text}</p></details>` : null}
   </div>`;
 }
 function Badges({ data, plan, prog, lib }) {

@@ -173,7 +173,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
       ${tab === "today" ? html`<${Today} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} src=${src} profile=${profile} coach=${coach}
           go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} saison=${saison} demo=${!!demo} />` : null}
       ${tab === "programme" ? html`<${ClientProgram} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} exo=${exoAll}
-          openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} />` : null}
+          openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} src=${src} />` : null}
       ${tab === "bilan" ? html`<${Bilans} data=${data} plan=${plan} prog=${prog} stats=${stats} src=${src} lib=${libAll} settings=${settings} ai=${showAI ? ai : null} openChat=${showAI ? () => setChat(true) : null} />` : null}
       ${tab === "nutrition" ? html`<${NutritionTab} data=${data} src=${src} plan=${plan} prog=${prog} settings=${settings} db=${db} onUpgrade=${demo ? null : () => setRenew(true)} />` : null}
       ${tab === "progres" ? html`<${Progress} data=${data} plan=${plan} prog=${prog} stats=${stats} openTests=${(w) => setTestOpen(w)} src=${src} coach=${coach} openSante=${() => setSante(true)} />` : null}
@@ -368,7 +368,7 @@ function Habits({ prog, data, src, block }) {
 }
 
 /* ---------- Programme ---------- */
-function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, openExtra, openTerrain }) {
+function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, openExtra, openTerrain, src }) {
   const ps = stats.ps;
   const [w, setW] = useState(ps.phase === "en_cours" ? ps.week : ps.phase === "fini" ? plan.weeks : 1);
   const block = blockOf(prog, w);
@@ -377,6 +377,7 @@ function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, open
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">${prog.n}</div><h1>${durName(plan.weeks)} · ${fmtD(plan.start)} → ${fmtD(ps.end)}</h1>
       <p className="muted small">${prog.desc}</p></div>
+    ${locked ? null : html`<${ClientPdfs} data=${data} src=${src} />`}
     <div className="weeks" role="tablist" aria-label="Semaines">${weeks.map((k) => {
       const pl = stats.plannedByWeek[k] || 0, dn = stats.doneByWeek[k] || 0;
       return html`<button key=${k} type="button" role="tab" aria-selected=${k === w} className=${"wk" + (k === w ? " on" : "") + (ps.week === k && ps.phase === "en_cours" ? " now" : "") + (dn >= pl && pl ? " full" : "")} onClick=${() => setW(k)}>

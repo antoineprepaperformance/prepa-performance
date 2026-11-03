@@ -1041,3 +1041,9 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 .msg-suj .chipbtn { font-size: 12.5px; padding: 5px 10px; }
 .msg-s { font-weight: 600; }
 .msg-s.hot { color: var(--bad, #c0392b); }
+
+/* listes simples : séances en PDF, tests face aux records */
+.rlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rlist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.rlist li > span:first-child { flex: 1 1 160px; min-width: 0; }
+.rlist li > :last-child { flex: none; }

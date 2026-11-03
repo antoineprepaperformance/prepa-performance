@@ -1,0 +1,57 @@
+# Robot Instagram : publie à l'heure prévue les posts des semaines validées par Antoine (pull request fusionnée).
+# Mode d'emploi et création du jeton : outils/INSTAGRAM.md. Gratuit (GitHub Actions est inclus pour les dépôts publics).
+# Sans le secret INSTAGRAM_JETON, il ne publie rien.
+name: Instagram
+on:
+  schedule:
+    - cron: "7,37 5-20 * * *"   # toutes les 30 min, de 6 h à 22 h environ (heure de Paris)
+    - cron: "23 4 * * 1"         # le lundi : renouvellement du jeton
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: instagram
+  cancel-in-progress: false
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publier ce qui est à l'heure
+        id: pub
+        env:
+          INSTAGRAM_JETON: ${{ secrets.INSTAGRAM_JETON }}
+        run: python3 outils/instagram.py
+        continue-on-error: true
+      - name: Noter ce qui est publié
+        run: |
+          [ -f docs/reseaux/publie.json ] || exit 0
+          git add docs/reseaux/publie.json
+          if git diff --cached --quiet; then echo "Rien de nouveau."; exit 0; fi
+          git config user.name "robot-instagram"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Instagram : publications notées"
+          git pull --rebase -q && git push
+      - name: Prévenir Antoine en cas d'échec
+        if: steps.pub.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --title "Instagram : une publication n'est pas partie" \
+            --body "Le robot Instagram n'a pas pu publier. Le détail est dans docs/reseaux/publie.json (rubrique erreurs) et dans l'onglet Actions. Tu peux la publier à la main depuis le dossier docs/reseaux/." || true
+      - name: Renouveler le jeton (le lundi)
+        if: github.event.schedule == '23 4 * * 1'
+        env:
+          INSTAGRAM_JETON: ${{ secrets.INSTAGRAM_JETON }}
+          GH_TOKEN: ${{ secrets.JETON_GITHUB }}
+        run: |
+          if [ -z "$INSTAGRAM_JETON" ]; then echo "Pas de jeton Instagram."; exit 0; fi
+          NOUVEAU=$(curl -sf "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=$INSTAGRAM_JETON" | python3 -c "import json,sys; print(json.load(sys.stdin)['access_token'])") || NOUVEAU=""
+          if [ -z "$NOUVEAU" ]; then
+            GH_TOKEN="${{ github.token }}" gh issue create --title "Instagram : jeton à recréer" \
+              --body "Le jeton Instagram n'a pas pu être renouvelé (expiré ou retiré). Recrée-le en suivant outils/INSTAGRAM.md, étape 4." || true
+            exit 0
+          fi
+          echo "::add-mask::$NOUVEAU"
+          if [ -n "$GH_TOKEN" ]; then gh secret set INSTAGRAM_JETON --body "$NOUVEAU" --repo "${{ github.repository }}" && echo "Jeton renouvelé pour 60 jours."; fi

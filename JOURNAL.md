@@ -3,6 +3,13 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 3 novembre 2026 (soir, correctif) · carte athlète par sport : la note ne doit jamais baisser
+
+- **Erreur corrigée** dans la mise à jour précédente (carte par sport et par poste) : quand le repère « haut niveau » spécifique au sport est plus exigeant que le repère générique (trois-quarts de rugby, pousseurs de bobsleigh), la note calculée pouvait être plus basse qu'avant la mise à jour pour un athlète déjà performant — l'inverse du but recherché. En cause : le même écart de 9 points (90 à 99) était étiré sur un intervalle de temps plus court, ce qui pénalisait quiconque se trouvait entre le nouveau repère et le record du monde.
+- **Corrigé** : la note se calcule maintenant avec le repère générique et, si un repère sport existe, avec le repère sport ; c'est la meilleure des deux qui s'affiche. Un repère plus exigeant peut donc seulement aider ceux qui l'atteignent désormais (ex. avants de rugby : 87 → 90), jamais pénaliser ceux qui dépassaient déjà l'ancien repère générique (trois-quarts et pousseurs de bobsleigh : aucun changement, leur note était déjà bonne).
+- Test ajouté dans `e2e_pdf_carte.py` qui vérifie précisément cette garantie (la note avec repère sport n'est jamais inférieure à la note avec repère générique).
+- Repéré grâce à Antoine, qui ne voyait pas de changement sur une carte qu'il attendait meilleure.
+
 ## 3 novembre 2026 (soir) · carte athlète : repère « haut niveau » par sport et par poste
 
 - **Demande d'Antoine** : deux athlètes de niveaux très différents se retrouvaient avec une carte proche l'une de l'autre, alors qu'ils n'ont pas le même profil. En cause : le repère « haut niveau » (note 90) de chaque test était le même pour tout le monde, qu'on soit rugbyman ou pousseur de bobsleigh — comparé à la vitesse d'Usain Bolt, un avant de rugby a toujours l'air lent, même excellent dans son sport.

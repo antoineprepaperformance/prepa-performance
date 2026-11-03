@@ -45,6 +45,7 @@ async def run():
               tqGen: refScore("sprint10", 1.77, "H").v, tqSp: refScore("sprint10", 1.77, "H", null, "rugby", "trois-quarts").v,
               rugby7Sp: refScore("sprint10", 1.85, "H", null, "rugby7", "avant").v,
               bobGen: refScore("sprint30", 4.0, "H").v, bobSp: refScore("sprint30", 4.0, "H", null, "bob", "pousseur").v,
+              midGen: refScore("sprint30", 3.90, "H").v, midSp: refScore("sprint30", 3.90, "H", null, "bob", "pousseur").v,
               noPoste: refScore("sprint10", 1.85, "H", null, "rugby", null).v, autreSport: refScore("sprint10", 1.85, "H", null, "foot", "attaquant").v,
               pousseurCarte: cardAbs({ profile: { sportId: "bob", poste: "pousseur", weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.0 } } } }) })""")
             ok(r["s30"][0] == 99 and r["s30"][1] == 90 and r["s30"][2] == 40 and r["s30"][3] >= 25 and r["s30"][4] == 99, "sprint 30 m : record du monde 99, haut niveau 90, débutant 40", r["s30"])
@@ -55,10 +56,11 @@ async def run():
             ok(sc.get("sprint30", {}).get("val") == 4.2 and "e1rm_squat" in sc and r["abs"]["byAttr"].get("vit") and r["abs"]["sex"] == "H" and not r["abs"]["sexKnown"],
                "dernier résultat de chaque test, attributs vitesse et force", r["abs"])
             ok(r["avantSp"] == 90 and r["avantSp"] > r["avantGen"], "rugby avant : 1,85 s au 10 m vaut 90 (haut niveau du poste), plus que le repère générique", r)
-            ok(r["tqSp"] == 90 and r["tqSp"] < r["tqGen"], "rugby trois-quarts : 1,77 s au 10 m recalé à 90 (était trop proche du record sur le repère générique)", r)
+            ok(r["tqSp"] == r["tqGen"], "rugby trois-quarts : repère du poste plus exigeant que le générique ici, donc sans effet — jamais de note plus basse qu'avec le repère générique", r)
             ok(r["rugby7Sp"] == r["avantSp"], "rugby à 7 : même repère que le rugby à XV pour les avants", r)
-            ok(r["bobSp"] == 90 and abs(r["bobSp"] - r["bobGen"]) <= 2, "bobsleigh pousseur : repère déjà proche du générique, léger ajustement seulement", r)
+            ok(r["bobSp"] == r["bobGen"], "bobsleigh pousseur : repère déjà proche du générique (légèrement plus exigeant ici) : pas de note plus basse qu'avec le repère générique", r)
             ok(r["noPoste"] == r["avantGen"] and r["autreSport"] == r["avantGen"], "sans poste connu, ou sport sans repère dédié : repère générique", r)
+            ok(r["midSp"] >= r["midGen"], "garde-fou : un repère sport plus exigeant ne fait jamais baisser la note sous le repère générique", r)
             ok(r["pousseurCarte"]["scores"][0]["spSrc"] is not None and "Bobsleigh UK" in r["pousseurCarte"]["scores"][0]["spSrc"],
                "carte d'un pousseur : la source du repère spécifique est bien remontée", r["pousseurCarte"])
 

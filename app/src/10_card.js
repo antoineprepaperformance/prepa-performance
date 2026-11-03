@@ -112,13 +112,18 @@ function cardBw(data, cut) {
   const p = (data && data.profile) || {};
   return pts.length ? num(pts[pts.length - 1].values.poids) : num(p.weight);
 }
-function refAnchors(tid, sex, bw) {
+/* repère « haut niveau » (a1) : spécifique au sport et au poste du profil quand une étude le permet (CARD_REF[tid].sport),
+   sinon le repère générique. Le débutant (a0) et le record du monde (a2) ne changent jamais. */
+function refAnchors(tid, sex, bw, sportId, poste) {
   const r = CARD_REF[tid]; if (!r) return null;
+  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
   if (r.lift) { const [kg, cls] = r.lift[sex]; if (!bw) return null; const ref = kg * Math.pow(bw / cls, 0.67); return r.frac.map((f) => f * ref); }
-  return r[sex];
+  const a = r[sex].slice();
+  if (sp) a[1] = sp[0];
+  return a;
 }
-function refScore(tid, val, sex, bw) {
-  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
+function refScore(tid, val, sex, bw, sportId, poste) {
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw, sportId, poste);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
   const sg = r.dir === "low" ? -1 : 1, x = sg * val, [a0, a1, a2] = a.map((y) => sg * y);
   let v;
@@ -127,15 +132,17 @@ function refScore(tid, val, sex, bw) {
   else if (x < a2) v = 90 + 9 * (x - a1) / (a2 - a1);
   else v = 99;
   const wr = a[2];
-  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100) };
+  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
+  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sp ? sp[1] : null };
 }
 /* dernier résultat de chaque test (jusqu'à la date « cut »), noté face au record du monde */
 function cardAbs(data, cut) {
   const sex = cardSex(data) || "H", bw = cardBw(data, cut), p = (data && data.profile) || {};
+  const sportId = p.sportId || null, poste = p.poste || null;
   const pts = Object.values((data && data.tests) || {}).filter((t) => t && t.values && String(t.at).slice(0, 10) <= (cut || "9999")).sort((a, b) => String(a.at).localeCompare(String(b.at)));
   const last = {};
   pts.forEach((t) => Object.keys(CARD_REF).forEach((tid) => { const v = testValue(tid, t.values[tid], p.side); if (typeof v === "number" && v > 0) last[tid] = v; }));
-  const scores = Object.entries(last).map(([tid, v]) => refScore(tid, v, sex, bw)).filter(Boolean);
+  const scores = Object.entries(last).map(([tid, v]) => refScore(tid, v, sex, bw, sportId, poste)).filter(Boolean);
   const byAttr = {}; scores.forEach((x) => { (byAttr[x.a] = byAttr[x.a] || []).push(x.v); });
   return { sex, sexKnown: !!cardSex(data), bw, scores, byAttr };
 }
@@ -369,7 +376,8 @@ function CardRecords({ abs }) {
     ${abs.scores.length ? html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`
       : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
-    ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}.</li>`)}</ul>
+    ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
+    ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
       <p className="small muted">${CARD_REF_SCI.text}</p></details>` : null}
   </div>`;
 }

@@ -207,9 +207,17 @@ function cardStats(data, plan, prog, lib, cut) {
   // tests comparés au record du monde : ils remplacent les progrès relatifs pour la vitesse, la force et l'endurance
   const abs = cardAbs(data, cutD);
   Object.entries(abs.byAttr).forEach(([attr, arr]) => { v[attr] = clamp(Math.round(arr.reduce((a, b) => a + b, 0) / arr.length), 25, 99); has[attr] = true; });
-  const W = CARD_W[prog.id] || CARD_W.forme;
+  const W0 = CARD_W[prog.id] || CARD_W.forme;
+  // régularité et engagement mesurent l'usage de l'appli, pas le niveau sportif : tant qu'ils n'ont pas de donnée,
+  // ils ne comptent pas dans la moyenne (sinon un test déjà au niveau du record du monde resterait plombé par un
+  // historique d'usage encore vide). Les autres qualités, elles, gardent leur poids même sans donnée : ne rien
+  // savoir du physique ou de la force reste un repère neutre, pas un historique à ignorer.
+  const W = { ...W0 };
+  if (!has.reg) W.reg = 0;
+  if (!has.eng) W.eng = 0;
+  const denom = CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0), 0) || CARD_ATTRS.reduce((s, a) => s + (W0[a.k] || 0), 0) || 1;
   const bonus = Math.round(4 * Math.min(1, curW / (plan.weeks || 12)));
-  const overall = clamp(Math.round(CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0) * v[a.k], 0) / (CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0), 0) || 1)) + bonus, 40, 99);
+  const overall = clamp(Math.round(CARD_ATTRS.reduce((s, a) => s + (W[a.k] || 0) * v[a.k], 0) / denom) + bonus, 40, 99);
   return { overall, tier: tierOf(overall), attrs: CARD_ATTRS.map((a) => ({ ...a, v: v[a.k], live: !!has[a.k], wr: !!abs.byAttr[a.k] })), pos: CARD_POS[prog.id] || "ATHLÈTE", week: curW, abs };
 }
 function cardEvolution(data, plan, prog, lib) {

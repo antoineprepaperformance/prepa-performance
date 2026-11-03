@@ -35,19 +35,34 @@ async def run():
             await co.goto(URL + "?as=owner"); await co.evaluate("localStorage.clear()"); await co.reload(); await co.wait_for_timeout(800)
 
             # ---------- notes face aux records du monde (fonctions pures) ----------
-            r = await co.evaluate("""() => ({
-              s30: [refScore("sprint30", 3.63, "H").v, refScore("sprint30", 4.05, "H").v, refScore("sprint30", 5.2, "H").v, refScore("sprint30", 7, "H").v, refScore("sprint30", 3.5, "H").v],
-              pct: refScore("sprint30", 4.2, "H").pct, f30: refScore("sprint30", 4.5, "F").v,
-              squat83: refScore("e1rm_squat", 302.5, "H", 83).v, squat100: [refScore("e1rm_squat", 200, "H", 100).v, refScore("e1rm_squat", 200, "H", 70).v],
-              nobw: refScore("e1rm_squat", 150, "H", null), t5: refScore("t5km", 12.589, "H").v, cmj: refScore("cmj", 50, "H"),
-              abs: cardAbs({ profile: { weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.4, e1rm_squat: { kg: 140, reps: 3 } } }, b: { at: "2026-10-29", values: { sprint30: 4.2 } } } }),
-              avantGen: refScore("sprint10", 1.85, "H").v, avantSp: refScore("sprint10", 1.85, "H", null, "rugby", "avant").v,
-              tqGen: refScore("sprint10", 1.77, "H").v, tqSp: refScore("sprint10", 1.77, "H", null, "rugby", "trois-quarts").v,
-              rugby7Sp: refScore("sprint10", 1.85, "H", null, "rugby7", "avant").v,
-              bobGen: refScore("sprint30", 4.0, "H").v, bobSp: refScore("sprint30", 4.0, "H", null, "bob", "pousseur").v,
-              midGen: refScore("sprint30", 3.90, "H").v, midSp: refScore("sprint30", 3.90, "H", null, "bob", "pousseur").v,
-              noPoste: refScore("sprint10", 1.85, "H", null, "rugby", null).v, autreSport: refScore("sprint10", 1.85, "H", null, "foot", "attaquant").v,
-              pousseurCarte: cardAbs({ profile: { sportId: "bob", poste: "pousseur", weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.0 } } } }) })""")
+            r = await co.evaluate("""() => {
+              const out = {
+                s30: [refScore("sprint30", 3.63, "H").v, refScore("sprint30", 4.05, "H").v, refScore("sprint30", 5.2, "H").v, refScore("sprint30", 7, "H").v, refScore("sprint30", 3.5, "H").v],
+                pct: refScore("sprint30", 4.2, "H").pct, f30: refScore("sprint30", 4.5, "F").v,
+                squat83: refScore("e1rm_squat", 302.5, "H", 83).v, squat100: [refScore("e1rm_squat", 200, "H", 100).v, refScore("e1rm_squat", 200, "H", 70).v],
+                nobw: refScore("e1rm_squat", 150, "H", null), t5: refScore("t5km", 12.589, "H").v, cmj: refScore("cmj", 50, "H"),
+                abs: cardAbs({ profile: { weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.4, e1rm_squat: { kg: 140, reps: 3 } } }, b: { at: "2026-10-29", values: { sprint30: 4.2 } } } }),
+                avantGen: refScore("sprint10", 1.85, "H").v, avantSp: refScore("sprint10", 1.85, "H", null, "rugby", "avant").v,
+                tqGen: refScore("sprint10", 1.77, "H").v, tqSp: refScore("sprint10", 1.77, "H", null, "rugby", "trois-quarts").v,
+                rugby7Sp: refScore("sprint10", 1.85, "H", null, "rugby7", "avant").v,
+                bobGen: refScore("sprint30", 4.0, "H").v, bobSp: refScore("sprint30", 4.0, "H", null, "bob", "pousseur").v,
+                midGen: refScore("sprint30", 3.90, "H").v, midSp: refScore("sprint30", 3.90, "H", null, "bob", "pousseur").v,
+                noPoste: refScore("sprint10", 1.85, "H", null, "rugby", null).v, autreSport: refScore("sprint10", 1.85, "H", null, "foot", "attaquant").v,
+                pousseurCarte: cardAbs({ profile: { sportId: "bob", poste: "pousseur", weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.0 } } } }),
+              };
+              // note générale : un test déjà noté face au record du monde ne doit pas être plombé par régularité/engagement
+              // sans historique (profil tout juste inscrit, plan pas encore commencé : pl = 0, aucun bilan).
+              try {
+                const plan = { start: addDays(todayISO(), 14), weeks: 12 };
+                const prog = PB.prepa;
+                const noTest = cardStats({ profile: { weight: 90, level: "Confirmé" } }, plan, prog, {});
+                const avecVit = cardStats({ profile: { weight: 90, level: "Confirmé" }, tests: { a: { at: todayISO(), values: { sprint30: 3.70 } } } }, plan, prog, {});
+                out.noteSansRien = noTest.overall; out.tierSansRien = noTest.tier.k;
+                out.noteAvecVitElite = avecVit.overall; out.tierAvecVitElite = avecVit.tier.k;
+                out.regEngSansDonnee = noTest.attrs.filter((a) => (a.k === "reg" || a.k === "eng") && a.live).length;
+              } catch (e) { out.noteErr = String(e); }
+              return out;
+            }""")
             ok(r["s30"][0] == 99 and r["s30"][1] == 90 and r["s30"][2] == 40 and r["s30"][3] >= 25 and r["s30"][4] == 99, "sprint 30 m : record du monde 99, haut niveau 90, débutant 40", r["s30"])
             ok(r["pct"] == 86 and r["f30"] == 90, "pourcentage du record ; repères féminins", [r["pct"], r["f30"]])
             ok(r["squat83"] == 99 and r["squat100"][1] > r["squat100"][0] and r["nobw"] is None, "charges ramenées au poids de corps (plus léger = meilleure note à charge égale)", r)
@@ -61,6 +76,11 @@ async def run():
             ok(r["bobSp"] == r["bobGen"], "bobsleigh pousseur : repère déjà proche du générique (légèrement plus exigeant ici) : pas de note plus basse qu'avec le repère générique", r)
             ok(r["noPoste"] == r["avantGen"] and r["autreSport"] == r["avantGen"], "sans poste connu, ou sport sans repère dédié : repère générique", r)
             ok(r["midSp"] >= r["midGen"], "garde-fou : un repère sport plus exigeant ne fait jamais baisser la note sous le repère générique", r)
+            ok("noteErr" not in r, "note générale : cardStats s'exécute sans erreur avec un plan pas encore commencé", r.get("noteErr"))
+            ok(r.get("regEngSansDonnee") == 0, "avant le début du plan, régularité et engagement n'ont encore aucune donnée", r)
+            ok(r.get("noteSansRien") == 65 and r.get("tierSansRien") == "argent", "sans aucune donnée, note neutre (profil Confirmé) et palier Argent", r)
+            ok(r.get("noteAvecVitElite") == 78 and r.get("tierAvecVitElite") == "or",
+               "un seul test déjà au niveau du record du monde (65 → 78) fait passer directement au palier Or, sans attendre un historique de régularité/engagement", r)
             ok(r["pousseurCarte"]["scores"][0]["spSrc"] is not None and "Bobsleigh UK" in r["pousseurCarte"]["scores"][0]["spSrc"],
                "carte d'un pousseur : la source du repère spécifique est bien remontée", r["pousseurCarte"])
 

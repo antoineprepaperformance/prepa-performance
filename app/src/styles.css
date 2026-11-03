@@ -1023,3 +1023,21 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 /* fiches technique (skills) */
 .obj-l { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .rc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ===== mon suivi sur mesure : modules et matériel (27_materiel.js) ===== */
+.mod-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.modcard { display: flex; flex-direction: column; gap: 4px; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; color: inherit; }
+.modcard b { font-family: var(--f-display); font-size: 18px; line-height: 1.1; }
+.modcard span { font-size: 13px; color: var(--muted); }
+.modcard.on, .modcard:hover:not(:disabled) { border-color: var(--gold); }
+.modcard.on { background: var(--gold-tint); }
+.modcard:disabled { opacity: 0.55; }
+.mat-pick { display: flex; flex-direction: column; gap: 8px; }
+.mat-chips .chipbtn.on { color: var(--fg); }
+
+/* sujet des messages */
+.msg-suj { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 4px; }
+.msg-suj .chips { gap: 5px; }
+.msg-suj .chipbtn { font-size: 12.5px; padding: 5px 10px; }
+.msg-s { font-weight: 600; }
+.msg-s.hot { color: var(--bad, #c0392b); }

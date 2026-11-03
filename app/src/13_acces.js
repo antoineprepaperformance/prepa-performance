@@ -321,7 +321,9 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   const isCode = !!codeC || !!(cst && cst.pendingCoach);
   const price = isCode ? 0 : isLite ? litePrice(settings, lPer, nutri) : priceOf(settings, offer, weeks);
   const link = isCode ? null : isLite ? payLinkOf(settings, "lite", lPer + "_" + lMode + (nutri ? "_n" : "")) : payLinkOf(settings, offer, weeks);
-  const checks = assessPlan({ programId, niveau: f.niveau, ans: req.answers, sport: p.sport, age, equipment: f.equipment, screeningFlag: p.screeningFlag, prereqOk: !PB[programId] || !PB[programId].prereq || (p.prereq || []).length >= PB[programId].prereq.length, weeks: progW, compDate: f.compDate, start: f.start });
+  /* lieu : déduit du matériel indiqué par le client (27_materiel.js), sinon choisi ici */
+  const eqOf = (pr) => matLieu(pr, p) || (pr && pr.maison ? f.equipment : "salle");
+  const checks = assessPlan({ programId, niveau: f.niveau, ans: req.answers, sport: p.sport, age, equipment: eqOf(PB[programId]), screeningFlag: p.screeningFlag, prereqOk: !PB[programId] || !PB[programId].prereq || (p.prereq || []).length >= PB[programId].prereq.length, weeks: progW, compDate: f.compDate, start: f.start });
   const blocking = checks.some((c) => c.t === "bad");
   useEffect(() => { if (code && !cst) check(code); }, []);
   async function check(c0) {
@@ -342,7 +344,7 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
   const endISO = isLite ? isoOf(new Date(liteToMs - 1)) : dated ? isoOf(new Date(orderUntilMs(prev, { weeks, ext: isExt, start: f.start, programId }) - 1)) : weeks ? addDays(startCont, weeks * 7 - 1) : null;
   const mkOrder = (kind) => ({ id: rid("o"), at: nowISO(), kind, offer, weeks: isLite && !codeC ? null : weeks, period: isLite && !codeC ? lPer : null, mode: isLite && !codeC ? lMode : null,
     ...(nutri ? { nutri: true } : {}), programId, niveau: f.niveau, start: isExt ? prev.start : isLite ? startCont : f.start, contStart: isExt ? startCont : null,
-    ext: !!isExt, equipment: prog && prog.maison ? f.equipment : "salle", compDate: f.compDate || null, price: price || 0, currency: "EUR", status: "en_attente",
+    ext: !!isExt, equipment: eqOf(prog), compDate: f.compDate || null, price: price || 0, currency: "EUR", status: "en_attente",
     code: codeC ? codeC.code : cst && cst.pendingCoach ? cst.code : null, cgv: { v: CGV_VERSION, at: nowISO() }, early: !!(early && price),
     parent: minor ? { ok: !!parent, name: (p.parent && p.parent.name) || "", email: (p.parent && p.parent.email) || "" } : null });
   const needEarly = !!price && startCont < addDays(todayISO(), 15);
@@ -426,7 +428,7 @@ function Purchase({ data, src, settings, db, uid, lib, mode, onDone }) {
         ${long ? html`<p className="small muted">${"Soit " + eur(Math.round(priceOf(settings, f.offer, weeks) / monthsOfW(weeks))) + " par mois, payés en une fois. Ton programme de 12 semaines s'enchaîne avec le suivant jusqu'à la fin de ton accès."}</p>` : null}`}`}
     ${isLite && !isExt && lMode === "abo" && !codeC ? html`<p className="small muted">Ton accès commence dès le paiement.</p>` : null}
     ${(isLite ? !isExt && (lMode === "avance" || codeC) : !isExt || prevEnd < todayISO()) ? html`<div className="row2"><${Field} label=${isExt ? "Reprise le" : "Début"} id="pu-start" hint=${isLite || dated ? "Au plus tard dans 60 jours." : null}><input id="pu-start" type="date" min=${todayISO()} max=${isLite || dated ? addDays(todayISO(), 60) : undefined} value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
-      ${prog && prog.maison ? html`<${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "En salle" }, { v: "maison", n: "À la maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>` : null}</div>` : null}
+      ${prog && prog.maison && !matOf(p) ? html`<${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "En salle" }, { v: "maison", n: "À la maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>` : null}</div>` : null}
     ${!startOk ? html`<p className="small warn-t">Choisis une date de début entre aujourd'hui et dans 60 jours.</p>` : null}
     ${nivRank(f.niveau) >= 2 ? html`<${Field} label="Prochaine compétition importante (facultatif)" id="pu-comp" hint="Pour programmer l'affûtage des deux semaines précédentes."><input id="pu-comp" type="date" value=${f.compDate} onChange=${(e) => set("compDate", e.target.value)} /></${Field}>` : null}
     <${Card} title="Vérification de ton plan"><${FitChecks} checks=${checks} /></${Card}>
@@ -685,7 +687,8 @@ function LegalDocFr({ kind, settings }) {
       <li><b>Vidéos d'exercice</b> : la vidéo reste sur ton appareil ; seules les images que tu gardes (3 au maximum, réduites) et tes repères sont enregistrés, pour la correction de ta technique. Base : ton consentement.</li>
       <li><b>Goûts et régime alimentaire</b> (aliments évités ou aimés, végétarien, sans gluten…) : te proposer des recettes adaptées. Base : exécution du contrat ; une allergie ou intolérance que tu indiques est traitée avec ton consentement explicite.</li>
       <li><b>Commandes, abonnements et paiements</b> (formule, montant, date, statut, identifiant d'abonnement Stripe, rétractation ou résiliation ; jamais tes coordonnées bancaires, gérées par Stripe) : gérer ta commande, tes prélèvements, ta facture, une rétractation ou une résiliation. Base : contrat et obligations comptables.</li>
-      <li><b>Messages</b> échangés avec ${L.editeur} dans l'application (texte et photos que tu choisis d'envoyer) : répondre à tes questions et te suivre. Base : exécution du contrat ; une information de santé que tu y écris est traitée avec ton consentement explicite.</li>
+      <li><b>Messages</b> échangés avec ${L.editeur} dans l'application (texte, photos que tu choisis d'envoyer et sujet du message) : répondre à tes questions, en commençant par la santé et les rétractations, et te suivre. Base : exécution du contrat ; une information de santé que tu y écris est traitée avec ton consentement explicite.</li>
+      <li><b>Suivi sur mesure</b> (matériel dont tu disposes ; musculation, cardio et nutrition choisis) : adapter les séances et remplacer les exercices que tu ne peux pas faire. Base : exécution du contrat.</li>
       <li><b>Réglages d'affichage et défis de saison</b> (thème, couleur, taille du texte, blocs de ta page du jour, jours cochés pour un défi et badges obtenus) : afficher l'application comme tu l'as choisie et compter tes défis. Base : exécution du contrat.</li>
       <li><b>Codes d'essai</b> : vérifier qu'un code n'est utilisé qu'une fois par personne. Base : contrat.</li>
       <li><b>Certificat médical</b> que tu envoies pour suspendre ou résilier une formule de 6 ou 12 mois (article 7 ter des conditions de vente) : traiter ta demande, puis il est supprimé une fois la demande traitée. Base : ton consentement explicite.</li></ul>
@@ -747,12 +750,13 @@ function LiteNextCycle({ data, src, db, uid, plan, onDone }) {
   const [asked, setAsked] = useState(!!(p.nextCycle && p.nextCycle.cycle === cycOf(plan) + 1));
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
   const prog = PB[f.programId];
-  const checks = assessPlan({ programId: f.programId, niveau: f.niveau, ans: req.answers, sport: p.sport, age, equipment: f.equipment, screeningFlag: p.screeningFlag, prereqOk: !prog || !prog.prereq || (p.prereq || []).length >= prog.prereq.length, weeks: progWeeks(f.programId), compDate: f.compDate, start: f.start });
+  const eqN = matLieu(prog, p) || (prog && prog.maison ? f.equipment : "salle");
+  const checks = assessPlan({ programId: f.programId, niveau: f.niveau, ans: req.answers, sport: p.sport, age, equipment: eqN, screeningFlag: p.screeningFlag, prereqOk: !prog || !prog.prereq || (p.prereq || []).length >= prog.prereq.length, weeks: progWeeks(f.programId), compDate: f.compDate, start: f.start });
   const ok = !!prog && f.start >= todayISO() && f.start <= maxStart && !checks.some((c) => c.t === "bad");
   const go = async () => {
     if (!ok || busy) return;
     setBusy(true);
-    const nf = { programId: f.programId, niveau: f.niveau, start: f.start, equipment: prog.maison ? f.equipment : "salle", compDate: f.compDate || null };
+    const nf = { programId: f.programId, niveau: f.niveau, start: f.start, equipment: eqN, compDate: f.compDate || null };
     const next = liteNextCycle(plan, nf);
     try {
       if (window.IS_SITE && db && uid) await db.doc("plans/" + uid).set(clone(next));
@@ -772,7 +776,7 @@ function LiteNextCycle({ data, src, db, uid, plan, onDone }) {
     <${Field} label="Programme" id="nc-prog"><select id="nc-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Choisir</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}${x.id === plan.programId ? " (à nouveau)" : ""}</option>`)}</select></${Field}>
     <div className="field"><span className="field-l">Ton profil</span><${NiveauCards} value=${f.niveau} onChange=${(v) => set("niveau", v)} recommended=${rec.id} /></div>
     <div className="row2"><${Field} label="Début" id="nc-start" hint=${"Au plus tard le " + fmtDY(maxStart) + "."}><input id="nc-start" type="date" min=${todayISO()} max=${maxStart} value=${f.start} onChange=${(e) => set("start", e.target.value)} /></${Field}>
-      ${prog && prog.maison ? html`<${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "En salle" }, { v: "maison", n: "À la maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>` : null}</div>
+      ${prog && prog.maison && !matOf(p) ? html`<${Field} label="Lieu"><${Seg} options=${[{ v: "salle", n: "En salle" }, { v: "maison", n: "À la maison" }]} value=${f.equipment} onChange=${(v) => set("equipment", v)} /></${Field}>` : null}</div>
     ${nivRank(f.niveau) >= 2 ? html`<${Field} label="Prochaine compétition importante (facultatif)" id="nc-comp"><input id="nc-comp" type="date" value=${f.compDate} onChange=${(e) => set("compDate", e.target.value)} /></${Field}>` : null}
     ${prog ? html`<${Card} title="Vérification"><${FitChecks} checks=${checks} /></${Card}>` : null}
     <${Btn} block onClick=${go} disabled=${!ok || busy}>${busy ? "Un instant…" : "Démarrer ce programme"}</${Btn}>

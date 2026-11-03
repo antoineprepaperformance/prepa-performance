@@ -134,8 +134,8 @@ ex("tirage_vertical", "Tirage vertical à la poulie", "Haut du corps", "Machine"
 ex("rowing_barre", "Rowing barre buste penché", "Haut du corps", "Barre",
    ["Buste à 45°, dos neutre", "Tirer la barre vers le nombril", "Serrer les omoplates en haut"],
    alt="rowing_haltere", prog="Plus lourd")
-ex("rowing_haltere", "Rowing haltère un bras", "Haut du corps", "Banc + haltère",
-   ["Main et genou sur le banc", "Tirer le coude vers la hanche", "Pas de rotation du buste"],
+ex("rowing_haltere", "Rowing haltère un bras", "Haut du corps", "Haltère + banc ou chaise",
+   ["Main et genou sur un banc ou une chaise", "Tirer le coude vers la hanche", "Pas de rotation du buste"],
    prog="Plus lourd")
 ex("rowing_inverse", "Rowing inversé", "Haut du corps", "Barre basse ou sangles",
    ["Corps gainé sous la barre", "Tirer la poitrine vers la barre", "Plus les pieds sont loin, plus c'est dur"],

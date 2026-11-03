@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="e6a084e716">
+<meta name="app-build" content="f4c2e836c1">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -6482,27 +6482,29 @@ function cardBw(data, cut) {
   const p = (data && data.profile) || {};
   return pts.length ? num(pts[pts.length - 1].values.poids) : num(p.weight);
 }
-/* repère « haut niveau » (a1) : spécifique au sport et au poste du profil quand une étude le permet (CARD_REF[tid].sport),
-   sinon le repère générique. Le débutant (a0) et le record du monde (a2) ne changent jamais. */
-function refAnchors(tid, sex, bw, sportId, poste) {
+/* repère « haut niveau » (a1) : générique, ou spécifique au sport et au poste du profil quand une étude le permet
+   (CARD_REF[tid].sport). Le débutant (a0) et le record du monde (a2) ne changent jamais.
+   Le repère sport ne peut jamais faire baisser la note sous ce que donne le repère générique : on garde le
+   meilleur des deux (un repère plus exigeant doit aider ceux qui l'atteignent, jamais pénaliser ceux qui le dépassaient déjà). */
+function refAnchors(tid, sex, bw) {
   const r = CARD_REF[tid]; if (!r) return null;
-  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
   if (r.lift) { const [kg, cls] = r.lift[sex]; if (!bw) return null; const ref = kg * Math.pow(bw / cls, 0.67); return r.frac.map((f) => f * ref); }
-  const a = r[sex].slice();
-  if (sp) a[1] = sp[0];
-  return a;
+  return r[sex];
+}
+function scoreFromAnchors(dir, val, a) {
+  const sg = dir === "low" ? -1 : 1, x = sg * val, [a0, a1, a2] = a.map((y) => sg * y);
+  if (x <= a0) return Math.max(25, 40 - 20 * (a0 - x) / (a1 - a0));
+  if (x < a1) return 40 + 50 * (x - a0) / (a1 - a0);
+  if (x < a2) return 90 + 9 * (x - a1) / (a2 - a1);
+  return 99;
 }
 function refScore(tid, val, sex, bw, sportId, poste) {
-  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw, sportId, poste);
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
-  const sg = r.dir === "low" ? -1 : 1, x = sg * val, [a0, a1, a2] = a.map((y) => sg * y);
-  let v;
-  if (x <= a0) v = Math.max(25, 40 - 20 * (a0 - x) / (a1 - a0));
-  else if (x < a1) v = 40 + 50 * (x - a0) / (a1 - a0);
-  else if (x < a2) v = 90 + 9 * (x - a1) / (a2 - a1);
-  else v = 99;
-  const wr = a[2];
+  let v = scoreFromAnchors(r.dir, val, a);
   const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
+  if (sp) { const aSp = a.slice(); aSp[1] = sp[0]; v = Math.max(v, scoreFromAnchors(r.dir, val, aSp)); }
+  const wr = a[2];
   return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sp ? sp[1] : null };
 }
 /* dernier résultat de chaque test (jusqu'à la date « cut »), noté face au record du monde */

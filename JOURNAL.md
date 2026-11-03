@@ -3,6 +3,16 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 3 novembre 2026 (soir) · carte athlète : repère « haut niveau » par sport et par poste
+
+- **Demande d'Antoine** : deux athlètes de niveaux très différents se retrouvaient avec une carte proche l'une de l'autre, alors qu'ils n'ont pas le même profil. En cause : le repère « haut niveau » (note 90) de chaque test était le même pour tout le monde, qu'on soit rugbyman ou pousseur de bobsleigh — comparé à la vitesse d'Usain Bolt, un avant de rugby a toujours l'air lent, même excellent dans son sport.
+- Le record du monde (note 99) ne change pas : c'est le même plafond, universel, pour tout le monde. Seul le repère « haut niveau » devient spécifique au sport et au poste du profil (`profil.sportId`, `profil.poste`) quand une étude sérieuse le permet ; sinon le repère générique s'applique, rien ne casse.
+- **Rugby** (à XV et à 7, avants et trois-quarts) : sprint 10 m recalé sur des mesures réelles de joueurs de haut niveau (avants 1,85 s, trois-quarts 1,77 s — Wood, Coughlan et Delahunt, 2018). Un avant au niveau moyen de sa position passe de 87 à 90 ; un trois-quarts à son niveau moyen, qui touchait presque le record sur l'ancien repère générique, redescend à 90 (la note proche du record redevient réservée à ceux qui dépassent la moyenne de leur poste).
+- **Bobsleigh** (pousseurs) : sprint 30 m à moins de 4 s (critères d'athlètes de Bobsleigh UK). Changement minime : le repère générique était déjà proche de la réalité une fois ramené au poids de corps.
+- Écarté pour cette fois : le squat, le développé couché et le soulevé de terre (pas de donnée fiable, ramenée au poids de corps, pour ces sports) ; les autres sports du catalogue (foot, hand, basket…) gardent le repère générique en attendant une étude équivalente.
+- Sources : Wood DJ, Coughlan GF, Delahunt E. Fitness Profiles of Elite Adolescent Irish Rugby Union Players. J Strength Cond Res. 2018;32(1):105-112. Bobsleigh UK, Bobsleigh Athlete Requirements. Tests ajoutés dans `e2e_pdf_carte.py`.
+- i18n non vérifié cette fois : Node n'est pas installé sur cette machine, `node tools/i18n_extract.mjs` n'a pas pu tourner. Les deux phrases ajoutées suivent le même choix que leurs voisines dans ce bloc (sources techniques, non traduites) ; à repasser par le robot du mardi (qui a Node) pour vérifier.
+
 ## 3 novembre 2026 (après-midi) · lot de contenu, séances en PDF, carte athlète face aux records du monde
 
 - **Séances en PDF** (demande d'Antoine) : fiche client › onglet « Fichiers PDF », Antoine dépose un PDF (3 Mo au plus), lui donne un titre, une semaine (ou « tout le cycle ») et un petit mot ; le client le trouve en haut de son onglet Programme (« Mes séances écrites par Antoine ») : Ouvrir, puis Afficher ou Télécharger. Idéal pour le Sur mesure, possible pour tous. Gratuit : le fichier est rangé dans Firestore (offre Spark, pas de Cloud Storage, devenu payant pour les nouveaux projets) en morceaux de 800 000 caractères, dans le dossier du client (`clients/{id}/pdfs` et `pdfparts`), lu seulement à l'ouverture ; effacé avec le compte. Aucune règle Firestore à changer (le dossier du client l'autorise déjà). Caché quand l'accès est verrouillé.

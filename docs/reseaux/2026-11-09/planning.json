@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-11-09",
+ "publications": [
+  {
+   "id": "2026-11-09-a",
+   "quand": "2026-11-09T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-11-09-b",
+   "quand": "2026-11-10T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_sueur.jpg"
+   ],
+   "auto": true,
+   "legende": "Tu sais combien tu perds en sueur pendant une séance ? 💧\nLa plupart des sportifs n'en ont aucune idée. Au-delà de 2 % du poids du corps perdu, l'endurance baisse.\n\nLe test prend 2 minutes :\n1. Pèse-toi en sous-vêtements juste avant la séance.\n2. Même pesée après, une fois séché.\n3. La différence (plus ce que tu as bu pendant), c'est ta sueur. Chaque kilo perdu : rebois environ 1,5 litre dans les heures qui suivent, avec un repas ou une boisson un peu salée.\n\nFais-le une fois en salle et une fois dehors : tu ne transpires pas pareil.\n👉 Enregistre ce post et teste-le à ta prochaine séance. Dans l'application, le test de sueur calcule tout pour toi.\n\nSources : Sawka MN et al., Med Sci Sports Exerc 2007 ; Shirreffs SM et al., Med Sci Sports Exerc 1996.\n\n#preparationphysique #hydratation #sportif #musculation #rugby #endurance #nutritionsportive #entrainement"
+  },
+  {
+   "id": "2026-11-09-c",
+   "quand": "2026-11-11T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et une question : à publier toi-même"
+  },
+  {
+   "id": "2026-11-09-d",
+   "quand": "2026-11-12T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_chute_1.jpg",
+    "05_post_jeudi_chute_2.jpg",
+    "06_post_jeudi_chute_3.jpg",
+    "07_post_jeudi_chute_4.jpg",
+    "08_post_jeudi_chute_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Avant d'apprendre à plaquer, apprends à tomber. 🏉\nC'est le premier geste de la progression du plaquage chez World Rugby, et c'est celui qu'on oublie le plus.\n\nLes 4 gestes de la fiche :\n1. Chute avant amortie sur les avant-bras, menton rentré.\n2. Roulade sur l'épaule, en diagonale vers la hanche opposée.\n3. Chute sur le côté, l'avant-bras frappe le sol, tête décollée.\n4. Relevé en moins de 2 secondes, puis 5 m d'appuis vifs.\n\nDose de départ : 3 séries de 4 chutes (une de chaque), sur l'herbe ou un tapis. La qualité passe avant la vitesse.\nLe bon réflexe : le mettre dans ton échauffement, au moins 3 fois par semaine.\n👉 Enregistre le carrousel et envoie-le à ton coéquipier. La fiche complète, avec son schéma, est dans l'application.\n\nSources : Hislop MD et al., Br J Sports Med 2017 ; World Rugby, Tackle Ready.\n\n#rugby #preparationphysique #rugbyamateur #plaquage #prevention #echauffement #rugbyfeminin #ecolederugby #entrainement"
+  },
+  {
+   "id": "2026-11-09-e",
+   "quand": "2026-11-14T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_copenhague.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-09-f",
+   "quand": "2026-11-15T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Ta prépa physique, dans ta poche. 📲\nDes séances construites pour ton sport, des fiches technique avec leur schéma et leurs études, la nutrition et des recettes de saison avec les valeurs de l'ANSES. Et, selon ta formule, un suivi avec moi.\nFormules dès 9,90 € par mois.\n👉 Lien en bio pour découvrir les formules.\n\n#preparationphysique #coachingenligne #coachsportif #musculation #rugby #football #bordeaux #sportif"
+  }
+ ]
+}

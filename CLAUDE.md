@@ -6,7 +6,7 @@ Les sources sont dans `app/` (voir README.md pour l'organisation). Écris toujou
 
 ## Règles qui ne se discutent pas
 
-1. **Aucun secret dans le dépôt** : ni clé Stripe (`sk_…`, `rk_…`, `whsec_…`), ni mot de passe du relais, ni clé d'API d'aucune sorte. Ils vivent seulement dans les secrets Cloudflare. N'écris dans le dépôt aucune adresse e-mail ni aucun numéro d'Antoine autres que ceux qu'il a mis lui-même dans `docs/config.js`. Ce dépôt est **public** : rien de privé ici, et jamais de donnée d'un client.
+1. **Aucun secret dans le dépôt** : ni clé Stripe (`sk_…`, `rk_…`, `whsec_…`), ni mot de passe du relais, ni clé d'API d'aucune sorte. Ils vivent seulement dans les secrets Cloudflare (et, pour le robot Instagram, dans les secrets GitHub Actions `INSTAGRAM_JETON` et `JETON_GITHUB`, qu'Antoine saisit lui-même). N'écris dans le dépôt aucune adresse e-mail ni aucun numéro d'Antoine autres que ceux qu'il a mis lui-même dans `docs/config.js`. Ce dépôt est **public** : rien de privé ici, et jamais de donnée d'un client.
 2. **`docs/config.js` appartient à Antoine** (ses clés Firebase et son e-mail de coach) : ne le modifie pas.
 3. **Gratuit** : pas de service payant, pas d'abonnement, rien qui puisse facturer Antoine (Firebase Spark, GitHub Pages, Cloudflare Workers Free, Workers AI gratuit).
 4. **Ne casse rien de ce qui marche.** L'application est fluide et Antoine y tient : change seulement ce qui apporte quelque chose de clair, garde le style (noir et or, sobre), et n'enlève jamais une fonction sans qu'il l'ait demandé.
@@ -33,6 +33,11 @@ Les sources sont dans `app/` (voir README.md pour l'organisation). Écris toujou
 4. Ouvre une pull request en français, lisible par quelqu'un qui n'est pas développeur : ce qui change pour les clients et pour lui, pourquoi, avec quelles sources, et **en gras ce qu'il doit faire à la main** (règles Firestore à recoller dans Firebase si `firestore.rules` change, nouveau `relais/worker.js` à coller dans Cloudflare s'il change). Sinon, écris « Rien à faire de ton côté : fusionne et c'est en ligne ».
 5. Ajoute une entrée à JOURNAL.md (date, ce qui a changé, pourquoi, sources) : c'est la mémoire d'un passage à l'autre.
 6. Ne remplace pas `docs/ciqual.json` par une version plus ancienne (le robot `.github/workflows/ciqual.yml` le tient à jour chaque mois).
+
+## Publications Instagram de la semaine
+
+- Le studio du jeudi ouvre une pull request à part, sur une branche `reseaux/AAAA-MM-JJ` (lundi de la semaine visée), qui ajoute seulement `docs/reseaux/AAAA-MM-JJ/` : les images en JPEG et `planning.json` (voir `outils/INSTAGRAM.md`). Antoine la fusionne pour valider, puis le robot `.github/workflows/instagram.yml` publie les posts à l'heure prévue. Les stories restent à Antoine (musique, stickers).
+- Pour cette pull request, `python3 app/unit_instagram.py` suffit (pas la batterie complète) et il n'y a pas d'entrée dans JOURNAL.md. Tu ne publies jamais toi-même et tu ne touches pas à `docs/reseaux/publie.json` (tenu par le robot).
 
 ## Où trouver ce qu'Antoine veut
 

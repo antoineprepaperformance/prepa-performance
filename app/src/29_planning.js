@@ -15,13 +15,14 @@ function weekPlanning(prog, plan, w, lib, logs) {
     return { date, today: date === today, e, done: !!(e && logs && logs[e.key]) };
   });
 }
-function WeekPlanning({ prog, plan, w, lib, logs, onOpen }) {
+/* coachView : lecture seule, sur la fiche du client (sa semaine à lui, pas la sienne) */
+function WeekPlanning({ prog, plan, w, lib, logs, onOpen, coachView }) {
   const days = useMemo(() => weekPlanning(prog, plan, w, lib, logs), [prog, plan, w, lib, logs]);
   if (!days.some((d) => d.e)) return null;
-  return html`<${Card} title="Ma semaine" sub="Une suggestion de jours : tu peux décaler, l'important est de faire tes séances">
+  return html`<${Card} title=${coachView ? "Sa semaine" : "Ma semaine"} sub="Une suggestion de jours : tu peux décaler, l'important est de faire tes séances">
     <div className="wplan">${days.map((d) => html`<button key=${d.date} type="button"
         className=${"wp-d" + (d.today ? " now" : "") + (d.e ? (d.done ? " done" : " on") : " rest")}
-        disabled=${!d.e} onClick=${() => d.e && onOpen(d.e)}>
+        disabled=${!d.e || coachView} onClick=${() => d.e && !coachView && onOpen(d.e)}>
       <small>${JOURS[parseISO(d.date).getDay()].slice(0, 3)}</small><b>${parseISO(d.date).getDate()}</b>
       <span>${d.e ? (d.done ? "✓ " : "") + d.e.s.t + (d.e.rep > 1 ? " (" + d.e.rep + ")" : "") : "Repos"}</span>
     </button>`)}</div>

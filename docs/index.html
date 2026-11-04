@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="639be3c610">
+<meta name="app-build" content="6cf132bcd7">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3948,7 +3948,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
     ${tab === "terrain" ? html`<${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
-    ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
+    ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
     ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} />` : null}
@@ -12095,13 +12095,14 @@ function weekPlanning(prog, plan, w, lib, logs) {
     return { date, today: date === today, e, done: !!(e && logs && logs[e.key]) };
   });
 }
-function WeekPlanning({ prog, plan, w, lib, logs, onOpen }) {
+/* coachView : lecture seule, sur la fiche du client (sa semaine à lui, pas la sienne) */
+function WeekPlanning({ prog, plan, w, lib, logs, onOpen, coachView }) {
   const days = useMemo(() => weekPlanning(prog, plan, w, lib, logs), [prog, plan, w, lib, logs]);
   if (!days.some((d) => d.e)) return null;
-  return html`<${Card} title="Ma semaine" sub="Une suggestion de jours : tu peux décaler, l'important est de faire tes séances">
+  return html`<${Card} title=${coachView ? "Sa semaine" : "Ma semaine"} sub="Une suggestion de jours : tu peux décaler, l'important est de faire tes séances">
     <div className="wplan">${days.map((d) => html`<button key=${d.date} type="button"
         className=${"wp-d" + (d.today ? " now" : "") + (d.e ? (d.done ? " done" : " on") : " rest")}
-        disabled=${!d.e} onClick=${() => d.e && onOpen(d.e)}>
+        disabled=${!d.e || coachView} onClick=${() => d.e && !coachView && onOpen(d.e)}>
       <small>${JOURS[parseISO(d.date).getDay()].slice(0, 3)}</small><b>${parseISO(d.date).getDate()}</b>
       <span>${d.e ? (d.done ? "✓ " : "") + d.e.s.t + (d.e.rep > 1 ? " (" + d.e.rep + ")" : "") : "Repos"}</span>
     </button>`)}</div>

@@ -312,7 +312,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
     ${tab === "terrain" ? html`<${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
-    ${tab === "seances" ? html`<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
+    ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
     ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} />` : null}

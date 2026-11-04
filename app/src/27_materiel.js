@@ -21,6 +21,10 @@ function modsOf(p) {
   if (!m || typeof m !== "object") return null;
   return { muscu: m.muscu !== false, cardio: m.cardio !== false, nutrition: m.nutrition !== false };
 }
+/* jours d'entraînement par semaine choisis par le client ; absent = rythme naturel du programme (pas de répétition) */
+function rythmeOf(p) { const r = p && Number(p.rythme); return Number.isFinite(r) && r >= 1 && r <= 7 ? r : null; }
+/* plus petit nombre de séances par semaine du programme (selon ses blocs), une fois matériel et modules appliqués */
+function natFreq(prog) { const c = (prog && prog.blocks || []).map((b) => (b.sessions || []).length).filter((n) => n > 0); return c.length ? Math.min(...c) : 0; }
 /* lieu du plan déduit du matériel : « maison » seulement pour un programme qui a une version maison */
 function matLieu(prog, p) { const mat = matOf(p); return mat ? (prog && prog.maison && !mat.includes("salle") ? "maison" : "salle") : null; }
 function modsAll(m) { return !m || (m.muscu && m.cardio && m.nutrition); }
@@ -93,9 +97,9 @@ function modSession(s, mods) {
 /* programme vu par le client : séances selon ses modules, matériel pour les remplacements */
 function persoProg(prog, p) {
   if (!prog) return prog;
-  const mat = matOf(p), mods = modsOf(p);
-  if (!mat && !mods) return prog;
-  const out = { ...prog, mat: mat || null, mods: mods || null };
+  const mat = matOf(p), mods = modsOf(p), rythme = rythmeOf(p);
+  if (!mat && !mods && !rythme) return prog;
+  const out = { ...prog, mat: mat || null, mods: mods || null, rythme: rythme || null };
   if (mods && !(mods.muscu && mods.cardio)) out.blocks = (prog.blocks || []).map((b) => ({ ...b, sessions: (b.sessions || []).map((s) => modSession(s, mods)).filter(Boolean) }));
   return out;
 }
@@ -159,27 +163,40 @@ function ModulesPicker({ value, onChange, nutriLocked, idp }) {
       <b>${on ? "✓ " : ""}${x.n}</b><span>${lock ? "Non incluse dans ta formule actuelle." : x.d}</span></button>`;
   })}</div>`;
 }
+/* jours d'entraînement par semaine : au-delà du rythme naturel du programme, les séances se répètent en boucle */
+function RythmePicker({ value, min, onChange, idp }) {
+  const days = Array.from({ length: 7 - min + 1 }, (_, i) => min + i);
+  const v = value && value >= min ? value : min;
+  return html`<div className="seg" role="radiogroup" aria-label="Jours d'entraînement par semaine">
+    ${days.map((d) => html`<button key=${d} id=${(idp || "ry") + "-" + d} type="button" role="radio" aria-checked=${v === d} className=${v === d ? "on" : ""} onClick=${() => onChange(d)}>${d}</button>`)}
+  </div>`;
+}
 /* éditeur du profil : le client (ou Antoine) change son matériel et son suivi */
 function PersoEditor({ data, src, plan, onDone, lib }) {
   const toast = useToast();
   const p = data.profile || {};
   const [mat, setMat] = useState(() => matOf(p) || (plan && plan.equipment === "maison" ? ["terrain"] : ["salle", "terrain"]));
   const [mods, setMods] = useState(() => modsOf(p) || { muscu: true, cardio: true, nutrition: true });
-  const [busy, setBusy] = useState(false);
   const pid = plan ? plan.programId : p.request && p.request.programId;
+  const natural = Math.max(1, natFreq(persoProg(progOf(pid, lib || {}), { materiel: mat, modules: mods })) || 1);
+  const [rythme, setRythme] = useState(() => rythmeOf(p) || natural);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { if (rythme < natural) setRythme(natural); }, [natural]);
   const checks = persoChecks(pid, mat, mods, lib);
   const nLock = !!(plan && !nutriOk(plan));
   const empty = !trainOn(mods) && (!mods.nutrition || nLock);
   const blocked = empty || checks.some((c) => c.t === "bad");
   const save = async () => {
     setBusy(true);
-    try { await src.setProfile({ ...p, materiel: mat, modules: mods, persoAt: nowISO() }); toast("Ton suivi est mis à jour.", "ok"); onDone && onDone(); }
+    try { await src.setProfile({ ...p, materiel: mat, modules: mods, rythme: trainOn(mods) && rythme > natural ? rythme : null, persoAt: nowISO() }); toast("Ton suivi est mis à jour.", "ok"); onDone && onDone(); }
     catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
   };
   return html`<div className="form">
     <div className="field"><span className="field-l">Ce que tu veux dans ton suivi</span><${ModulesPicker} value=${mods} onChange=${setMods} nutriLocked=${nLock} idp="pe-mod" />
       <span className="field-h">Même prix : tu choisis seulement ce que tu fais. Au moins un choix.</span></div>
     ${trainOn(mods) ? html`<div className="field"><span className="field-l">Mon matériel</span><${MaterielPicker} value=${mat} onChange=${setMat} idp="pe-mat" /></div>` : null}
+    ${trainOn(mods) ? html`<div className="field"><span className="field-l">Jours d'entraînement par semaine</span><${RythmePicker} value=${rythme} min=${natural} onChange=${setRythme} idp="pe-ry" />
+      <span className="field-h">${natural === 7 ? "Ton programme a déjà une séance chaque jour." : "Au-delà de " + plural(natural, "séance") + ", les jours en plus reprennent tes séances habituelles en boucle."}</span></div>` : null}
     ${empty ? html`<p className="small warn-t">Choisis au moins la musculation ou le cardio : la nutrition n'est pas incluse dans ta formule actuelle.</p>` : html`<${FitChecks} checks=${checks} />`}
     <div className="actions"><${Btn} block onClick=${save} disabled=${busy || blocked}>Enregistrer</${Btn}></div></div>`;
 }
@@ -187,20 +204,22 @@ function PersoEditor({ data, src, plan, onDone, lib }) {
 function PersoCard({ data, src, plan, lib, coachView }) {
   const [edit, setEdit] = useState(false);
   const p = data.profile || {};
-  const mat = matOf(p), mods = modsOf(p);
+  const mat = matOf(p), mods = modsOf(p), rythme = rythmeOf(p);
   return html`<${Card} title=${coachView ? "Suivi choisi par le client" : "Mon suivi sur mesure"} sub=${coachView ? null : "Ton matériel et ce que tu veux travailler : le programme s'adapte."}
     action=${src && src.setProfile ? html`<${Btn} small kind="ghost" onClick=${() => setEdit(true)}>Modifier</${Btn}>` : null}>
     <dl className="dl"><dt>Suivi</dt><dd>${modsLabel(mods)}</dd>
-      ${trainOn(mods) ? html`<dt>Matériel</dt><dd>${mat ? matLabel(mat) : plan && plan.equipment === "maison" ? "Maison (version maison du programme)" : "Salle de sport"}</dd>` : null}</dl>
+      ${trainOn(mods) ? html`<dt>Matériel</dt><dd>${mat ? matLabel(mat) : plan && plan.equipment === "maison" ? "Maison (version maison du programme)" : "Salle de sport"}</dd>` : null}
+      ${trainOn(mods) && rythme ? html`<dt>Rythme</dt><dd>${plural(rythme, "jour")} par semaine</dd>` : null}</dl>
     ${!coachView && !mat ? html`<p className="muted small">Indique ton matériel : les exercices que tu ne peux pas faire seront remplacés par un équivalent.</p>` : null}
     <${Modal} open=${edit} title=${coachView ? "Suivi du client" : "Mon suivi sur mesure"} onClose=${() => setEdit(false)}>${edit ? html`<${PersoEditor} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setEdit(false)} />` : null}</${Modal}>
   </${Card}>`;
 }
 /* ligne du contexte du coach IA */
 function persoLine(p) {
-  const mat = matOf(p), mods = modsOf(p);
+  const mat = matOf(p), mods = modsOf(p), rythme = rythmeOf(p);
   const L = [];
   if (mods && !modsAll(mods)) L.push("Suivi choisi par le client : " + modsLabel(mods).toLowerCase() + (trainOn(mods) ? "" : " (aucune séance d'entraînement, ne pas en proposer sauf demande)"));
   if (mat) L.push("Matériel disponible : " + (mat.length ? mat.map((k) => MATB[k].n).join(", ") : "aucun (poids du corps)") + ". Ne propose que des exercices faisables avec ce matériel.");
+  if (rythme) L.push("S'entraîne " + rythme + " jours par semaine : ses séances habituelles reviennent en boucle au-delà du rythme de base du programme.");
   return L.join(" · ");
 }

@@ -39,7 +39,7 @@ FR_SCAN = r"""(lang) => {
   while ((n = w.nextNode())) {
     const t = n.nodeValue.replace(/\s+/g, ' ').trim();
     if (t.length < 3 || ALLOW.test(t)) continue;
-    const u = t.replace(/In[èÈ]s|IN[ÈE]S|et al\.|et seq\.|Prépa|PRÉPA|Métropole|Antoine Limousi|Mon\./g, '');
+    const u = t.replace(/In[èÈ]s|IN[ÈE]S|et al\.|et seq\.|Prépa|PRÉPA|Métropole|Antoine Limousi|Mon\.|\bMon\b/g, ''); /* \bMon\b : abréviation anglaise de « Monday » (planning de la semaine), pas le déterminant français */
     const p = n.parentElement;
     if (!p || p.closest('[data-notr],.notr,script,style,textarea,code,pre,[aria-hidden=true]')) continue;
     if (!p.getClientRects().length) continue;

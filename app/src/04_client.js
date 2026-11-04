@@ -338,7 +338,7 @@ function Prereq({ prog }) {
 }
 function SessionRow({ e, log, onOpen, locked }) {
   return html`<button type="button" className=${"srow" + (log ? " done" : "") + (locked && !log ? " lock" : "")} onClick=${onOpen}>
-    <span className="srow-id">${e.extra ? "+" : e.sid}</span>
+    <span className="srow-id">${e.extra ? "+" : e.sid}${e.rep > 1 ? e.rep : ""}</span>
     <span className="srow-t"><b>${e.s.t}${e.opt ? html` <${Pill}>optionnelle</${Pill}>` : null}</b><span className="muted small">${log ? "Faite le " + fmtD(log.date) + (log.rpe !== undefined && log.rpe !== null ? " · effort " + log.rpe + "/10" : "") : (e.s.focus || "") + (e.s.lieu ? " · " + e.s.lieu : "")}</span></span>
     <span className=${"srow-s" + (log ? " ok" : "")}>${log ? "✓" : locked ? "🔒" : "›"}</span>
   </button>`;
@@ -383,6 +383,7 @@ function ClientProgram({ data, plan, prog, stats, lib, openSession, locked, open
       return html`<button key=${k} type="button" role="tab" aria-selected=${k === w} className=${"wk" + (k === w ? " on" : "") + (ps.week === k && ps.phase === "en_cours" ? " now" : "") + (dn >= pl && pl ? " full" : "")} onClick=${() => setW(k)}>
         <span>${WK}${k}</span><small>${dn}/${pl}</small></button>`;
     })}</div>
+    ${locked ? null : html`<${WeekPlanning} prog=${prog} plan=${plan} w=${w} lib=${lib} logs=${data.logs} onOpen=${openSession} />`}
     <${Card} title=${"Bloc " + Math.ceil(w / 4) + " — " + block.n} sub=${block.focus}>
       ${((w - 1) % 4) + 1 === 4 ? html`<p className="note">Semaine ${w} : allègement (moins de séries, charges plus légères) puis tests de fin de bloc.</p>` : null}
       ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} locked=${locked} onOpen=${() => openSession(e)} />`)}

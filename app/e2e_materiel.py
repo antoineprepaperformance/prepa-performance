@@ -173,6 +173,31 @@ async def run():
             ok(((await mdb(c2, "clients/u_p2") or {}).get("sum") or {}).get("msgSujet") == "sante", "résumé du client : sujet du dernier message (pour la boîte d'Antoine)")
             await c2.bring_to_front()
             ok(await c2.locator(".msg .msg-s.hot", has_text="Santé").count() == 1, "fil : sujet affiché sur le message")
+
+            # ---------- rythme : s'entraîner plus de jours (séances reprises en boucle) + planning visuel ----------
+            await c2.reload(); await c2.wait_for_timeout(1200)
+            await c2.get_by_role("button", name="Mon profil").first.click(); await c2.wait_for_timeout(400)
+            await c2.locator("section.card", has_text="Mon suivi sur mesure").get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
+            ok(await c2.locator('.seg[aria-label="Jours d\'entraînement par semaine"] button').count() == 5, "rythme : de 3 (naturel) à 7 jours proposés")
+            await c2.locator("#pe-ry-7").click(); await c2.wait_for_timeout(150)
+            await btn(c2, "Enregistrer"); await c2.wait_for_timeout(600)
+            ok((await mdb(c2, "clients/u_p2") or {}).get("rythme") == 7, "profil : rythme enregistré (7 jours)")
+            await c2.locator("nav.tabbar button", has_text="Programme").click(); await c2.wait_for_timeout(500)
+            ok(await c2.locator(".srow").count() == 7, "programme : 7 séances cette semaine (A, B, C reprises en boucle)", await c2.locator(".srow").count())
+            cells, rest = await c2.locator(".wp-d").count(), await c2.locator(".wp-d.rest").count()
+            ok(cells == 7 and rest == 0, "ma semaine : 7 jours d'entraînement affichés, aucun jour de repos", {"cells": cells, "rest": rest})
+            await c2.locator(".wp-d").first.screenshot(path=f"{OUT}/05_planning_jour.png")
+            await c2.locator(".wplan").screenshot(path=f"{OUT}/05_planning_semaine.png")
+
+            # ---------- rythme ramené au naturel : rien n'est forcé en dessous du minimum du programme ----------
+            await c2.get_by_role("button", name="Mon profil").first.click(); await c2.wait_for_timeout(400)
+            await c2.locator("section.card", has_text="Mon suivi sur mesure").get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
+            await c2.locator("#pe-ry-3").click(); await c2.wait_for_timeout(150)
+            await btn(c2, "Enregistrer"); await c2.wait_for_timeout(600)
+            ok((await mdb(c2, "clients/u_p2") or {}).get("rythme") is None, "rythme égal au naturel : rien n'est enregistré (comportement par défaut)")
+            await c2.locator("nav.tabbar button", has_text="Programme").click(); await c2.wait_for_timeout(500)
+            ok(await c2.locator(".srow").count() == 3, "retour à 3 séances naturelles", await c2.locator(".srow").count())
+
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1200)
             await co.locator(".side-nav button", has_text="Messages").click(); await co.wait_for_timeout(600)
             rows = await co.evaluate("[...document.querySelectorAll('.inbox-row')].map((e) => e.innerText.replace(/\\s+/g, ' '))")

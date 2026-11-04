@@ -32,6 +32,8 @@ const MOIS = { fr: ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "
   es: ["ene.", "feb.", "mar.", "abr.", "may.", "jun.", "jul.", "ago.", "sept.", "oct.", "nov.", "dic."] }[typeof LANG === "string" ? LANG : "fr"];
 const JOURS = { fr: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
   es: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"] }[typeof LANG === "string" ? LANG : "fr"];
+/* répartit n séances le plus régulièrement possible sur une semaine de 7 jours : jours 0 (lundi) à 6 (dimanche) */
+function spreadDays(n) { const k = clamp(Math.round(n), 0, 7); return Array.from({ length: k }, (_, i) => Math.floor((i * 7) / k)); }
 function fmtD(s) { if (!s) return "—"; const d = parseISO(s.slice(0, 10)); return d.getDate() + " " + MOIS[d.getMonth()]; }
 function fmtDY(s) { if (!s) return "—"; const d = parseISO(s.slice(0, 10)); return d.getDate() + " " + MOIS[d.getMonth()] + " " + d.getFullYear(); }
 function nextMonday() { const d = new Date(); const k = (8 - d.getDay()) % 7 || 7; d.setDate(d.getDate() + k); return isoOf(d); }
@@ -70,10 +72,18 @@ function planState(plan, today) {
   return { phase: "en_cours", week, weeks, block: Math.ceil(week / 4), wib: ((week - 1) % 4) + 1, end, day: (d % 7) + 1 };
 }
 function blockOf(prog, w) { if (!prog) return null; const i = Math.min(Math.ceil(w / 4), prog.blocks.length) - 1; return prog.blocks[Math.max(0, i)]; }
+/* rythme (profil.rythme, via persoProg) : s'entraîner plus de jours que le programme n'a de séances propres
+   reprend ses séances en boucle (A, B, C, A, B, C…) plutôt que d'inventer un contenu différent chaque jour. */
 function weekSessions(prog, plan, w, lib) {
   const b = blockOf(prog, w);
   if (!b) return [];
-  const out = b.sessions.map((s) => ({ key: "w" + w + "-" + s.id, w, sid: s.id, s, extra: false }));
+  const base = b.sessions.length;
+  const n = base > 0 && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const s = b.sessions[i % base], rep = Math.floor(i / base);
+    out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1 });
+  }
   (plan && plan.extra || []).filter((x) => Number(x.w) === w).forEach((x, i) => {
     const s = lib && lib[x.sid];
     if (s && s.kind === "session") out.push({ key: "w" + w + "-X" + x.sid, w, sid: "X" + x.sid, s: { ...s, id: "+" }, extra: true });

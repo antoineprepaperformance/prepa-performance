@@ -168,7 +168,7 @@ function clientContext({ data, plan, prog, stats, lib }) {
     ses.forEach((e) => {
       const items = adjItems(e, data, prog);
       const dn = data.logs[e.key];
-      L.push("  " + e.sid + " « " + e.s.t + " »" + (dn ? " ✓ faite le " + fmtD(dn.date) : " à faire") + " : " + items.map((it) => it.e + " (" + (EXB[it.e] ? EXB[it.e].n : it.e) + ", " + doseOf(it, ps.wib || 1).text + ")" + (it.adjNote ? " [consigne IA : " + it.adjNote + "]" : "")).join(" ; "));
+      L.push("  " + e.sid + (e.rep > 1 ? " (" + e.rep + "e fois cette semaine)" : "") + " « " + e.s.t + " »" + (dn ? " ✓ faite le " + fmtD(dn.date) : " à faire") + " : " + items.map((it) => it.e + " (" + (EXB[it.e] ? EXB[it.e].n : it.e) + ", " + doseOf(it, ps.wib || 1).text + ")" + (it.adjNote ? " [consigne IA : " + it.adjNote + "]" : "")).join(" ; "));
     });
     if (stats.adherence !== null) L.push("Régularité depuis le début : " + Math.round(stats.adherence * 100) + " % des séances prévues.");
   } else L.push("Programme : pas encore actif.");

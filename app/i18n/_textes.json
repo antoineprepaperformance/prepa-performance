@@ -51012,5 +51012,40 @@
   "kind": "string",
   "where": "src/site/11_site.js:196",
   "n": 2
+ },
+ {
+  "h": "fe7d4d15fc",
+  "k": "Ma semaine",
+  "kind": "text",
+  "where": "src:29_planning.js",
+  "n": 1
+ },
+ {
+  "h": "c4214ab72a",
+  "k": "Une suggestion de jours : tu peux décaler, l'important est de faire tes séances",
+  "kind": "text",
+  "where": "src:29_planning.js",
+  "n": 1
+ },
+ {
+  "h": "ce2b77f99d",
+  "k": "Jours d'entraînement par semaine",
+  "kind": "text",
+  "where": "src:27_materiel.js",
+  "n": 1
+ },
+ {
+  "h": "0fe56f8b67",
+  "k": "Ton programme a déjà une séance chaque jour.",
+  "kind": "text",
+  "where": "src:27_materiel.js",
+  "n": 1
+ },
+ {
+  "h": "d4f84f4165",
+  "k": "Rythme",
+  "kind": "text",
+  "where": "src:27_materiel.js",
+  "n": 1
  }
 ]

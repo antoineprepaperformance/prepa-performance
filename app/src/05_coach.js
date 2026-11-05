@@ -127,7 +127,8 @@ function CoachApp({ db, settings, lib, exo, dl }) {
           onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
       ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
-          settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")} />` : null}
+          settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")}
+          edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
       ${view === "client" && !selRow ? html`<${Empty} title="Client introuvable"><${Btn} onClick=${() => go("clients")}>Retour aux clients</${Btn}></${Empty}>` : null}
       ${view === "programmes" ? html`<${Library} lib=${lib} db=${db} open=${(p) => { setProgSel(p); setView("prog"); }} edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
       ${view === "prog" && progSel ? html`<${ProgramViewer} prog=${progSel} lib=${lib} exo=${exo} db=${db} onBack=${() => go("programmes")} edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
@@ -283,7 +284,7 @@ function ClientsList({ rows, openClient, onAdd, onImport }) {
 }
 
 /* ---------- Fiche client ---------- */
-function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, tab0, onBack }) {
+function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, tab0, onBack, edit }) {
   const src = useMemo(() => (demoData ? memSource(demoData, "demo") : db ? dbSource(db, row.cid) : null), [row.cid]);
   useEffect(() => () => { src && src.close && src.close(); }, [src]);
   const data = useSource(src);
@@ -315,7 +316,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
-    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} />` : null}
+    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} exo=${exo} edit=${edit} />` : null}
     ${tab === "sante" ? html`<${CoachSante} data=${data} />` : null}
     ${tab === "plan" ? html`<${PlanEditor} data=${data} src=${src} lib=${lib} settings=${settings} cid=${row.cid} exo=${exo} demo=${row.demo} />` : null}
     ${tab === "notes" ? html`<${CoachNotes} db=${db} cid=${row.cid} note=${note} demo=${row.demo} name=${p.name} onDeleted=${onBack} relay=${p.santeSync ? relayOf(settings) : ""} />` : null}

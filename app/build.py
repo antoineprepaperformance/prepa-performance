@@ -24,7 +24,7 @@ ciqjson = json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")).replace("<"
 from i18n_build import dictionaries
 I18N = dictionaries()
 i18njs = {l: json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c") for l, d in I18N.items()}
-js = "\n".join((SRC / f).read_text() for f in ["00_i18n.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "27_materiel.js", "28_pdf.js", "29_planning.js", "30_article.js", "07_main.js"])
+js = "\n".join((SRC / f).read_text() for f in ["00_i18n.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js", "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "27_materiel.js", "28_pdf.js", "29_planning.js", "30_article.js", "31_pdfimport.js", "07_main.js"])
 css = (SRC / "styles.css").read_text()
 assert "</script" not in js
 
@@ -44,7 +44,10 @@ def page(libs):
 
 CDN = ["https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js",
        "https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js",
-       "https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"]
+       "https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js",
+       # lecture du texte d'un PDF (import de programme, 31_pdfimport.js) : seule cette fonction a besoin du réseau,
+       # le reste de l'application marche sans ; non mise en cache hors ligne, volontairement
+       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"]
 (ROOT / "dist").mkdir(exist_ok=True)
 (ROOT / "dist" / "index.html").write_text(page(CDN))
 

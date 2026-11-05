@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-11-16",
+ "publications": [
+  {
+   "id": "2026-11-16-a",
+   "quand": "2026-11-16T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-b",
+   "quand": "2026-11-17T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_nordic.jpg"
+   ],
+   "auto": true,
+   "legende": "Un seul exercice, et deux fois moins de blessures aux ischio-jambiers. 🦵\nC'est ce que montre une méta-analyse sur près de 8 500 sportifs : les programmes de prévention qui contiennent le Nordic font baisser ces blessures jusqu'à 51 %.\n\nComment le faire :\n1. À genoux sur un tapis, chevilles bloquées par un partenaire (ou sous un banc lourd).\n2. Descends vers l'avant le plus lentement possible, corps aligné des genoux aux épaules.\n3. Rattrape-toi avec les mains et repousse pour remonter.\n\nPour commencer : 2 séries de 5, deux fois par semaine, loin des matchs. Trop dur ? Réduis l'amplitude ou aide-toi d'un élastique.\n👉 Enregistre ce post et montre-le à ton partenaire d'entraînement. Le Nordic est dans l'application, avec sa version facile et sa progression.\n\nSource : van Dyk N, Behan FP, Whiteley R. Br J Sports Med. 2019;53(21):1362-1370.\n\n#preparationphysique #ischiojambiers #prevention #rugby #football #sprint #musculation #blessure"
+  },
+  {
+   "id": "2026-11-16-c",
+   "quand": "2026-11-18T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-d",
+   "quand": "2026-11-19T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_pied_1.jpg",
+    "05_post_jeudi_pied_2.jpg",
+    "06_post_jeudi_pied_3.jpg",
+    "07_post_jeudi_pied_4.jpg",
+    "08_post_jeudi_pied_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Les points au pied se gagnent à l'entraînement, pas le jour du match. 🏉\nLe secret des bons buteurs : une routine qui ne change jamais… et un bras qu'on oublie.\n\nLes 4 étapes de la fiche :\n1. Ballon sur le tee, légèrement incliné ; vise un point précis derrière les poteaux.\n2. Recule de 3 à 4 pas, décale-toi de 2 : toujours les mêmes appuis.\n3. Élan en courbe, pied d'appui à 20-30 cm du ballon, orienté vers la cible.\n4. Frappe avec le haut du pied, bras opposé ouvert puis ramené devant toi.\n\nDose : 3 séries de 5 tirs (face aux poteaux, puis à 15 m et à 5 m de la touche). Pour te mettre en conditions de match : un tir juste après un sprint de 20 m.\n👉 Enregistre le carrousel et envoie-le à ton buteur. La fiche complète, avec son schéma animé, est dans l'application.\n\nSource : Bezodis N, Trewartha G, Wilson C, Irwin G. Contributions of the non-kicking-side arm to rugby place-kicking technique. Sports Biomech. 2007;6(2):171-186.\n\n#rugby #buteur #rugbyamateur #preparationphysique #technique #ouvreur #entrainement #rugbyfeminin"
+  },
+  {
+   "id": "2026-11-16-e",
+   "quand": "2026-11-21T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_genou.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-f",
+   "quand": "2026-11-22T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Tu sais où tu te situes face aux records du monde ? 🏅\nDans l'application, ta carte athlète compare chacun de tes tests (sprint, saut, force, endurance) au record du monde de référence, et ta note monte palier par palier avec tes progrès.\nNouveau aussi : ta semaine en un coup d'œil, de 3 à 7 jours d'entraînement, et des fiches technique avec leur schéma et leurs études.\nFormules dès 9,90 € par mois.\n👉 Lien en bio pour découvrir les formules.\n\nSource : records de référence de World Athletics et de l'IPF (carte athlète de l'application). Aucune promesse de résultat, aucun témoignage.\n\n#preparationphysique #coachingenligne #coachsportif #musculation #rugby #football #handball #bordeaux"
+  }
+ ]
+}

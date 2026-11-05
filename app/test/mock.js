@@ -70,7 +70,13 @@
       else if (/Tâche : analyse_produit/.test(all)) text = JSON.stringify({ produit: "Skyr nature", marque: "Marque test", ean: null, lisible: true, estime: false, pour100: { kcal: 64, p: 11, c: 4, f: 0.2, sucres: 4, fibres: 0, sel: 0.1 }, portion_g: 150, nutriscore: "A", verdict: "bon", commentaire: "Excellente source de protéines pour ta collation.", alternative: null });
       else if (/Analyse la technique d'un client/.test(all)) text = JSON.stringify({ resume: "Bonne profondeur, le buste reste solide. Le genou part un peu vers l'intérieur à la remontée.", points: [{ point: "Genoux dans l'axe des pieds", ok: false, conseil: "Pousse les genoux vers l'extérieur en remontant." }, { point: "Dos neutre", ok: true, conseil: "Garde ce gainage." }], priorite: "Genoux dans l'axe des pieds.", securite: "" });
       else if (/Propose UNE recette simple pour un sportif/.test(all)) text = JSON.stringify({ n: "Bol poulet, riz et courgettes", temps: 20, ingredients: [{ nom: "blanc de poulet", g: 150 }, { nom: "riz basmati", g: 80 }, { nom: "courgette", g: 200 }, { nom: "huile d'olive", g: 10 }], etapes: ["Cuire le riz.", "Saisir le poulet en dés.", "Ajouter les courgettes en rondelles."], astuce: "Double les quantités pour le lendemain.", kcal: 620, p: 45, c: 70, f: 15 });
-      else if (/Tâche : import_programme_meta\./.test(all)) text = JSON.stringify({ n: "Stage test", short: "Programme de test", desc: "Semaine de test pour l'import automatique.", lieu: "Salle",
+      else if (/Tâche : import_programme_meta\./.test(all) && /MARQUEUR-REPETE/.test(all)) text = JSON.stringify({ n: "Semaine type test", short: "Programme de test", desc: "Semaine type de test pour l'import automatique.", lieu: "Salle", repeating: true,
+        blockName: "Semaine type", blockFocus: "Vérifier la périodisation importée",
+        sessions: [
+          { id: "lun", t: "Squat", focus: "Force max", lieu: "Salle", day: 0, items: [{ e: "squat_barre", w: ["4 x 5 · 75 %", "5 x 4 · 80 %", "5 x 3 · 85 %", "3 x 3 · 70 %"] }] },
+          { id: "mer", t: "Sprint", focus: "Vitesse", lieu: "Piste", day: 2, items: [{ e: "sprint_10m", w: ["3 x 10 m", "4 x 10 m", "5 x 10 m", "2 x 10 m"] }] },
+        ], weeks: [], refs: [], science: "" });
+      else if (/Tâche : import_programme_meta\./.test(all)) text = JSON.stringify({ n: "Stage test", short: "Programme de test", desc: "Semaine de test pour l'import automatique.", lieu: "Salle", repeating: false, sessions: [],
         weeks: [{ n: "Semaine du test", focus: "Vérifier l'import", marker: "MARQUEUR-SEMAINE-1" }], refs: [], science: "" });
       else if (/Tâche : import_programme_semaine\./.test(all)) text = JSON.stringify({ sessions: [
         { id: "lun-am", t: "Poussée du matin", focus: "Vitesse", lieu: "Piste", day: 0, moment: "matin", items: [{ e: "sprint_10m", free: "6 x 10 m départ arrêté", n: "Récup complète" }] },
@@ -113,9 +119,10 @@
   }
   const sampleFn = nosample ? null : mkSample();
   window.claude = { use: async (n) => { await new Promise((r) => setTimeout(r, 15)); if (nodb && n === "db") return null; return n === "db" ? db : n === "user" ? user : n === "downloads" ? downloads : n === "sample" ? sampleFn : null; } };
-  /* 31_pdfimport.js : au lieu de charger la vraie bibliothèque pdf.js par le réseau (évité dans les tests),
-     un texte fixe suffit ici puisque la réponse de l'IA simulée ci-dessus ne dépend pas du texte du PDF */
+  /* 31_pdfimport.js : au lieu de charger la vraie bibliothèque pdf.js par le réseau (évité dans les tests), un
+     texte fixe suffit ici (la réponse simulée ci-dessus dépend du texte, pas de vraie lecture de PDF) ; un test
+     peut le changer avant l'import via window.__fakePdfText pour choisir quelle réponse simulée se déclenche */
   window.pdfjsLib = { GlobalWorkerOptions: {}, getDocument: () => ({ promise: Promise.resolve({
-    numPages: 1, getPage: async () => ({ getTextContent: async () => ({ items: [{ str: "Programme de test : entraînement du lundi, matin et soir, pour vérifier l'import automatique." }] }) }),
+    numPages: 1, getPage: async () => ({ getTextContent: async () => ({ items: [{ str: window.__fakePdfText || "Programme de test : entraînement du lundi, matin et soir, pour vérifier l'import automatique." }] }) }),
   }) }) };
 })();

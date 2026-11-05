@@ -38,14 +38,33 @@ function ClientPdfs({ data, src }) {
   </${Card}>`;
 }
 
-/* côté coach : déposer, nommer, rattacher à une semaine, retirer */
-function CoachPdfs({ data, src, plan }) {
+/* côté coach : déposer, nommer, rattacher à une semaine, retirer, ou transformer en programme (31_pdfimport.js) */
+function CoachPdfs({ data, src, plan, exo, edit }) {
   const toast = useToast();
+  const ai = useAI();
   const list = pdfList(data);
   const [f, setF] = useState({ file: null, n: "", w: "", note: "" });
   const [busy, setBusy] = useState(false);
   const [sure, setSure] = useState(null);
   const [fk, setFk] = useState(0);
+  const [imp, setImp] = useState(null);
+  const [impErr, setImpErr] = useState({});
+  const doImport = async (m) => {
+    if (!ai.sample) { toast("Coach IA indisponible ici : ouvre l'application depuis ton compte Claude.", "warn"); return; }
+    setImpErr((o) => ({ ...o, [m.id]: "" }));
+    setImp({ id: m.id, step: 0, total: 1 });
+    try {
+      const b64 = await src.loadPdf(m.id, m.parts || 1);
+      if (!b64) throw new Error("vide");
+      const text = await extractPdfText(pdfBlob(b64));
+      if (!text || text.replace(/\s/g, "").length < 60) throw Object.assign(new Error("texte introuvable"), { code: "no_text" });
+      const doc = await importProgramFromText(text, exo, ai.sample, (step, total) => setImp({ id: m.id, step, total }));
+      if (!doc.n || doc.n === "Programme importé") doc.n = m.n;
+      edit(doc);
+      toast("Brouillon créé à partir du PDF : relis chaque séance, corrige ce qu'il faut, puis enregistre.", "ok");
+    } catch (e) { setImpErr((o) => ({ ...o, [m.id]: importErrText(e) })); }
+    setImp(null);
+  };
   const weeks = plan ? plan.weeks : 12;
   const pick = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -84,8 +103,12 @@ function CoachPdfs({ data, src, plan }) {
       </div>
     </${Card}>
     <${Card} title="PDF de ce client" sub=${list.length ? list.length + " fichier" + (list.length > 1 ? "s" : "") : "Aucun pour l'instant"}>
-      ${list.length ? html`<ul className="rlist">${list.map((m) => html`<li key=${m.id}><span className="stack-s"><b>${m.n}</b><span className="small muted">${pdfWhen(m)} · ${fmtN((m.size || 0) / 1048576, 1)} Mo${m.note ? " · " + m.note : ""}</span></span>
-        <${Btn} small kind="quiet" onClick=${() => del(m)}>${sure === m.id ? "Confirmer le retrait" : "Retirer"}</${Btn}></li>`)}</ul>` : html`<p className="small muted">Les PDF envoyés apparaissent ici et dans l'onglet Programme du client.</p>`}
+      ${list.length ? html`<ul className="rlist">${list.map((m) => html`<li key=${m.id}><span className="stack-s"><b>${m.n}</b><span className="small muted">${pdfWhen(m)} · ${fmtN((m.size || 0) / 1048576, 1)} Mo${m.note ? " · " + m.note : ""}</span>
+          ${impErr[m.id] ? html`<span className="small warn-t">${impErr[m.id]}</span>` : null}</span>
+        <span className="btnrow"><${Btn} small kind="ghost" onClick=${() => doImport(m)} disabled=${!!imp}>${imp && imp.id === m.id ? "Transformation " + imp.step + "/" + imp.total + "…" : "Transformer en programme"}</${Btn}>
+        <${Btn} small kind="quiet" onClick=${() => del(m)} disabled=${!!imp}>${sure === m.id ? "Confirmer le retrait" : "Retirer"}</${Btn}></span></li>`)}</ul>`
+        : html`<p className="small muted">Les PDF envoyés apparaissent ici et dans l'onglet Programme du client.</p>`}
+      ${list.length ? html`<p className="muted small">« Transformer en programme » lit le texte du PDF et en propose une version avec cases à cocher, comme un programme normal : tu la relis et la corriges avant de l'enregistrer, puis tu l'assignes à ce client depuis l'onglet Plan.</p>` : null}
     </${Card}>
   </div>`;
 }

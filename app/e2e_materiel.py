@@ -221,7 +221,7 @@ async def run():
             await co.get_by_role("radio", name="Séances", exact=True).click(); await co.wait_for_timeout(400)
             cells = await co.locator(".wp-d").count()
             ok(cells == 7 and await has(co, "Sa semaine"), "coach : planning de la semaine du client (lecture seule)", cells)
-            ok(await co.locator(".wp-d.on, .wp-d.done").first.is_disabled(), "coach : planning en lecture seule, pas de clic pour ouvrir la séance")
+            ok(await co.locator(".wp-e").first.is_disabled(), "coach : planning en lecture seule, pas de clic pour ouvrir la séance")
             await co.screenshot(path=f"{OUT}/06_coach_planning.png", full_page=True)
             await b.close()
     finally:

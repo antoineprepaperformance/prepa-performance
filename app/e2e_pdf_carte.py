@@ -126,7 +126,40 @@ async def run():
             ok(await card.get_by_role("link", name="Télécharger").get_attribute("download") is not None, "bouton Télécharger")
             await c.screenshot(path=f"{OUT}/02_client_pdf.png")
 
+            # ---------- coach : transformer le PDF en programme (import par l'IA, 31_pdfimport.js) ----------
+            await co.bring_to_front()
+            await btn(co, "Transformer en programme")
+            await co.wait_for_timeout(2000)
+            ok(await co.input_value("#pe-n") == "Stage test", "import PDF : brouillon de programme ouvert avec le nom trouvé dans le document")
+            ok("importé d'un pdf" in (await co.inner_text("body")).lower(), "import PDF : signalé comme à vérifier avant d'enregistrer")
+            ok(await co.locator(".sess-ed").count() == 3, "import PDF : une séance par entrée du document, dont deux le même jour")
+            ok(await co.locator(".sess-ed summary", has_text="Poussée du matin").count() == 1 and await co.locator(".sess-ed summary", has_text="Musculation du soir").count() == 1,
+               "import PDF : titres des séances repris du document")
+            ok(await co.input_value("#sd-0-0") == "0" and await co.input_value("#sm-0-0") == "matin", "import PDF : première séance calée lundi matin")
+            await co.locator(".sess-ed summary", has_text="Musculation du soir").click(); await co.wait_for_timeout(150)
+            ok(await co.input_value("#sd-0-1") == "0" and await co.input_value("#sm-0-1") == "soir", "import PDF : séance bi-quotidienne calée le même jour (après-midi/soir)")
+            await co.screenshot(path=f"{OUT}/03_import_pdf.png", full_page=True)
+            await btn(co, "Enregistrer le programme"); await co.wait_for_timeout(500)
+
+            # ---------- assignation du programme importé, planning bi-quotidien côté client ----------
+            await co.locator(".side-nav button", has_text="Clients").first.click(); await co.wait_for_timeout(500)
+            await co.locator(".ctable tbody tr", has_text="Paul Pdf").first.click(); await co.wait_for_timeout(900)
+            await co.get_by_role("radio", name="Plan", exact=True).click(); await co.wait_for_timeout(400)
+            await co.select_option("#pe-prog", label="Stage test (perso)")
+            await btn(co, "Enregistrer"); await co.wait_for_timeout(600)
+            await co.get_by_role("radio", name="Séances", exact=True).click(); await co.wait_for_timeout(500)
+            cell = co.locator(".wplan .wp-d").filter(has=co.locator(".wp-e")).first
+            entries = await cell.locator(".wp-e").all_inner_texts()
+            ok(len(entries) == 2 and "matin" in entries[0] and "soir" in entries[1], "planning (coach) : deux séances le même jour, matin et soir", entries)
+            await c.bring_to_front(); await c.goto(URL + "?as=p1"); await c.wait_for_timeout(1300)
+            week_card = c.locator(".card", has_text="Semaine 1")
+            srows = await week_card.locator(".srow").all_inner_texts()
+            ok(len(srows) == 3 and any("Poussée du matin" in r for r in srows) and any("Musculation du soir" in r for r in srows) and any("Repos actif" in r for r in srows),
+               "programme (client) : les 3 séances importées sont là, à cocher comme un programme normal", srows)
+            await c.screenshot(path=f"{OUT}/04_client_programme_importe.png", full_page=True)
+
             # ---------- coach : retrait ----------
+            await co.get_by_role("radio", name="Fichiers PDF").click(); await co.wait_for_timeout(400)
             await co.bring_to_front()
             await co.get_by_role("button", name="Retirer").first.click(); await co.wait_for_timeout(200)
             await co.get_by_role("button", name="Confirmer le retrait").first.click(); await co.wait_for_timeout(800)

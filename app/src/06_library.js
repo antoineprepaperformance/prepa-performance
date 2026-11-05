@@ -24,6 +24,9 @@ function Library({ lib, db, open, edit }) {
   </div>`;
 }
 const WU_DEFAULT = "10 min : 5 min de cardio léger, mobilité des hanches et des chevilles, puis 2 séries progressives du premier exercice.";
+/* jours de la semaine, lundi en premier (s.day : 0 = lundi … 6 = dimanche), pour caler une séance sur un jour précis
+   d'un programme importé (séances bi-quotidiennes comprises, via s.moment) plutôt que de la répartir automatiquement */
+const JOURS_LUN = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
 function ProgramViewer({ prog, lib, exo, db, onBack, edit }) {
   const toast = useToast();
@@ -36,12 +39,12 @@ function ProgramViewer({ prog, lib, exo, db, onBack, edit }) {
   const del = async () => { try { await dbDel(db, "library/" + prog.id); toast("Programme supprimé.", "ok"); onBack(); } catch (e) { toast("Suppression impossible" + errWhy(e, true), "bad"); } };
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Programmes</button>
-    <header className="page-h"><div><div className="eyebrow">${prog.lieu}${isCustom ? " · personnalisé" : ""}</div><h1>${prog.n}</h1><p className="muted">${prog.desc}</p></div>
+    <header className="page-h"><div><div className="eyebrow">${prog.lieu}${prog.fromPdf ? " · importé d'un PDF, à vérifier" : isCustom ? " · personnalisé" : ""}</div><h1>${prog.n}</h1><p className="muted">${prog.desc}</p></div>
       <div className="btnrow">${isCustom ? html`<${Btn} onClick=${() => edit(prog)}>Modifier</${Btn}>` : null}<${Btn} kind="ghost" onClick=${dup}>Dupliquer pour personnaliser</${Btn}></div></header>
     <div className="row-wrap"><${Seg} options=${prog.blocks.map((x, i) => ({ v: i, n: "Bloc " + (i + 1) + " · " + x.n }))} value=${b} onChange=${setB} />
       <${Seg} options=${[1, 2, 3, 4].map((x) => ({ v: x, n: "Semaine " + (b * 4 + x) }))} value=${wib} onChange=${setWib} /></div>
     <p className="muted">${block.focus}${wib === 4 ? " · Semaine d'allègement et tests." : ""}</p>
-    <div className="grid3">${block.sessions.map((s) => html`<${Card} key=${s.id} title=${s.id + " · " + s.t} sub=${(s.focus || "") + (s.lieu ? " · " + s.lieu : "")}>
+    <div className="grid3">${(block.sessions.some((s) => s.wib) ? block.sessions.filter((s) => !s.wib || s.wib === wib) : block.sessions).map((s) => html`<${Card} key=${s.id} title=${s.id + " · " + s.t + (s.day !== undefined && s.day !== null ? " · " + JOURS_LUN[s.day] + (s.moment === "matin" ? " matin" : s.moment === "soir" ? " soir" : "") : "")} sub=${(s.focus || "") + (s.lieu ? " · " + s.lieu : "")}>
       <ol className="plist">${s.items.map((it, i) => { const ex = exOf(it.e, "salle", prog, exo); return html`<li key=${i}><b>${ex.n}</b><span>${doseOf(it, wib).text}</span>${it.n ? html`<small>${it.n}</small>` : null}</li>`; })}</ol>
     </${Card}>`)}</div>
     <${Card} title="Tests du programme"><div className="chips">${(prog.tests || []).map((t) => html`<${Pill} key=${t}>${TESTS[t] ? TESTS[t].n : t}</${Pill}>`)}</div></${Card}>
@@ -73,7 +76,7 @@ function DocEditor({ doc, db, lib, exo, onDone }) {
   const setBlock = (i, b) => setD({ ...d, blocks: d.blocks.map((x, k) => (k === i ? b : x)) });
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onDone}>‹ Programmes</button>
-    <header className="page-h"><div><div className="eyebrow">Programme perso${d.from && PB[d.from] ? " · basé sur " + PB[d.from].n : ""}</div><h1>${d.n || "Programme"}</h1></div><div className="btnrow"><${Btn} onClick=${save}>Enregistrer</${Btn}></div></header>
+    <header className="page-h"><div><div className="eyebrow">Programme perso${d.fromPdf ? " · importé d'un PDF, à vérifier avant d'enregistrer" : d.from && PB[d.from] ? " · basé sur " + PB[d.from].n : ""}</div><h1>${d.n || "Programme"}</h1></div><div className="btnrow"><${Btn} onClick=${save}>Enregistrer</${Btn}></div></header>
     <${Card} title="Informations"><div className="form">
       <${Field} label="Nom" id="pe-n"><input id="pe-n" value=${d.n} onChange=${(e) => setD({ ...d, n: e.target.value })} /></${Field}>
       <${Field} label="Accroche" id="pe-s"><input id="pe-s" value=${d.short || ""} onChange=${(e) => setD({ ...d, short: e.target.value })} /></${Field}>
@@ -88,10 +91,18 @@ function DocEditor({ doc, db, lib, exo, onDone }) {
       action=${d.blocks.length > 1 ? html`<button type="button" className="linkbtn" onClick=${() => setD({ ...d, blocks: d.blocks.filter((_, k) => k !== i) })}>Retirer le bloc</button>` : null}>
       <div className="form"><div className="row2"><${Field} label="Nom du bloc" id=${"b-n-" + i}><input id=${"b-n-" + i} value=${b.n} onChange=${(e) => setBlock(i, { ...b, n: e.target.value })} /></${Field}>
         <${Field} label="Objectif du bloc" id=${"b-f-" + i}><input id=${"b-f-" + i} value=${b.focus || ""} onChange=${(e) => setBlock(i, { ...b, focus: e.target.value })} /></${Field}></div></div>
-      ${b.sessions.map((s, k) => html`<details key=${k} className="sess-ed" open=${k === 0 && i === 0}><summary><b>Séance ${s.id}</b> · ${s.t} <span className="muted small">${plural(s.items.length, "exercice")}</span></summary>
-        <${SessionEditor} s=${s} exo=${exo} onChange=${(ns) => setBlock(i, { ...b, sessions: b.sessions.map((x, j) => (j === k ? { ...x, ...ns } : x)) })} />
+      ${b.sessions.map((s, k) => { const setS = (ns) => setBlock(i, { ...b, sessions: b.sessions.map((x, j) => (j === k ? { ...x, ...ns } : x)) });
+        return html`<details key=${k} className="sess-ed" open=${k === 0 && i === 0}><summary><b>Séance ${s.id}</b> · ${s.t} <span className="muted small">${plural(s.items.length, "exercice")}</span></summary>
+        <div className="row3"><${Field} label="Semaine du bloc" id=${"sw-" + i + "-" + k} hint="Pour un programme importé où chaque semaine a son propre contenu (pas de répétition).">
+            <select id=${"sw-" + i + "-" + k} value=${s.wib || ""} onChange=${(e) => setS({ wib: e.target.value ? Number(e.target.value) : undefined })}>
+              <option value="">Toutes les semaines du bloc</option>${[1, 2, 3, 4].map((x) => html`<option key=${x} value=${x}>Semaine ${x} du bloc seulement</option>`)}</select></${Field}>
+          <${Field} label="Jour fixe" id=${"sd-" + i + "-" + k}><select id=${"sd-" + i + "-" + k} value=${s.day ?? ""} onChange=${(e) => setS({ day: e.target.value === "" ? undefined : Number(e.target.value), moment: e.target.value === "" ? undefined : s.moment })}>
+              <option value="">Réparti automatiquement</option>${JOURS_LUN.map((n, x) => html`<option key=${x} value=${x}>${n}</option>`)}</select></${Field}>
+          <${Field} label="Moment" id=${"sm-" + i + "-" + k}><select id=${"sm-" + i + "-" + k} value=${s.moment || ""} disabled=${s.day === undefined || s.day === null} onChange=${(e) => setS({ moment: e.target.value || undefined })}>
+              <option value="">Journée</option><option value="matin">Matin</option><option value="soir">Après-midi / soir</option></select></${Field}></div>
+        <${SessionEditor} s=${s} exo=${exo} onChange=${setS} />
         ${b.sessions.length > 1 ? html`<button type="button" className="linkbtn" onClick=${() => setBlock(i, { ...b, sessions: b.sessions.filter((_, j) => j !== k) })}>Retirer la séance ${s.id}</button>` : null}
-      </details>`)}
+      </details>`; })}
       ${b.sessions.length < 6 ? html`<${Btn} kind="ghost" small onClick=${() => setBlock(i, { ...b, sessions: [...b.sessions, { id: "ABCDEF"[b.sessions.length], t: "Séance " + "ABCDEF"[b.sessions.length], focus: "", lieu: "Salle", wu: WU_DEFAULT, items: [] }] })}>Ajouter une séance</${Btn}>` : null}
     </${Card}>`)}
     ${d.blocks.length < 3 ? html`<${Btn} kind="ghost" onClick=${() => setD({ ...d, blocks: [...d.blocks, clone(d.blocks[d.blocks.length - 1])].map((x, i) => (i === d.blocks.length ? { ...x, n: "Bloc " + (i + 1) } : x)) })}>Ajouter un bloc (copie du précédent)</${Btn}>` : null}
@@ -115,16 +126,17 @@ function SessionEditor({ s, onChange, exo }) {
     <${Field} label="Objectif de la séance" id=${uid + "f"}><input id=${uid + "f"} value=${s.focus || ""} onChange=${(e) => onChange({ focus: e.target.value })} /></${Field}>
     <${Field} label="Échauffement" id=${uid + "w"}><textarea id=${uid + "w"} rows="2" value=${s.wu || ""} onChange=${(e) => onChange({ wu: e.target.value })}></textarea></${Field}>
     <div className="items">${s.items.map((it, i) => {
-      const mode = it.w ? "libre" : (it.t || "H12");
+      const mode = it.free !== undefined ? "fixe" : it.w ? "libre" : (it.t || "H12");
       return html`<div className="item" key=${i}>
         <div className="item-h"><span className="exc-n">${i + 1}</span>
           <select id=${uid + "e" + i} aria-label="Exercice" value=${it.e} onChange=${(e) => setItem(i, { ...it, e: e.target.value })}>${opts.map((g) => html`<optgroup key=${g.c} label=${g.c}>${g.items.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</optgroup>`)}</select>
           <div className="item-btns"><button type="button" onClick=${() => move(i, -1)} aria-label="Monter">↑</button><button type="button" onClick=${() => move(i, 1)} aria-label="Descendre">↓</button>
             <button type="button" onClick=${() => onChange({ items: s.items.filter((_, k) => k !== i) })} aria-label="Retirer">×</button></div></div>
-        <div className="row2"><select id=${uid + "m" + i} aria-label="Dose" value=${mode} onChange=${(e) => { const v = e.target.value; if (v === "libre") { const w = [1, 2, 3, 4].map((x) => doseOf(it, x).text); setItem(i, { e: it.e, w, n: it.n }); } else setItem(i, { e: it.e, t: v, r: it.r, n: it.n }); }}>
-            ${Object.entries(T).map(([k, t]) => html`<option key=${k} value=${k}>${t.label} (${t.sets[0]}×${t.reps[0]} → ${t.sets[2]}×${t.reps[2]})</option>`)}<option value="libre">Dose libre semaine par semaine</option></select>
-          ${it.w ? null : html`<input id=${uid + "r" + i} aria-label="Répétitions imposées" placeholder="Répétitions imposées (ex. 8/jambe)" value=${it.r || ""} onChange=${(e) => setItem(i, { ...it, r: e.target.value || undefined })} />`}</div>
-        ${it.w ? html`<div className="row4">${[0, 1, 2, 3].map((k) => html`<input key=${k} id=${uid + "w" + i + k} aria-label=${"Semaine " + (k + 1)} placeholder=${"S" + (k + 1)} value=${it.w[k] || ""} onChange=${(e) => setItem(i, { ...it, w: it.w.map((x, j) => (j === k ? e.target.value : x)) })} />`)}</div>`
+        <div className="row2"><select id=${uid + "m" + i} aria-label="Dose" value=${mode} onChange=${(e) => { const v = e.target.value; if (v === "libre") { const w = [1, 2, 3, 4].map((x) => doseOf(it, x).text); setItem(i, { e: it.e, w, n: it.n }); } else if (v === "fixe") { setItem(i, { e: it.e, free: it.free || it.r || "", n: it.n }); } else setItem(i, { e: it.e, t: v, r: it.r, n: it.n }); }}>
+            ${Object.entries(T).map(([k, t]) => html`<option key=${k} value=${k}>${t.label} (${t.sets[0]}×${t.reps[0]} → ${t.sets[2]}×${t.reps[2]})</option>`)}<option value="libre">Dose libre semaine par semaine</option><option value="fixe">Dose fixe (texte libre, sans progression)</option></select>
+          ${mode === "fixe" || it.w ? null : html`<input id=${uid + "r" + i} aria-label="Répétitions imposées" placeholder="Répétitions imposées (ex. 8/jambe)" value=${it.r || ""} onChange=${(e) => setItem(i, { ...it, r: e.target.value || undefined })} />`}</div>
+        ${mode === "fixe" ? html`<input id=${uid + "fx" + i} aria-label="Dose fixe" placeholder="Ex. 3 x 2 reps · 80 % RM · récup 2'" value=${it.free || ""} onChange=${(e) => setItem(i, { ...it, free: e.target.value })} />`
+          : it.w ? html`<div className="row4">${[0, 1, 2, 3].map((k) => html`<input key=${k} id=${uid + "w" + i + k} aria-label=${"Semaine " + (k + 1)} placeholder=${"S" + (k + 1)} value=${it.w[k] || ""} onChange=${(e) => setItem(i, { ...it, w: it.w.map((x, j) => (j === k ? e.target.value : x)) })} />`)}</div>`
           : html`<p className="muted small">Semaines 1 à 4 : ${[1, 2, 3, 4].map((x) => doseOf(it, x).text.split(" · ")[0]).join(" → ")}</p>`}
         <input id=${uid + "n" + i} aria-label="Note" placeholder="Note pour le client (facultatif)" value=${it.n || ""} onChange=${(e) => setItem(i, { ...it, n: e.target.value || undefined })} />
       </div>`;

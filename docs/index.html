@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="1a4a84967d">
+<meta name="app-build" content="ca2f3649e2">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -80,6 +80,7 @@ small { font-size: 12px; }
 .right { display: flex; justify-content: flex-end; }
 .btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 .row4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .row-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
@@ -250,12 +251,13 @@ input:focus, select:focus, textarea:focus { border-color: var(--gold); outline: 
 .wp-d { flex: 1; min-width: 68px; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 4px; text-align: center; }
 .wp-d b { font-family: var(--f-display); font-weight: 700; font-size: 16px; }
 .wp-d small { color: var(--muted); text-transform: uppercase; font-size: 11px; font-variant-numeric: tabular-nums; }
-.wp-d span { font-size: 11px; color: var(--muted); line-height: 1.25; min-height: 2.5em; }
 .wp-d.now { border-color: var(--gold); }
-.wp-d.on { background: var(--gold-tint); border-color: var(--gold); }
-.wp-d.on span { color: var(--fg); }
-.wp-d.done span { color: var(--ok); }
 .wp-d.rest { opacity: 0.55; }
+.wp-rest { font-size: 11px; color: var(--muted); line-height: 1.25; min-height: 2.5em; }
+.wp-e { width: 100%; border: none; border-top: 1px solid var(--line); margin-top: 2px; background: transparent; padding: 3px 2px 0; font: inherit; font-size: 11px; color: var(--muted); line-height: 1.25; cursor: pointer; }
+.wp-e.on { color: var(--fg); }
+.wp-e.done { color: var(--ok); }
+.wp-e:disabled { cursor: default; }
 .week-dots { display: flex; justify-content: space-between; gap: 6px; }
 .wd { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--muted); }
 .wd-d { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); }
@@ -1348,6 +1350,7 @@ service cloud.firestore {
 <script src="vendor/firebase-auth-compat.js"></script>
 <script src="vendor/firebase-firestore-compat.js"></script>
 <script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
 /* ===== Langues : français (langue d'origine), anglais, espagnol =====
    L'application est écrite en français. Pour une autre langue, chaque texte affiché est remplacé, au moment où il apparaît,
@@ -1833,15 +1836,21 @@ function planState(plan, today) {
 }
 function blockOf(prog, w) { if (!prog) return null; const i = Math.min(Math.ceil(w / 4), prog.blocks.length) - 1; return prog.blocks[Math.max(0, i)]; }
 /* rythme (profil.rythme, via persoProg) : s'entraîner plus de jours que le programme n'a de séances propres
-   reprend ses séances en boucle (A, B, C, A, B, C…) plutôt que d'inventer un contenu différent chaque jour. */
+   reprend ses séances en boucle (A, B, C, A, B, C…) plutôt que d'inventer un contenu différent chaque jour.
+   Séances calées (s.wib, programme importé d'un PDF : chaque semaine du bloc a son propre contenu, pas de
+   répétition) : on ne garde que les séances de la semaine du bloc en cours, sans boucle « rythme » (rien à
+   répéter, le contenu est déjà précis jour par jour, matin/soir compris via s.day/s.moment). */
 function weekSessions(prog, plan, w, lib) {
   const b = blockOf(prog, w);
   if (!b) return [];
-  const base = b.sessions.length;
-  const n = base > 0 && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
+  const wib = ((w - 1) % 4) + 1;
+  const pinned = b.sessions.some((s) => s.wib);
+  const pool = pinned ? b.sessions.filter((s) => s.wib === wib) : b.sessions;
+  const base = pool.length;
+  const n = base > 0 && !pinned && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
   const out = [];
   for (let i = 0; i < n; i++) {
-    const s = b.sessions[i % base], rep = Math.floor(i / base);
+    const s = pool[i % base], rep = Math.floor(i / base);
     out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1 });
   }
   (plan && plan.extra || []).filter((x) => Number(x.w) === w).forEach((x, i) => {
@@ -1858,6 +1867,9 @@ function weekSessions(prog, plan, w, lib) {
 function plannedCount(prog, plan, w, lib) { return weekSessions(prog, plan, w, lib).filter((x) => !x.opt).length; }
 function doseOf(it, wib) {
   const i = clamp((wib || 1) - 1, 0, 3);
+  /* dose fixe (it.free) : prescription exacte d'une séance précise (ex. programme importé d'un PDF), affichée
+     telle quelle, sans gabarit ni progression sur 4 semaines */
+  if (it.free) return { text: it.free, load: false, sets: 0 };
   if (it.w) return { text: it.w[i] || "", load: false, sets: 0 };
   const t = T[it.t] || T.C;
   const reps = it.r || t.reps[i];
@@ -3766,7 +3778,8 @@ function CoachApp({ db, settings, lib, exo, dl }) {
           onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
       ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
-          settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")} />` : null}
+          settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")}
+          edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
       ${view === "client" && !selRow ? html`<${Empty} title="Client introuvable"><${Btn} onClick=${() => go("clients")}>Retour aux clients</${Btn}></${Empty}>` : null}
       ${view === "programmes" ? html`<${Library} lib=${lib} db=${db} open=${(p) => { setProgSel(p); setView("prog"); }} edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
       ${view === "prog" && progSel ? html`<${ProgramViewer} prog=${progSel} lib=${lib} exo=${exo} db=${db} onBack=${() => go("programmes")} edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
@@ -3922,7 +3935,7 @@ function ClientsList({ rows, openClient, onAdd, onImport }) {
 }
 
 /* ---------- Fiche client ---------- */
-function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, tab0, onBack }) {
+function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, tab0, onBack, edit }) {
   const src = useMemo(() => (demoData ? memSource(demoData, "demo") : db ? dbSource(db, row.cid) : null), [row.cid]);
   useEffect(() => () => { src && src.close && src.close(); }, [src]);
   const data = useSource(src);
@@ -3954,7 +3967,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
-    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} />` : null}
+    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} exo=${exo} edit=${edit} />` : null}
     ${tab === "sante" ? html`<${CoachSante} data=${data} />` : null}
     ${tab === "plan" ? html`<${PlanEditor} data=${data} src=${src} lib=${lib} settings=${settings} cid=${row.cid} exo=${exo} demo=${row.demo} />` : null}
     ${tab === "notes" ? html`<${CoachNotes} db=${db} cid=${row.cid} note=${note} demo=${row.demo} name=${p.name} onDeleted=${onBack} relay=${p.santeSync ? relayOf(settings) : ""} />` : null}
@@ -4478,6 +4491,9 @@ function Library({ lib, db, open, edit }) {
   </div>`;
 }
 const WU_DEFAULT = "10 min : 5 min de cardio léger, mobilité des hanches et des chevilles, puis 2 séries progressives du premier exercice.";
+/* jours de la semaine, lundi en premier (s.day : 0 = lundi … 6 = dimanche), pour caler une séance sur un jour précis
+   d'un programme importé (séances bi-quotidiennes comprises, via s.moment) plutôt que de la répartir automatiquement */
+const JOURS_LUN = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
 function ProgramViewer({ prog, lib, exo, db, onBack, edit }) {
   const toast = useToast();
@@ -4490,12 +4506,12 @@ function ProgramViewer({ prog, lib, exo, db, onBack, edit }) {
   const del = async () => { try { await dbDel(db, "library/" + prog.id); toast("Programme supprimé.", "ok"); onBack(); } catch (e) { toast("Suppression impossible" + errWhy(e, true), "bad"); } };
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onBack}>‹ Programmes</button>
-    <header className="page-h"><div><div className="eyebrow">${prog.lieu}${isCustom ? " · personnalisé" : ""}</div><h1>${prog.n}</h1><p className="muted">${prog.desc}</p></div>
+    <header className="page-h"><div><div className="eyebrow">${prog.lieu}${prog.fromPdf ? " · importé d'un PDF, à vérifier" : isCustom ? " · personnalisé" : ""}</div><h1>${prog.n}</h1><p className="muted">${prog.desc}</p></div>
       <div className="btnrow">${isCustom ? html`<${Btn} onClick=${() => edit(prog)}>Modifier</${Btn}>` : null}<${Btn} kind="ghost" onClick=${dup}>Dupliquer pour personnaliser</${Btn}></div></header>
     <div className="row-wrap"><${Seg} options=${prog.blocks.map((x, i) => ({ v: i, n: "Bloc " + (i + 1) + " · " + x.n }))} value=${b} onChange=${setB} />
       <${Seg} options=${[1, 2, 3, 4].map((x) => ({ v: x, n: "Semaine " + (b * 4 + x) }))} value=${wib} onChange=${setWib} /></div>
     <p className="muted">${block.focus}${wib === 4 ? " · Semaine d'allègement et tests." : ""}</p>
-    <div className="grid3">${block.sessions.map((s) => html`<${Card} key=${s.id} title=${s.id + " · " + s.t} sub=${(s.focus || "") + (s.lieu ? " · " + s.lieu : "")}>
+    <div className="grid3">${(block.sessions.some((s) => s.wib) ? block.sessions.filter((s) => !s.wib || s.wib === wib) : block.sessions).map((s) => html`<${Card} key=${s.id} title=${s.id + " · " + s.t + (s.day !== undefined && s.day !== null ? " · " + JOURS_LUN[s.day] + (s.moment === "matin" ? " matin" : s.moment === "soir" ? " soir" : "") : "")} sub=${(s.focus || "") + (s.lieu ? " · " + s.lieu : "")}>
       <ol className="plist">${s.items.map((it, i) => { const ex = exOf(it.e, "salle", prog, exo); return html`<li key=${i}><b>${ex.n}</b><span>${doseOf(it, wib).text}</span>${it.n ? html`<small>${it.n}</small>` : null}</li>`; })}</ol>
     </${Card}>`)}</div>
     <${Card} title="Tests du programme"><div className="chips">${(prog.tests || []).map((t) => html`<${Pill} key=${t}>${TESTS[t] ? TESTS[t].n : t}</${Pill}>`)}</div></${Card}>
@@ -4527,7 +4543,7 @@ function DocEditor({ doc, db, lib, exo, onDone }) {
   const setBlock = (i, b) => setD({ ...d, blocks: d.blocks.map((x, k) => (k === i ? b : x)) });
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${onDone}>‹ Programmes</button>
-    <header className="page-h"><div><div className="eyebrow">Programme perso${d.from && PB[d.from] ? " · basé sur " + PB[d.from].n : ""}</div><h1>${d.n || "Programme"}</h1></div><div className="btnrow"><${Btn} onClick=${save}>Enregistrer</${Btn}></div></header>
+    <header className="page-h"><div><div className="eyebrow">Programme perso${d.fromPdf ? " · importé d'un PDF, à vérifier avant d'enregistrer" : d.from && PB[d.from] ? " · basé sur " + PB[d.from].n : ""}</div><h1>${d.n || "Programme"}</h1></div><div className="btnrow"><${Btn} onClick=${save}>Enregistrer</${Btn}></div></header>
     <${Card} title="Informations"><div className="form">
       <${Field} label="Nom" id="pe-n"><input id="pe-n" value=${d.n} onChange=${(e) => setD({ ...d, n: e.target.value })} /></${Field}>
       <${Field} label="Accroche" id="pe-s"><input id="pe-s" value=${d.short || ""} onChange=${(e) => setD({ ...d, short: e.target.value })} /></${Field}>
@@ -4542,10 +4558,18 @@ function DocEditor({ doc, db, lib, exo, onDone }) {
       action=${d.blocks.length > 1 ? html`<button type="button" className="linkbtn" onClick=${() => setD({ ...d, blocks: d.blocks.filter((_, k) => k !== i) })}>Retirer le bloc</button>` : null}>
       <div className="form"><div className="row2"><${Field} label="Nom du bloc" id=${"b-n-" + i}><input id=${"b-n-" + i} value=${b.n} onChange=${(e) => setBlock(i, { ...b, n: e.target.value })} /></${Field}>
         <${Field} label="Objectif du bloc" id=${"b-f-" + i}><input id=${"b-f-" + i} value=${b.focus || ""} onChange=${(e) => setBlock(i, { ...b, focus: e.target.value })} /></${Field}></div></div>
-      ${b.sessions.map((s, k) => html`<details key=${k} className="sess-ed" open=${k === 0 && i === 0}><summary><b>Séance ${s.id}</b> · ${s.t} <span className="muted small">${plural(s.items.length, "exercice")}</span></summary>
-        <${SessionEditor} s=${s} exo=${exo} onChange=${(ns) => setBlock(i, { ...b, sessions: b.sessions.map((x, j) => (j === k ? { ...x, ...ns } : x)) })} />
+      ${b.sessions.map((s, k) => { const setS = (ns) => setBlock(i, { ...b, sessions: b.sessions.map((x, j) => (j === k ? { ...x, ...ns } : x)) });
+        return html`<details key=${k} className="sess-ed" open=${k === 0 && i === 0}><summary><b>Séance ${s.id}</b> · ${s.t} <span className="muted small">${plural(s.items.length, "exercice")}</span></summary>
+        <div className="row3"><${Field} label="Semaine du bloc" id=${"sw-" + i + "-" + k} hint="Pour un programme importé où chaque semaine a son propre contenu (pas de répétition).">
+            <select id=${"sw-" + i + "-" + k} value=${s.wib || ""} onChange=${(e) => setS({ wib: e.target.value ? Number(e.target.value) : undefined })}>
+              <option value="">Toutes les semaines du bloc</option>${[1, 2, 3, 4].map((x) => html`<option key=${x} value=${x}>Semaine ${x} du bloc seulement</option>`)}</select></${Field}>
+          <${Field} label="Jour fixe" id=${"sd-" + i + "-" + k}><select id=${"sd-" + i + "-" + k} value=${s.day ?? ""} onChange=${(e) => setS({ day: e.target.value === "" ? undefined : Number(e.target.value), moment: e.target.value === "" ? undefined : s.moment })}>
+              <option value="">Réparti automatiquement</option>${JOURS_LUN.map((n, x) => html`<option key=${x} value=${x}>${n}</option>`)}</select></${Field}>
+          <${Field} label="Moment" id=${"sm-" + i + "-" + k}><select id=${"sm-" + i + "-" + k} value=${s.moment || ""} disabled=${s.day === undefined || s.day === null} onChange=${(e) => setS({ moment: e.target.value || undefined })}>
+              <option value="">Journée</option><option value="matin">Matin</option><option value="soir">Après-midi / soir</option></select></${Field}></div>
+        <${SessionEditor} s=${s} exo=${exo} onChange=${setS} />
         ${b.sessions.length > 1 ? html`<button type="button" className="linkbtn" onClick=${() => setBlock(i, { ...b, sessions: b.sessions.filter((_, j) => j !== k) })}>Retirer la séance ${s.id}</button>` : null}
-      </details>`)}
+      </details>`; })}
       ${b.sessions.length < 6 ? html`<${Btn} kind="ghost" small onClick=${() => setBlock(i, { ...b, sessions: [...b.sessions, { id: "ABCDEF"[b.sessions.length], t: "Séance " + "ABCDEF"[b.sessions.length], focus: "", lieu: "Salle", wu: WU_DEFAULT, items: [] }] })}>Ajouter une séance</${Btn}>` : null}
     </${Card}>`)}
     ${d.blocks.length < 3 ? html`<${Btn} kind="ghost" onClick=${() => setD({ ...d, blocks: [...d.blocks, clone(d.blocks[d.blocks.length - 1])].map((x, i) => (i === d.blocks.length ? { ...x, n: "Bloc " + (i + 1) } : x)) })}>Ajouter un bloc (copie du précédent)</${Btn}>` : null}
@@ -4569,16 +4593,17 @@ function SessionEditor({ s, onChange, exo }) {
     <${Field} label="Objectif de la séance" id=${uid + "f"}><input id=${uid + "f"} value=${s.focus || ""} onChange=${(e) => onChange({ focus: e.target.value })} /></${Field}>
     <${Field} label="Échauffement" id=${uid + "w"}><textarea id=${uid + "w"} rows="2" value=${s.wu || ""} onChange=${(e) => onChange({ wu: e.target.value })}></textarea></${Field}>
     <div className="items">${s.items.map((it, i) => {
-      const mode = it.w ? "libre" : (it.t || "H12");
+      const mode = it.free !== undefined ? "fixe" : it.w ? "libre" : (it.t || "H12");
       return html`<div className="item" key=${i}>
         <div className="item-h"><span className="exc-n">${i + 1}</span>
           <select id=${uid + "e" + i} aria-label="Exercice" value=${it.e} onChange=${(e) => setItem(i, { ...it, e: e.target.value })}>${opts.map((g) => html`<optgroup key=${g.c} label=${g.c}>${g.items.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</optgroup>`)}</select>
           <div className="item-btns"><button type="button" onClick=${() => move(i, -1)} aria-label="Monter">↑</button><button type="button" onClick=${() => move(i, 1)} aria-label="Descendre">↓</button>
             <button type="button" onClick=${() => onChange({ items: s.items.filter((_, k) => k !== i) })} aria-label="Retirer">×</button></div></div>
-        <div className="row2"><select id=${uid + "m" + i} aria-label="Dose" value=${mode} onChange=${(e) => { const v = e.target.value; if (v === "libre") { const w = [1, 2, 3, 4].map((x) => doseOf(it, x).text); setItem(i, { e: it.e, w, n: it.n }); } else setItem(i, { e: it.e, t: v, r: it.r, n: it.n }); }}>
-            ${Object.entries(T).map(([k, t]) => html`<option key=${k} value=${k}>${t.label} (${t.sets[0]}×${t.reps[0]} → ${t.sets[2]}×${t.reps[2]})</option>`)}<option value="libre">Dose libre semaine par semaine</option></select>
-          ${it.w ? null : html`<input id=${uid + "r" + i} aria-label="Répétitions imposées" placeholder="Répétitions imposées (ex. 8/jambe)" value=${it.r || ""} onChange=${(e) => setItem(i, { ...it, r: e.target.value || undefined })} />`}</div>
-        ${it.w ? html`<div className="row4">${[0, 1, 2, 3].map((k) => html`<input key=${k} id=${uid + "w" + i + k} aria-label=${"Semaine " + (k + 1)} placeholder=${"S" + (k + 1)} value=${it.w[k] || ""} onChange=${(e) => setItem(i, { ...it, w: it.w.map((x, j) => (j === k ? e.target.value : x)) })} />`)}</div>`
+        <div className="row2"><select id=${uid + "m" + i} aria-label="Dose" value=${mode} onChange=${(e) => { const v = e.target.value; if (v === "libre") { const w = [1, 2, 3, 4].map((x) => doseOf(it, x).text); setItem(i, { e: it.e, w, n: it.n }); } else if (v === "fixe") { setItem(i, { e: it.e, free: it.free || it.r || "", n: it.n }); } else setItem(i, { e: it.e, t: v, r: it.r, n: it.n }); }}>
+            ${Object.entries(T).map(([k, t]) => html`<option key=${k} value=${k}>${t.label} (${t.sets[0]}×${t.reps[0]} → ${t.sets[2]}×${t.reps[2]})</option>`)}<option value="libre">Dose libre semaine par semaine</option><option value="fixe">Dose fixe (texte libre, sans progression)</option></select>
+          ${mode === "fixe" || it.w ? null : html`<input id=${uid + "r" + i} aria-label="Répétitions imposées" placeholder="Répétitions imposées (ex. 8/jambe)" value=${it.r || ""} onChange=${(e) => setItem(i, { ...it, r: e.target.value || undefined })} />`}</div>
+        ${mode === "fixe" ? html`<input id=${uid + "fx" + i} aria-label="Dose fixe" placeholder="Ex. 3 x 2 reps · 80 % RM · récup 2'" value=${it.free || ""} onChange=${(e) => setItem(i, { ...it, free: e.target.value })} />`
+          : it.w ? html`<div className="row4">${[0, 1, 2, 3].map((k) => html`<input key=${k} id=${uid + "w" + i + k} aria-label=${"Semaine " + (k + 1)} placeholder=${"S" + (k + 1)} value=${it.w[k] || ""} onChange=${(e) => setItem(i, { ...it, w: it.w.map((x, j) => (j === k ? e.target.value : x)) })} />`)}</div>`
           : html`<p className="muted small">Semaines 1 à 4 : ${[1, 2, 3, 4].map((x) => doseOf(it, x).text.split(" · ")[0]).join(" → ")}</p>`}
         <input id=${uid + "n" + i} aria-label="Note" placeholder="Note pour le client (facultatif)" value=${it.n || ""} onChange=${(e) => setItem(i, { ...it, n: e.target.value || undefined })} />
       </div>`;
@@ -12030,14 +12055,33 @@ function ClientPdfs({ data, src }) {
   </${Card}>`;
 }
 
-/* côté coach : déposer, nommer, rattacher à une semaine, retirer */
-function CoachPdfs({ data, src, plan }) {
+/* côté coach : déposer, nommer, rattacher à une semaine, retirer, ou transformer en programme (31_pdfimport.js) */
+function CoachPdfs({ data, src, plan, exo, edit }) {
   const toast = useToast();
+  const ai = useAI();
   const list = pdfList(data);
   const [f, setF] = useState({ file: null, n: "", w: "", note: "" });
   const [busy, setBusy] = useState(false);
   const [sure, setSure] = useState(null);
   const [fk, setFk] = useState(0);
+  const [imp, setImp] = useState(null);
+  const [impErr, setImpErr] = useState({});
+  const doImport = async (m) => {
+    if (!ai.sample) { toast("Coach IA indisponible ici : ouvre l'application depuis ton compte Claude.", "warn"); return; }
+    setImpErr((o) => ({ ...o, [m.id]: "" }));
+    setImp({ id: m.id, step: 0, total: 1 });
+    try {
+      const b64 = await src.loadPdf(m.id, m.parts || 1);
+      if (!b64) throw new Error("vide");
+      const text = await extractPdfText(pdfBlob(b64));
+      if (!text || text.replace(/\s/g, "").length < 60) throw Object.assign(new Error("texte introuvable"), { code: "no_text" });
+      const doc = await importProgramFromText(text, exo, ai.sample, (step, total) => setImp({ id: m.id, step, total }));
+      if (!doc.n || doc.n === "Programme importé") doc.n = m.n;
+      edit(doc);
+      toast("Brouillon créé à partir du PDF : relis chaque séance, corrige ce qu'il faut, puis enregistre.", "ok");
+    } catch (e) { setImpErr((o) => ({ ...o, [m.id]: importErrText(e) })); }
+    setImp(null);
+  };
   const weeks = plan ? plan.weeks : 12;
   const pick = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -12076,8 +12120,12 @@ function CoachPdfs({ data, src, plan }) {
       </div>
     </${Card}>
     <${Card} title="PDF de ce client" sub=${list.length ? list.length + " fichier" + (list.length > 1 ? "s" : "") : "Aucun pour l'instant"}>
-      ${list.length ? html`<ul className="rlist">${list.map((m) => html`<li key=${m.id}><span className="stack-s"><b>${m.n}</b><span className="small muted">${pdfWhen(m)} · ${fmtN((m.size || 0) / 1048576, 1)} Mo${m.note ? " · " + m.note : ""}</span></span>
-        <${Btn} small kind="quiet" onClick=${() => del(m)}>${sure === m.id ? "Confirmer le retrait" : "Retirer"}</${Btn}></li>`)}</ul>` : html`<p className="small muted">Les PDF envoyés apparaissent ici et dans l'onglet Programme du client.</p>`}
+      ${list.length ? html`<ul className="rlist">${list.map((m) => html`<li key=${m.id}><span className="stack-s"><b>${m.n}</b><span className="small muted">${pdfWhen(m)} · ${fmtN((m.size || 0) / 1048576, 1)} Mo${m.note ? " · " + m.note : ""}</span>
+          ${impErr[m.id] ? html`<span className="small warn-t">${impErr[m.id]}</span>` : null}</span>
+        <span className="btnrow"><${Btn} small kind="ghost" onClick=${() => doImport(m)} disabled=${!!imp}>${imp && imp.id === m.id ? "Transformation " + imp.step + "/" + imp.total + "…" : "Transformer en programme"}</${Btn}>
+        <${Btn} small kind="quiet" onClick=${() => del(m)} disabled=${!!imp}>${sure === m.id ? "Confirmer le retrait" : "Retirer"}</${Btn}></span></li>`)}</ul>`
+        : html`<p className="small muted">Les PDF envoyés apparaissent ici et dans l'onglet Programme du client.</p>`}
+      ${list.length ? html`<p className="muted small">« Transformer en programme » lit le texte du PDF et en propose une version avec cases à cocher, comme un programme normal : tu la relis et la corriges avant de l'enregistrer, puis tu l'assignes à ce client depuis l'onglet Plan.</p>` : null}
     </${Card}>
   </div>`;
 }
@@ -12085,31 +12133,45 @@ function CoachPdfs({ data, src, plan }) {
 /* ===== Planning visuel de la semaine : une suggestion de jours, pas un jour imposé =====
    Les séances de la semaine (déjà construites par weekSessions, boucle comprise si profil.rythme) sont
    réparties le plus régulièrement possible sur les 7 jours réels de cette semaine du plan (spreadDays,
-   01_core.js) ; le jour de départ du plan n'est pas forcément un lundi, chaque jour garde son vrai nom. */
+   01_core.js) ; le jour de départ du plan n'est pas forcément un lundi, chaque jour garde son vrai nom.
+   Séances calées (s.day, programme importé d'un PDF) : affichées sur leur jour exact plutôt que réparties,
+   un jour pouvant alors montrer deux séances (s.moment « matin »/« soir », ex. poussée puis musculation). */
 function weekPlanning(prog, plan, w, lib, logs) {
   const sessions = weekSessions(prog, plan, w, lib).filter((x) => !x.opt);
-  const offsets = spreadDays(sessions.length);
   const weekStart = addDays(plan.start, (w - 1) * 7);
-  const byOffset = {};
-  offsets.forEach((o, i) => { byOffset[o] = sessions[i]; });
+  const pinned = sessions.some((x) => x.s.day !== undefined && x.s.day !== null);
+  /* séances calées (s.day, 0 = lundi) : ancrées sur le vrai lundi de la semaine civile de weekStart, pas sur
+     weekStart lui-même (le début du plan n'est pas forcément un lundi) — sinon « lundi » pourrait tomber un
+     autre jour. Les séances réparties automatiquement gardent weekStart, inchangé. */
+  const base = pinned ? addDays(weekStart, -((parseISO(weekStart).getDay() + 6) % 7)) : weekStart;
   const today = todayISO();
+  const byOffset = {};
+  if (pinned) {
+    sessions.forEach((e) => {
+      const o = e.s.day !== undefined && e.s.day !== null ? clamp(Math.round(e.s.day), 0, 6) : 0;
+      (byOffset[o] = byOffset[o] || []).push(e);
+    });
+  } else {
+    spreadDays(sessions.length).forEach((o, i) => { byOffset[o] = [sessions[i]]; });
+  }
   return Array.from({ length: 7 }, (_, o) => {
-    const date = addDays(weekStart, o);
-    const e = byOffset[o] || null;
-    return { date, today: date === today, e, done: !!(e && logs && logs[e.key]) };
+    const date = addDays(base, o);
+    const es = byOffset[o] || [];
+    return { date, today: date === today, es, pinned };
   });
 }
 /* coachView : lecture seule, sur la fiche du client (sa semaine à lui, pas la sienne) */
 function WeekPlanning({ prog, plan, w, lib, logs, onOpen, coachView }) {
   const days = useMemo(() => weekPlanning(prog, plan, w, lib, logs), [prog, plan, w, lib, logs]);
-  if (!days.some((d) => d.e)) return null;
-  return html`<${Card} title=${coachView ? "Sa semaine" : "Ma semaine"} sub="Une suggestion de jours : tu peux décaler, l'important est de faire tes séances">
-    <div className="wplan">${days.map((d) => html`<button key=${d.date} type="button"
-        className=${"wp-d" + (d.today ? " now" : "") + (d.e ? (d.done ? " done" : " on") : " rest")}
-        disabled=${!d.e || coachView} onClick=${() => d.e && !coachView && onOpen(d.e)}>
+  if (!days.some((d) => d.es.length)) return null;
+  const sub = days.some((d) => d.pinned) ? "Les jours prévus pour cette semaine" : "Une suggestion de jours : tu peux décaler, l'important est de faire tes séances";
+  return html`<${Card} title=${coachView ? "Sa semaine" : "Ma semaine"} sub=${sub}>
+    <div className="wplan">${days.map((d) => html`<div key=${d.date} className=${"wp-d" + (d.today ? " now" : "") + (!d.es.length ? " rest" : "")}>
       <small>${JOURS[parseISO(d.date).getDay()].slice(0, 3)}</small><b>${parseISO(d.date).getDate()}</b>
-      <span>${d.e ? (d.done ? "✓ " : "") + d.e.s.t + (d.e.rep > 1 ? " (" + d.e.rep + ")" : "") : "Repos"}</span>
-    </button>`)}</div>
+      ${d.es.length ? d.es.map((e) => { const done = !!(logs && logs[e.key]); return html`<button key=${e.key} type="button" className=${"wp-e" + (done ? " done" : " on")}
+          disabled=${coachView} onClick=${() => !coachView && onOpen(e)}>${(done ? "✓ " : "") + e.s.t + (e.s.moment === "matin" ? " (matin)" : e.s.moment === "soir" ? " (soir)" : "") + (e.rep > 1 ? " (" + e.rep + ")" : "")}</button>`; })
+        : html`<span className="wp-rest">Repos</span>`}
+    </div>`)}</div>
   </${Card}>`;
 }
 
@@ -12129,6 +12191,156 @@ function ArticleCard() {
     <p className="small" style=${{ whiteSpace: "pre-line" }}>${a.texte}</p>
     ${a.refs && a.refs.length ? html`<details><summary>Source</summary><ul className="refs">${a.refs.map((r, i) => html`<li key=${i}>${r}</li>`)}</ul></details>` : null}
   </${Card}>`;
+}
+
+/* ===== Import PDF → programme structuré =====
+   Le coach dépose un PDF (28_pdf.js) : ici, à la demande, son texte est lu dans le navigateur (pdf.js, chargé
+   comme React, sans rien installer) puis mis en forme par l'IA du coach (même mécanisme gratuit que le Coach
+   IA, sur son propre compte Claude, ou le relais du site) en un brouillon de « Programme perso » — avec cases
+   à cocher, séances bi-quotidiennes comprises (jour + moment). Le coach relit et corrige dans l'éditeur
+   habituel (06_library.js) avant d'enregistrer : l'IA peut se tromper sur un exercice ou une charge.
+   Une semaine à la fois (pas tout le document en un seul appel) : certains relais limitent la longueur d'une
+   réponse, et une semaine à la fois reste fiable quelle que soit la longueur du programme. */
+function pdfjsReady() { return typeof window !== "undefined" && !!window.pdfjsLib; }
+if (pdfjsReady()) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+const PDFIMPORT_MAXCHARS = 60000, PDFIMPORT_MAXWEEKS = 16;
+async function extractPdfText(blob) {
+  if (!pdfjsReady()) throw Object.assign(new Error("pdfjs"), { code: "pdfjs_absent" });
+  const buf = await blob.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  for (let i = 1; i <= Math.min(pdf.numPages, 60); i++) {
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    pages.push(tc.items.map((it) => it.str).join(" ").replace(/\s+/g, " ").trim());
+  }
+  const text = pages.map((t, i) => "[page " + (i + 1) + "]\n" + t).join("\n\n");
+  return text.slice(0, PDFIMPORT_MAXCHARS);
+}
+function importErrText(e) {
+  if (e && e.code === "pdfjs_absent") return "La lecture de PDF n'a pas pu se charger (vérifie ta connexion) : réessaie dans un instant.";
+  if (e && e.code === "no_text") return "Ce PDF ne contient pas de texte lisible (probablement des pages scannées en image) : transformation impossible, saisis le programme à la main.";
+  return "Transformation impossible : " + aiErr(e);
+}
+function exerciseListForAI(exo) {
+  const custom = Object.values(exo || {}).filter((x) => x && x.custom).map((e) => [e.id, e.n, e.c]);
+  return [...EXLIB.map((e) => [e.id, e.n, e.c]), ...custom];
+}
+const IMPORT_META_PROMPT = `Tâche : import_programme_meta. Tu reçois le texte extrait d'un programme d'entraînement en PDF, écrit par un préparateur physique pour un ou des athlètes. Identifie sa structure générale, sans entrer dans le détail des séances.
+Réponds uniquement avec un objet JSON (sans texte autour, sans balises de code), de cette forme exacte :
+{"n":"nom du programme","short":"accroche courte (une phrase)","desc":"description courte (une à deux phrases)",
+ "lieu":"Salle, Extérieur, ou autre lieu principal selon le document",
+ "weeks":[{"n":"nom de cette semaine (ex. intitulé exact trouvé dans le document)","focus":"objectif de cette semaine en une phrase",
+   "marker":"copie EXACTE d'une courte phrase ou d'un titre du document qui marque le début de cette semaine"}],
+ "refsMarker":"copie exacte du titre de la section des références scientifiques si le document en a une (sinon omets ce champ)",
+ "refs":["au plus 6 références scientifiques complètes trouvées dans le document, chacune en 200 caractères au plus (sinon tableau vide)"],
+ "science":"un paragraphe de 400 caractères au plus résumant la logique scientifique si le document l'explique, sinon chaîne vide"}
+Une entrée de "weeks" par semaine réelle du document, dans l'ordre. "marker" doit être une sous-chaîne EXACTE du texte fourni (copiée mot pour mot, avec les mêmes espaces et accents), assez longue pour être unique (8 à 15 mots), jamais résumée ni reformulée. S'il n'y a qu'une seule semaine, un seul élément dans "weeks" suffit.
+
+Texte du document :
+`;
+async function importMeta(text, sample) { return sample.json(IMPORT_META_PROMPT + text, { cache: false }); }
+function sliceWeeks(text, meta) {
+  const weeks = Array.isArray(meta.weeks) && meta.weeks.length ? meta.weeks : [{ n: "Semaine 1", focus: "" }];
+  if (weeks.length === 1) return [{ meta: weeks[0], text }];
+  const idxs = weeks.map((w) => (w && typeof w.marker === "string" && w.marker.trim() ? text.indexOf(w.marker.trim()) : -1));
+  const refsIdx = meta.refsMarker && typeof meta.refsMarker === "string" ? text.indexOf(meta.refsMarker.trim()) : -1;
+  return weeks.map((w, i) => {
+    const start = idxs[i] >= 0 ? idxs[i] : 0;
+    let end = text.length;
+    for (let j = i + 1; j < idxs.length; j++) if (idxs[j] >= 0) { end = idxs[j]; break; }
+    if (refsIdx >= 0 && refsIdx > start && refsIdx < end) end = refsIdx;
+    return { meta: w, text: end > start ? text.slice(start, end) : text };
+  });
+}
+const IMPORT_DOSE_HELP = `Pour la dose de chaque exercice, choisis l'une de ces deux formes selon ce que dit le document (n'utilise jamais de gabarit interne, ce texte vient d'un document extérieur) :
+- "free" : texte EXACT de la prescription telle qu'écrite (ex. "3 x 2 reps · 80 % RM squat · récup 20''") — à utiliser dans presque tous les cas.
+- "w" : tableau de 4 textes (progression sur 4 semaines) — seulement si le document donne lui-même 4 valeurs progressives distinctes pour 4 semaines successives de ce même exercice.`;
+function importWeekPrompt(weekMeta, text, exList) {
+  return `Tâche : import_programme_semaine. Tu structures UNE semaine d'un programme d'entraînement pour l'application d'un préparateur physique. Transforme le texte ci-dessous en séances avec exercices, fidèlement, sans rien inventer ni arrondir les chiffres.
+Réponds uniquement avec un objet JSON (sans texte autour, sans balises de code), de cette forme exacte :
+{"sessions":[{"id":"identifiant court et unique (ex. lun-am)","t":"titre de la séance","focus":"objectif court (vide si non précisé)","lieu":"lieu si précisé, sinon vide",
+  "wu":"échauffement si décrit, sinon vide","day":0,"moment":"matin",
+  "items":[{"e":"identifiant d'exercice","free":"dose exacte telle qu'écrite","n":"consigne courte si le document en donne une, sinon omets ce champ"}]}]}
+"day" : jour de la semaine, 0 = lundi … 6 = dimanche, déduit des dates ou jours mentionnés ; omets ce champ si non déterminable.
+"moment" : seulement quand DEUX séances d'entraînement distinctes ont lieu le même jour (ex. "matin" et "soir") ; omets-le sinon.
+Ignore les lignes qui ne décrivent pas une séance d'entraînement (repas, trajets, logistique) : garde-les tout au plus comme contexte bref dans "focus", jamais comme exercice.
+` + IMPORT_DOSE_HELP + `
+Pour "e", choisis l'identifiant le plus proche dans cette liste [id, nom, catégorie] si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice : ` + JSON.stringify(exList) + `
+
+Nom de cette semaine : ` + (weekMeta.n || "") + `
+Texte de cette semaine :
+` + text;
+}
+function slugId(s) {
+  /* retire les diacritiques combinants (plage Unicode U+0300-U+036F) par code, pour éviter tout risque
+     de corruption des caractères accentués eux-mêmes dans le fichier source */
+  const lo = String.fromCharCode(768), hi = String.fromCharCode(879);
+  const noAccents = String(s || "").toLowerCase().normalize("NFD").replace(new RegExp("[" + lo + "-" + hi + "]", "g"), "");
+  return noAccents.replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) || "exercice";
+}
+function sanitizeImportedItem(raw, idx) {
+  const it = raw && typeof raw === "object" ? raw : {};
+  const out = { e: typeof it.e === "string" && it.e.trim() ? slugId(it.e) : "exercice_" + (idx + 1) };
+  if (Array.isArray(it.w) && it.w.some((x) => String(x || "").trim())) out.w = [0, 1, 2, 3].map((k) => String(it.w[k] || "").trim().slice(0, 100));
+  else out.free = typeof it.free === "string" ? it.free.trim().slice(0, 140) : "";
+  if (typeof it.n === "string" && it.n.trim()) out.n = it.n.trim().slice(0, 200);
+  return out;
+}
+function sanitizeImportedSession(raw, fallbackId) {
+  const s = raw && typeof raw === "object" ? raw : {};
+  const out = {
+    id: (typeof s.id === "string" && s.id.trim() ? slugId(s.id.trim()).slice(0, 24) : fallbackId) || fallbackId,
+    t: typeof s.t === "string" && s.t.trim() ? s.t.trim().slice(0, 80) : "Séance",
+    focus: typeof s.focus === "string" ? s.focus.trim().slice(0, 200) : "",
+    lieu: typeof s.lieu === "string" ? s.lieu.trim().slice(0, 40) : "",
+    wu: typeof s.wu === "string" ? s.wu.trim().slice(0, 400) : "",
+    items: Array.isArray(s.items) ? s.items.slice(0, 20).map(sanitizeImportedItem) : [],
+  };
+  const day = Math.round(Number(s.day));
+  if (Number.isInteger(day) && day >= 0 && day <= 6) { out.day = day; if (s.moment === "matin" || s.moment === "soir") out.moment = s.moment; }
+  return out;
+}
+function sanitizeImportedProgram(meta, weeks) {
+  const m = meta && typeof meta === "object" ? meta : {};
+  const ws = (Array.isArray(weeks) ? weeks : []).slice(0, PDFIMPORT_MAXWEEKS);
+  const blocks = [];
+  for (let i = 0; i < ws.length; i += 4) {
+    const grp = ws.slice(i, i + 4);
+    const sessions = [];
+    grp.forEach((wk, j) => {
+      (wk.sessions || []).forEach((raw, k) => {
+        const s = sanitizeImportedSession(raw, "s" + (i + j + 1) + "_" + (k + 1));
+        if (grp.length > 1) { s.id += "-s" + (j + 1); s.wib = j + 1; }
+        sessions.push(s);
+      });
+    });
+    blocks.push({ n: grp.map((wk) => wk.n).filter(Boolean).join(" · ").slice(0, 120) || ("Bloc " + (blocks.length + 1)), focus: String(grp[0].focus || "").slice(0, 200), sessions });
+  }
+  const refs = Array.isArray(m.refs) ? m.refs.filter((x) => typeof x === "string" && x.trim()).slice(0, 10).map((x) => x.trim().slice(0, 300)) : [];
+  return {
+    kind: "program", id: rid("c_"), isNew: true, fromPdf: true,
+    n: (typeof m.n === "string" && m.n.trim() ? m.n.trim() : "Programme importé").slice(0, 80),
+    short: typeof m.short === "string" ? m.short.trim().slice(0, 140) : "",
+    desc: typeof m.desc === "string" ? m.desc.trim().slice(0, 400) : "",
+    lieu: typeof m.lieu === "string" && m.lieu.trim() ? m.lieu.trim().slice(0, 40) : "Salle",
+    maison: false, tests: [], better: {}, habits: [], refs,
+    science: typeof m.science === "string" ? m.science.trim().slice(0, 1200) : "",
+    blocks: blocks.length ? blocks : [{ n: "Bloc 1", focus: "", sessions: [] }],
+  };
+}
+async function importProgramFromText(text, exo, sample, onProgress) {
+  onProgress && onProgress(1, 2);
+  const meta = await importMeta(text, sample);
+  const slices = sliceWeeks(text, meta).slice(0, PDFIMPORT_MAXWEEKS);
+  const exList = exerciseListForAI(exo);
+  const weeks = [];
+  for (let i = 0; i < slices.length; i++) {
+    onProgress && onProgress(i + 2, slices.length + 1);
+    const r = await sample.json(importWeekPrompt(slices[i].meta, slices[i].text, exList), { cache: false });
+    weeks.push({ n: slices[i].meta && slices[i].meta.n, focus: slices[i].meta && slices[i].meta.focus, sessions: r && Array.isArray(r.sessions) ? r.sessions : [] });
+  }
+  return sanitizeImportedProgram(meta, weeks);
 }
 
 /* ===== Version site : accueil public, connexion, installation ===== */

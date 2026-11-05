@@ -73,15 +73,21 @@ function planState(plan, today) {
 }
 function blockOf(prog, w) { if (!prog) return null; const i = Math.min(Math.ceil(w / 4), prog.blocks.length) - 1; return prog.blocks[Math.max(0, i)]; }
 /* rythme (profil.rythme, via persoProg) : s'entraîner plus de jours que le programme n'a de séances propres
-   reprend ses séances en boucle (A, B, C, A, B, C…) plutôt que d'inventer un contenu différent chaque jour. */
+   reprend ses séances en boucle (A, B, C, A, B, C…) plutôt que d'inventer un contenu différent chaque jour.
+   Séances calées (s.wib, programme importé d'un PDF : chaque semaine du bloc a son propre contenu, pas de
+   répétition) : on ne garde que les séances de la semaine du bloc en cours, sans boucle « rythme » (rien à
+   répéter, le contenu est déjà précis jour par jour, matin/soir compris via s.day/s.moment). */
 function weekSessions(prog, plan, w, lib) {
   const b = blockOf(prog, w);
   if (!b) return [];
-  const base = b.sessions.length;
-  const n = base > 0 && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
+  const wib = ((w - 1) % 4) + 1;
+  const pinned = b.sessions.some((s) => s.wib);
+  const pool = pinned ? b.sessions.filter((s) => s.wib === wib) : b.sessions;
+  const base = pool.length;
+  const n = base > 0 && !pinned && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
   const out = [];
   for (let i = 0; i < n; i++) {
-    const s = b.sessions[i % base], rep = Math.floor(i / base);
+    const s = pool[i % base], rep = Math.floor(i / base);
     out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1 });
   }
   (plan && plan.extra || []).filter((x) => Number(x.w) === w).forEach((x, i) => {
@@ -98,6 +104,9 @@ function weekSessions(prog, plan, w, lib) {
 function plannedCount(prog, plan, w, lib) { return weekSessions(prog, plan, w, lib).filter((x) => !x.opt).length; }
 function doseOf(it, wib) {
   const i = clamp((wib || 1) - 1, 0, 3);
+  /* dose fixe (it.free) : prescription exacte d'une séance précise (ex. programme importé d'un PDF), affichée
+     telle quelle, sans gabarit ni progression sur 4 semaines */
+  if (it.free) return { text: it.free, load: false, sets: 0 };
   if (it.w) return { text: it.w[i] || "", load: false, sets: 0 };
   const t = T[it.t] || T.C;
   const reps = it.r || t.reps[i];

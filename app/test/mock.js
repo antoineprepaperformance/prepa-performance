@@ -70,6 +70,13 @@
       else if (/Tâche : analyse_produit/.test(all)) text = JSON.stringify({ produit: "Skyr nature", marque: "Marque test", ean: null, lisible: true, estime: false, pour100: { kcal: 64, p: 11, c: 4, f: 0.2, sucres: 4, fibres: 0, sel: 0.1 }, portion_g: 150, nutriscore: "A", verdict: "bon", commentaire: "Excellente source de protéines pour ta collation.", alternative: null });
       else if (/Analyse la technique d'un client/.test(all)) text = JSON.stringify({ resume: "Bonne profondeur, le buste reste solide. Le genou part un peu vers l'intérieur à la remontée.", points: [{ point: "Genoux dans l'axe des pieds", ok: false, conseil: "Pousse les genoux vers l'extérieur en remontant." }, { point: "Dos neutre", ok: true, conseil: "Garde ce gainage." }], priorite: "Genoux dans l'axe des pieds.", securite: "" });
       else if (/Propose UNE recette simple pour un sportif/.test(all)) text = JSON.stringify({ n: "Bol poulet, riz et courgettes", temps: 20, ingredients: [{ nom: "blanc de poulet", g: 150 }, { nom: "riz basmati", g: 80 }, { nom: "courgette", g: 200 }, { nom: "huile d'olive", g: 10 }], etapes: ["Cuire le riz.", "Saisir le poulet en dés.", "Ajouter les courgettes en rondelles."], astuce: "Double les quantités pour le lendemain.", kcal: 620, p: 45, c: 70, f: 15 });
+      else if (/Tâche : import_programme_meta\./.test(all)) text = JSON.stringify({ n: "Stage test", short: "Programme de test", desc: "Semaine de test pour l'import automatique.", lieu: "Salle",
+        weeks: [{ n: "Semaine du test", focus: "Vérifier l'import", marker: "MARQUEUR-SEMAINE-1" }], refs: [], science: "" });
+      else if (/Tâche : import_programme_semaine\./.test(all)) text = JSON.stringify({ sessions: [
+        { id: "lun-am", t: "Poussée du matin", focus: "Vitesse", lieu: "Piste", day: 0, moment: "matin", items: [{ e: "sprint_10m", free: "6 x 10 m départ arrêté", n: "Récup complète" }] },
+        { id: "lun-pm", t: "Musculation du soir", focus: "Force", lieu: "Salle", day: 0, moment: "soir", items: [{ e: "squat_barre", free: "3 x 3 à 80 % RM" }] },
+        { id: "mar", t: "Repos actif", focus: "Récupération", day: 1, items: [] },
+      ] });
       else if (/Tâche : traduction/.test(all)) text = /en anglais/.test(all) ? "Great week, keep it up." : /en espagnol/.test(all) ? "Gran semana, sigue así." : "Super semaine, continue comme ça.";
       else if (/Tâche : brouillon_reponse/.test(all)) text = "Belle semaine : tes séances sont faites et ton énergie remonte. Pour le vélo à la place du rameur, aucun souci : garde la même intensité.";
       else if (/Tâche : bilan_hebdo/.test(all)) {
@@ -106,4 +113,9 @@
   }
   const sampleFn = nosample ? null : mkSample();
   window.claude = { use: async (n) => { await new Promise((r) => setTimeout(r, 15)); if (nodb && n === "db") return null; return n === "db" ? db : n === "user" ? user : n === "downloads" ? downloads : n === "sample" ? sampleFn : null; } };
+  /* 31_pdfimport.js : au lieu de charger la vraie bibliothèque pdf.js par le réseau (évité dans les tests),
+     un texte fixe suffit ici puisque la réponse de l'IA simulée ci-dessus ne dépend pas du texte du PDF */
+  window.pdfjsLib = { GlobalWorkerOptions: {}, getDocument: () => ({ promise: Promise.resolve({
+    numPages: 1, getPage: async () => ({ getTextContent: async () => ({ items: [{ str: "Programme de test : entraînement du lundi, matin et soir, pour vérifier l'import automatique." }] }) }),
+  }) }) };
 })();

@@ -125,6 +125,8 @@ async def run():
             ok(lm == "simple", "débutante en remise en forme : consignes simples par défaut", lm)
             todo = c.locator("section.todo")
             ok(await todo.count() == 1 and "À faire aujourd'hui" in await todo.inner_text(), "page du jour : « À faire aujourd'hui »", await todo.inner_text() if await todo.count() else "")
+            art = c.locator("section.card", has_text="Article de la semaine")
+            ok(await art.count() == 1 and "Footballeur" in await art.inner_text() and "Source" in await art.inner_text(), "page du jour : article de la semaine avec sa source", await art.inner_text() if await art.count() else "")
             ban = c.locator("section.saison")
             bt = await ban.inner_text() if await ban.count() else ""
             ok("Séance spéciale citrouille samedi !" in bt and "Défi des citrouilles" in bt, "Halloween : message du coach et défi des citrouilles", bt)
@@ -164,6 +166,7 @@ async def run():
             prof = await mdb(c, "clients/u_p1") or {}
             pr = prof.get("prefs") or {}
             ok(pr.get("theme") == "clair" and pr.get("accent") == "vert" and pr.get("fs") == 1, "réglages enregistrés sur le compte", pr)
+            ok(await ap.get_by_role("switch", name="Afficher : Article de la semaine").count() == 1, "apparence : « Article de la semaine » réglable comme les autres blocs")
             await ap.locator("#ap-lang").get_by_role("radio", name="Détaillé").click(); await c.wait_for_timeout(300)
             lm = await c.evaluate("langMode(null, JSON.parse(localStorage.getItem('__mockdb'))['clients/u_p1'])")
             ok(lm == "expert", "consignes détaillées choisies par la cliente", lm)

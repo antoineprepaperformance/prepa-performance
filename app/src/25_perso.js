@@ -9,6 +9,7 @@ const THEMES = [{ v: "auto", n: "Automatique" }, { v: "sombre", n: "Sombre" }, {
 const LANG_MODES = [{ v: "auto", n: "Selon mon profil" }, { v: "simple", n: "Simple" }, { v: "expert", n: "Détaillé" }];
 const TODAY_BLOCKS = [
   { id: "todo", n: "À faire aujourd'hui" }, { id: "stats", n: "Ma régularité" }, { id: "coach", n: "Messages et conseils" },
+  { id: "article", n: "Article de la semaine" },
   { id: "nutri", n: "Nutrition et santé" }, { id: "habits", n: "Mes habitudes" }, { id: "terrain", n: "Séance terrain de la semaine" },
   { id: "extras", n: "Séances en plus" }, { id: "carte", n: "Ma carte athlète" }, { id: "week", n: "Les séances de la semaine" }];
 const PREFS_LS = "ui_prefs_v1";

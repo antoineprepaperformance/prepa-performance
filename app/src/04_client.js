@@ -230,6 +230,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       ${prog.prereq ? html`<${Prereq} prog=${prog} />` : null}
       ${w1.length ? html`<${Card} title="Ta première semaine">${w1.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} onOpen=${() => openSession(e)} />`)}</${Card}>` : null}
       ${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
+      <${ArticleCard} />
     </div>`;
   }
   if (ps.phase === "fini" && liteOk) {
@@ -241,6 +242,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
         : html`<${Card} title="Choisir mon prochain programme"><${LiteNextCycle} data=${data} src=${src} db=${db} uid=${uid} plan=${plan} /></${Card}>`}
       <div className="btnrow"><${Btn} kind="ghost" onClick=${() => go("progres")}>Voir mes progrès</${Btn}>${!data.tests["t" + plan.weeks] ? html`<${Btn} kind="ghost" onClick=${() => openTests(plan.weeks)}>Saisir mes tests finaux</${Btn}>` : null}</div>
       ${openExtra ? html`<${ExtrasTeaser} open=${openExtra} openTerrain=${openTerrain} />` : null}
+      <${ArticleCard} />
     </div>`;
   }
   if (ps.phase === "fini") {
@@ -251,6 +253,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div className="btnrow">${onRenew ? html`<${Btn} onClick=${onRenew}>Prolonger ou choisir la suite</${Btn}>` : null}<${Btn} kind="ghost" onClick=${() => go("progres")}>Voir mes progrès</${Btn}></div>
       <p className="muted small">Les séances de cette période ne sont plus accessibles ; ton historique, tes bilans, tes tests et ta carte restent consultables.</p>
       ${!data.tests["t" + plan.weeks] ? html`<${Card} title="Tests de fin de programme"><${Btn} kind="ghost" onClick=${() => openTests(plan.weeks)}>Saisir mes tests finaux</${Btn}></${Card}>` : null}
+      <${ArticleCard} />
     </div>`;
   }
   const w = ps.week;
@@ -320,7 +323,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
   const week = html`<${Card} title=${"Semaine " + w}>${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} onOpen=${() => openSession(e)} />`)}</${Card}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
-  const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
+  const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
   const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;

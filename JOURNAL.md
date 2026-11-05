@@ -3,6 +3,15 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 5 novembre 2026 · article de la semaine
+
+- **Demande d'Antoine** : intégrer dans l'application un contenu qu'il avait fait préparer sur une autre conversation et publié sur son compte Instagram personnel (@antoine_prepa_performance, distinct du compte du robot) — en rubrique récurrente, une nouvelle fois par semaine, pas un ajout isolé.
+- **Article de la semaine** (`app/content_articles.py`, `app/src/30_article.js`) : nouveau bloc de la page du jour, réglable comme les autres (ordre, affichage) dans Apparence et affichage. Un article par semaine (daté par son lundi) ; le plus récent déjà commencé reste affiché tant que le suivant n'est pas ajouté, pour qu'il n'y ait jamais de trou.
+- **Premier article** repris du post Instagram d'Antoine du 2 novembre : « Footballeur : la muscu ne va pas te rendre lourd », avec sa source complétée (Lauersen, Bertelsen et Andersen, Br J Sports Med 2014 — méta-analyse de 25 essais, renforcement musculaire et prévention des blessures).
+- Proposé et retenu : le responsable contenus écrit un nouvel article chaque jeudi (même jour que le community manager et les posts Instagram), pas un jour à part. À reporter dans `agence/SEMAINE.md` et `AGENCE.md` du dépôt privé.
+- i18n : le libellé du bloc traduit à la main (anglais, espagnol) ; le texte de l'article lui-même pas encore traduit (pas de Node sur cette machine) — à faire par le robot du mardi, comme pour tout contenu nouveau.
+- Tests ajoutés dans `e2e_perso.py` (présence de l'article et de sa source sur la page du jour, réglage visible dans Apparence et affichage).
+
 ## 4 novembre 2026 · s'entraîner tous les jours, planning visuel de la semaine
 
 - **Demande d'Antoine** : pouvoir s'entraîner plus souvent que les séances propres au programme (3 par semaine en général), et montrer visuellement quel jour faire quoi.

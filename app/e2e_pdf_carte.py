@@ -139,14 +139,14 @@ async def run():
             await co.locator(".sess-ed summary", has_text="Musculation du soir").click(); await co.wait_for_timeout(150)
             ok(await co.input_value("#sd-0-1") == "0" and await co.input_value("#sm-0-1") == "soir", "import PDF : séance bi-quotidienne calée le même jour (après-midi/soir)")
             await co.screenshot(path=f"{OUT}/03_import_pdf.png", full_page=True)
+            new_pid = await co.evaluate("() => JSON.parse(localStorage.getItem('__mockdb') || '{}')['plans/u_p1'].programId")
+            ok(bool(new_pid) and new_pid.startswith("c_"), "import PDF : programme du client déjà remplacé, avant même d'enregistrer dans l'éditeur (l'athlète n'a jamais deux programmes)", new_pid)
             await btn(co, "Enregistrer le programme"); await co.wait_for_timeout(500)
 
-            # ---------- assignation du programme importé, planning bi-quotidien côté client ----------
+            # ---------- planning bi-quotidien côté coach et côté client, programme déjà assigné ----------
             await co.locator(".side-nav button", has_text="Clients").first.click(); await co.wait_for_timeout(500)
             await co.locator(".ctable tbody tr", has_text="Paul Pdf").first.click(); await co.wait_for_timeout(900)
-            await co.get_by_role("radio", name="Plan", exact=True).click(); await co.wait_for_timeout(400)
-            await co.select_option("#pe-prog", label="Stage test (perso)")
-            await btn(co, "Enregistrer"); await co.wait_for_timeout(600)
+            ok(await co.locator("header.page-h .eyebrow", has_text="Stage test").count() == 1, "fiche client : le nouveau programme apparaît tout de suite en en-tête")
             await co.get_by_role("radio", name="Séances", exact=True).click(); await co.wait_for_timeout(500)
             cell = co.locator(".wplan .wp-d").filter(has=co.locator(".wp-e")).first
             entries = await cell.locator(".wp-e").all_inner_texts()

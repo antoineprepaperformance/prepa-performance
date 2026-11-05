@@ -316,7 +316,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}
-    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} exo=${exo} edit=${edit} />` : null}
+    ${tab === "pdf" ? html`<${CoachPdfs} data=${data} src=${src} plan=${plan} exo=${exo} edit=${edit} db=${db} />` : null}
     ${tab === "sante" ? html`<${CoachSante} data=${data} />` : null}
     ${tab === "plan" ? html`<${PlanEditor} data=${data} src=${src} lib=${lib} settings=${settings} cid=${row.cid} exo=${exo} demo=${row.demo} />` : null}
     ${tab === "notes" ? html`<${CoachNotes} db=${db} cid=${row.cid} note=${note} demo=${row.demo} name=${p.name} onDeleted=${onBack} relay=${p.santeSync ? relayOf(settings) : ""} />` : null}

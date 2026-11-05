@@ -168,10 +168,10 @@ async def run():
             await co.locator("li", has_text="Semaine type test").get_by_role("button", name="Transformer en programme").click()
             await co.wait_for_timeout(1500)
             n_after = await co.evaluate("() => (window.__prompts || []).length")
-            ok(n_after - n_before == 1, "import PDF (semaine type) : une seule réponse de l'IA suffit (pas une par semaine, la progression est dans la même réponse)", n_after - n_before)
+            ok(n_after - n_before == 3, "import PDF (semaine type) : une réponse de structure puis une petite réponse par séance-type (2 ici), jamais une par semaine répétée", n_after - n_before)
             ok(await co.input_value("#pe-n") == "Semaine type test", "import PDF (semaine type) : brouillon ouvert avec le bon nom")
             ok(await co.locator(".sess-ed").count() == 2, "import PDF (semaine type) : les séances de la semaine type, une seule fois chacune (pas répétées par semaine)")
-            squat = co.locator(".sess-ed").filter(has=co.locator("summary", has_text="Séance lun"))
+            squat = co.locator(".sess-ed").filter(has=co.locator("summary", has_text="Séance squat"))
             await squat.locator("summary").click(); await co.wait_for_timeout(150)
             doses = [await squat.get_by_placeholder("S" + str(k)).input_value() for k in (1, 2, 3, 4)]
             ok("75" in doses[0] and "80" in doses[1] and "85" in doses[2], "import PDF (semaine type) : progression sur 4 semaines reprise telle qu'écrite (75 % → 80 % → 85 %), sans gabarit interne", doses)

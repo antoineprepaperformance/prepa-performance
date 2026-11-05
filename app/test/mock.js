@@ -72,12 +72,13 @@
       else if (/Propose UNE recette simple pour un sportif/.test(all)) text = JSON.stringify({ n: "Bol poulet, riz et courgettes", temps: 20, ingredients: [{ nom: "blanc de poulet", g: 150 }, { nom: "riz basmati", g: 80 }, { nom: "courgette", g: 200 }, { nom: "huile d'olive", g: 10 }], etapes: ["Cuire le riz.", "Saisir le poulet en dés.", "Ajouter les courgettes en rondelles."], astuce: "Double les quantités pour le lendemain.", kcal: 620, p: 45, c: 70, f: 15 });
       else if (/Tâche : import_programme_meta\./.test(all) && /MARQUEUR-REPETE/.test(all)) text = JSON.stringify({ n: "Semaine type test", short: "Programme de test", desc: "Semaine type de test pour l'import automatique.", lieu: "Salle", repeating: true,
         blockName: "Semaine type", blockFocus: "Vérifier la périodisation importée",
-        sessions: [
-          { id: "lun", t: "Squat", focus: "Force max", lieu: "Salle", day: 0, items: [{ e: "squat_barre", w: ["4 x 5 · 75 %", "5 x 4 · 80 %", "5 x 3 · 85 %", "3 x 3 · 70 %"] }] },
-          { id: "mer", t: "Sprint", focus: "Vitesse", lieu: "Piste", day: 2, items: [{ e: "sprint_10m", w: ["3 x 10 m", "4 x 10 m", "5 x 10 m", "2 x 10 m"] }] },
-        ], weeks: [], refs: [], science: "" });
-      else if (/Tâche : import_programme_meta\./.test(all)) text = JSON.stringify({ n: "Stage test", short: "Programme de test", desc: "Semaine de test pour l'import automatique.", lieu: "Salle", repeating: false, sessions: [],
-        weeks: [{ n: "Semaine du test", focus: "Vérifier l'import", marker: "MARQUEUR-SEMAINE-1" }], refs: [], science: "" });
+        days: [{ t: "Squat", day: 0, lieu: "Salle", pages: [1] }, { t: "Sprint", day: 2, lieu: "Piste", pages: [1] }],
+        weeks: [], refsPages: [], refs: [], science: "" });
+      else if (/Tâche : import_programme_meta\./.test(all)) text = JSON.stringify({ n: "Stage test", short: "Programme de test", desc: "Semaine de test pour l'import automatique.", lieu: "Salle", repeating: false, days: [],
+        weeks: [{ n: "Semaine du test", focus: "Vérifier l'import", pages: [1] }], refsPages: [], refs: [], science: "" });
+      else if (/Tâche : import_programme_jour_type\./.test(all)) text = /Séance-type : Squat/.test(all)
+        ? JSON.stringify({ wu: "", items: [{ e: "squat_barre", w: ["4 x 5 · 75 %", "5 x 4 · 80 %", "5 x 3 · 85 %", "3 x 3 · 70 %"] }] })
+        : JSON.stringify({ wu: "", items: [{ e: "sprint_10m", w: ["3 x 10 m", "4 x 10 m", "5 x 10 m", "2 x 10 m"] }] });
       else if (/Tâche : import_programme_semaine\./.test(all)) text = JSON.stringify({ sessions: [
         { id: "lun-am", t: "Poussée du matin", focus: "Vitesse", lieu: "Piste", day: 0, moment: "matin", items: [{ e: "sprint_10m", free: "6 x 10 m départ arrêté", n: "Récup complète" }] },
         { id: "lun-pm", t: "Musculation du soir", focus: "Force", lieu: "Salle", day: 0, moment: "soir", items: [{ e: "squat_barre", free: "3 x 3 à 80 % RM" }] },

@@ -158,13 +158,35 @@ async def run():
                "programme (client) : les 3 séances importées sont là, à cocher comme un programme normal", srows)
             await c.screenshot(path=f"{OUT}/04_client_programme_importe.png", full_page=True)
 
-            # ---------- coach : retrait ----------
-            await co.get_by_role("radio", name="Fichiers PDF").click(); await co.wait_for_timeout(400)
+            # ---------- coach : transformer un 2e PDF, structure "semaine type qui se répète" (périodisation classique) ----------
+            await co.bring_to_front(); await co.get_by_role("radio", name="Fichiers PDF").click(); await co.wait_for_timeout(400)
+            await co.set_input_files("#pdf-file", PDF_PATH); await co.wait_for_timeout(200)
+            await co.fill("#pdf-n", "Semaine type test")
+            await btn(co, "Envoyer au client"); await co.wait_for_timeout(1000)
+            n_before = await co.evaluate("() => (window.__prompts || []).length")
+            await co.evaluate("() => { window.__fakePdfText = 'MARQUEUR-REPETE : semaine type qui se répète sur plusieurs semaines avec une charge qui monte.'; }")
+            await co.locator("li", has_text="Semaine type test").get_by_role("button", name="Transformer en programme").click()
+            await co.wait_for_timeout(1500)
+            n_after = await co.evaluate("() => (window.__prompts || []).length")
+            ok(n_after - n_before == 1, "import PDF (semaine type) : une seule réponse de l'IA suffit (pas une par semaine, la progression est dans la même réponse)", n_after - n_before)
+            ok(await co.input_value("#pe-n") == "Semaine type test", "import PDF (semaine type) : brouillon ouvert avec le bon nom")
+            ok(await co.locator(".sess-ed").count() == 2, "import PDF (semaine type) : les séances de la semaine type, une seule fois chacune (pas répétées par semaine)")
+            squat = co.locator(".sess-ed").filter(has=co.locator("summary", has_text="Séance lun"))
+            await squat.locator("summary").click(); await co.wait_for_timeout(150)
+            doses = [await squat.get_by_placeholder("S" + str(k)).input_value() for k in (1, 2, 3, 4)]
+            ok("75" in doses[0] and "80" in doses[1] and "85" in doses[2], "import PDF (semaine type) : progression sur 4 semaines reprise telle qu'écrite (75 % → 80 % → 85 %), sans gabarit interne", doses)
+            await co.screenshot(path=f"{OUT}/05_import_semaine_type.png", full_page=True)
+
+            # ---------- coach : retrait (2 PDF déposés dans ce test : les deux) ----------
             await co.bring_to_front()
-            await co.get_by_role("button", name="Retirer").first.click(); await co.wait_for_timeout(200)
-            await co.get_by_role("button", name="Confirmer le retrait").first.click(); await co.wait_for_timeout(800)
+            await co.locator(".side-nav button", has_text="Clients").first.click(); await co.wait_for_timeout(500)
+            await co.locator(".ctable tbody tr", has_text="Paul Pdf").first.click(); await co.wait_for_timeout(900)
+            await co.get_by_role("radio", name="Fichiers PDF").click(); await co.wait_for_timeout(400)
+            for _ in range(2):
+                await co.get_by_role("button", name="Retirer").first.click(); await co.wait_for_timeout(200)
+                await co.get_by_role("button", name="Confirmer le retrait").first.click(); await co.wait_for_timeout(800)
             parts = await co.evaluate("() => Object.keys(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter((k) => k.includes('/pdfparts/') || k.includes('/pdfs/')).length")
-            ok(parts == 0 and "Aucun pour l'instant" in await co.inner_text("body"), "retrait en deux clics : liste et morceaux effacés", parts)
+            ok(parts == 0 and "Aucun pour l'instant" in await co.inner_text("body"), "retrait en deux clics : liste et morceaux effacés (les deux PDF du test)", parts)
 
             # ---------- carte athlète côté client ----------
             await c.bring_to_front()

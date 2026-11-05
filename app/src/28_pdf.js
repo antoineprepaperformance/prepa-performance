@@ -39,7 +39,7 @@ function ClientPdfs({ data, src }) {
 }
 
 /* côté coach : déposer, nommer, rattacher à une semaine, retirer, ou transformer en programme (31_pdfimport.js) */
-function CoachPdfs({ data, src, plan, exo, edit }) {
+function CoachPdfs({ data, src, plan, exo, edit, db }) {
   const toast = useToast();
   const ai = useAI();
   const list = pdfList(data);
@@ -60,8 +60,16 @@ function CoachPdfs({ data, src, plan, exo, edit }) {
       if (!text || text.replace(/\s/g, "").length < 60) throw Object.assign(new Error("texte introuvable"), { code: "no_text" });
       const doc = await importProgramFromText(text, exo, ai.sample, (step, total) => setImp({ id: m.id, step, total }));
       if (!doc.n || doc.n === "Programme importé") doc.n = m.n;
+      /* enregistré tout de suite (pas seulement à l'ouverture de l'éditeur) et mis directement à la place du
+         programme de ce client : l'athlète ne doit jamais se retrouver avec deux programmes à la fois. Modifier
+         ensuite dans l'éditeur (ouvert juste après pour relecture) met à jour ce même programme, déjà assigné. */
+      if (db) {
+        const out = { ...doc }; delete out.id; delete out.isNew; out.updatedAt = nowISO();
+        await dbSet(db, "library/" + doc.id, out);
+      }
+      if (plan) await src.setPlan({ ...plan, programId: doc.id, start: todayISO(), weeks: doc.blocks.length * 4, updatedAt: nowISO() });
       edit(doc);
-      toast("Brouillon créé à partir du PDF : relis chaque séance, corrige ce qu'il faut, puis enregistre.", "ok");
+      toast(plan ? "Programme de ce client remplacé par celui du PDF : relis chaque séance, corrige ce qu'il faut, puis enregistre." : "Brouillon créé : ce client n'a pas encore de programme actif, assigne-le depuis l'onglet Plan une fois son programme activé.", "ok");
     } catch (e) { setImpErr((o) => ({ ...o, [m.id]: importErrText(e) })); }
     setImp(null);
   };
@@ -108,7 +116,7 @@ function CoachPdfs({ data, src, plan, exo, edit }) {
         <span className="btnrow"><${Btn} small kind="ghost" onClick=${() => doImport(m)} disabled=${!!imp}>${imp && imp.id === m.id ? "Transformation " + imp.step + "/" + imp.total + "…" : "Transformer en programme"}</${Btn}>
         <${Btn} small kind="quiet" onClick=${() => del(m)} disabled=${!!imp}>${sure === m.id ? "Confirmer le retrait" : "Retirer"}</${Btn}></span></li>`)}</ul>`
         : html`<p className="small muted">Les PDF envoyés apparaissent ici et dans l'onglet Programme du client.</p>`}
-      ${list.length ? html`<p className="muted small">« Transformer en programme » lit le texte du PDF et en propose une version avec cases à cocher, comme un programme normal : tu la relis et la corriges avant de l'enregistrer, puis tu l'assignes à ce client depuis l'onglet Plan.</p>` : null}
+      ${list.length ? html`<p className="muted small">« Transformer en programme » lit le texte du PDF et en propose une version avec cases à cocher, comme un programme normal : elle remplace tout de suite le programme actuel de ce client (il ne peut pas en suivre deux à la fois), relis-la et corrige ce qu'il faut puis enregistre.${plan ? "" : " Ce client n'a pas encore de programme actif : le brouillon est créé dans Programmes, à assigner une fois son programme activé."}</p>` : null}
     </${Card}>
   </div>`;
 }

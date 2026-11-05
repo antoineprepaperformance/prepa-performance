@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="6e569d130d">
+<meta name="app-build" content="f0d83637df">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -12207,15 +12207,19 @@ function ArticleCard() {
    IA, sur son propre compte Claude, ou le relais du site) en un brouillon de « Programme perso » — avec cases
    à cocher, séances bi-quotidiennes comprises (jour + moment). Le coach relit et corrige dans l'éditeur
    habituel (06_library.js) avant d'enregistrer : l'IA peut se tromper sur un exercice ou une charge.
+
    Deux structures bien différentes selon les coachs (vérifié sur deux programmes réels d'Antoine) :
    - semaine type qui se répète plusieurs semaines avec une charge qui monte (périodisation classique, son
-     style habituel) : une seule petite réponse suffit (les séances, chacune avec sa dose semaine par semaine) ;
+     style habituel) : chaque séance-type n'est demandée qu'une fois à l'IA, avec sa dose semaine par semaine ;
    - programme bespoke où chaque semaine (voire chaque jour) a un contenu vraiment différent : une réponse par
-     semaine, qui se replie automatiquement en une réponse par page de cette semaine si elle est trop dense
-     pour le relais utilisé (certains limitent la longueur d'une réponse de l'IA). */
+     semaine.
+   Dans les deux cas, chaque réponse de l'IA reste petite : certains relais limitent la longueur d'une réponse
+   (observé : 2000 jetons, largement dépassé en demandant toutes les semaines ou toutes les séances d'un coup).
+   Le texte est numéroté par page ([page N]) : l'IA repère les pages utiles par leur numéro (fiable), jamais en
+   recopiant un passage exact (fragile) — chaque section ne lit et ne reçoit que les pages qui la concernent. */
 function pdfjsReady() { return typeof window !== "undefined" && !!window.pdfjsLib; }
 if (pdfjsReady()) pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
-const PDFIMPORT_MAXCHARS = 60000, PDFIMPORT_MAXWEEKS = 16;
+const PDFIMPORT_MAXCHARS = 60000, PDFIMPORT_MAXWEEKS = 16, PDFIMPORT_MAXDAYS = 10;
 async function extractPdfText(blob) {
   if (!pdfjsReady()) throw Object.assign(new Error("pdfjs"), { code: "pdfjs_absent" });
   const buf = await blob.arrayBuffer();
@@ -12229,12 +12233,15 @@ async function extractPdfText(blob) {
   const text = pages.map((t, i) => "[page " + (i + 1) + "]\n" + t).join("\n\n");
   return text.slice(0, PDFIMPORT_MAXCHARS);
 }
+function pagesOf(text) { return String(text || "").split(/\[page (\d+)\]\n/).slice(1).reduce((a, x, i) => (i % 2 ? (a[a.length - 1][1] = x.trim(), a) : (a.push([Number(x), ""]), a)), []); }
+function pagesText(allPages, nums) {
+  const byNum = new Map(allPages);
+  const list = (Array.isArray(nums) ? nums : []).map((n) => Number(n)).filter((n) => byNum.has(n));
+  return list.map((n) => "[page " + n + "]\n" + byNum.get(n)).join("\n\n");
+}
 /* une réponse de l'IA trop longue pour le relais arrive tronquée (JSON invalide) : on découpe alors plus finement
    plutôt que d'abandonner. Les autres échecs (quota, IA refusée…) ne se résolvent pas en réessayant plus petit. */
 function importSplittable(e) { return !!e && (e.code === "invalid_json" || e.code === "prompt_too_large"); }
-function splitByPageMarkers(text) {
-  return String(text || "").split(/\[page \d+\]\n/).map((s) => s.trim()).filter(Boolean);
-}
 function importErrText(e) {
   if (e && e.code === "pdfjs_absent") return "La lecture de PDF n'a pas pu se charger (vérifie ta connexion) : réessaie dans un instant.";
   if (e && e.code === "no_text") return "Ce PDF ne contient pas de texte lisible (probablement des pages scannées en image) : transformation impossible, saisis le programme à la main.";
@@ -12244,72 +12251,73 @@ function exerciseListForAI(exo) {
   const custom = Object.values(exo || {}).filter((x) => x && x.custom).map((e) => [e.id, e.n, e.c]);
   return [...EXLIB.map((e) => [e.id, e.n, e.c]), ...custom];
 }
-const IMPORT_SESSION_SHAPE = `{"id":"identifiant court et unique (ex. lun-am)","t":"titre de la séance","focus":"objectif court (vide si non précisé)","lieu":"lieu si précisé, sinon vide",
-  "wu":"échauffement si décrit, sinon vide","day":0,"moment":"matin",
-  "items":[{"e":"identifiant d'exercice","free":"dose exacte telle qu'écrite","w":["dose semaine 1","dose semaine 2","dose semaine 3","dose semaine 4"],"n":"consigne courte si le document en donne une, sinon omets ce champ"}]}
-"day" : jour de la semaine, 0 = lundi … 6 = dimanche, déduit des dates ou jours mentionnés ; omets ce champ si non déterminable.
-"moment" : seulement quand DEUX séances d'entraînement distinctes ont lieu le même jour (ex. "matin" et "soir") ; omets-le sinon.
-Pour chaque exercice, choisis l'une de ces deux formes de dose selon ce que dit le document (jamais les deux, jamais de gabarit interne) :
-- "free" : texte EXACT de la prescription telle qu'écrite (ex. "3 x 2 reps · 80 % RM squat · récup 20''") — la forme la plus courante.
-- "w" : tableau de 4 textes au plus, un par semaine réelle de progression (ex. "4 x 5 · 75 %" puis "5 x 4 · 80 %"…) — seulement si LA MÊME séance se répète sur plusieurs semaines avec une charge qui monte et que le document donne bien une valeur par semaine pour cet exercice ; une valeur manquante se laisse vide ("").
-Pour "e", choisis l'identifiant le plus proche dans cette liste [id, nom, catégorie] si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice.`;
-const IMPORT_META_PROMPT = `Tâche : import_programme_meta. Tu reçois le texte extrait d'un programme d'entraînement en PDF, écrit par un préparateur physique pour un ou des athlètes.
+const IMPORT_META_PROMPT = `Tâche : import_programme_meta. Tu reçois le texte extrait d'un programme d'entraînement en PDF, écrit par un préparateur physique. Le texte est numéroté par page (repères [page N]) : tu t'en sers pour indiquer où se trouve chaque chose, jamais en recopiant un passage.
 
 Deux structures possibles, à bien distinguer avant de répondre :
-1. Semaine type qui se répète (périodisation classique) : les mêmes jours et les mêmes séances reviennent sur plusieurs semaines, avec une charge qui monte puis redescend (ex. « Semaine type · 4 semaines », un tableau hebdomadaire, une progression en % par semaine). Décris alors les séances DIRECTEMENT dans "sessions" ci-dessous, une seule fois chacune, avec leur dose semaine par semaine ("w") — jamais la même séance répétée plusieurs fois.
-2. Programme bespoke : chaque semaine (voire chaque jour) a un contenu vraiment différent, sans répétition. Laisse alors "sessions" vide et remplis "weeks" : chaque semaine sera relue séparément dans un deuxième temps.
+1. Semaine type qui se répète (périodisation classique) : les mêmes jours et les mêmes séances reviennent sur plusieurs semaines, avec une charge qui monte puis redescend (ex. « Semaine type · 4 semaines », un tableau hebdomadaire, une progression en % par semaine). Décris alors chaque séance-type UNE SEULE FOIS dans "days", avec le numéro de page de CHACUNE de ses occurrences (une par semaine de progression, dans l'ordre).
+2. Programme bespoke : chaque semaine (voire chaque jour) a un contenu vraiment différent, sans répétition. Décris alors chaque semaine dans "weeks", avec les numéros de page qui la concernent.
 
 Réponds uniquement avec un objet JSON (sans texte autour, sans balises de code), de cette forme exacte :
 {"n":"nom du programme","short":"accroche courte (une phrase)","desc":"description courte (une à deux phrases)",
  "lieu":"Salle, Extérieur, ou autre lieu principal selon le document",
  "repeating": true si cas 1 ci-dessus, false si cas 2,
- "blockName":"nom de la semaine type (cas 1 seulement, ex. 'Semaine type')","blockFocus":"objectif général (cas 1 seulement)",
- "sessions":[${IMPORT_SESSION_SHAPE} (cas 1 seulement ; tableau vide si cas 2)],
- "weeks":[{"n":"nom de cette semaine (ex. intitulé exact trouvé dans le document)","focus":"objectif de cette semaine en une phrase",
-   "marker":"copie EXACTE d'une courte phrase ou d'un titre du document qui marque le début de cette semaine"}] (cas 2 seulement ; tableau vide si cas 1),
- "refsMarker":"copie exacte du titre de la section des références scientifiques si le document en a une (sinon omets ce champ)",
+ "blockName":"nom de la semaine type (cas 1, ex. 'Semaine type')","blockFocus":"objectif général (cas 1)",
+ "days":[{"t":"titre de cette séance-type","day":0,"lieu":"lieu si précisé, sinon vide","pages":[3,9,15,21]}] (cas 1 seulement ; tableau vide si cas 2),
+ "weeks":[{"n":"nom de cette semaine (intitulé trouvé dans le document)","focus":"objectif de cette semaine en une phrase","pages":[2,3,4,5,6,7,8]}] (cas 2 seulement ; tableau vide si cas 1),
+ "refsPages":[26] (numéros de page de la section de références scientifiques si le document en a une, sinon tableau vide),
  "refs":["au plus 6 références scientifiques complètes trouvées dans le document, chacune en 200 caractères au plus (sinon tableau vide)"],
  "science":"un paragraphe de 400 caractères au plus résumant la logique scientifique si le document l'explique, sinon chaîne vide"}
-Dans "weeks" (cas 2), une entrée par semaine réelle du document, dans l'ordre. "marker" doit être une sous-chaîne EXACTE du texte fourni (copiée mot pour mot, avec les mêmes espaces et accents), assez longue pour être unique (8 à 15 mots), jamais résumée ni reformulée. S'il n'y a qu'une seule semaine, un seul élément dans "weeks" suffit.
+"day" (cas 1) : jour de la semaine de cette séance-type, 0 = lundi … 6 = dimanche, déduit des jours mentionnés ; omets ce champ si non déterminable. Une entrée de "weeks" par semaine réelle du document (cas 2), dans l'ordre ; une seule semaine suffit s'il n'y en a qu'une.
 
-Liste d'exercices existants [id, nom, catégorie] pour choisir un identifiant si un exercice correspond vraiment (cas 1 seulement, ignore cette liste si cas 2) : `;
-async function importMeta(text, exList, sample) { return sample.json(IMPORT_META_PROMPT + JSON.stringify(exList) + "\n\nTexte du document :\n" + text, { cache: false }); }
-function sliceWeeks(text, meta) {
-  const weeks = Array.isArray(meta.weeks) && meta.weeks.length ? meta.weeks : [{ n: "Semaine 1", focus: "" }];
-  if (weeks.length === 1) return [{ meta: weeks[0], text }];
-  const idxs = weeks.map((w) => (w && typeof w.marker === "string" && w.marker.trim() ? text.indexOf(w.marker.trim()) : -1));
-  const refsIdx = meta.refsMarker && typeof meta.refsMarker === "string" ? text.indexOf(meta.refsMarker.trim()) : -1;
-  return weeks.map((w, i) => {
-    const start = idxs[i] >= 0 ? idxs[i] : 0;
-    let end = text.length;
-    for (let j = i + 1; j < idxs.length; j++) if (idxs[j] >= 0) { end = idxs[j]; break; }
-    if (refsIdx >= 0 && refsIdx > start && refsIdx < end) end = refsIdx;
-    return { meta: w, text: end > start ? text.slice(start, end) : text };
-  });
+Texte du document :
+`;
+async function importMeta(text, sample) { return sample.json(IMPORT_META_PROMPT + text, { cache: false }); }
+const IMPORT_DOSE_HELP = `Pour la dose de chaque exercice, choisis l'une de ces deux formes selon ce que dit le document (jamais les deux, jamais de gabarit interne) :
+- "free" : texte EXACT de la prescription telle qu'écrite (ex. "3 x 2 reps · 80 % RM squat · récup 20''") — la forme la plus courante pour une séance qui ne se répète pas.
+- "w" : tableau de textes, un par occurrence fournie ci-dessous, dans le même ordre (ex. "4 x 5 · 75 %" puis "5 x 4 · 80 %"…) — pour une dose qui progresse d'une occurrence à l'autre.
+Pour "e", choisis l'identifiant le plus proche dans la liste [id, nom, catégorie] fournie si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice.`;
+function importDayTypePrompt(d, occPages, exList) {
+  return `Tâche : import_programme_jour_type. Tu structures UNE séance-type d'un programme qui se répète chaque semaine (périodisation classique), à partir de ses occurrences ci-dessous (une par semaine de progression, dans l'ordre). Décris les exercices UNE SEULE FOIS, fidèlement, sans rien inventer ni arrondir les chiffres.
+Réponds uniquement avec un objet JSON (sans texte autour, sans balises de code), de cette forme exacte :
+{"wu":"échauffement si décrit, sinon vide","items":[{"e":"identifiant d'exercice","free":"dose exacte telle qu'écrite","w":["dose occurrence 1","dose occurrence 2","…"],"n":"consigne courte si le document en donne une, sinon omets ce champ"}]}
+` + IMPORT_DOSE_HELP + `
+
+Séance-type : ` + (d.t || "") + `
+Liste d'exercices existants [id, nom, catégorie] : ` + JSON.stringify(exList) + `
+
+Occurrences, dans l'ordre des semaines :
+` + occPages;
 }
 function importWeekPrompt(weekMeta, text, exList) {
   return `Tâche : import_programme_semaine. Tu structures UNE semaine (ou une partie d'une semaine) d'un programme d'entraînement pour l'application d'un préparateur physique. Transforme le texte ci-dessous en séances avec exercices, fidèlement, sans rien inventer ni arrondir les chiffres. Ignore les lignes qui ne décrivent pas une séance d'entraînement (repas, trajets, logistique) : garde-les tout au plus comme contexte bref dans "focus", jamais comme exercice.
 Réponds uniquement avec un objet JSON (sans texte autour, sans balises de code), de cette forme exacte :
-{"sessions":[${IMPORT_SESSION_SHAPE}]}
+{"sessions":[{"id":"identifiant court et unique (ex. lun-am)","t":"titre de la séance","focus":"objectif court (vide si non précisé)","lieu":"lieu si précisé, sinon vide",
+  "wu":"échauffement si décrit, sinon vide","day":0,"moment":"matin",
+  "items":[{"e":"identifiant d'exercice","free":"dose exacte telle qu'écrite","n":"consigne courte si le document en donne une, sinon omets ce champ"}]}]}
+"day" : jour de la semaine, 0 = lundi … 6 = dimanche, déduit des dates ou jours mentionnés ; omets ce champ si non déterminable.
+"moment" : seulement quand DEUX séances d'entraînement distinctes ont lieu le même jour (ex. "matin" et "soir") ; omets-le sinon.
+` + IMPORT_DOSE_HELP + `
 
 Nom de cette semaine : ` + (weekMeta.n || "") + `
-Liste d'exercices existants [id, nom, catégorie] pour choisir un identifiant si un exercice correspond vraiment : ` + JSON.stringify(exList) + `
+Liste d'exercices existants [id, nom, catégorie] : ` + JSON.stringify(exList) + `
 
 Texte :
 ` + text;
 }
 /* une semaine entière d'un coup, et seulement si la réponse est trop longue pour le relais (JSON tronqué),
    une page (= un jour, en pratique) à la fois — jamais le choix inverse, pour rester rapide dans le cas courant */
-async function importWeekSessions(weekMeta, text, exList, sample) {
+async function importWeekSessions(weekMeta, text, allPages, exList, sample) {
   try {
     const r = await sample.json(importWeekPrompt(weekMeta, text, exList), { cache: false });
     return r && Array.isArray(r.sessions) ? r.sessions : [];
   } catch (e) {
     if (!importSplittable(e)) throw e;
-    const pages = splitByPageMarkers(text);
-    if (pages.length <= 1) throw e;
+    const nums = (Array.isArray(weekMeta.pages) ? weekMeta.pages : []).map(Number);
+    if (nums.length <= 1) throw e;
     const out = [];
-    for (const p of pages) {
+    for (const n of nums) {
+      const p = pagesText(allPages, [n]);
+      if (!p) continue;
       try { const r = await sample.json(importWeekPrompt(weekMeta, p, exList), { cache: false }); if (r && Array.isArray(r.sessions)) out.push(...r.sessions); }
       catch (e2) { /* une page illisible : les autres restent, plutôt que de tout perdre */ }
     }
@@ -12364,6 +12372,21 @@ function blocksFromWeeks(weeks) {
   }
   return blocks;
 }
+/* séances-types (semaine qui se répète) : une seule fois chacune, jour fixe repris de l'IA ; deux séances-types
+   sur le même jour (rare mais possible) deviennent automatiquement matin/soir plutôt que de se chevaucher */
+function sessionsFromDayTypes(dayTypes) {
+  const byDay = {};
+  return dayTypes.map((d, i) => {
+    const s = sanitizeImportedSession({ ...d.detail, id: d.t, t: d.t, lieu: d.lieu }, "j" + (i + 1));
+    const day = Math.round(Number(d.day));
+    if (Number.isInteger(day) && day >= 0 && day <= 6) {
+      s.day = day;
+      const n = (byDay[day] = (byDay[day] || 0) + 1);
+      if (n === 2) s.moment = "soir"; else if (n === 1 && dayTypes.some((x, j) => j !== i && Math.round(Number(x.day)) === day)) s.moment = "matin";
+    }
+    return s;
+  });
+}
 function sanitizeImportedProgram(meta, blocks) {
   const m = meta && typeof meta === "object" ? meta : {};
   const refs = Array.isArray(m.refs) ? m.refs.filter((x) => typeof x === "string" && x.trim()).slice(0, 10).map((x) => x.trim().slice(0, 300)) : [];
@@ -12379,20 +12402,30 @@ function sanitizeImportedProgram(meta, blocks) {
   };
 }
 async function importProgramFromText(text, exo, sample, onProgress) {
-  onProgress && onProgress(1, 2);
+  const allPages = pagesOf(text);
   const exList = exerciseListForAI(exo);
-  const meta = await importMeta(text, exList, sample);
-  if (meta && meta.repeating && Array.isArray(meta.sessions) && meta.sessions.length) {
-    onProgress && onProgress(2, 2);
-    const sessions = meta.sessions.map((raw, k) => sanitizeImportedSession(raw, "s" + (k + 1)));
-    return sanitizeImportedProgram(meta, [{ n: (meta.blockName || "Bloc 1").slice(0, 120), focus: String(meta.blockFocus || "").slice(0, 200), sessions }]);
+  onProgress && onProgress(1, 2);
+  const meta = await importMeta(text, sample);
+  if (meta && meta.repeating && Array.isArray(meta.days) && meta.days.length) {
+    const days = meta.days.slice(0, PDFIMPORT_MAXDAYS).filter((d) => d && typeof d === "object");
+    for (let i = 0; i < days.length; i++) {
+      onProgress && onProgress(i + 2, days.length + 1);
+      const d = days[i];
+      const occ = pagesText(allPages, d.pages);
+      try { d.detail = occ ? await sample.json(importDayTypePrompt(d, occ, exList), { cache: false }) : {}; }
+      catch (e) { d.detail = {}; }
+    }
+    const sessions = sessionsFromDayTypes(days);
+    return sanitizeImportedProgram(meta, [{ n: String(meta.blockName || "Bloc 1").slice(0, 120), focus: String(meta.blockFocus || "").slice(0, 200), sessions }]);
   }
-  const slices = sliceWeeks(text, meta).slice(0, PDFIMPORT_MAXWEEKS);
+  const weeks0 = Array.isArray(meta.weeks) && meta.weeks.length ? meta.weeks : [{ n: "Semaine 1", focus: "", pages: allPages.map((p) => p[0]) }];
+  const slices = weeks0.slice(0, PDFIMPORT_MAXWEEKS);
   const weeks = [];
   for (let i = 0; i < slices.length; i++) {
     onProgress && onProgress(i + 2, slices.length + 1);
-    const sessions = await importWeekSessions(slices[i].meta, slices[i].text, exList, sample);
-    weeks.push({ n: slices[i].meta && slices[i].meta.n, focus: slices[i].meta && slices[i].meta.focus, sessions });
+    const weekText = pagesText(allPages, slices[i].pages) || text;
+    const sessions = await importWeekSessions(slices[i], weekText, allPages, exList, sample);
+    weeks.push({ n: slices[i].n, focus: slices[i].focus, sessions });
   }
   return sanitizeImportedProgram(meta, blocksFromWeeks(weeks));
 }

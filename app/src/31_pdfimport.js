@@ -39,9 +39,14 @@ function pagesText(allPages, nums) {
 /* une réponse de l'IA trop longue pour le relais arrive tronquée (JSON invalide) : on découpe alors plus finement
    plutôt que d'abandonner. Les autres échecs (quota, IA refusée…) ne se résolvent pas en réessayant plus petit. */
 function importSplittable(e) { return !!e && (e.code === "invalid_json" || e.code === "prompt_too_large"); }
+/* e.text (texte brut, partiel ou non, renvoyé par l'IA quand elle n'a pas produit de JSON valide) : affiché en
+   partie pour qu'Antoine puisse le copier-coller si le souci se reproduit, plutôt que de deviner sans rien voir. */
 function importErrText(e) {
   if (e && e.code === "pdfjs_absent") return "La lecture de PDF n'a pas pu se charger (vérifie ta connexion) : réessaie dans un instant.";
   if (e && e.code === "no_text") return "Ce PDF ne contient pas de texte lisible (probablement des pages scannées en image) : transformation impossible, saisis le programme à la main.";
+  if (e && typeof e.text === "string" && e.text.trim()) {
+    return "Transformation impossible : " + aiErr(e) + " Ce que l'IA a répondu (à copier si le souci se reproduit) : " + e.text.trim().slice(0, 500);
+  }
   return "Transformation impossible : " + aiErr(e);
 }
 function exerciseListForAI(exo) {

@@ -324,13 +324,15 @@ function WatchHowto({ data, src, relay, raccourci }) {
 function SanteForm({ data, src, date }) {
   const toast = useToast();
   const cur = (data.sante && data.sante[date]) || {};
-  const [v, setV] = useState(() => Object.fromEntries([...SANTE_F.map((f) => [f.k, cur[f.k] ?? ""]), ["qualite", cur.qualite ?? null], ["energie", cur.energie ?? null], ["stress", cur.stress ?? null]]));
-  useEffect(() => { const c = (data.sante && data.sante[date]) || {}; setV(Object.fromEntries([...SANTE_F.map((f) => [f.k, c[f.k] ?? ""]), ["qualite", c.qualite ?? null], ["energie", c.energie ?? null], ["stress", c.stress ?? null]])); }, [date]);
+  const cycleTracked = cycleOn(data.profile);
+  const [v, setV] = useState(() => Object.fromEntries([...SANTE_F.map((f) => [f.k, cur[f.k] ?? ""]), ["qualite", cur.qualite ?? null], ["energie", cur.energie ?? null], ["stress", cur.stress ?? null], ["regles", !!cur.regles]]));
+  useEffect(() => { const c = (data.sante && data.sante[date]) || {}; setV(Object.fromEntries([...SANTE_F.map((f) => [f.k, c[f.k] ?? ""]), ["qualite", c.qualite ?? null], ["energie", c.energie ?? null], ["stress", c.stress ?? null], ["regles", !!c.regles]])); }, [date]);
   const [busy, setBusy] = useState(false);
   const save = async () => {
     const out = { ...cur, at: nowISO(), src: cur.src && cur.src !== "manuel" ? cur.src + "+manuel" : "manuel" };
     for (const f of SANTE_F) { const n = num(v[f.k]); if (v[f.k] === "" || v[f.k] === null) { delete out[f.k]; continue; } if (n === null || n < f.min || n > f.max) { toast(f.n + " : valeur hors limites.", "warn"); return; } out[f.k] = f.k === "pas" || f.k === "kcal" ? Math.round(n) : n; }
     ["qualite", "energie", "stress"].forEach((k) => { if (v[k] !== null && v[k] !== undefined) out[k] = v[k]; });
+    if (cycleTracked) { if (v.regles) out.regles = true; else delete out.regles; }
     setBusy(true);
     try { await src.saveSante(date, out); toast("Enregistré.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
   };
@@ -339,6 +341,7 @@ function SanteForm({ data, src, date }) {
     <${Field} label="Qualité du sommeil"><${Scale} id="sa-q" min=${1} max=${5} value=${v.qualite} onChange=${(x) => setV({ ...v, qualite: x })} lo="Très mauvaise" hi="Excellente" /></${Field}>
     <${Field} label="Énergie"><${Scale} id="sa-e" min=${1} max=${5} value=${v.energie} onChange=${(x) => setV({ ...v, energie: x })} lo="Épuisé" hi="En pleine forme" /></${Field}>
     <${Field} label="Stress"><${Scale} id="sa-s" min=${1} max=${5} value=${v.stress} onChange=${(x) => setV({ ...v, stress: x })} lo="Très stressé" hi="Détendu" /></${Field}>
+    ${cycleTracked ? html`<label className="chk"><input type="checkbox" id="sa-regles" checked=${!!v.regles} onChange=${(e) => setV({ ...v, regles: e.target.checked })} /><span>Mes règles ont commencé ce jour-là</span></label>` : null}
     <div className="actions"><${Btn} block onClick=${save} disabled=${busy}>Enregistrer</${Btn}></div>
     ${cur.src && cur.src.includes("iphone") ? html`<p className="muted small">Valeurs reçues de ton iPhone le ${fmtDY(String(cur.at).slice(0, 10))}.</p>` : null}
   </div>`;
@@ -374,6 +377,7 @@ function SanteScreen({ data, src, plan, relay, raccourci, onClose }) {
       <div className="daynav"><button type="button" className="x" aria-label="Jour précédent" onClick=${() => setDate(addDays(date, -1))}>‹</button><b>${date === todayISO() ? "Aujourd'hui" : JOURS[parseISO(date).getDay()] + " " + fmtD(date)}</b>
         <button type="button" className="x" aria-label="Jour suivant" disabled=${date === todayISO()} onClick=${() => setDate(addDays(date, 1))}>›</button></div>
       <${SanteForm} key=${date} data=${data} src=${src} date=${date} /></${Card}>
+    <${CycleCard} data=${data} src=${src} />
     ${tip ? html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">Conseil du jour</div><p><b>${tip.t}.</b> ${tip.d}</p><p className="muted small">${(tip.refs || []).map((k) => refShort(XREFS[k])).join(" · ")}</p></div></div>` : null}
     ${line("sommeil").length >= 2 ? html`<${Card} title="Sommeil" sub="14 derniers jours, en heures"><${BarChart} data=${bar("sommeil")} unit="h" target=${8} /></${Card}>` : null}
     ${line("pas").length >= 2 ? html`<${Card} title="Pas"><${BarChart} data=${bar("pas")} unit="pas" target=${stepsTarget(data)} /></${Card}>` : null}
@@ -405,8 +409,9 @@ function CoachSante({ data }) {
   const rows = days.filter((d) => data.sante && data.sante[d]);
   const f = santeFlag(data);
   const acts = Object.values(data.activites || {}).filter(Boolean).sort((a, b) => String(b.d).localeCompare(String(a.d)));
-  if (!rows.length && !acts.length) return html`<${Empty} title="Pas encore de données santé" text="Le client les saisit dans « Ma santé du jour » ou les envoie depuis son iPhone." />`;
+  if (!rows.length && !acts.length && !cycleShared(data.profile)) return html`<${Empty} title="Pas encore de données santé" text="Le client les saisit dans « Ma santé du jour » ou les envoie depuis son iPhone." />`;
   return html`<div className="stack">
+    <${CycleCard} data=${data} coachView=${true} />
     ${f.fcr !== null || f.vfc !== null ? html`<div className=${"alert " + ({ ok: "okb", prudence: "gold", leger: "warn" }[f.lvl])}><div><b>Aujourd'hui : ${{ ok: "feu vert", prudence: "prudence", leger: "récupération conseillée" }[f.lvl]}</b><p>${f.notes.join(" · ") || "Valeurs habituelles."}</p></div></div>` : null}
     ${rows.length ? html`<${Card} title="14 derniers jours"><div className="tscroll"><table className="ttable"><thead><tr><th>Jour</th>${SANTE_F.map((x) => html`<th key=${x.k}>${x.n}</th>`)}<th>Énergie</th></tr></thead>
       <tbody>${rows.map((d) => { const x = data.sante[d]; return html`<tr key=${d}><th>${fmtD(d)}<small>${x.src || ""}</small></th>${SANTE_F.map((c) => html`<td key=${c.k}>${num(x[c.k]) === null ? "—" : fmtN(num(x[c.k]), c.k === "pas" || c.k === "kcal" ? 0 : 1)}</td>`)}<td>${x.energie ? x.energie + "/5" : "—"}</td></tr>`; })}</tbody></table></div></${Card}>` : null}

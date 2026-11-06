@@ -177,12 +177,24 @@ async def run():
             ok("75" in doses[0] and "80" in doses[1] and "85" in doses[2], "import PDF (semaine type) : progression sur 4 semaines reprise telle qu'écrite (75 % → 80 % → 85 %), sans gabarit interne", doses)
             await co.screenshot(path=f"{OUT}/05_import_semaine_type.png", full_page=True)
 
-            # ---------- coach : retrait (2 PDF déposés dans ce test : les deux) ----------
-            await co.bring_to_front()
+            # ---------- coach : réponse de l'IA illisible (JSON cassé) : message d'erreur avec un extrait à copier, pas de plantage ----------
             await co.locator(".side-nav button", has_text="Clients").first.click(); await co.wait_for_timeout(500)
             await co.locator(".ctable tbody tr", has_text="Paul Pdf").first.click(); await co.wait_for_timeout(900)
             await co.get_by_role("radio", name="Fichiers PDF").click(); await co.wait_for_timeout(400)
-            for _ in range(2):
+            await co.set_input_files("#pdf-file", PDF_PATH); await co.wait_for_timeout(200)
+            await co.fill("#pdf-n", "Reponse cassee test")
+            await btn(co, "Envoyer au client"); await co.wait_for_timeout(1000)
+            await co.evaluate("() => { window.__fakePdfText = 'MARQUEUR-CASSE : provoque une reponse JSON invalide pour ce test.'; }")
+            await co.locator("li", has_text="Reponse cassee test").get_by_role("button", name="Transformer en programme").click()
+            await co.wait_for_timeout(1500)
+            err = co.locator("li", has_text="Reponse cassee test").locator(".warn-t")
+            ok(await err.count() == 1 and "Réponse illisible" in await err.inner_text() and "Programme cassé" in await err.inner_text(),
+               "réponse illisible : message d'erreur avec un extrait de la réponse à copier (pas une page blanche)", await err.inner_text() if await err.count() else "")
+            ok(await co.locator(".ctable, .side-nav").count() > 0, "réponse illisible : l'appli reste utilisable, pas de plantage")
+            await co.screenshot(path=f"{OUT}/06_reponse_illisible.png", full_page=True)
+
+            # ---------- coach : retrait (3 PDF déposés dans ce test) ----------
+            for _ in range(3):
                 await co.get_by_role("button", name="Retirer").first.click(); await co.wait_for_timeout(200)
                 await co.get_by_role("button", name="Confirmer le retrait").first.click(); await co.wait_for_timeout(800)
             parts = await co.evaluate("() => Object.keys(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter((k) => k.includes('/pdfparts/') || k.includes('/pdfs/')).length")

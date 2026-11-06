@@ -70,6 +70,7 @@
       else if (/Tâche : analyse_produit/.test(all)) text = JSON.stringify({ produit: "Skyr nature", marque: "Marque test", ean: null, lisible: true, estime: false, pour100: { kcal: 64, p: 11, c: 4, f: 0.2, sucres: 4, fibres: 0, sel: 0.1 }, portion_g: 150, nutriscore: "A", verdict: "bon", commentaire: "Excellente source de protéines pour ta collation.", alternative: null });
       else if (/Analyse la technique d'un client/.test(all)) text = JSON.stringify({ resume: "Bonne profondeur, le buste reste solide. Le genou part un peu vers l'intérieur à la remontée.", points: [{ point: "Genoux dans l'axe des pieds", ok: false, conseil: "Pousse les genoux vers l'extérieur en remontant." }, { point: "Dos neutre", ok: true, conseil: "Garde ce gainage." }], priorite: "Genoux dans l'axe des pieds.", securite: "" });
       else if (/Propose UNE recette simple pour un sportif/.test(all)) text = JSON.stringify({ n: "Bol poulet, riz et courgettes", temps: 20, ingredients: [{ nom: "blanc de poulet", g: 150 }, { nom: "riz basmati", g: 80 }, { nom: "courgette", g: 200 }, { nom: "huile d'olive", g: 10 }], etapes: ["Cuire le riz.", "Saisir le poulet en dés.", "Ajouter les courgettes en rondelles."], astuce: "Double les quantités pour le lendemain.", kcal: 620, p: 45, c: 70, f: 15 });
+      else if (/Tâche : import_programme_meta\./.test(all) && /MARQUEUR-CASSE/.test(all)) text = "Voici le programme structuré : {\"n\": \"Programme cassé\", \"repeating\": true, \"days\": [ { \"t\": \"Squat\" // réponse tronquée, volontairement invalide pour ce test";
       else if (/Tâche : import_programme_meta\./.test(all) && /MARQUEUR-REPETE/.test(all)) text = JSON.stringify({ n: "Semaine type test", short: "Programme de test", desc: "Semaine type de test pour l'import automatique.", lieu: "Salle", repeating: true,
         blockName: "Semaine type", blockFocus: "Vérifier la périodisation importée",
         days: [{ t: "Squat", day: 0, lieu: "Salle", pages: [1] }, { t: "Sprint", day: 2, lieu: "Piste", pages: [1] }],
@@ -114,7 +115,13 @@
       return { text, truncated: false, modelTierApplied: opts.modelTier || "default" };
     }
     const sample = (input, opts) => run(input, opts);
-    sample.json = async (input, opts) => JSON.parse((await run(input, opts)).text);
+    /* même contrat d'erreur que les deux vrais relais (claude.ai et le site, 01_ia.js) : une réponse non JSON
+       rejette avec {code:"invalid_json", text}, pas une erreur de syntaxe JS brute */
+    sample.json = async (input, opts) => {
+      const r = await run(input, opts);
+      try { return JSON.parse(r.text); }
+      catch (e) { const er = new Error("invalid_json"); er.code = "invalid_json"; er.text = r.text; throw er; }
+    };
     sample.limits = async () => ({ maxPromptBytes: 262144, images: { maxCount: 4, maxInputBytes: 20000000, mediaTypes: ["image/jpeg", "image/png"] }, ...(notools ? {} : { tools: { maxCount: 10 } }) });
     return sample;
   }

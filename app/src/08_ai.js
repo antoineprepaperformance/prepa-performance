@@ -164,6 +164,13 @@ function clientContext({ data, plan, prog, stats, lib }) {
     L.push("Objectifs (deux axes séparés) : " + objLigne(o) + ".");
     if (o.recomp) L.push("Recomposition visée : dire franchement que les deux objectifs avancent plus lentement ensemble que séparément, que la fenêtre est " + (o.fenetre === "large" ? "favorable d'après son profil (débutant, reprise ou masse grasse plus élevée)" : o.fenetre === "etroite" ? "étroite d'après son profil (entraîné et sec), et qu'enchaîner les deux phases rend souvent plus" : "jouable sans être acquise") + ", que la condition est des protéines élevées (" + fmtN(o.prot[0], 1) + " à " + fmtN(o.prot[1], 1) + " g/kg/j) et un déficit modéré, et que le succès se juge sur les charges, les tests et les circonférences, pas sur le poids. Ne jamais promettre un gain de force maximal et une perte de gras rapide en même temps.");
   }
+  /* autorégulation (34_autoreg.js) : l'IA explique l'ajustement, elle ne le décide pas — la règle est
+     déterministe et bornée. Lui dire la décision du jour et d'où elle vient, et lui interdire d'en inventer
+     une autre ou de promettre de meilleurs résultats. */
+  if (autoregOn(plan)) {
+    const lim = autoregOf(plan);
+    L.push("Autorégulation de la charge : activée par Antoine, bornes +" + lim.up + " % / −" + lim.down + " %. La décision est prise par une règle écrite dans l'application (effort ressenti et séance terminée pour les profils Performance et Haut niveau ; répétitions faites contre prescrites, séances de la semaine et courbatures pour les profils Reprise et Sportif ; les signaux de montre ne peuvent que faire baisser la charge). Tu peux expliquer un ajustement et répondre aux questions dessus, mais tu ne décides jamais de la charge toi-même et tu ne proposes jamais un autre chiffre que celui affiché. Ne promets pas de meilleurs résultats grâce à l'ajustement : son intérêt est de pouvoir s'entraîner souvent sans que ce soit plat ni imprudent.");
+  }
   const ps = stats && stats.ps;
   if (plan && prog && ps) {
     const b = blockOf(prog, Math.max(1, ps.week));

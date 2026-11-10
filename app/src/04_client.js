@@ -431,7 +431,10 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
   const [ready, setReady] = useState(existing && existing.readiness ? existing.readiness.values : null);
   const rd = detailed ? readinessOf(ready, data) : null;
   const taper = detailed ? taperFor(plan, entry.w) : null;
-  const ctx = useMemo(() => ({ niveau: niv, block: Math.ceil(entry.w / 4), e1rm: (e) => e1rmFor(e, data), vma: vmaOf(data), t5k: t5kOf(data), taper, ready: rd }), [niv, entry.key, rd && rd.lvl, !!taper]);
+  /* autorégulation (34_autoreg.js) : décision déterministe prise une fois à l'ouverture de la séance, à partir
+     de données déjà enregistrées ; appliquée par doseFor comme la forme du jour et l'affûtage */
+  const auto = useMemo(() => autoDecision(data, plan, prog, null, entry, todayISO()), [entry.key, autoregOn(plan), data.logs, data.checkins, data.sante]);
+  const ctx = useMemo(() => ({ niveau: niv, block: Math.ceil(entry.w / 4), e1rm: (e) => e1rmFor(e, data), vma: vmaOf(data), t5k: t5kOf(data), taper, ready: rd, auto, rep: entry.rep }), [niv, entry.key, rd && rd.lvl, !!taper, auto]);
   const doses = useMemo(() => items.map((it) => doseFor(it, wib, ctx)), [items, ctx]);
   const [vals, setVals] = useState(() => items.map((it, i) => {
     const d = doseFor(it, wib, { niveau: niv, block: Math.ceil(entry.w / 4) });
@@ -444,7 +447,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
     }
     return { e: it.e, done: ex ? !!ex.done : false };
   }));
-  /* la forme du jour ou l'affûtage changent le nombre de séries : on ajuste les lignes sans perdre la saisie */
+  /* la forme du jour, l'affûtage ou l'autorégulation changent le nombre de séries : on ajuste les lignes sans perdre la saisie */
   useEffect(() => {
     if (existing) return;
     setVals((vs) => vs.map((v, i) => {
@@ -490,6 +493,7 @@ function SessionPlayer({ entry, prog, plan, exo, data, src, onClose, isCurrent, 
     ${entry.s.modCut ? html`<p className="note">${entry.s.modCut === "cardio" ? "Version musculation : la partie cardio est retirée, comme tu l'as choisi dans ton suivi." : "Version cardio : la partie musculation est retirée, comme tu l'as choisi dans ton suivi."}</p>` : null}
     ${plan.medicalHold ? html`<div className="alert warn"><div><b>Mode Reprise</b><p>En attendant l'avis de ton médecin, les charges et les intensités sont réduites.</p></div></div>` : null}
     ${taper ? html`<div className="alert gold"><div><b>Affûtage</b><p>${taper.n}</p></div></div>` : null}
+    <${AutoregNote} a=${auto} rep=${entry.rep} />
     ${detailed ? (simple ? html`<${QuickReady} value=${ready} onChange=${setReady} data=${data} />` : html`<${ReadinessCheck} value=${ready} onChange=${setReady} data=${data} />`) : null}
     ${wu ? html`<div className="wu"><b>${detailed && !simple ? "Échauffement RAMP" : "Échauffement"}</b><p>${wu}</p></div>` : null}
     <ol className="exlist">${items.map((it, i) => {

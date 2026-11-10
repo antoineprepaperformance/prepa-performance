@@ -234,6 +234,22 @@ function doseFor(it, wib, ctx) {
   }
   /* affûtage */
   if (taper && it.t !== "M" && it.t !== "C") sets = Math.max(1, Math.round(sets * taper.f));
+  /* jour en plus (séance reprise en boucle parce que le client s'entraîne plus de jours que le programme n'a
+     de séances) : une série de moins sur la force et la puissance, la charge est réduite plus bas (34_autoreg.js) */
+  const rn = typeof repNote === "function" ? repNote(c.rep) : null;
+  if (rn && main) sets = Math.max(1, sets - 1);
+  /* autorégulation sans charge calculée en kg (profils Reprise et Sportif, ou exercice au poids du corps) :
+     le levier ne peut pas être le pourcentage d'un maximum qu'on n'a pas. On allège en séries et on dit quoi
+     faire de la charge que le client note lui-même ; on ne rajoute jamais de volume à qui a échoué. */
+  const autoD = c.auto && c.auto.on ? c.auto.dir : 0;
+  if (autoD && (!loadT || r < 2)) {
+    /* la forme du jour a déjà pu retirer une série juste au-dessus : on ne cumule pas deux fois le même levier */
+    const dejaBaisse = ready && (ready.lvl === "leger" || ready.lvl === "prudence");
+    if (autoD < 0 && main && !dejaBaisse) sets = Math.max(1, sets - 1);
+    lines.push(autoD > 0
+      ? "Ajustement du jour : monte d'un cran par rapport à ta dernière séance de ce type (une charge un peu plus lourde, ou une version un peu plus difficile)."
+      : "Ajustement du jour : reprends une charge plus légère que la dernière fois" + (main ? ", avec une série de moins sur cet exercice" : "") + ". L'objectif est de finir toutes tes répétitions proprement.");
+  }
   if (r >= 2 && REST_P[it.t]) rest = REST_P[it.t];
   const parts = [sets + " × " + reps];
   if (int) parts.push(int);
@@ -250,6 +266,14 @@ function doseFor(it, wib, ctx) {
       if (e1 && e1.v) {
         kg = [roundLoad(e1.v * pct[0] / 100), roundLoad(e1.v * pct[1] / 100)];
         lines.push("Charge : " + pctTxt(pct) + " de ton maximum estimé (" + fmtN(e1.v, 1) + " kg, " + e1.src + " du " + fmtD(e1.date) + ") ≈ " + fmtN(kg[0], 1) + (kg[1] !== kg[0] ? " à " + fmtN(kg[1], 1) : "") + " kg.");
+        /* autorégulation (34_autoreg.js) : la charge calculée est le seul levier touché ici, et l'écart est
+           dit en clair — la règle et ses bornes sont dans 34_autoreg.js, pas ici */
+        const fac = (c.auto && c.auto.dir ? c.auto.dir * c.auto.pct : 0) - (rn ? rn.pct : 0);
+        if (fac) {
+          const k2 = kg.map((v) => roundLoad(v * (1 + fac / 100)));
+          lines.push((fac > 0 ? "Charge montée de " + fac + " % aujourd'hui" : "Charge allégée de " + Math.abs(fac) + " % aujourd'hui") + " : " + fmtN(k2[0], 1) + (k2[1] !== k2[0] ? " à " + fmtN(k2[1], 1) : "") + " kg. " + (rn && c.auto && c.auto.dir ? "Jour en plus, et ajustement du jour." : rn ? "Jour en plus : séance volontairement plus légère." : "Ajustement automatique, dans les limites réglées par Antoine."));
+          kg = k2;
+        }
       } else lines.push("Charge : " + pctTxt(pct) + " de ton maximum" + (it.t === "P" ? (TEST_FOR_EX[it.e] ? " : fais le test de maximum pour le calcul en kg." : " : une charge que tu montes vite et proprement à chaque répétition.") : ". Note tes charges : le calcul en kg apparaît dès la prochaine séance."));
     }
     if (TEMPO[it.t]) lines.push("Tempo " + TEMPO[it.t] + " : descente " + TEMPO[it.t].split("-")[0] + " s, " + (TEMPO[it.t].split("-")[2] === "X" ? "montée explosive" : "montée en 1 s") + ".");

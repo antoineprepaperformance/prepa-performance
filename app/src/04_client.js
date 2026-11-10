@@ -696,6 +696,7 @@ function Progress({ data, plan, prog, stats, openTests, src, coach, openSante })
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Mes progrès</div><h1>${stats.logs.filter((l) => l.kind !== "presentiel").length} séances · ${stats.adherence === null ? "régularité calculée dès la semaine 2" : Math.round(stats.adherence * 100) + " % de régularité"}</h1></div>
     ${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}
+    ${objectifs(data.profile, plan, plan && plan.programId).recomp ? html`<${RecompMesures} data=${data} stats=${stats} />` : null}
     <${Card} title="Mes tests" sub="Départ puis toutes les 4 semaines" action=${html`<${Btn} small kind="ghost" onClick=${() => openTests(nextPoint ?? 0)}>Saisir</${Btn}>`}>
       <${TestsTable} prog=${prog} plan=${plan} data=${data} /></${Card}>
     ${stats.weights.length ? html`<${Card} title="Poids"><${LineChart} points=${stats.weights} unit="kg" /></${Card}>` : null}
@@ -732,6 +733,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       <dt>Profil</dt><dd>${nivName(effNiveau(plan, p))}${plan && plan.medicalHold ? " (Reprise en attendant l'avis médical)" : ""}</dd>
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
       </dl></${Card}>
+    ${plan ? html`<${ObjectifsCard} data=${data} src=${src} plan=${plan} />` : null}
     <${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} />
     <${SportCard} data=${data} src=${src} plan=${plan} />
     <${BodyRecordsCard} data=${data} src=${src} />
@@ -804,7 +806,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
   const pendingCode = (() => { try { return normCode(localStorage.getItem("pending_code") || ""); } catch (e) { return ""; } })();
   const [step, setStep] = useState(0);
   const [f, setF] = useState({ name: (au && au.displayName) || "", email: (au && au.email) || "", phone: "", birthYear: "", height: "", weight: "", sport: "", sportId: "", poste: "", answers: { compet: null, xp: null, freq: 3 },
-    records: {}, programId: "", niveau: "", materiel: ["salle", "terrain"], modules: { muscu: true, cardio: true, nutrition: true }, screening: SCREENING.map(() => null), screeningDetails: SCREENING.map(() => ""), prereq: [], side: "", consent: false, parentName: "", parentEmail: "", parentOk: false });
+    records: {}, programId: "", corps: "", niveau: "", materiel: ["salle", "terrain"], modules: { muscu: true, cardio: true, nutrition: true }, screening: SCREENING.map(() => null), screeningDetails: SCREENING.map(() => ""), prereq: [], side: "", consent: false, parentName: "", parentEmail: "", parentOk: false });
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
@@ -840,6 +842,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
       records: recClean(minor ? Object.fromEntries(Object.entries(f.records || {}).filter(([k]) => k === "autres" || (RECORDS[k] && RECORDS[k].type !== "kg"))) : f.records), recordsAt: todayISO(), sport: f.sport.trim(), sportId: spo ? spo.id : null, poste: spo && (spo.postes || []).some((q) => q[0] === f.poste) ? f.poste : "", sportAdapt: true,
       level: { reprise: "Débutant", sportif: "Intermédiaire", perf: "Confirmé", elite: "Confirmé" }[niveau] || "Intermédiaire",
       materiel: f.materiel, modules: f.modules, persoAt: nowISO(),
+      corps: f.corps || corpsDefault(f.programId), corpsAt: todayISO(),
       side: f.side || "", prereq: f.prereq, request: { programId: f.programId, niveau, answers: f.answers, offer: "suivi", weeks: 4, equipment: lieu, start: nextMonday(), code: pendingCode || null },
       screening: f.screening, screeningDetails: f.screening.map((x, i) => (x ? String(f.screeningDetails[i] || "").trim().slice(0, 400) : "")), screeningFlag: flag, consent: { at: nowISO(), text: consentTxt, v: window.IS_SITE ? "site2" : 3 },
       parent: minor ? { name: f.parentName.trim(), email: f.parentEmail.trim(), at: nowISO(), ok: true } : null, createdAt: nowISO() };
@@ -883,12 +886,16 @@ function Onboarding({ settings, onSubmit, onCode }) {
         ${minor ? html`<p className="muted small">Avant 18 ans, pas de charge maximale : note plutôt tes performances au poids du corps, en vitesse ou en endurance.</p>` : html`<p className="muted small">Une charge levée plusieurs fois suffit (ex. 100 kg × 5) : ton maximum est estimé avec la formule d'Epley.</p>`}
         <${RecordsEditor} value=${f.records} onChange=${(r) => set("records", r)} sportId=${spo ? spo.id : ""} minor=${minor} /></${Card}>
     </div>` : null}
-    ${step === 3 ? html`<div className="stack"><h2>Ton objectif</h2>
+    ${step === 3 ? html`<div className="stack"><h2>Tes objectifs</h2>
       <div className="field"><span className="field-l">Ce que tu veux dans ton suivi</span><${ModulesPicker} value=${f.modules} onChange=${(v) => set("modules", v)} idp="ob-mod" />
         <span className="field-h">Même prix : tu choisis seulement ce que tu fais.${trainOn(f.modules) ? "" : " Choisis quand même ton objectif : il règle tes repères de nutrition."}</span></div>
+      <div className="field"><span className="field-l">1. Ton entraînement</span><span className="field-h">Ce que tu travailles. Un seul programme à la fois : il dure 12 semaines.</span></div>
       ${recProgs.length && cat !== "aucun" ? html`<p className="muted small">Conseillés pour un ${SPORT_LABEL[cat]} : ${recProgs.slice(0, 2).map((x) => PB[x].n).join(", ")}.</p>` : null}
       <div className="pgrid">${PROGS.map((x) => html`<button key=${x.id} type="button" className=${"pcard" + (f.programId === x.id ? " on" : "")} aria-pressed=${f.programId === x.id} onClick=${() => set("programId", x.id)}>
         <b>${x.n}</b><span>${x.short}</span><small>${x.lieu}</small>${recProgs.slice(0, 2).includes(x.id) ? html`<${Pill} tone="gold">Conseillé</${Pill}>` : null}</button>`)}</div>
+      <div className="field"><span className="field-l">2. Ta composition corporelle</span></div>
+      <${ObjectifsPicker} corps=${corpsOf({ corps: f.corps }, f.programId)} onCorps=${(v) => set("corps", v)} idp="ob" />
+      ${f.programId ? html`<${RecompNote} o=${objectifs({ corps: f.corps, height: num(f.height), weight: num(f.weight), request: { niveau, answers: f.answers } }, null, f.programId)} />` : null}
       ${trainOn(f.modules) ? html`<div className="field"><span className="field-l">Ton matériel</span><${MaterielPicker} value=${f.materiel} onChange=${(v) => set("materiel", v)} idp="ob-mat" /></div>` : null}
       ${prog ? html`<${Card} title=${prog.n}><p className="small">${prog.desc}</p><${FitChecks} checks=${checks} /></${Card}>` : null}</div>` : null}
     ${step === 4 ? html`<div className="stack form"><h2>Ta santé</h2>

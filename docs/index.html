@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="f4f7bf44ed">
+<meta name="app-build" content="2c50c2cb8d">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3424,6 +3424,7 @@ function Progress({ data, plan, prog, stats, openTests, src, coach, openSante })
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Mes progrès</div><h1>${stats.logs.filter((l) => l.kind !== "presentiel").length} séances · ${stats.adherence === null ? "régularité calculée dès la semaine 2" : Math.round(stats.adherence * 100) + " % de régularité"}</h1></div>
     ${openSante ? html`<${SanteMini} data=${data} open=${openSante} />` : null}
+    ${objectifs(data.profile, plan, plan && plan.programId).recomp ? html`<${RecompMesures} data=${data} stats=${stats} />` : null}
     <${Card} title="Mes tests" sub="Départ puis toutes les 4 semaines" action=${html`<${Btn} small kind="ghost" onClick=${() => openTests(nextPoint ?? 0)}>Saisir</${Btn}>`}>
       <${TestsTable} prog=${prog} plan=${plan} data=${data} /></${Card}>
     ${stats.weights.length ? html`<${Card} title="Poids"><${LineChart} points=${stats.weights} unit="kg" /></${Card}>` : null}
@@ -3460,6 +3461,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       <dt>Profil</dt><dd>${nivName(effNiveau(plan, p))}${plan && plan.medicalHold ? " (Reprise en attendant l'avis médical)" : ""}</dd>
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
       </dl></${Card}>
+    ${plan ? html`<${ObjectifsCard} data=${data} src=${src} plan=${plan} />` : null}
     <${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} />
     <${SportCard} data=${data} src=${src} plan=${plan} />
     <${BodyRecordsCard} data=${data} src=${src} />
@@ -3532,7 +3534,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
   const pendingCode = (() => { try { return normCode(localStorage.getItem("pending_code") || ""); } catch (e) { return ""; } })();
   const [step, setStep] = useState(0);
   const [f, setF] = useState({ name: (au && au.displayName) || "", email: (au && au.email) || "", phone: "", birthYear: "", height: "", weight: "", sport: "", sportId: "", poste: "", answers: { compet: null, xp: null, freq: 3 },
-    records: {}, programId: "", niveau: "", materiel: ["salle", "terrain"], modules: { muscu: true, cardio: true, nutrition: true }, screening: SCREENING.map(() => null), screeningDetails: SCREENING.map(() => ""), prereq: [], side: "", consent: false, parentName: "", parentEmail: "", parentOk: false });
+    records: {}, programId: "", corps: "", niveau: "", materiel: ["salle", "terrain"], modules: { muscu: true, cardio: true, nutrition: true }, screening: SCREENING.map(() => null), screeningDetails: SCREENING.map(() => ""), prereq: [], side: "", consent: false, parentName: "", parentEmail: "", parentOk: false });
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
@@ -3568,6 +3570,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
       records: recClean(minor ? Object.fromEntries(Object.entries(f.records || {}).filter(([k]) => k === "autres" || (RECORDS[k] && RECORDS[k].type !== "kg"))) : f.records), recordsAt: todayISO(), sport: f.sport.trim(), sportId: spo ? spo.id : null, poste: spo && (spo.postes || []).some((q) => q[0] === f.poste) ? f.poste : "", sportAdapt: true,
       level: { reprise: "Débutant", sportif: "Intermédiaire", perf: "Confirmé", elite: "Confirmé" }[niveau] || "Intermédiaire",
       materiel: f.materiel, modules: f.modules, persoAt: nowISO(),
+      corps: f.corps || corpsDefault(f.programId), corpsAt: todayISO(),
       side: f.side || "", prereq: f.prereq, request: { programId: f.programId, niveau, answers: f.answers, offer: "suivi", weeks: 4, equipment: lieu, start: nextMonday(), code: pendingCode || null },
       screening: f.screening, screeningDetails: f.screening.map((x, i) => (x ? String(f.screeningDetails[i] || "").trim().slice(0, 400) : "")), screeningFlag: flag, consent: { at: nowISO(), text: consentTxt, v: window.IS_SITE ? "site2" : 3 },
       parent: minor ? { name: f.parentName.trim(), email: f.parentEmail.trim(), at: nowISO(), ok: true } : null, createdAt: nowISO() };
@@ -3611,12 +3614,16 @@ function Onboarding({ settings, onSubmit, onCode }) {
         ${minor ? html`<p className="muted small">Avant 18 ans, pas de charge maximale : note plutôt tes performances au poids du corps, en vitesse ou en endurance.</p>` : html`<p className="muted small">Une charge levée plusieurs fois suffit (ex. 100 kg × 5) : ton maximum est estimé avec la formule d'Epley.</p>`}
         <${RecordsEditor} value=${f.records} onChange=${(r) => set("records", r)} sportId=${spo ? spo.id : ""} minor=${minor} /></${Card}>
     </div>` : null}
-    ${step === 3 ? html`<div className="stack"><h2>Ton objectif</h2>
+    ${step === 3 ? html`<div className="stack"><h2>Tes objectifs</h2>
       <div className="field"><span className="field-l">Ce que tu veux dans ton suivi</span><${ModulesPicker} value=${f.modules} onChange=${(v) => set("modules", v)} idp="ob-mod" />
         <span className="field-h">Même prix : tu choisis seulement ce que tu fais.${trainOn(f.modules) ? "" : " Choisis quand même ton objectif : il règle tes repères de nutrition."}</span></div>
+      <div className="field"><span className="field-l">1. Ton entraînement</span><span className="field-h">Ce que tu travailles. Un seul programme à la fois : il dure 12 semaines.</span></div>
       ${recProgs.length && cat !== "aucun" ? html`<p className="muted small">Conseillés pour un ${SPORT_LABEL[cat]} : ${recProgs.slice(0, 2).map((x) => PB[x].n).join(", ")}.</p>` : null}
       <div className="pgrid">${PROGS.map((x) => html`<button key=${x.id} type="button" className=${"pcard" + (f.programId === x.id ? " on" : "")} aria-pressed=${f.programId === x.id} onClick=${() => set("programId", x.id)}>
         <b>${x.n}</b><span>${x.short}</span><small>${x.lieu}</small>${recProgs.slice(0, 2).includes(x.id) ? html`<${Pill} tone="gold">Conseillé</${Pill}>` : null}</button>`)}</div>
+      <div className="field"><span className="field-l">2. Ta composition corporelle</span></div>
+      <${ObjectifsPicker} corps=${corpsOf({ corps: f.corps }, f.programId)} onCorps=${(v) => set("corps", v)} idp="ob" />
+      ${f.programId ? html`<${RecompNote} o=${objectifs({ corps: f.corps, height: num(f.height), weight: num(f.weight), request: { niveau, answers: f.answers } }, null, f.programId)} />` : null}
       ${trainOn(f.modules) ? html`<div className="field"><span className="field-l">Ton matériel</span><${MaterielPicker} value=${f.materiel} onChange=${(v) => set("materiel", v)} idp="ob-mat" /></div>` : null}
       ${prog ? html`<${Card} title=${prog.n}><p className="small">${prog.desc}</p><${FitChecks} checks=${checks} /></${Card}>` : null}</div>` : null}
     ${step === 4 ? html`<div className="stack form"><h2>Ta santé</h2>
@@ -3991,6 +3998,7 @@ function ClientOverview({ data, plan, prog, stats, info, lib }) {
       <${Stat} n=${ps.phase === "en_cours" ? fmtN(stats.loadByWeek[ps.week] || 0, 0) : "—"} label="Charge cette semaine" sub="effort × minutes" />
       <${Stat} n=${lastC ? "S" + lastC.w : "—"} label="Dernier bilan" sub=${lastC ? fmtD(lastC.at) : null} />
     </div>
+    <${CoachObjectifs} data=${data} plan=${plan} stats=${stats} lib=${lib} />
     <div className="grid2"><${Card} title="Carte athlète" sub="Ce que voit le client"><${CardEvo} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>
       <${Badges} data=${data} plan=${plan} prog=${prog} lib=${lib} /></div>
     <div className="grid2">
@@ -5038,6 +5046,14 @@ function clientContext({ data, plan, prog, stats, lib }) {
     if (tdone.length) L.push("Dernières séances terrain : " + tdone.map((l) => fmtD(l.d) + " « " + l.n + " » effort " + l.rpe + "/10" + (l.res ? ", résultat " + fmtRes(l.res.t, l.res.v) : "")).join(" ; "));
   } else if (p.sport) L.push("Sport déclaré mais non reconnu dans la liste : « " + p.sport + " ».");
   if (typeof persoLine === "function" && persoLine(p)) L.push(persoLine(p) + ".");
+  /* deux axes d'objectifs (33_objectifs.js) : ne jamais promettre que les deux avancent à pleine vitesse
+     ensemble quand une recomposition est visée, et juger sur les charges, les tests et les tours de taille
+     plutôt que sur la balance */
+  {
+    const o = objectifs(p, plan, plan && plan.programId, lib);
+    L.push("Objectifs (deux axes séparés) : " + objLigne(o) + ".");
+    if (o.recomp) L.push("Recomposition visée : dire franchement que les deux objectifs avancent plus lentement ensemble que séparément, que la fenêtre est " + (o.fenetre === "large" ? "favorable d'après son profil (débutant, reprise ou masse grasse plus élevée)" : o.fenetre === "etroite" ? "étroite d'après son profil (entraîné et sec), et qu'enchaîner les deux phases rend souvent plus" : "jouable sans être acquise") + ", que la condition est des protéines élevées (" + fmtN(o.prot[0], 1) + " à " + fmtN(o.prot[1], 1) + " g/kg/j) et un déficit modéré, et que le succès se juge sur les charges, les tests et les circonférences, pas sur le poids. Ne jamais promettre un gain de force maximal et une perte de gras rapide en même temps.");
+  }
   const ps = stats && stats.ps;
   if (plan && prog && ps) {
     const b = blockOf(prog, Math.max(1, ps.week));
@@ -5443,7 +5459,11 @@ function nutriCalc(f, sessions) {
     if (status === "rapide") suggestWeeks = Math.ceil(delta / (0.0035 * w));
   }
   kcal = r10(Math.max(floor, kcal));
-  const p = Math.round(refW * (goal === "maintien" ? 1.6 : 1.8));
+  /* recomposition déclarée (perdre du gras en visant la force ou le muscle) : protéines dans la moitié haute
+     de la plage des études, le déficit étant le moment où l'apport protéique compte le plus — Longland et al.,
+     Am J Clin Nutr 2016 (2,4 contre 1,2 g/kg/j en déficit : masse maigre gagnée et plus de gras perdu) ;
+     plage retenue 1,6 à 2,4 g/kg/j (Bonilla 2024, Barakat 2020), appliquée au poids de référence (IMC 25). */
+  const p = Math.round(refW * (f.recomp && goal === "perte" ? 2 : goal === "maintien" ? 1.6 : 1.8));
   const fat = Math.round(Math.max(0.8 * refW, (kcal * 0.28) / 9));
   const c = Math.max(0, Math.round((kcal - p * 4 - fat * 9) / 4));
   const base = { 1.2: 4000, 1.35: 6000, 1.5: 8500, 1.65: 11000 }[act] || 6000;
@@ -5983,20 +6003,24 @@ function NutriSetup({ data, plan, prog, onSave, onCancel }) {
   const p = data.profile || {};
   const np = data.nutri && data.nutri.plan;
   const lw = lastWeight(data);
-  const [f, setF] = useState(() => np && np.form ? { ...np.form } : { sex: "", age: p.birthYear ? String(new Date().getFullYear() - p.birthYear) : "", height: p.height ? String(p.height) : "", weight: lw ? String(lw.v) : p.weight ? String(p.weight) : "", goal: prog && prog.id === "masse" ? "prise" : prog && prog.id === "perte" ? "perte" : "maintien", delta: "", months: "3", act: 1.35, prefs: "", preg: false, ted: false });
+  /* l'objectif de nutrition part de l'axe « composition corporelle » déclaré par le client (33_objectifs.js),
+     plus du programme seul : les deux axes sont séparés, c'est celui-ci qui règle les repères alimentaires */
+  const obj = objectifs(p, plan, prog && prog.id);
+  const [f, setF] = useState(() => np && np.form ? { ...np.form } : { sex: "", age: p.birthYear ? String(new Date().getFullYear() - p.birthYear) : "", height: p.height ? String(p.height) : "", weight: lw ? String(lw.v) : p.weight ? String(p.weight) : "", goal: obj.corps, delta: "", months: "3", act: 1.35, prefs: "", preg: false, ted: false });
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
   const weeks = Math.round(num(f.months) * 52 / 12) || 13;
   const age = num(f.age);
   const minor = age !== null && age < 18;
   const eqMode = minor || f.ted || (f.sex === "F" && f.preg && f.goal === "perte");
   const sessions = prog ? 3 : 0;
-  const calc = f.sex && !eqMode ? nutriCalc({ ...f, weeks }, sessions) : null;
+  const recomp = obj.recomp && f.goal === "perte";
+  const calc = f.sex && !eqMode ? nutriCalc({ ...f, weeks, recomp }, sessions) : null;
   const ok = !!f.sex && (eqMode || (calc && !calc.error)) && (f.goal === "maintien" || eqMode || num(f.delta) > 0);
   const save = () => {
     const form = { ...f };
     if (eqMode) { onSave({ mode: "equilibre", form: { ...form, ted: false, preg: false }, start: todayISO(), createdAt: nowISO(), prefs: f.prefs.trim(), reason: minor ? "mineur" : "" }); return; }
     onSave({ mode: "calories", form: { ...form, ted: false, preg: false }, sex: calc.sex, age, height: num(f.height), weight0: num(f.weight), goal: f.goal, delta: f.goal === "maintien" ? 0 : num(f.delta), weeks: f.goal === "maintien" ? weeks : Math.round(calc.weeksReal || weeks),
-      target: calc.target, rate: calc.rate, tdee: calc.tdee, bmr: calc.bmr, floor: calc.floor, refW: calc.refW, targets: calc.targets, status: calc.status, prefs: f.prefs.trim(), start: todayISO(), createdAt: (np && np.createdAt) || nowISO(), updatedAt: nowISO(),
+      recomp, target: calc.target, rate: calc.rate, tdee: calc.tdee, bmr: calc.bmr, floor: calc.floor, refW: calc.refW, targets: calc.targets, status: calc.status, prefs: f.prefs.trim(), start: todayISO(), createdAt: (np && np.createdAt) || nowISO(), updatedAt: nowISO(),
       history: [...((np && np.history) || []), { at: nowISO(), by: "client", after: calc.targets, reason: "Nouvel objectif : " + (f.goal === "maintien" ? "maintien" : f.goal + " de " + f.delta + " kg en " + f.months + " mois") }].slice(-30) });
   };
   const st = calc && !calc.error ? { ok: ["ok", "Objectif réaliste"], ambitieux: ["gold", "Ambitieux mais faisable"], rapide: ["warn", "Trop rapide"] }[calc.status] : null;
@@ -6009,9 +6033,11 @@ function NutriSetup({ data, plan, prog, onSave, onCancel }) {
           <${Field} label="Poids (kg)" id="nu-w"><input id="nu-w" inputMode="decimal" value=${f.weight} onChange=${(e) => set("weight", e.target.value)} /></${Field}></div>
         <${Field} label="Activité en dehors de tes séances" hint=${(ACT.find((x) => x.v === f.act) || {}).d}><${Seg} options=${ACT.map((x) => ({ v: x.v, n: x.n }))} value=${f.act} onChange=${(v) => set("act", v)} /></${Field}>
       </div></${Card}>
-    <${Card} title="Ton objectif">
+    <${Card} title="Ton objectif" sub=${obj.programNom ? "Ton entraînement, c'est « " + obj.programNom + " » : c'est un axe à part, il ne change pas ici" : null}>
       <div className="form">
         <${Seg} options=${[{ v: "perte", n: "Perdre du poids" }, { v: "maintien", n: "Garder mon poids" }, { v: "prise", n: "Prendre du muscle" }]} value=${f.goal} onChange=${(v) => set("goal", v)} />
+        ${!eqMode && f.goal !== obj.corps ? html`<p className="small warn-t">Dans ton profil, ta composition corporelle est réglée sur « ${corpsName(obj.corps)} ». En validant ici, c'est ce choix-ci qui fera référence pour ta nutrition : pense à aligner les deux dans Mon profil › Mes objectifs.</p>` : null}
+        ${recomp ? html`<${RecompNote} o=${obj} />` : null}
         ${f.goal !== "maintien" ? html`<div className="row2"><${Field} label=${f.goal === "perte" ? "Kilos à perdre" : "Kilos à prendre"} id="nu-d"><input id="nu-d" inputMode="decimal" value=${f.delta} onChange=${(e) => set("delta", e.target.value)} placeholder=${f.goal === "perte" ? "10" : "3"} /></${Field}>
           <${Field} label="En combien de mois ?"><${Seg} options=${["1", "2", "3", "4", "6", "9", "12"].map((m) => ({ v: m, n: m }))} value=${f.months} onChange=${(v) => set("months", v)} /></${Field}></div>` : null}
         <${Field} label="Préférences et aliments à éviter (facultatif)" id="nu-pr"><input id="nu-pr" value=${f.prefs} onChange=${(e) => set("prefs", e.target.value)} placeholder="Ex. végétarien, pas de porc, n'aime pas le poisson" /></${Field}>
@@ -12542,6 +12568,192 @@ function CycleCard({ data, src, coachView }) {
     <label className="chk"><input type="checkbox" id="cy-share" checked=${!!(p.cycle && p.cycle.share)} onChange=${(e) => setCycle({ share: e.target.checked })} disabled=${busy} /><span>Partager la phase du jour avec ${COACH_NAME_DEFAULT}</span></label>
     <p className="field-h">Désactivé par défaut : plus sensible que le reste de tes données santé. ${COACH_NAME_DEFAULT} ne verra jamais tes dates de règles, seulement la phase estimée du jour si tu partages.</p>
     <button type="button" className="linkbtn" onClick=${() => setCycle({ on: false, share: false })} disabled=${busy}>Désactiver le suivi</button>
+  </${Card}>`;
+}
+
+/* ===== Deux axes d'objectifs indépendants : l'entraînement et la composition corporelle =====
+   Jusqu'ici un seul choix (le programme) servait d'objectif, en mélangeant deux choses différentes :
+   un style d'entraînement (force, vitesse, sports collectifs, course…) et une direction de composition
+   corporelle (perdre du gras, garder son poids, prendre du muscle). On les sépare : le programme reste
+   l'axe entraînement, profil.corps devient l'axe composition corporelle, choisi à part.
+   Aucun client existant n'a besoin d'être migré : sans profil.corps, l'axe est déduit du programme comme
+   le formulaire de nutrition le faisait déjà (masse → prise, perte → perte, sinon maintien).
+
+   Intérêt réel : quand les deux axes tirent en sens opposés (gagner en force ET perdre du gras, soit la
+   « recomposition corporelle »), on le dit honnêtement avec ses conditions, au lieu de laisser croire que
+   tout est compatible. Ce que disent les sources :
+   - la recomposition est réelle, mais d'ampleur modeste ;
+   - elle est largement documentée chez qui débute, reprend, ou part avec plus de masse grasse ;
+   - la fenêtre est étroite chez l'athlète entraîné et déjà sec, où enchaîner les phases rend souvent plus ;
+   - condition présente dans toutes les sources : protéines élevées (1,6 à 2,4 g/kg/j) et déficit modéré.
+   Bonilla et al., Frontiers in Nutrition 2024 ; Barakat et al., Strength Cond J 2020 ; Longland et al.,
+   Am J Clin Nutr 2016 (2,4 contre 1,2 g/kg/j en déficit : masse maigre gagnée et plus de gras perdu).
+   Le profil est estimé d'après l'expérience déclarée et le rapport taille/poids : ce n'est pas une mesure
+   de masse grasse, et c'est dit au client tel quel. */
+const CORPS = [
+  { v: "perte", n: "Perdre du gras", court: "perdre du gras" },
+  { v: "maintien", n: "Garder mon poids", court: "garder son poids" },
+  { v: "prise", n: "Prendre du muscle", court: "prendre du muscle" },
+];
+const RECOMP_PROT = [1.6, 2.4];
+/* programmes dont l'entraînement pousse vers la force, la masse ou la puissance : c'est avec « perdre du
+   gras » que le compromis se pose vraiment (les autres combinaisons ne sont pas annoncées comme un conflit,
+   faute de preuves solides à citer) */
+const CORPS_FORCE_PROGS = ["force", "masse", "vitesse", "prepa"];
+const RECOMP_REFS = [
+  "Bonilla DA, et al. Body recomposition: a narrative review and practical recommendations. Front Nutr. 2024. — recomposition réelle mais d'ampleur modeste, conditions de protéines et de déficit.",
+  "Barakat C, Pearson J, Escalante G, Campbell B, De Souza EO. Body recomposition: can trained individuals build muscle and lose fat at the same time? Strength Cond J. 2020;42(5):7-21. — plus accessible chez le débutant, la reprise et les masses grasses plus élevées ; fenêtre étroite chez l'athlète entraîné et sec.",
+  "Longland TM, Oikawa SY, Mitchell CJ, Devries MC, Phillips SM. Higher compared with lower dietary protein during an energy deficit combined with intense exercise promotes greater lean mass gain and fat mass loss. Am J Clin Nutr. 2016;103(3):738-746. — 2,4 contre 1,2 g/kg/j en déficit de 40 % : masse maigre gagnée et davantage de gras perdu.",
+];
+function corpsDefault(programId) { return programId === "masse" ? "prise" : programId === "perte" ? "perte" : "maintien"; }
+function corpsOf(p, programId) {
+  const v = p && p.corps;
+  return v === "perte" || v === "maintien" || v === "prise" ? v : corpsDefault(programId);
+}
+function corpsName(v) { const c = CORPS.find((x) => x.v === v); return c ? c.n : ""; }
+function corpsCourt(v) { const c = CORPS.find((x) => x.v === v); return c ? c.court : ""; }
+/* fenêtre de recomposition estimée : large chez qui débute, reprend, ou part avec plus de masse grasse ;
+   étroite chez qui est entraîné et déjà sec. Entrées disponibles seulement : expérience déclarée (profil et
+   réponse « expérience en musculation ») et IMC — jamais une mesure de masse grasse, d'où la prudence. */
+function recompFenetre(p, plan) {
+  const rang = nivRank(effNiveau(plan, p));
+  const xp = p && p.request && p.request.answers ? num(p.request.answers.xp) : null;
+  const h = num(p && p.height), w = num(p && p.weight);
+  const imc = h && w ? w / ((h / 100) * (h / 100)) : null;
+  const debutant = rang <= 1 || (xp !== null && xp <= 1);
+  const marge = imc !== null && imc >= 25;
+  if (debutant || marge) return "large";
+  return imc !== null && imc < 23 ? "etroite" : "moyenne";
+}
+/* l'état des deux axes et, s'il y a compromis, ce qu'on en dit */
+function objectifs(p, plan, programId, lib) {
+  const pid = programId || (plan && plan.programId) || (p && p.request && p.request.programId) || null;
+  const prog = pid ? progOf(pid, lib || null) : null;
+  const corps = corpsOf(p, pid);
+  const recomp = corps === "perte" && CORPS_FORCE_PROGS.includes(pid);
+  const fenetre = recomp ? recompFenetre(p, plan) : null;
+  return {
+    corps, corpsNom: corpsName(corps), programId: pid, programNom: prog ? prog.n : null,
+    recomp, fenetre,
+    prot: RECOMP_PROT,
+    /* protéines visées en recomposition : moitié haute de la plage des études, le déficit étant le moment
+       où l'apport protéique compte le plus (Longland 2016) */
+    protCible: recomp ? 2 : null,
+  };
+}
+/* une ligne lisible pour le coach et pour le contexte du coach IA */
+function objLigne(o) {
+  if (!o) return "";
+  return (o.programNom ? "entraînement « " + o.programNom + " »" : "entraînement non choisi") + " · composition corporelle : " + corpsCourt(o.corps)
+    + (o.recomp ? " · recomposition visée (fenêtre estimée " + o.fenetre + ", protéines visées " + fmtN(o.protCible, 1) + " g/kg/j)" : "");
+}
+/* texte affiché au client (et au coach) quand les deux axes tirent en sens opposés */
+function recompTexte(o) {
+  if (!o || !o.recomp) return null;
+  const base = "Gagner en force et perdre du gras en même temps, c'est ce qu'on appelle la recomposition corporelle. C'est réel, mais d'ampleur modeste : les deux avancent plus lentement que si tu n'en visais qu'un.";
+  const selon = o.fenetre === "large"
+    ? "D'après ton profil, tu es dans le cas le plus favorable : c'est surtout documenté chez les personnes qui débutent, qui reprennent, ou qui partent avec plus de masse grasse."
+    : o.fenetre === "etroite"
+      ? "D'après ton profil (entraîné et déjà sec), la fenêtre est étroite : enchaîner les deux phases — d'abord l'une, puis l'autre — rend souvent plus que viser les deux à la fois. À voir avec Antoine."
+      : "D'après ton profil, c'est jouable sans être acquis : on regarde les chiffres au bout de quelques semaines avant de trancher.";
+  const cond = "Condition présente dans toutes les études : des protéines élevées (" + fmtN(RECOMP_PROT[0], 1) + " à " + fmtN(RECOMP_PROT[1], 1) + " g par kg de poids et par jour) et un déficit modéré, pas extrême.";
+  const mesure = "Comment on jugera : tes charges et tes tests, ton tour de taille et ton tour de hanches — pas la balance. En recomposition le poids bouge peu, c'est normal et ça ne veut pas dire que rien ne se passe.";
+  const proxy = "Estimé d'après ton expérience déclarée et ton rapport taille/poids, pas d'après une mesure de masse grasse.";
+  return { base, selon, cond, mesure, proxy };
+}
+/* choix des deux axes : utilisé à l'inscription et dans le profil */
+function ObjectifsPicker({ corps, onCorps, idp }) {
+  return html`<${Field} label="Ta composition corporelle" hint="Indépendant de ton entraînement : tu peux viser la force et perdre du gras en même temps. Si les deux tirent en sens opposés, on te le dit franchement.">
+    <${Seg} id=${(idp || "obj") + "-corps"} options=${CORPS.map((c) => ({ v: c.v, n: c.n }))} value=${corps} onChange=${onCorps} /></${Field}>`;
+}
+/* avertissement de compromis : affiché partout où les deux axes sont visibles ensemble */
+function RecompNote({ o, coachView }) {
+  const t = recompTexte(o);
+  if (!t) return null;
+  return html`<div className=${"alert " + (o.fenetre === "etroite" ? "gold" : "okb")}>
+    <div><b>${o.fenetre === "etroite" ? "Deux objectifs qui tirent en sens opposés" : "Deux objectifs à la fois : c'est jouable"}</b>
+      <p>${t.base} ${coachView ? "" : t.selon}</p>
+      <p className="small">${t.cond} ${t.mesure}</p>
+      <p className="muted small">${t.proxy}</p>
+      <details><summary>Les sources</summary><ol className="refs">${RECOMP_REFS.map((r, i) => html`<li key=${i}>${r}</li>`)}</ol></details>
+    </div></div>`;
+}
+/* Comment juger une recomposition : le poids ne sert pas de juge, donc on va chercher les deux mesures
+   déjà suivies ailleurs dans l'application — les circonférences (tests « Tour de taille » et « Tour de
+   hanches ») et les charges (séries de maximum estimé calculées depuis les séances). Rien de nouveau à
+   saisir : on relit ce qui existe et on le dit en clair, pour éviter qu'un poids stable passe pour un échec. */
+function testSerie(data, key) {
+  return Object.values((data && data.tests) || {}).filter((t) => t && t.values && num(t.values[key]) !== null)
+    .sort((a, b) => (Number(a.w) || 0) - (Number(b.w) || 0)).map((t) => ({ w: Number(t.w) || 0, v: num(t.values[key]) }));
+}
+/* delta entre la première et la dernière valeur, seulement si on a deux points espacés */
+function deltaSerie(s) { return s.length >= 2 ? s[s.length - 1].v - s[0].v : null; }
+function recompSignaux(data, stats) {
+  const taille = testSerie(data, "taille"), hanches = testSerie(data, "hanches");
+  const dT = deltaSerie(taille), dH = deltaSerie(hanches);
+  const force = (stats && stats.liftSeries) || [];
+  const dF = force.length ? force.map((s) => ({ e: s.e, d: s.points[s.points.length - 1].y - s.points[0].y })) : [];
+  const dP = stats && stats.weights && stats.weights.length >= 2 ? stats.weights[stats.weights.length - 1].y - stats.weights[0].y : null;
+  const circOk = (dT !== null && dT <= -1) || (dH !== null && dH <= -1);
+  const forceOk = dF.length ? dF.some((x) => x.d > 0) : null;
+  const assez = (dT !== null || dH !== null) && dF.length > 0;
+  return { taille: dT, hanches: dH, force: dF, poids: dP, circOk, forceOk, assez };
+}
+function RecompMesures({ data, stats, coachView }) {
+  const s = recompSignaux(data, stats);
+  const kg = (v) => (v > 0 ? "+" : "") + fmtN(v, 1);
+  const verdict = !s.assez
+    ? { t: "", n: "Pas encore de quoi juger", p: "Il faut au moins deux mesures de tour de taille ou de hanches (onglet Tests) et deux séances avec les charges notées sur un même exercice." }
+    : s.circOk && s.forceOk ? { t: "okb", n: "La recomposition se passe bien", p: "Les circonférences baissent et les charges montent : c'est exactement le signal attendu, même si le poids bouge peu." }
+      : s.circOk ? { t: "gold", n: "Le gras baisse, la force stagne", p: "Soit le déficit est trop marqué, soit les protéines sont trop basses. Remonter l'un ou l'autre avant de continuer." }
+        : s.forceOk ? { t: "gold", n: "La force monte, les circonférences non", p: "L'entraînement prend, le déficit n'y est pas. Revoir les apports avant de toucher au programme." }
+          : { t: "bad", n: "Ni l'un ni l'autre ne bouge", p: "Après quelques semaines sans mouvement sur les deux, viser un seul objectif à la fois rend généralement plus." };
+  return html`<${Card} title="Recomposition : où on en est" sub="Les circonférences et les charges, pas la balance">
+    <div className="kvs">
+      <div className="kv"><span>Tour de taille</span><b className=${s.taille !== null && s.taille <= -1 ? "ok-t" : ""}>${s.taille === null ? "—" : kg(s.taille) + " cm"}</b></div>
+      <div className="kv"><span>Tour de hanches</span><b className=${s.hanches !== null && s.hanches <= -1 ? "ok-t" : ""}>${s.hanches === null ? "—" : kg(s.hanches) + " cm"}</b></div>
+      ${s.force.map((x) => html`<div className="kv" key=${x.e}><span>${EXB[x.e] ? EXB[x.e].n : x.e}</span><b className=${x.d > 0 ? "ok-t" : ""}>${kg(x.d)} kg</b></div>`)}
+      <div className="kv"><span>Poids</span><b className="muted">${s.poids === null ? "—" : kg(s.poids) + " kg"}</b></div>
+    </div>
+    <div className=${"alert " + verdict.t}><div><b>${verdict.n}</b><p className="small">${verdict.p}</p></div></div>
+    <p className="muted small">Le poids est affiché pour information : en recomposition il bouge peu, ce n'est pas un échec.${coachView ? " Mesures prises depuis les tests du client et ses charges notées." : ""}</p>
+  </${Card}>`;
+}
+/* vue d'ensemble côté coach : les deux axes du client, l'avertissement s'il y a compromis, et le suivi
+   des mesures qui comptent. Sans compromis on reste sur une ligne, pour ne pas alourdir la page. */
+function CoachObjectifs({ data, plan, stats, lib }) {
+  const p = data.profile || {};
+  const o = objectifs(p, plan, plan && plan.programId, lib);
+  const np = data.nutri && data.nutri.plan;
+  const diverge = np && np.goal && np.goal !== o.corps;
+  return html`<${Card} title="Objectifs du client" sub="Entraînement et composition corporelle, choisis séparément">
+    <div className="kvs"><div className="kv"><span>Entraînement</span><b>${o.programNom || "—"}</b></div>
+      <div className="kv"><span>Composition corporelle</span><b>${o.corpsNom}${p.corpsAt ? "" : " *"}</b></div>
+      ${o.recomp ? html`<div className="kv"><span>Fenêtre estimée</span><b className=${o.fenetre === "etroite" ? "warn-t" : "ok-t"}>${o.fenetre}</b></div>` : null}
+      ${o.recomp ? html`<div className="kv"><span>Protéines visées</span><b>${fmtN(o.protCible, 1)} g/kg/j</b></div>` : null}</div>
+    ${p.corpsAt ? null : html`<p className="muted small">* déduit du programme : le client n'a pas encore choisi cet axe lui-même.</p>`}
+    ${diverge ? html`<div className="alert gold"><div><b>Nutrition et objectif ne disent pas la même chose</b>
+      <p className="small">Ses repères de nutrition sont réglés sur « ${corpsCourt(np.goal)} » alors que son objectif de composition corporelle est « ${corpsCourt(o.corps)} ». À aligner avec lui.</p></div></div>` : null}
+    <${RecompNote} o=${o} coachView=${true} />
+    ${o.recomp ? html`<${RecompMesures} data=${data} stats=${stats} coachView=${true} />` : null}
+  </${Card}>`;
+}
+/* carte du profil client : les deux axes, modifiables, avec l'avertissement s'il y a lieu */
+function ObjectifsCard({ data, src, plan }) {
+  const toast = useToast();
+  const p = data.profile || {};
+  const o = objectifs(p, plan, plan && plan.programId);
+  const [busy, setBusy] = useState(false);
+  const setCorps = async (v) => {
+    setBusy(true);
+    try { await src.setProfile({ ...p, corps: v, corpsAt: todayISO() }); toast("Objectif enregistré.", "ok"); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<${Card} title="Mes objectifs" sub="Deux choix séparés : ce que tu travailles, et où tu veux emmener ton poids">
+    <p className="small"><b>Entraînement :</b> ${o.programNom || "pas encore de programme"}${o.programNom ? html` <span className="muted">(choisi avec Antoine)</span>` : null}</p>
+    <div className=${busy ? "form dim" : "form"}><${ObjectifsPicker} corps=${o.corps} onCorps=${setCorps} idp="pf-obj" /></div>
+    <${RecompNote} o=${o} />
+    <p className="muted small">Ta composition corporelle règle tes repères de nutrition. Ton entraînement, c'est le programme : parles-en à Antoine pour le changer.</p>
   </${Card}>`;
 }
 

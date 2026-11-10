@@ -156,6 +156,14 @@ function clientContext({ data, plan, prog, stats, lib }) {
     if (tdone.length) L.push("Dernières séances terrain : " + tdone.map((l) => fmtD(l.d) + " « " + l.n + " » effort " + l.rpe + "/10" + (l.res ? ", résultat " + fmtRes(l.res.t, l.res.v) : "")).join(" ; "));
   } else if (p.sport) L.push("Sport déclaré mais non reconnu dans la liste : « " + p.sport + " ».");
   if (typeof persoLine === "function" && persoLine(p)) L.push(persoLine(p) + ".");
+  /* deux axes d'objectifs (33_objectifs.js) : ne jamais promettre que les deux avancent à pleine vitesse
+     ensemble quand une recomposition est visée, et juger sur les charges, les tests et les tours de taille
+     plutôt que sur la balance */
+  {
+    const o = objectifs(p, plan, plan && plan.programId, lib);
+    L.push("Objectifs (deux axes séparés) : " + objLigne(o) + ".");
+    if (o.recomp) L.push("Recomposition visée : dire franchement que les deux objectifs avancent plus lentement ensemble que séparément, que la fenêtre est " + (o.fenetre === "large" ? "favorable d'après son profil (débutant, reprise ou masse grasse plus élevée)" : o.fenetre === "etroite" ? "étroite d'après son profil (entraîné et sec), et qu'enchaîner les deux phases rend souvent plus" : "jouable sans être acquise") + ", que la condition est des protéines élevées (" + fmtN(o.prot[0], 1) + " à " + fmtN(o.prot[1], 1) + " g/kg/j) et un déficit modéré, et que le succès se juge sur les charges, les tests et les circonférences, pas sur le poids. Ne jamais promettre un gain de force maximal et une perte de gras rapide en même temps.");
+  }
   const ps = stats && stats.ps;
   if (plan && prog && ps) {
     const b = blockOf(prog, Math.max(1, ps.week));

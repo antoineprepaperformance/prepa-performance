@@ -48,7 +48,12 @@ function rowInfo(row, lib, today, settings) {
     if (ps.phase === "en_cours") {
       const sinceStart = diffDays(plan.start, today);
       const last = sum.lastLogAt ? diffDays(sum.lastLogAt, today) : sinceStart;
-      if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
+      /* client qui n'a JAMAIS rien fait : prévenu dès le 3e jour, pas au 7e — à ce stade il n'a pas décroché,
+         il n'a pas commencé, et ça se rattrape (35_demarrage.js). Remplace l'alerte d'inactivité, qui garde
+         son rôle pour les clients déjà lancés. */
+      const dem = demarrageAlerte(plan, sum.nLogs || 0, today);
+      if (dem) alerts.push(dem);
+      else if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
       const left = diffDays(today, ps.end);
       if (left <= 7 && !lite && !dated) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
       weekPlanned = plannedCount(prog, plan, ps.week, lib);

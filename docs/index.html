@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="cd91a6b58d">
+<meta name="app-build" content="0c79f1021c">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3020,8 +3020,11 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div><div className="eyebrow">Séance ${next.extra ? "supplémentaire" : next.sid}${next.opt ? " · optionnelle" : ""}${next.s.lieu ? " · " + next.s.lieu : ""}</div>
         <div className="next-t">${next.s.t}</div><div className="muted small">${next.s.focus || ""} · ${plural(next.s.items.length, "exercice")}</div></div>
       <span className="next-go">Commencer</span></button>` : null}`;
+  /* première semaine d'un client qui débute (35_demarrage.js) : un seul cap, deux séances */
+  const demar = demarrageState(data, plan, prog, lib, todayISO());
   /* alertes qui ne sont pas des tâches du jour (accès, avis médical) ; bilan et tests passent dans « À faire aujourd'hui » */
   const alerts = html`${liteBan}
+    <${DemarrageCard} d=${demar} next=${next} openSession=${openSession} />
     ${left <= 7 && onRenew && !dated ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
     ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>${isLite ? html`Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.` : plan.offer === "surmesure" ? html`Ensuite, ${coach && coach.name || COACH_NAME_DEFAULT} t'écrit le bloc suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.` : html`Ensuite, tu choisis toi-même le suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.`}</p></div></div>` : null}
     ${hold}`;
@@ -3710,7 +3713,12 @@ function rowInfo(row, lib, today, settings) {
     if (ps.phase === "en_cours") {
       const sinceStart = diffDays(plan.start, today);
       const last = sum.lastLogAt ? diffDays(sum.lastLogAt, today) : sinceStart;
-      if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
+      /* client qui n'a JAMAIS rien fait : prévenu dès le 3e jour, pas au 7e — à ce stade il n'a pas décroché,
+         il n'a pas commencé, et ça se rattrape (35_demarrage.js). Remplace l'alerte d'inactivité, qui garde
+         son rôle pour les clients déjà lancés. */
+      const dem = demarrageAlerte(plan, sum.nLogs || 0, today);
+      if (dem) alerts.push(dem);
+      else if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
       const left = diffDays(today, ps.end);
       if (left <= 7 && !lite && !dated) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
       weekPlanned = plannedCount(prog, plan, ps.week, lib);
@@ -6823,7 +6831,7 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
     <div className="card-wrap" ref=${ref}><${AthleteCard} data=${data} stats=${st} evo=${evo} size=${300} idp="f" /></div>
     <p className="small center">${next ? "Encore " + plural(next.min - st.overall, "point") + " pour passer " + next.n + "." : "Niveau maximal atteint : garde-le !"} ${evo.d > 0 ? "Cette semaine : +" + evo.d + "." : ""}</p>
     <div className="btnrow center"><${Btn} kind="ghost" small onClick=${save}>Télécharger ma carte</${Btn}></div>
-    <${CardRecords} abs=${st.abs} />
+    <${CardRecords} abs=${st.abs} data=${data} plan=${plan} prog=${prog} />
     <details><summary>Comment ma carte évolue</summary><ul className="small">
       <li><b>RÉG</b> : séances faites sur séances prévues.</li><li><b>ENG</b> : bilans envoyés, habitudes et repas notés.</li>
       <li><b>VIT, FOR, END</b> : ton dernier résultat à chaque test comparé au record du monde (sprint 10 et 30 m, saut en longueur, squat, développé couché, soulevé de terre, demi-Cooper, 5 km). Débutant = 40, haut niveau = 90, record du monde = 99. Les charges sont ramenées à ton poids de corps.</li>
@@ -6833,13 +6841,34 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
   </div>`;
 }
 /* détail des tests notés face au record du monde */
-function CardRecords({ abs }) {
+function CardRecords({ abs, data, plan, prog }) {
   if (!abs) return null;
   const fmt = (tid, x) => (CARD_REF[tid].u === "min" ? fmtTemps(x) : fmtN(x, CARD_REF[tid].u === "s" ? 2 : 0) + " " + CARD_REF[tid].u);
   const attrN = { vit: "VIT", for: "FOR", end: "END" };
+  /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
+     replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
+  const deb = cardDebutant(plan, data && data.profile);
+  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+  if (deb && abs.scores.length) {
+    const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
+    const bougé = prg.filter((x) => x.p);
+    return html`<div className="stack-s">
+      <div className="eyebrow">Mes tests : mes progrès</div>
+      <ul className="rlist">${prg.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b>
+        <span className="muted small">${fmt(x.tid, x.val)}${x.p ? " · depuis ton premier test : " + (x.p.mieux ? "+" : "") + fmtN(Math.abs(x.p.pct), 1) + " %" + (x.p.mieux ? " de mieux" : "") : " · premier résultat, c'est ton point de départ"}</span></span>
+        ${x.p ? html`<${Pill} tone=${x.p.mieux ? "ok" : ""}>${x.p.mieux ? "en progrès" : "stable"}</${Pill}>` : html`<${Pill}>départ</${Pill}>`}</li>`)}</ul>
+      <p className="muted small">${bougé.length ? "C'est la comparaison qui compte quand on démarre : toi contre toi, pas toi contre un champion du monde." : "Refais ces tests dans 4 semaines : tu te compareras à toi-même, c'est le seul repère utile au début."}</p>
+      <details><summary>Voir aussi la comparaison avec les records du monde</summary>
+        ${recordsList}
+        <p className="muted small">Ces pourcentages servent de repère aux athlètes confirmés. Au début ils sont forcément bas pour tout le monde : ce n'est pas une note sur toi.</p>
+        <ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
+        <p className="small muted">${CARD_REF_SCI.text}</p></details>
+      ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
+    </div>`;
+  }
   return html`<div className="stack-s">
     <div className="eyebrow">Mes tests face aux records du monde</div>
-    ${abs.scores.length ? html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`
+    ${abs.scores.length ? recordsList
       : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
@@ -12996,6 +13025,93 @@ function AutoregSettings({ data, src, plan }) {
       <div className="btnrow"><${Btn} onClick=${save} disabled=${busy}>Enregistrer</${Btn}></div>
     </div></${Card}>`;
 }
+
+/* ===== Les premiers jours : démarrer, et ne pas se faire comparer à un record du monde le jour 1 =====
+   Deux manques identifiés par le comparatif des applications concurrentes, les deux chez le débutant, les
+   deux petits à construire. Ce sont les seuls chantiers du comparatif dont l'effet porte sur le fait qu'un
+   client reste ou parte, plutôt que sur la qualité de sa programmation.
+
+   1. L'ACTIVATION DE LA PREMIÈRE SEMAINE. Le seul enseignement comportemental chiffré trouvé dans tout le
+      secteur vient de Freeletics : les utilisateurs qui terminent **deux séances dans leur première semaine**
+      restent nettement plus longtemps. À prendre pour ce que c'est — une étude de cas d'éditeur, pas un essai
+      contrôlé, et c'est écrit tel quel dans les sources ci-dessous. En face, la première cause d'annulation
+      déclarée dans un rapport 2026 est la perte de motivation (38 %), pas le prix ni le logiciel. L'alerte
+      d'inactivité existante ne se déclenchait qu'à 7 jours : un client qui n'a rien touché depuis une semaine
+      a souvent déjà arrêté dans sa tête. On raccourcit la mèche pour celui qui n'a JAMAIS rien fait.
+
+      Ce qui est volontairement refusé ici : les séries de jours (« streaks »), les badges et les points. Le
+      comparatif a trouvé ces mécaniques partout et leur appui chiffré nulle part, et le seul testeur ayant
+      passé 21 jours dans une application à communauté la décrit comme « sous-utilisée ». On affiche donc un
+      compteur honnête — deux séances, voilà où tu en es — et rien d'autre.
+
+   2. LA CARTE ATHLÈTE POUR QUI DÉBUTE. La carte note chaque test face au record du monde : c'est un vrai
+      différenciateur pour l'athlète d'Antoine, et c'est démoralisant pour un débutant qui lit « 15 % du
+      record » à son premier test. Rien n'est caché (l'application ne ment pas sur les chiffres) : pour les
+      profils Reprise et Sportif, on met en avant **ses progrès sur ses propres tests**, et la comparaison aux
+      records passe dans un volet replié. Pour Performance et Haut niveau, rien ne change : à ce niveau, le
+      pourcentage du record est une information utile. */
+const DEMARRAGE_JOURS = 7;
+const DEMARRAGE_CIBLE = 2;
+/* nombre de jours sans aucune séance au tout début avant de prévenir Antoine ; bien plus court que
+   l'alerte d'inactivité habituelle (7 jours), qui garde son rôle pour les clients déjà lancés */
+const DEMARRAGE_RELANCE = 3;
+const DEMARRAGE_REFS = [
+  "Freeletics, étude de cas publiée par l'éditeur (via The Audiencers) : les utilisateurs qui terminent deux séances pendant leur première semaine restent nettement plus longtemps. Étude de cas commerciale, pas un essai contrôlé : c'est le seul repère comportemental chiffré trouvé dans le secteur, et il est cité comme tel.",
+  "Fitness Refined, rapport 2026 sur les raisons d'abandon des applications de sport (communiqué via Barchart) : la perte de motivation ou l'abandon de l'objectif représente 38 % des résiliations déclarées, loin devant le prix. Seul le communiqué a pu être lu, pas la méthodologie.",
+];
+/* Première semaine d'un client qui n'a jamais rien fait dans l'application : on ne compte pas les clients
+   qui enchaînent un deuxième programme (ils n'ont pas besoin qu'on leur souhaite la bienvenue). */
+function demarrageState(data, plan, prog, lib, today) {
+  const ps = planState(plan, today || todayISO());
+  if (!ps || ps.phase !== "en_cours" || !plan.start) return null;
+  const logs = Object.values(data.logs || {}).filter((l) => l && l.date);
+  /* déjà des séances avant ce programme : ce n'est pas un début, c'est une suite */
+  if (logs.some((l) => l.date < plan.start)) return null;
+  const jour = diffDays(plan.start, today || todayISO()) + 1;
+  if (jour < 1 || jour > DEMARRAGE_JOURS) return null;
+  const faites = logs.filter((l) => l.date >= plan.start && l.kind !== "presentiel" && !l.opt).length;
+  const prevu = prog ? plannedCount(prog, plan, 1, lib) : 0;
+  /* la cible ne peut pas dépasser ce que la semaine propose réellement (suivi nutrition seule : rien à viser) */
+  const cible = Math.min(DEMARRAGE_CIBLE, prevu);
+  if (!cible) return null;
+  return { jour, faites, cible, reste: Math.max(0, cible - faites), fini: faites >= cible,
+    joursRestants: Math.max(0, DEMARRAGE_JOURS - jour + 1) };
+}
+/* carte affichée au client pendant ses 7 premiers jours */
+function DemarrageCard({ d, next, openSession }) {
+  if (!d) return null;
+  if (d.fini) return html`<div className="alert okb"><div><b>Tes ${plural(d.cible, "première séance", "deux premières séances")} ${d.cible > 1 ? "sont faites" : "est faite"}</b>
+    <p className="small">C'est le passage qui compte le plus : les gens qui font leurs deux premières séances dans la première semaine sont ceux qui tiennent sur la durée. La suite est plus facile.</p></div></div>`;
+  return html`<div className="alert"><div><b>Tes débuts : ${d.faites} séance${d.faites > 1 ? "s" : ""} sur ${d.cible}</b>
+    <p className="small">${d.faites === 0
+      ? "L'objectif de cette première semaine est simple : " + plural(d.cible, "séance") + ". Pas plus. C'est le seul cap qui compte pour l'instant, le reste suivra tout seul."
+      : "Encore " + plural(d.reste, "séance") + " cette semaine et ton démarrage est réussi."}</p>
+    <p className="muted small">${d.joursRestants > 1 ? "Il te reste " + plural(d.joursRestants, "jour") + "." : "Dernier jour de ta première semaine."}</p></div>
+    ${next && openSession ? html`<${Btn} small onClick=${() => openSession(next)}>Commencer</${Btn}>` : null}</div>`;
+}
+/* alerte côté coach : un client qui n'a jamais rien fait, prévenu bien plus tôt que l'inactivité habituelle */
+function demarrageAlerte(plan, nLogs, today) {
+  if (!plan || plan.status !== "active" || !plan.start) return null;
+  if (nLogs > 0) return null;
+  const j = diffDays(plan.start, today || todayISO()) + 1;
+  if (j < DEMARRAGE_RELANCE || j > DEMARRAGE_JOURS + 7) return null;
+  return { tone: j > DEMARRAGE_JOURS ? "bad" : "warn", n: "Jamais démarré (" + plural(j, "jour") + ") : relancer", k: "seances" };
+}
+
+/* ---------- carte athlète : mettre en avant ses propres progrès quand on débute ---------- */
+/* delta entre le premier et le dernier résultat d'un test, dans le sens « mieux » du test */
+function persoProgres(data, tid, prog) {
+  const s = Object.values((data && data.tests) || {}).filter((t) => t && t.values && testValue(tid, t.values[tid]) !== null)
+    .sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  if (s.length < 2) return null;
+  const a = testValue(tid, s[0].values[tid]), b = testValue(tid, s[s.length - 1].values[tid]);
+  if (a === null || b === null || !a) return null;
+  const low = testBetter(prog, tid) === "low";
+  const d = b - a;
+  return { from: a, to: b, d, pct: Math.round((low ? -d : d) / Math.abs(a) * 1000) / 10, mieux: low ? d < 0 : d > 0 };
+}
+/* vrai pour les profils Reprise et Sportif : le pourcentage d'un record du monde ne leur apprend rien d'utile */
+function cardDebutant(plan, profile) { return nivRank(effNiveau(plan, profile)) <= 1; }
 
 /* ===== Version site : accueil public, connexion, installation ===== */
 const AUTH_ERR = {

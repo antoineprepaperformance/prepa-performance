@@ -909,7 +909,8 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
-    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
+    ${sub === "objectif" && np && !edit ? html`<${EnergieCard} data=${data} plan=${plan} />
+      <${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
       <${NutriAdaptCard} data=${data} src=${src} plan=${plan} />` : null}
     ${sub === "journal" && np ? html`
       <div className="daynav"><button type="button" className="x" aria-label="Jour précédent" onClick=${() => setDate(addDays(date, -1))}>‹</button>
@@ -981,6 +982,7 @@ function CoachNutrition({ data, src }) {
       <${Stat} n=${eq || avg("kcal") === null ? "—" : fmtN(avg("kcal"), 0)} label="kcal moyennes" sub="jours notés" />
       <${Stat} n=${eq || avg("p") === null ? "—" : fmtN(avg("p"), 0) + " g"} label="Protéines moyennes" sub=${eq ? null : "cible " + np.targets.p + " g"} />
     </div>
+    ${eq ? null : html`<${EnergieCard} data=${data} coachView=${true} partage=${cycleShared(data.profile)} />`}
     ${eq ? null : html`<${NutriAdaptCard} data=${data} src=${src} coachView=${true} />`}
     <${Card} title="Objectif" sub=${eq ? "Mode équilibre : aucun chiffre affiché au client" : nutriGoalText(np) + " · statut : " + ({ ok: "réaliste", ambitieux: "ambitieux", rapide: "trop rapide, plan ralenti" }[np.status] || "—")}>
       ${eq ? null : html`<p className="small">Dépense ${np.tdeeSrc === "mesure" ? "mesurée" : "estimée"} ${fmtN(np.tdee, 0)} kcal${np.tdeeSrc === "mesure" ? " (recalibrée le " + fmtD(np.tdeeAt) + (np.tdeeEq ? ", équation de départ " + fmtN(np.tdeeEq, 0) : "") + ")" : ""} · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>

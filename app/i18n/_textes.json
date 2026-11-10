@@ -51068,5 +51068,334 @@
   "kind": "text",
   "where": "src:29_planning.js",
   "n": 1
+ },
+ {
+  "h": "6e81bf7d00",
+  "k": "Tes objectifs",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "faa486f443",
+  "k": "1. Ton entraînement",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "b57e237e16",
+  "k": "2. Ta composition corporelle",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "e8704765a2",
+  "k": "Ce que tu travailles. Un seul programme à la fois : il dure 12 semaines.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "e32a832356",
+  "k": "Ta composition corporelle",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "41b0e4af2d",
+  "k": "Perdre du gras",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "de05c1c124",
+  "k": "Indépendant de ton entraînement : tu peux viser la force et perdre du gras en même temps. Si les deux tirent en sens opposés, on te le dit franchement.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "13d2abf852",
+  "k": "Mes objectifs",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "10c89b775e",
+  "k": "Deux choix séparés : ce que tu travailles, et où tu veux emmener ton poids",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "8a15f3287b",
+  "k": "Entraînement :",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "85e1306271",
+  "k": "(choisi avec Antoine)",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "044ac2f44c",
+  "k": "Ta composition corporelle règle tes repères de nutrition. Ton entraînement, c'est le programme : parles-en à Antoine pour le changer.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "8d0ea7f487",
+  "k": "Deux objectifs à la fois : c'est jouable",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "cd6c0fd099",
+  "k": "Deux objectifs qui tirent en sens opposés",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "7886f8f30c",
+  "k": "Gagner en force et perdre du gras en même temps, c'est ce qu'on appelle la recomposition corporelle. C'est réel, mais d'ampleur modeste : les deux avancent plus lentement que si tu n'en visais qu'un.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "387e75398b",
+  "k": "D'après ton profil, tu es dans le cas le plus favorable : c'est surtout documenté chez les personnes qui débutent, qui reprennent, ou qui partent avec plus de masse grasse.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "14d21f62ed",
+  "k": "D'après ton profil (entraîné et déjà sec), la fenêtre est étroite : enchaîner les deux phases — d'abord l'une, puis l'autre — rend souvent plus que viser les deux à la fois. À voir avec Antoine.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "f0c1a42de4",
+  "k": "D'après ton profil, c'est jouable sans être acquis : on regarde les chiffres au bout de quelques semaines avant de trancher.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "18555f377b",
+  "k": "Condition présente dans toutes les études : des protéines élevées (1,6 à 2,4 g par kg de poids et par jour) et un déficit modéré, pas extrême.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "4fbf241c61",
+  "k": "Comment on jugera : tes charges et tes tests, ton tour de taille et ton tour de hanches — pas la balance. En recomposition le poids bouge peu, c'est normal et ça ne veut pas dire que rien ne se passe.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "35652960ae",
+  "k": "Estimé d'après ton expérience déclarée et ton rapport taille/poids, pas d'après une mesure de masse grasse.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "844979fe0e",
+  "k": "Les sources",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "c30e8b8aec",
+  "k": "Recomposition : où on en est",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "8672491a4a",
+  "k": "Les circonférences et les charges, pas la balance",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "e7d7d593a1",
+  "k": "Pas encore de quoi juger",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "ad33f6894f",
+  "k": "Il faut au moins deux mesures de tour de taille ou de hanches (onglet Tests) et deux séances avec les charges notées sur un même exercice.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "08f60fa401",
+  "k": "La recomposition se passe bien",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "8822be4e8e",
+  "k": "Les circonférences baissent et les charges montent : c'est exactement le signal attendu, même si le poids bouge peu.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "c3979bbe3d",
+  "k": "Le gras baisse, la force stagne",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "58035f8ada",
+  "k": "Soit le déficit est trop marqué, soit les protéines sont trop basses. Remonter l'un ou l'autre avant de continuer.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "ecf4e597bd",
+  "k": "La force monte, les circonférences non",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "0bcab11727",
+  "k": "L'entraînement prend, le déficit n'y est pas. Revoir les apports avant de toucher au programme.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "551fb6a04f",
+  "k": "Ni l'un ni l'autre ne bouge",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "b86c286e8c",
+  "k": "Après quelques semaines sans mouvement sur les deux, viser un seul objectif à la fois rend généralement plus.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "2406cff479",
+  "k": "Tes débuts :",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "15807a96b5",
+  "k": "Mes tests : mes progrès",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "8c108bbbdc",
+  "k": "premier résultat, c'est ton point de départ",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "84e6779e82",
+  "k": "en progrès",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "dc5fd7f6e0",
+  "k": "départ",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "f1fc865589",
+  "k": "C'est la comparaison qui compte quand on démarre : toi contre toi, pas toi contre un champion du monde.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "98392e50a9",
+  "k": "Refais ces tests dans 4 semaines : tu te compareras à toi-même, c'est le seul repère utile au début.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "41db992b3c",
+  "k": "Voir aussi la comparaison avec les records du monde",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "4c0733d758",
+  "k": "Ces pourcentages servent de repère aux athlètes confirmés. Au début ils sont forcément bas pour tout le monde : ce n'est pas une note sur toi.",
+  "kind": "literal",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "b92325900f",
+  "k": "Ton entraînement, c'est « {} » : c'est un axe à part, il ne change pas ici",
+  "kind": "pattern",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "eef61b140a",
+  "k": "L'objectif de cette première semaine est simple : {}. Pas plus. C'est le seul cap qui compte pour l'instant, le reste suivra tout seul.",
+  "kind": "pattern",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "c6848bfc79",
+  "k": "Encore {} cette semaine et ton démarrage est réussi.",
+  "kind": "pattern",
+  "where": "src/i18n-main",
+  "n": 1
+ },
+ {
+  "h": "559c5373eb",
+  "k": "Il te reste {}.",
+  "kind": "pattern",
+  "where": "src/i18n-main",
+  "n": 1
  }
 ]

@@ -43,6 +43,9 @@ function rowInfo(row, lib, today, settings) {
   if ((sum.videoPending || 0) > 0) alerts.push({ tone: "gold", n: plural(sum.videoPending, "vidéo", "vidéos") + " à corriger", k: "videos" });
   if ((sum.aiPending || 0) > 0 && !sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending, "ajustement IA", "ajustements IA") + " à vérifier", k: "ia" });
   else if ((sum.aiPending || 0) > 1 && sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending - 1, "autre point IA", "autres points IA") + " à vérifier", k: "ia" });
+  /* apports durablement insuffisants pour la charge (37_energie.js) : drapeau publié par le client, sans
+     jamais la raison intime — le détail est dans sa fiche, onglet Nutrition */
+  if (sum.energieBasse) alerts.push({ tone: "bad", n: "Apports bas pour la charge (" + fmtN(sum.energieBasse.manquePct, 0) + " % sous la référence)", k: "nutrition" });
   let adherence = null, weekDone = 0, weekPlanned = 0;
   if (ps && prog && plan.status !== "archived") {
     if (ps.phase === "en_cours") {
@@ -238,7 +241,7 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
       <${Stat} n=${eur(mrr)} label="Revenu mensuel estimé" sub="formules actives" />
     </div>
     <${Card} title="À traiter" sub=${alerts.length ? plural(alerts.length, "point") : "Rien d'urgent"}>
-      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia", "videos", "sante"].includes(a.k) ? a.k : "vue")}>
+      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia", "videos", "sante", "nutrition"].includes(a.k) ? a.k : "vue")}>
         <${Pill} tone=${a.tone}>${a.n}</${Pill}><b>${a.r.profile.name || "Client"}</b><span className="muted small">${a.r.info.prog ? a.r.info.prog.n : ""}</span></button></li>`)}</ul>`
         : html`<p className="muted small">Tous les bilans ont une réponse et aucun client n'a d'alerte.</p>`}
     </${Card}>

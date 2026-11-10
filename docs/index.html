@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="cd91a6b58d">
+<meta name="app-build" content="f5a7be76cc">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3020,8 +3020,11 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <div><div className="eyebrow">Séance ${next.extra ? "supplémentaire" : next.sid}${next.opt ? " · optionnelle" : ""}${next.s.lieu ? " · " + next.s.lieu : ""}</div>
         <div className="next-t">${next.s.t}</div><div className="muted small">${next.s.focus || ""} · ${plural(next.s.items.length, "exercice")}</div></div>
       <span className="next-go">Commencer</span></button>` : null}`;
+  /* première semaine d'un client qui débute (35_demarrage.js) : un seul cap, deux séances */
+  const demar = demarrageState(data, plan, prog, lib, todayISO());
   /* alertes qui ne sont pas des tâches du jour (accès, avis médical) ; bilan et tests passent dans « À faire aujourd'hui » */
   const alerts = html`${liteBan}
+    <${DemarrageCard} d=${demar} next=${next} openSession=${openSession} />
     ${left <= 7 && onRenew && !dated ? html`<div className="alert gold"><div><b>Ton accès se termine le ${fmtD(ps.end)}</b><p>Prolonge maintenant pour enchaîner sans coupure.</p></div><${Btn} small onClick=${onRenew}>Prolonger</${Btn}></div>` : null}
     ${left <= 7 && liteOk && plan.untilMs > Date.now() + 7 * 86400000 ? html`<div className="alert gold"><div><b>Ton programme se termine le ${fmtD(ps.end)}</b><p>${isLite ? html`Ensuite, tu choisis toi-même le suivant : ton accès Lite court jusqu'au ${fmtDY(liteEnd(plan))}.` : plan.offer === "surmesure" ? html`Ensuite, ${coach && coach.name || COACH_NAME_DEFAULT} t'écrit le bloc suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.` : html`Ensuite, tu choisis toi-même le suivant : ton accompagnement court jusqu'au ${fmtDY(liteEnd(plan))}.`}</p></div></div>` : null}
     ${hold}`;
@@ -3710,7 +3713,12 @@ function rowInfo(row, lib, today, settings) {
     if (ps.phase === "en_cours") {
       const sinceStart = diffDays(plan.start, today);
       const last = sum.lastLogAt ? diffDays(sum.lastLogAt, today) : sinceStart;
-      if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
+      /* client qui n'a JAMAIS rien fait : prévenu dès le 3e jour, pas au 7e — à ce stade il n'a pas décroché,
+         il n'a pas commencé, et ça se rattrape (35_demarrage.js). Remplace l'alerte d'inactivité, qui garde
+         son rôle pour les clients déjà lancés. */
+      const dem = demarrageAlerte(plan, sum.nLogs || 0, today);
+      if (dem) alerts.push(dem);
+      else if (last >= 7) alerts.push({ tone: "warn", n: "Aucune séance depuis " + last + " j", k: "seances" });
       const left = diffDays(today, ps.end);
       if (left <= 7 && !lite && !dated) alerts.push({ tone: "gold", n: "Fin dans " + Math.max(0, left) + " j : proposer la suite", k: "plan" });
       weekPlanned = plannedCount(prog, plan, ps.week, lib);
@@ -5125,6 +5133,12 @@ function clientContext({ data, plan, prog, stats, lib }) {
       L.push("Objectif nutrition : " + nutriGoalText(np) + " · cibles du jour : " + fmtN(t.kcal, 0) + " kcal, protéines " + fmtN(t.p, 0) + " g, glucides " + fmtN(t.c, 0) + " g, lipides " + fmtN(t.f, 0) + " g, " + fmtN(t.steps, 0) + " pas, eau " + fmtN(t.water, 1) + " L · dépense estimée " + fmtN(np.tdee, 0) + " kcal · plancher de sécurité " + fmtN(np.floor, 0) + " kcal" + (np.prefs ? " · préférences : " + np.prefs : ""));
       const enT = dayEnergy(data, np, todayISO()), en7 = energyAvg(data, np, 7);
       if ((enT && (enT.total || enT.steps !== null)) || en7) L.push("Dépense mesurée : aujourd'hui " + (enT && enT.total ? fmtN(enT.total, 0) + " kcal (" + (enT.src === "montre" ? "calories actives de la montre" : "d'après les pas et séances") + ")" + (enT.bonus ? ", bonus d'activité +" + fmtN(enT.bonus, 0) + " kcal sur la cible du jour" : "") : "pas encore de donnée") + (enT && enT.steps !== null ? ", " + fmtN(enT.steps, 0) + " pas" : "") + (en7 ? " · moyenne sur " + en7.n + " jours : " + fmtN(en7.total, 0) + " kcal" + (en7.steps !== null ? " et " + fmtN(en7.steps, 0) + " pas par jour" : "") : "") + " · dépense prévue par le plan " + fmtN(np.tdee, 0) + " kcal. Si la moyenne mesurée s'écarte durablement du plan, propose d'ajuster les cibles (les montres se trompent souvent de 20 % ou plus).");
+      /* recalibrage de la dépense (36_nutriadapt.js) : comme pour la charge, le calcul est déterministe et
+         l'IA ne fait que l'expliquer. Elle ne doit ni sortir son propre chiffre, ni appliquer quoi que ce
+         soit : le client valide lui-même depuis sa page Nutrition. */
+      const ad = nutriAdapt(data, plan, todayISO());
+      if (ad && ad.pret && ad.assez) L.push("Recalibrage de la dépense proposé au client : ses repas notés (" + fmtN(ad.apport, 0) + " kcal/j en moyenne sur " + ad.joursNotes + " jours) et l'évolution de son poids (" + (ad.penteSem < 0 ? "−" : "+") + fmtN(Math.abs(ad.penteSem), 2) + " kg/semaine sur " + ad.pesees + " pesées) donnent une dépense d'environ " + fmtN(ad.mesuree, 0) + " kcal/j, contre " + fmtN(ad.equation, 0) + " utilisées pour ses repères, soit " + fmtN(Math.abs(ad.ecartPct), 1) + " % " + (ad.sens === "haut" ? "de plus" : "de moins") + ". " + (ad.sens === "haut" ? "Ce sens est fiable (on sous-déclare toujours un peu ses apports, le biais pousse dans l'autre sens)." : "Prudence : une dépense mesurée plus basse vient le plus souvent de repas non notés (huile, boissons, grignotages), pas d'un métabolisme lent.") + " Tu peux l'expliquer et répondre aux questions, mais tu ne donnes jamais ton propre chiffre de calories à la place, et tu n'appliques rien : le client met à jour ses repères lui-même avec le bouton de sa page Nutrition.");
+      else if (ad && !ad.pret) L.push("Recalibrage de la dépense : pas encore possible, il manque " + ad.manque.join(", et ") + ". Si le client demande pourquoi ses repères ne bougent pas, c'est la réponse — et noter ses repas plus régulièrement est ce qui débloque le calcul.");
       const exp = expectedWeight(np, todayISO());
       const lastW = lastWeight(data);
       if (exp !== null) L.push("Poids attendu aujourd'hui selon le plan : " + fmtN(exp) + " kg" + (lastW ? " · dernier poids noté : " + fmtN(lastW.v) + " kg (" + fmtD(lastW.d) + ")" : ""));
@@ -6081,7 +6095,10 @@ function TrajChart({ np, pts }) {
   const total = Math.max(14, Math.round(np.weeks * 7));
   const xs = (d) => diffDays(np.start, d);
   const data = pts.filter((p) => xs(p.d) >= -14);
-  const ys = [np.weight0, np.target, ...data.map((p) => p.v)];
+  /* une seule valeur absente (plan écrit par une version plus ancienne, écriture partielle) suffirait à
+     rendre toute l'échelle NaN et à casser le graphique : on ne garde que les nombres utilisables */
+  const ys = [np.weight0, np.target, ...data.map((p) => p.v)].map(num).filter((v) => v !== null && Number.isFinite(v));
+  if (!ys.length) return null;
   let mn = Math.min(...ys), mx = Math.max(...ys); if (mx - mn < 2) { mn -= 1; mx += 1; }
   const ticks = niceTicks(mn, mx, 3); const lo = ticks[0], hi = ticks[ticks.length - 1];
   const L = 40, R = 12, T = 12, B = 24;
@@ -6311,7 +6328,8 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
-    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />` : null}
+    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
+      <${NutriAdaptCard} data=${data} src=${src} plan=${plan} />` : null}
     ${sub === "journal" && np ? html`
       <div className="daynav"><button type="button" className="x" aria-label="Jour précédent" onClick=${() => setDate(addDays(date, -1))}>‹</button>
         <b>${isToday ? "Aujourd'hui" : JOURS[parseISO(date).getDay()] + " " + fmtD(date)}</b>
@@ -6382,8 +6400,9 @@ function CoachNutrition({ data, src }) {
       <${Stat} n=${eq || avg("kcal") === null ? "—" : fmtN(avg("kcal"), 0)} label="kcal moyennes" sub="jours notés" />
       <${Stat} n=${eq || avg("p") === null ? "—" : fmtN(avg("p"), 0) + " g"} label="Protéines moyennes" sub=${eq ? null : "cible " + np.targets.p + " g"} />
     </div>
+    ${eq ? null : html`<${NutriAdaptCard} data=${data} src=${src} coachView=${true} />`}
     <${Card} title="Objectif" sub=${eq ? "Mode équilibre : aucun chiffre affiché au client" : nutriGoalText(np) + " · statut : " + ({ ok: "réaliste", ambitieux: "ambitieux", rapide: "trop rapide, plan ralenti" }[np.status] || "—")}>
-      ${eq ? null : html`<p className="small">Dépense estimée ${fmtN(np.tdee, 0)} kcal · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>
+      ${eq ? null : html`<p className="small">Dépense ${np.tdeeSrc === "mesure" ? "mesurée" : "estimée"} ${fmtN(np.tdee, 0)} kcal${np.tdeeSrc === "mesure" ? " (recalibrée le " + fmtD(np.tdeeAt) + (np.tdeeEq ? ", équation de départ " + fmtN(np.tdeeEq, 0) : "") + ")" : ""} · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>
         ${f ? html`<div className="row4">${[["kcal", "kcal"], ["p", "Protéines"], ["c", "Glucides"], ["f", "Lipides"]].map(([k, n]) => html`<${Field} key=${k} label=${n} id=${"cn-" + k}><input id=${"cn-" + k} inputMode="numeric" value=${f[k]} onChange=${(e) => setF({ ...f, [k]: e.target.value })} /></${Field}>`)}</div>
           <${Field} label="Pas par jour" id="cn-s"><input id="cn-s" inputMode="numeric" value=${f.steps} onChange=${(e) => setF({ ...f, steps: e.target.value })} /></${Field}>
           <div className="actions"><${Btn} onClick=${saveT}>Enregistrer les cibles</${Btn}><${Btn} kind="quiet" onClick=${() => setF(null)}>Annuler</${Btn}></div>`
@@ -6823,7 +6842,7 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
     <div className="card-wrap" ref=${ref}><${AthleteCard} data=${data} stats=${st} evo=${evo} size=${300} idp="f" /></div>
     <p className="small center">${next ? "Encore " + plural(next.min - st.overall, "point") + " pour passer " + next.n + "." : "Niveau maximal atteint : garde-le !"} ${evo.d > 0 ? "Cette semaine : +" + evo.d + "." : ""}</p>
     <div className="btnrow center"><${Btn} kind="ghost" small onClick=${save}>Télécharger ma carte</${Btn}></div>
-    <${CardRecords} abs=${st.abs} />
+    <${CardRecords} abs=${st.abs} data=${data} plan=${plan} prog=${prog} />
     <details><summary>Comment ma carte évolue</summary><ul className="small">
       <li><b>RÉG</b> : séances faites sur séances prévues.</li><li><b>ENG</b> : bilans envoyés, habitudes et repas notés.</li>
       <li><b>VIT, FOR, END</b> : ton dernier résultat à chaque test comparé au record du monde (sprint 10 et 30 m, saut en longueur, squat, développé couché, soulevé de terre, demi-Cooper, 5 km). Débutant = 40, haut niveau = 90, record du monde = 99. Les charges sont ramenées à ton poids de corps.</li>
@@ -6833,13 +6852,34 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
   </div>`;
 }
 /* détail des tests notés face au record du monde */
-function CardRecords({ abs }) {
+function CardRecords({ abs, data, plan, prog }) {
   if (!abs) return null;
   const fmt = (tid, x) => (CARD_REF[tid].u === "min" ? fmtTemps(x) : fmtN(x, CARD_REF[tid].u === "s" ? 2 : 0) + " " + CARD_REF[tid].u);
   const attrN = { vit: "VIT", for: "FOR", end: "END" };
+  /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
+     replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
+  const deb = cardDebutant(plan, data && data.profile);
+  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+  if (deb && abs.scores.length) {
+    const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
+    const bougé = prg.filter((x) => x.p);
+    return html`<div className="stack-s">
+      <div className="eyebrow">Mes tests : mes progrès</div>
+      <ul className="rlist">${prg.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b>
+        <span className="muted small">${fmt(x.tid, x.val)}${x.p ? " · depuis ton premier test : " + (x.p.mieux ? "+" : "") + fmtN(Math.abs(x.p.pct), 1) + " %" + (x.p.mieux ? " de mieux" : "") : " · premier résultat, c'est ton point de départ"}</span></span>
+        ${x.p ? html`<${Pill} tone=${x.p.mieux ? "ok" : ""}>${x.p.mieux ? "en progrès" : "stable"}</${Pill}>` : html`<${Pill}>départ</${Pill}>`}</li>`)}</ul>
+      <p className="muted small">${bougé.length ? "C'est la comparaison qui compte quand on démarre : toi contre toi, pas toi contre un champion du monde." : "Refais ces tests dans 4 semaines : tu te compareras à toi-même, c'est le seul repère utile au début."}</p>
+      <details><summary>Voir aussi la comparaison avec les records du monde</summary>
+        ${recordsList}
+        <p className="muted small">Ces pourcentages servent de repère aux athlètes confirmés. Au début ils sont forcément bas pour tout le monde : ce n'est pas une note sur toi.</p>
+        <ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
+        <p className="small muted">${CARD_REF_SCI.text}</p></details>
+      ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
+    </div>`;
+  }
   return html`<div className="stack-s">
     <div className="eyebrow">Mes tests face aux records du monde</div>
-    ${abs.scores.length ? html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`
+    ${abs.scores.length ? recordsList
       : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
@@ -12995,6 +13035,281 @@ function AutoregSettings({ data, src, plan }) {
       <details><summary>Les sources</summary><ol className="refs">${AUTOREG_REFS.map((r, i) => html`<li key=${i}>${r}</li>`)}</ol></details>
       <div className="btnrow"><${Btn} onClick=${save} disabled=${busy}>Enregistrer</${Btn}></div>
     </div></${Card}>`;
+}
+
+/* ===== Les premiers jours : démarrer, et ne pas se faire comparer à un record du monde le jour 1 =====
+   Deux manques identifiés par le comparatif des applications concurrentes, les deux chez le débutant, les
+   deux petits à construire. Ce sont les seuls chantiers du comparatif dont l'effet porte sur le fait qu'un
+   client reste ou parte, plutôt que sur la qualité de sa programmation.
+
+   1. L'ACTIVATION DE LA PREMIÈRE SEMAINE. Le seul enseignement comportemental chiffré trouvé dans tout le
+      secteur vient de Freeletics : les utilisateurs qui terminent **deux séances dans leur première semaine**
+      restent nettement plus longtemps. À prendre pour ce que c'est — une étude de cas d'éditeur, pas un essai
+      contrôlé, et c'est écrit tel quel dans les sources ci-dessous. En face, la première cause d'annulation
+      déclarée dans un rapport 2026 est la perte de motivation (38 %), pas le prix ni le logiciel. L'alerte
+      d'inactivité existante ne se déclenchait qu'à 7 jours : un client qui n'a rien touché depuis une semaine
+      a souvent déjà arrêté dans sa tête. On raccourcit la mèche pour celui qui n'a JAMAIS rien fait.
+
+      Ce qui est volontairement refusé ici : les séries de jours (« streaks »), les badges et les points. Le
+      comparatif a trouvé ces mécaniques partout et leur appui chiffré nulle part, et le seul testeur ayant
+      passé 21 jours dans une application à communauté la décrit comme « sous-utilisée ». On affiche donc un
+      compteur honnête — deux séances, voilà où tu en es — et rien d'autre.
+
+   2. LA CARTE ATHLÈTE POUR QUI DÉBUTE. La carte note chaque test face au record du monde : c'est un vrai
+      différenciateur pour l'athlète d'Antoine, et c'est démoralisant pour un débutant qui lit « 15 % du
+      record » à son premier test. Rien n'est caché (l'application ne ment pas sur les chiffres) : pour les
+      profils Reprise et Sportif, on met en avant **ses progrès sur ses propres tests**, et la comparaison aux
+      records passe dans un volet replié. Pour Performance et Haut niveau, rien ne change : à ce niveau, le
+      pourcentage du record est une information utile. */
+const DEMARRAGE_JOURS = 7;
+const DEMARRAGE_CIBLE = 2;
+/* nombre de jours sans aucune séance au tout début avant de prévenir Antoine ; bien plus court que
+   l'alerte d'inactivité habituelle (7 jours), qui garde son rôle pour les clients déjà lancés */
+const DEMARRAGE_RELANCE = 3;
+const DEMARRAGE_REFS = [
+  "Freeletics, étude de cas publiée par l'éditeur (via The Audiencers) : les utilisateurs qui terminent deux séances pendant leur première semaine restent nettement plus longtemps. Étude de cas commerciale, pas un essai contrôlé : c'est le seul repère comportemental chiffré trouvé dans le secteur, et il est cité comme tel.",
+  "Fitness Refined, rapport 2026 sur les raisons d'abandon des applications de sport (communiqué via Barchart) : la perte de motivation ou l'abandon de l'objectif représente 38 % des résiliations déclarées, loin devant le prix. Seul le communiqué a pu être lu, pas la méthodologie.",
+];
+/* Première semaine d'un client qui n'a jamais rien fait dans l'application : on ne compte pas les clients
+   qui enchaînent un deuxième programme (ils n'ont pas besoin qu'on leur souhaite la bienvenue). */
+function demarrageState(data, plan, prog, lib, today) {
+  const ps = planState(plan, today || todayISO());
+  if (!ps || ps.phase !== "en_cours" || !plan.start) return null;
+  const logs = Object.values(data.logs || {}).filter((l) => l && l.date);
+  /* déjà des séances avant ce programme : ce n'est pas un début, c'est une suite */
+  if (logs.some((l) => l.date < plan.start)) return null;
+  const jour = diffDays(plan.start, today || todayISO()) + 1;
+  if (jour < 1 || jour > DEMARRAGE_JOURS) return null;
+  const faites = logs.filter((l) => l.date >= plan.start && l.kind !== "presentiel" && !l.opt).length;
+  const prevu = prog ? plannedCount(prog, plan, 1, lib) : 0;
+  /* la cible ne peut pas dépasser ce que la semaine propose réellement (suivi nutrition seule : rien à viser) */
+  const cible = Math.min(DEMARRAGE_CIBLE, prevu);
+  if (!cible) return null;
+  return { jour, faites, cible, reste: Math.max(0, cible - faites), fini: faites >= cible,
+    joursRestants: Math.max(0, DEMARRAGE_JOURS - jour + 1) };
+}
+/* carte affichée au client pendant ses 7 premiers jours */
+function DemarrageCard({ d, next, openSession }) {
+  if (!d) return null;
+  if (d.fini) return html`<div className="alert okb"><div><b>Tes ${plural(d.cible, "première séance", "deux premières séances")} ${d.cible > 1 ? "sont faites" : "est faite"}</b>
+    <p className="small">C'est le passage qui compte le plus : les gens qui font leurs deux premières séances dans la première semaine sont ceux qui tiennent sur la durée. La suite est plus facile.</p></div></div>`;
+  return html`<div className="alert"><div><b>Tes débuts : ${d.faites} séance${d.faites > 1 ? "s" : ""} sur ${d.cible}</b>
+    <p className="small">${d.faites === 0
+      ? "L'objectif de cette première semaine est simple : " + plural(d.cible, "séance") + ". Pas plus. C'est le seul cap qui compte pour l'instant, le reste suivra tout seul."
+      : "Encore " + plural(d.reste, "séance") + " cette semaine et ton démarrage est réussi."}</p>
+    <p className="muted small">${d.joursRestants > 1 ? "Il te reste " + plural(d.joursRestants, "jour") + "." : "Dernier jour de ta première semaine."}</p></div>
+    ${next && openSession ? html`<${Btn} small onClick=${() => openSession(next)}>Commencer</${Btn}>` : null}</div>`;
+}
+/* alerte côté coach : un client qui n'a jamais rien fait, prévenu bien plus tôt que l'inactivité habituelle */
+function demarrageAlerte(plan, nLogs, today) {
+  if (!plan || plan.status !== "active" || !plan.start) return null;
+  if (nLogs > 0) return null;
+  const j = diffDays(plan.start, today || todayISO()) + 1;
+  if (j < DEMARRAGE_RELANCE || j > DEMARRAGE_JOURS + 7) return null;
+  return { tone: j > DEMARRAGE_JOURS ? "bad" : "warn", n: "Jamais démarré (" + plural(j, "jour") + ") : relancer", k: "seances" };
+}
+
+/* ---------- carte athlète : mettre en avant ses propres progrès quand on débute ---------- */
+/* delta entre le premier et le dernier résultat d'un test, dans le sens « mieux » du test */
+function persoProgres(data, tid, prog) {
+  const s = Object.values((data && data.tests) || {}).filter((t) => t && t.values && testValue(tid, t.values[tid]) !== null)
+    .sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  if (s.length < 2) return null;
+  const a = testValue(tid, s[0].values[tid]), b = testValue(tid, s[s.length - 1].values[tid]);
+  if (a === null || b === null || !a) return null;
+  const low = testBetter(prog, tid) === "low";
+  const d = b - a;
+  return { from: a, to: b, d, pct: Math.round((low ? -d : d) / Math.abs(a) * 1000) / 10, mieux: low ? d < 0 : d > 0 };
+}
+/* vrai pour les profils Reprise et Sportif : le pourcentage d'un record du monde ne leur apprend rien d'utile */
+function cardDebutant(plan, profile) { return nivRank(effNiveau(plan, profile)) <= 1; }
+
+/* ===== Recalibrage de la dépense : ce que disent les chiffres du client, pas une équation figée =====
+   Dernier chantier du Bloc B du comparatif. Jusqu'ici la cible de calories était calculée une fois à
+   l'inscription (Mifflin-St Jeor × facteur d'activité + séances) puis gelée, alors que c'est justement la
+   valeur qui dérive le plus : la dépense baisse quand le poids baisse, et l'adaptation métabolique en
+   déficit s'ajoute à cette baisse mécanique (Trexler 2014). Résultat classique : un client qui stagne alors
+   que « les calculs sont bons ».
+
+   LE PRINCIPE, qui est de la simple comptabilité d'énergie : sur une fenêtre assez longue,
+       dépense mesurée = apports notés − (variation de poids × 7700 / jours).
+   Si le poids descend, la dépense est supérieure aux apports ; s'il monte, elle est inférieure. On compare
+   cette dépense mesurée à celle de l'équation et on corrige la cible pour viser la vitesse voulue.
+
+   LE PIÈGE, et c'est lui qui décide de toute la conception : les apports déclarés sont systématiquement
+   sous-estimés (Livingstone & Black 2003). Comme « apports notés ≤ apports réels », la dépense mesurée est
+   un PLANCHER, pas une vérité. D'où une asymétrie volontaire :
+   - dépense mesurée AU-DESSUS de l'équation :信 signal fort, car le biais de sous-déclaration pousse dans
+     l'autre sens. On applique la correction en entier.
+   - dépense mesurée EN DESSOUS de l'équation : explication la plus probable = des repas non notés, pas un
+     métabolisme lent. On n'applique que la moitié de l'écart, et on le dit franchement au client.
+   C'est l'inverse d'une « IA qui optimise ton métabolisme » : c'est une correction prudente, expliquée, avec
+   son incertitude affichée.
+
+   CE QUI EST REFUSÉ ICI :
+   - aucun recalibrage en mode équilibre (mineur, grossesse ou allaitement, antécédent de trouble du
+     comportement alimentaire) : dans ce mode l'application ne donne aucun chiffre, et proposer de recalculer
+     des calories y serait exactement le contraire de ce qui est voulu ;
+   - rien n'est appliqué en silence : le client voit l'écart, la raison, et décide d'un geste. Changer les
+     calories de quelqu'un sans le lui dire n'est pas acceptable, même avec un bon calcul derrière ;
+   - rien n'est proposé sans assez de données : il faut une fenêtre longue, assez de jours notés et assez de
+     pesées, sinon on explique ce qui manque au lieu de sortir un chiffre inventé.
+   La règle des 7700 kcal par kilo est elle-même une approximation (Hall & Chow 2013) : suffisante sur
+   quelques semaines, et c'est dit dans les sources. */
+const ADAPT_FENETRE = 21;          /* jours regardés en arrière */
+const ADAPT_JOURS_MIN = 14;        /* écart minimal entre la première et la dernière pesée */
+const ADAPT_PESEES_MIN = 4;
+const ADAPT_NOTES_MIN = 10;        /* jours avec des repas crédibles */
+const ADAPT_COUV_MIN = 0.6;        /* part des jours de la fenêtre effectivement notés */
+const ADAPT_KCAL_MIN = 500;        /* en dessous : la journée n'est pas « légère », elle n'est pas notée */
+const ADAPT_ECART_MIN = 0.07;      /* en dessous de 7 % d'écart : dans le bruit, on ne touche à rien */
+const ADAPT_ECART_MAX = 0.25;      /* au-delà : on plafonne et on explique */
+const ADAPT_REFS = [
+  "Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241-247. — l'équation utilisée au départ, et qui est seulement une estimation de population.",
+  "Livingstone MB, Black AE. Markers of the validity of reported energy intake. J Nutr. 2003;133 Suppl 3:895S-920S. — les apports alimentaires déclarés sont systématiquement sous-estimés : la dépense calculée depuis un journal est donc un plancher, pas une vérité.",
+  "Trexler ET, Smith-Ryan AE, Norton LE. Metabolic adaptation to weight loss: implications for the athlete. J Int Soc Sports Nutr. 2014;11:7. — la dépense baisse davantage que le seul effet du poids perdu : une cible figée à l'inscription dérive forcément.",
+  "Hall KD, Chow CC. Why is the 3500 kcal per pound weight loss rule wrong? Int J Obes. 2013;37(12):1614. — la règle des 7700 kcal par kilo est une approximation ; acceptable sur quelques semaines, pas exacte.",
+];
+/* pente du poids en kg par jour, par régression linéaire sur tous les points de la fenêtre : moins sensible
+   qu'un simple « premier contre dernier » aux variations d'eau et de glycogène d'un jour donné */
+function penteKgJour(pts) {
+  const n = pts.length;
+  if (n < 2) return null;
+  const mx = pts.reduce((s, p) => s + p.x, 0) / n, my = pts.reduce((s, p) => s + p.y, 0) / n;
+  let num2 = 0, den = 0;
+  pts.forEach((p) => { num2 += (p.x - mx) * (p.y - my); den += (p.x - mx) * (p.x - mx); });
+  return den ? num2 / den : null;
+}
+/* pesées de la fenêtre : santé du jour (montre ou saisie) et bilans hebdomadaires, dédoublonnées par date */
+function poidsFenetre(data, today, jours) {
+  const from = addDays(today, -(jours - 1));
+  const m = {};
+  Object.entries((data && data.sante) || {}).forEach(([d, v]) => { const p = num(v && v.poids); if (p && d >= from && d <= today) m[d] = p; });
+  Object.values((data && data.checkins) || {}).forEach((c) => { const p = num(c && c.poids); const d = c && c.at ? String(c.at).slice(0, 10) : null; if (p && d && d >= from && d <= today && !m[d]) m[d] = p; });
+  return Object.keys(m).sort().map((d) => ({ d, x: diffDays(from, d), y: m[d] }));
+}
+/* apports notés de la fenêtre : on ne compte que les journées crédibles (voir ADAPT_KCAL_MIN) */
+function apportsFenetre(data, today, jours) {
+  const from = addDays(today, -(jours - 1));
+  const j = [];
+  Object.entries((data && data.food) || {}).forEach(([d, v]) => {
+    if (d < from || d > today) return;
+    const k = dayTotals(v).kcal;
+    if (k >= ADAPT_KCAL_MIN) j.push({ d, kcal: k });
+  });
+  return j.sort((a, b) => a.d.localeCompare(b.d));
+}
+/* Tout le calcul, avec la raison du refus quand il n'y a pas de quoi conclure.
+   Renvoie null si la fonction ne s'applique pas du tout (pas de plan chiffré). */
+function nutriAdapt(data, plan, today) {
+  const np = data && data.nutri && data.nutri.plan;
+  /* mode équilibre : aucun chiffre n'est donné dans ce mode, on ne recalibre rien (voir l'en-tête) */
+  if (!np || np.mode === "equilibre" || !np.targets || !np.tdee) return null;
+  const d = today || todayISO();
+  const pts = poidsFenetre(data, d, ADAPT_FENETRE);
+  const jours = apportsFenetre(data, d, ADAPT_FENETRE);
+  const span = pts.length >= 2 ? diffDays(pts[0].d, pts[pts.length - 1].d) : 0;
+  const couv = jours.length / ADAPT_FENETRE;
+  const manque = [];
+  if (pts.length < ADAPT_PESEES_MIN) manque.push("au moins " + ADAPT_PESEES_MIN + " pesées sur les 3 dernières semaines (tu en as " + pts.length + ")");
+  else if (span < ADAPT_JOURS_MIN) manque.push("des pesées espacées d'au moins " + ADAPT_JOURS_MIN + " jours (les tiennes couvrent " + plural(span, "jour") + ")");
+  if (jours.length < ADAPT_NOTES_MIN) manque.push("au moins " + ADAPT_NOTES_MIN + " journées de repas notées (tu en as " + jours.length + ")");
+  else if (couv < ADAPT_COUV_MIN) manque.push("des repas notés plus régulièrement : " + jours.length + " jours sur " + ADAPT_FENETRE + ", ce qui ne suffit pas pour une moyenne fiable");
+  if (manque.length) return { pret: false, manque, pesees: pts.length, joursNotes: jours.length, span };
+  const apport = jours.reduce((s, x) => s + x.kcal, 0) / jours.length;
+  const pente = penteKgJour(pts);
+  if (pente === null) return { pret: false, manque: ["des pesées à des dates différentes"], pesees: pts.length, joursNotes: jours.length, span };
+  const mesuree = apport - pente * 7700;
+  /* référence = la dépense actuellement utilisée pour ses cibles. Au premier recalibrage c'est celle de
+     l'équation ; ensuite c'est la dernière mesure retenue, et le recalibrage devient itératif. On garde la
+     valeur d'origine de l'équation à part (tdeeEq), pour pouvoir dire d'où on est parti. */
+  const equation = np.tdee;
+  const dejaMesure = np.tdeeSrc === "mesure";
+  const brut = mesuree / equation - 1;
+  /* asymétrie volontaire : au-dessus de l'équation le signal est fort (le biais de sous-déclaration pousse
+     dans l'autre sens) ; en dessous, la cause la plus probable est que des repas manquent au journal */
+  const plafonne = Math.abs(brut) > ADAPT_ECART_MAX;
+  const borne = clamp(brut, -ADAPT_ECART_MAX, ADAPT_ECART_MAX);
+  const retenu = borne > 0 ? borne : borne / 2;
+  const retenue = Math.round(equation * (1 + retenu));
+  const assez = Math.abs(brut) >= ADAPT_ECART_MIN;
+  return { pret: true, apport: Math.round(apport), pente, penteSem: Math.round(pente * 7 * 100) / 100,
+    mesuree: Math.round(mesuree), equation: Math.round(equation), ecart: brut, ecartPct: Math.round(brut * 1000) / 10,
+    retenue, sens: borne > 0 ? "haut" : borne < 0 ? "bas" : "egal", plafonne, assez, dejaMesure,
+    tdeeEq: np.tdeeEq || (dejaMesure ? null : Math.round(equation)),
+    pesees: pts.length, joursNotes: jours.length, span, confiance: borne > 0 ? "forte" : "prudente" };
+}
+/* nouvelle cible de calories, en gardant l'objectif et la vitesse déjà choisis par le client :
+   on refait tourner le même calcul, avec la dépense mesurée à la place de celle de l'équation */
+function nutriAdaptCible(data, plan, a) {
+  const np = data && data.nutri && data.nutri.plan;
+  if (!np || !a || !a.pret || !a.assez) return null;
+  const f = { ...(np.form || {}), weight: np.weight0, goal: np.goal, delta: np.delta, weeks: np.weeks, recomp: np.recomp };
+  const base = nutriCalc(f, null);
+  if (base.error) return null;
+  /* On garde le DÉFICIT (ou le surplus) en valeur absolue, et on le reporte sur la dépense corrigée :
+     nouvelle cible = dépense retenue − (dépense de référence − cible actuelle).
+     C'est ce qui conserve réellement la vitesse choisie en kg par semaine, puisque c'est l'écart absolu
+     entre dépense et apports qui la détermine. Mettre à l'échelle la cible proportionnellement (× 1,21 par
+     exemple) aurait aussi agrandi le déficit de 21 %, donc accéléré la perte sans que le client l'ait
+     demandé — alors que le texte affiché lui promet l'inverse.
+     Puis plancher de sécurité et pas maximal, pour qu'un recalibrage ne fasse jamais un grand saut. */
+  const cur = np.targets.kcal || base.targets.kcal;
+  const ecartCible = a.equation - cur;           /* déficit si > 0, surplus si < 0 ; 0 en maintien */
+  const brute = Math.round((a.retenue - ecartCible) / 10) * 10;
+  const kcal = clamp(brute, Math.max(base.floor, Math.round(cur * 0.8 / 10) * 10), Math.round(cur * 1.2 / 10) * 10);
+  const refW = np.refW || np.weight0 || 70;
+  const p = Math.round(refW * (np.recomp && np.goal === "perte" ? 2 : np.goal === "maintien" ? 1.6 : 1.8));
+  const fat = Math.round(Math.max(0.8 * refW, (kcal * 0.28) / 9));
+  const c = Math.max(0, Math.round((kcal - p * 4 - fat * 9) / 4));
+  return { ...np.targets, kcal, p, c, f: fat };
+}
+/* phrases affichées : une par idée, pour que le client comprenne d'où sort le chiffre */
+function adaptTexte(a) {
+  if (!a) return null;
+  if (!a.pret) return { titre: "Pas encore de quoi recalculer ta dépense", lignes: ["Pour comparer ta dépense réelle à l'estimation de départ, il manque " + a.manque.join(", et ") + "."], ton: "" };
+  const sens = a.sens === "haut" ? "plus haute" : "plus basse";
+  const l = ["Sur les 3 dernières semaines : " + fmtN(a.apport, 0) + " kcal par jour en moyenne sur " + plural(a.joursNotes, "journée notée", "journées notées") + ", et "
+    + (Math.abs(a.penteSem) < 0.05 ? "un poids stable" : (a.penteSem < 0 ? "−" : "+") + fmtN(Math.abs(a.penteSem), 2) + " kg par semaine") + " sur " + plural(a.pesees, "pesée") + "."];
+  l.push("Ce que ça donne : une dépense d'environ " + fmtN(a.mesuree, 0) + " kcal par jour, contre " + fmtN(a.equation, 0) + (a.dejaMesure ? " actuellement utilisées pour tes repères" : " estimées au départ") + ", soit " + fmtN(Math.abs(a.ecartPct), 1) + " % " + sens + ".");
+  if (!a.assez) return { titre: "Ta dépense correspond à tes repères actuels", lignes: l.concat(["L'écart est trop petit pour être autre chose que du bruit : on ne change rien."]), ton: "okb" };
+  if (a.sens === "haut") l.push("Ce sens-là est fiable : comme on note toujours un peu moins que ce qu'on mange réellement, une dépense mesurée plus haute que prévu est un signal solide. On applique l'écart en entier.");
+  else l.push("Prudence sur ce sens-là : l'explication la plus fréquente d'une dépense mesurée plus basse n'est pas un métabolisme lent, c'est que des aliments ne sont pas notés (huile de cuisson, boissons, grignotages). On n'applique donc que la moitié de l'écart.");
+  if (a.plafonne) l.push("L'écart brut dépassait " + Math.round(ADAPT_ECART_MAX * 100) + " % : il a été ramené à cette limite, parce qu'un écart aussi grand vient presque toujours du journal, pas du métabolisme.");
+  return { titre: "Ta dépense réelle est " + sens + " que tes repères actuels", lignes: l, ton: a.sens === "haut" ? "okb" : "gold" };
+}
+/* carte client : l'écart, la raison, et un geste pour mettre à jour ses repères */
+function NutriAdaptCard({ data, src, plan, coachView }) {
+  const toast = useToast();
+  const a = nutriAdapt(data, plan, todayISO());
+  const [busy, setBusy] = useState(false);
+  if (!a) return null;
+  const t = adaptTexte(a);
+  const cible = nutriAdaptCible(data, plan, a);
+  const np = data.nutri.plan;
+  const appliquer = async () => {
+    if (!cible) return;
+    setBusy(true);
+    try {
+      await src.saveNutri({ ...np, targets: cible, tdee: a.retenue, tdeeSrc: "mesure", tdeeAt: todayISO(), tdeeEq: a.tdeeEq || np.tdeeEq || a.equation, updatedAt: nowISO() });
+      toast("Tes repères sont à jour.", "ok");
+    } catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<${Card} title=${coachView ? "Dépense réelle du client" : "Ta dépense réelle"} sub="Calculée depuis tes repas notés et l'évolution de ton poids, pas depuis une formule">
+    <div className=${"alert " + t.ton}><div><b>${t.titre}</b>${t.lignes.map((x, i) => html`<p className="small" key=${i}>${x}</p>`)}</div></div>
+    ${a.pret && a.assez && cible ? html`<div className="kvs">
+      <div className="kv"><span>Cible actuelle</span><b>${fmtN(np.targets.kcal, 0)} kcal</b></div>
+      <div className="kv"><span>Cible recalculée</span><b className=${cible.kcal > np.targets.kcal ? "ok-t" : "warn-t"}>${fmtN(cible.kcal, 0)} kcal</b></div>
+      <div className="kv"><span>Protéines</span><b>${fmtN(cible.p, 0)} g</b></div>
+      <div className="kv"><span>Glucides</span><b>${fmtN(cible.c, 0)} g</b></div>
+    </div>` : null}
+    ${a.pret && a.assez && cible && !coachView ? html`<div className="btnrow"><${Btn} onClick=${appliquer} disabled=${busy}>Mettre à jour mes repères</${Btn}></div>
+      <p className="muted small">Rien n'est changé avant que tu cliques : ce sont tes calories, c'est à toi de décider. Ton objectif et ta vitesse ne changent pas, seule la dépense de référence est corrigée.</p>` : null}
+    ${np.tdeeSrc === "mesure" && np.tdeeAt ? html`<p className="muted small">Dernier recalibrage le ${fmtD(np.tdeeAt)} : dépense de référence ${fmtN(np.tdee, 0)} kcal (estimation de départ : ${fmtN(np.tdeeEq || 0, 0)} kcal).</p>` : null}
+    <details><summary>Comment c'est calculé, et ses limites</summary>
+      <p className="small">Dépense = apports notés − (variation de poids × 7700 / nombre de jours). C'est de la comptabilité d'énergie, pas une estimation de ton métabolisme : la qualité du résultat dépend entièrement de la régularité avec laquelle tu notes tes repas.</p>
+      <ol className="refs">${ADAPT_REFS.map((r, i) => html`<li key=${i}>${r}</li>`)}</ol></details>
+  </${Card}>`;
 }
 
 /* ===== Version site : accueil public, connexion, installation ===== */

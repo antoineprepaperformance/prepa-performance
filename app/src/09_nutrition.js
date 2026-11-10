@@ -676,7 +676,10 @@ function TrajChart({ np, pts }) {
   const total = Math.max(14, Math.round(np.weeks * 7));
   const xs = (d) => diffDays(np.start, d);
   const data = pts.filter((p) => xs(p.d) >= -14);
-  const ys = [np.weight0, np.target, ...data.map((p) => p.v)];
+  /* une seule valeur absente (plan écrit par une version plus ancienne, écriture partielle) suffirait à
+     rendre toute l'échelle NaN et à casser le graphique : on ne garde que les nombres utilisables */
+  const ys = [np.weight0, np.target, ...data.map((p) => p.v)].map(num).filter((v) => v !== null && Number.isFinite(v));
+  if (!ys.length) return null;
   let mn = Math.min(...ys), mx = Math.max(...ys); if (mx - mn < 2) { mn -= 1; mx += 1; }
   const ticks = niceTicks(mn, mx, 3); const lo = ticks[0], hi = ticks[ticks.length - 1];
   const L = 40, R = 12, T = 12, B = 24;
@@ -906,7 +909,8 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
-    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />` : null}
+    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
+      <${NutriAdaptCard} data=${data} src=${src} plan=${plan} />` : null}
     ${sub === "journal" && np ? html`
       <div className="daynav"><button type="button" className="x" aria-label="Jour précédent" onClick=${() => setDate(addDays(date, -1))}>‹</button>
         <b>${isToday ? "Aujourd'hui" : JOURS[parseISO(date).getDay()] + " " + fmtD(date)}</b>
@@ -977,8 +981,9 @@ function CoachNutrition({ data, src }) {
       <${Stat} n=${eq || avg("kcal") === null ? "—" : fmtN(avg("kcal"), 0)} label="kcal moyennes" sub="jours notés" />
       <${Stat} n=${eq || avg("p") === null ? "—" : fmtN(avg("p"), 0) + " g"} label="Protéines moyennes" sub=${eq ? null : "cible " + np.targets.p + " g"} />
     </div>
+    ${eq ? null : html`<${NutriAdaptCard} data=${data} src=${src} coachView=${true} />`}
     <${Card} title="Objectif" sub=${eq ? "Mode équilibre : aucun chiffre affiché au client" : nutriGoalText(np) + " · statut : " + ({ ok: "réaliste", ambitieux: "ambitieux", rapide: "trop rapide, plan ralenti" }[np.status] || "—")}>
-      ${eq ? null : html`<p className="small">Dépense estimée ${fmtN(np.tdee, 0)} kcal · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>
+      ${eq ? null : html`<p className="small">Dépense ${np.tdeeSrc === "mesure" ? "mesurée" : "estimée"} ${fmtN(np.tdee, 0)} kcal${np.tdeeSrc === "mesure" ? " (recalibrée le " + fmtD(np.tdeeAt) + (np.tdeeEq ? ", équation de départ " + fmtN(np.tdeeEq, 0) : "") + ")" : ""} · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>
         ${f ? html`<div className="row4">${[["kcal", "kcal"], ["p", "Protéines"], ["c", "Glucides"], ["f", "Lipides"]].map(([k, n]) => html`<${Field} key=${k} label=${n} id=${"cn-" + k}><input id=${"cn-" + k} inputMode="numeric" value=${f[k]} onChange=${(e) => setF({ ...f, [k]: e.target.value })} /></${Field}>`)}</div>
           <${Field} label="Pas par jour" id="cn-s"><input id="cn-s" inputMode="numeric" value=${f.steps} onChange=${(e) => setF({ ...f, steps: e.target.value })} /></${Field}>
           <div className="actions"><${Btn} onClick=${saveT}>Enregistrer les cibles</${Btn}><${Btn} kind="quiet" onClick=${() => setF(null)}>Annuler</${Btn}></div>`

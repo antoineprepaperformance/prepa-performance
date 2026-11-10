@@ -367,7 +367,7 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
     <div className="card-wrap" ref=${ref}><${AthleteCard} data=${data} stats=${st} evo=${evo} size=${300} idp="f" /></div>
     <p className="small center">${next ? "Encore " + plural(next.min - st.overall, "point") + " pour passer " + next.n + "." : "Niveau maximal atteint : garde-le !"} ${evo.d > 0 ? "Cette semaine : +" + evo.d + "." : ""}</p>
     <div className="btnrow center"><${Btn} kind="ghost" small onClick=${save}>Télécharger ma carte</${Btn}></div>
-    <${CardRecords} abs=${st.abs} />
+    <${CardRecords} abs=${st.abs} data=${data} plan=${plan} prog=${prog} />
     <details><summary>Comment ma carte évolue</summary><ul className="small">
       <li><b>RÉG</b> : séances faites sur séances prévues.</li><li><b>ENG</b> : bilans envoyés, habitudes et repas notés.</li>
       <li><b>VIT, FOR, END</b> : ton dernier résultat à chaque test comparé au record du monde (sprint 10 et 30 m, saut en longueur, squat, développé couché, soulevé de terre, demi-Cooper, 5 km). Débutant = 40, haut niveau = 90, record du monde = 99. Les charges sont ramenées à ton poids de corps.</li>
@@ -377,13 +377,34 @@ function CardPanel({ data, plan, prog, lib, compact, onOpen }) {
   </div>`;
 }
 /* détail des tests notés face au record du monde */
-function CardRecords({ abs }) {
+function CardRecords({ abs, data, plan, prog }) {
   if (!abs) return null;
   const fmt = (tid, x) => (CARD_REF[tid].u === "min" ? fmtTemps(x) : fmtN(x, CARD_REF[tid].u === "s" ? 2 : 0) + " " + CARD_REF[tid].u);
   const attrN = { vit: "VIT", for: "FOR", end: "END" };
+  /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
+     replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
+  const deb = cardDebutant(plan, data && data.profile);
+  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+  if (deb && abs.scores.length) {
+    const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
+    const bougé = prg.filter((x) => x.p);
+    return html`<div className="stack-s">
+      <div className="eyebrow">Mes tests : mes progrès</div>
+      <ul className="rlist">${prg.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b>
+        <span className="muted small">${fmt(x.tid, x.val)}${x.p ? " · depuis ton premier test : " + (x.p.mieux ? "+" : "") + fmtN(Math.abs(x.p.pct), 1) + " %" + (x.p.mieux ? " de mieux" : "") : " · premier résultat, c'est ton point de départ"}</span></span>
+        ${x.p ? html`<${Pill} tone=${x.p.mieux ? "ok" : ""}>${x.p.mieux ? "en progrès" : "stable"}</${Pill}>` : html`<${Pill}>départ</${Pill}>`}</li>`)}</ul>
+      <p className="muted small">${bougé.length ? "C'est la comparaison qui compte quand on démarre : toi contre toi, pas toi contre un champion du monde." : "Refais ces tests dans 4 semaines : tu te compareras à toi-même, c'est le seul repère utile au début."}</p>
+      <details><summary>Voir aussi la comparaison avec les records du monde</summary>
+        ${recordsList}
+        <p className="muted small">Ces pourcentages servent de repère aux athlètes confirmés. Au début ils sont forcément bas pour tout le monde : ce n'est pas une note sur toi.</p>
+        <ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
+        <p className="small muted">${CARD_REF_SCI.text}</p></details>
+      ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
+    </div>`;
+  }
   return html`<div className="stack-s">
     <div className="eyebrow">Mes tests face aux records du monde</div>
-    ${abs.scores.length ? html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`
+    ${abs.scores.length ? recordsList
       : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}

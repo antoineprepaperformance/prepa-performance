@@ -65,7 +65,11 @@ function nutriCalc(f, sessions) {
     if (status === "rapide") suggestWeeks = Math.ceil(delta / (0.0035 * w));
   }
   kcal = r10(Math.max(floor, kcal));
-  const p = Math.round(refW * (goal === "maintien" ? 1.6 : 1.8));
+  /* recomposition déclarée (perdre du gras en visant la force ou le muscle) : protéines dans la moitié haute
+     de la plage des études, le déficit étant le moment où l'apport protéique compte le plus — Longland et al.,
+     Am J Clin Nutr 2016 (2,4 contre 1,2 g/kg/j en déficit : masse maigre gagnée et plus de gras perdu) ;
+     plage retenue 1,6 à 2,4 g/kg/j (Bonilla 2024, Barakat 2020), appliquée au poids de référence (IMC 25). */
+  const p = Math.round(refW * (f.recomp && goal === "perte" ? 2 : goal === "maintien" ? 1.6 : 1.8));
   const fat = Math.round(Math.max(0.8 * refW, (kcal * 0.28) / 9));
   const c = Math.max(0, Math.round((kcal - p * 4 - fat * 9) / 4));
   const base = { 1.2: 4000, 1.35: 6000, 1.5: 8500, 1.65: 11000 }[act] || 6000;
@@ -605,20 +609,24 @@ function NutriSetup({ data, plan, prog, onSave, onCancel }) {
   const p = data.profile || {};
   const np = data.nutri && data.nutri.plan;
   const lw = lastWeight(data);
-  const [f, setF] = useState(() => np && np.form ? { ...np.form } : { sex: "", age: p.birthYear ? String(new Date().getFullYear() - p.birthYear) : "", height: p.height ? String(p.height) : "", weight: lw ? String(lw.v) : p.weight ? String(p.weight) : "", goal: prog && prog.id === "masse" ? "prise" : prog && prog.id === "perte" ? "perte" : "maintien", delta: "", months: "3", act: 1.35, prefs: "", preg: false, ted: false });
+  /* l'objectif de nutrition part de l'axe « composition corporelle » déclaré par le client (33_objectifs.js),
+     plus du programme seul : les deux axes sont séparés, c'est celui-ci qui règle les repères alimentaires */
+  const obj = objectifs(p, plan, prog && prog.id);
+  const [f, setF] = useState(() => np && np.form ? { ...np.form } : { sex: "", age: p.birthYear ? String(new Date().getFullYear() - p.birthYear) : "", height: p.height ? String(p.height) : "", weight: lw ? String(lw.v) : p.weight ? String(p.weight) : "", goal: obj.corps, delta: "", months: "3", act: 1.35, prefs: "", preg: false, ted: false });
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
   const weeks = Math.round(num(f.months) * 52 / 12) || 13;
   const age = num(f.age);
   const minor = age !== null && age < 18;
   const eqMode = minor || f.ted || (f.sex === "F" && f.preg && f.goal === "perte");
   const sessions = prog ? 3 : 0;
-  const calc = f.sex && !eqMode ? nutriCalc({ ...f, weeks }, sessions) : null;
+  const recomp = obj.recomp && f.goal === "perte";
+  const calc = f.sex && !eqMode ? nutriCalc({ ...f, weeks, recomp }, sessions) : null;
   const ok = !!f.sex && (eqMode || (calc && !calc.error)) && (f.goal === "maintien" || eqMode || num(f.delta) > 0);
   const save = () => {
     const form = { ...f };
     if (eqMode) { onSave({ mode: "equilibre", form: { ...form, ted: false, preg: false }, start: todayISO(), createdAt: nowISO(), prefs: f.prefs.trim(), reason: minor ? "mineur" : "" }); return; }
     onSave({ mode: "calories", form: { ...form, ted: false, preg: false }, sex: calc.sex, age, height: num(f.height), weight0: num(f.weight), goal: f.goal, delta: f.goal === "maintien" ? 0 : num(f.delta), weeks: f.goal === "maintien" ? weeks : Math.round(calc.weeksReal || weeks),
-      target: calc.target, rate: calc.rate, tdee: calc.tdee, bmr: calc.bmr, floor: calc.floor, refW: calc.refW, targets: calc.targets, status: calc.status, prefs: f.prefs.trim(), start: todayISO(), createdAt: (np && np.createdAt) || nowISO(), updatedAt: nowISO(),
+      recomp, target: calc.target, rate: calc.rate, tdee: calc.tdee, bmr: calc.bmr, floor: calc.floor, refW: calc.refW, targets: calc.targets, status: calc.status, prefs: f.prefs.trim(), start: todayISO(), createdAt: (np && np.createdAt) || nowISO(), updatedAt: nowISO(),
       history: [...((np && np.history) || []), { at: nowISO(), by: "client", after: calc.targets, reason: "Nouvel objectif : " + (f.goal === "maintien" ? "maintien" : f.goal + " de " + f.delta + " kg en " + f.months + " mois") }].slice(-30) });
   };
   const st = calc && !calc.error ? { ok: ["ok", "Objectif réaliste"], ambitieux: ["gold", "Ambitieux mais faisable"], rapide: ["warn", "Trop rapide"] }[calc.status] : null;
@@ -631,9 +639,11 @@ function NutriSetup({ data, plan, prog, onSave, onCancel }) {
           <${Field} label="Poids (kg)" id="nu-w"><input id="nu-w" inputMode="decimal" value=${f.weight} onChange=${(e) => set("weight", e.target.value)} /></${Field}></div>
         <${Field} label="Activité en dehors de tes séances" hint=${(ACT.find((x) => x.v === f.act) || {}).d}><${Seg} options=${ACT.map((x) => ({ v: x.v, n: x.n }))} value=${f.act} onChange=${(v) => set("act", v)} /></${Field}>
       </div></${Card}>
-    <${Card} title="Ton objectif">
+    <${Card} title="Ton objectif" sub=${obj.programNom ? "Ton entraînement, c'est « " + obj.programNom + " » : c'est un axe à part, il ne change pas ici" : null}>
       <div className="form">
         <${Seg} options=${[{ v: "perte", n: "Perdre du poids" }, { v: "maintien", n: "Garder mon poids" }, { v: "prise", n: "Prendre du muscle" }]} value=${f.goal} onChange=${(v) => set("goal", v)} />
+        ${!eqMode && f.goal !== obj.corps ? html`<p className="small warn-t">Dans ton profil, ta composition corporelle est réglée sur « ${corpsName(obj.corps)} ». En validant ici, c'est ce choix-ci qui fera référence pour ta nutrition : pense à aligner les deux dans Mon profil › Mes objectifs.</p>` : null}
+        ${recomp ? html`<${RecompNote} o=${obj} />` : null}
         ${f.goal !== "maintien" ? html`<div className="row2"><${Field} label=${f.goal === "perte" ? "Kilos à perdre" : "Kilos à prendre"} id="nu-d"><input id="nu-d" inputMode="decimal" value=${f.delta} onChange=${(e) => set("delta", e.target.value)} placeholder=${f.goal === "perte" ? "10" : "3"} /></${Field}>
           <${Field} label="En combien de mois ?"><${Seg} options=${["1", "2", "3", "4", "6", "9", "12"].map((m) => ({ v: m, n: m }))} value=${f.months} onChange=${(v) => set("months", v)} /></${Field}></div>` : null}
         <${Field} label="Préférences et aliments à éviter (facultatif)" id="nu-pr"><input id="nu-pr" value=${f.prefs} onChange=${(e) => set("prefs", e.target.value)} placeholder="Ex. végétarien, pas de porc, n'aime pas le poisson" /></${Field}>

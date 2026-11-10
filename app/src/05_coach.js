@@ -340,6 +340,7 @@ function ClientOverview({ data, plan, prog, stats, info, lib }) {
       <${Stat} n=${ps.phase === "en_cours" ? fmtN(stats.loadByWeek[ps.week] || 0, 0) : "—"} label="Charge cette semaine" sub="effort × minutes" />
       <${Stat} n=${lastC ? "S" + lastC.w : "—"} label="Dernier bilan" sub=${lastC ? fmtD(lastC.at) : null} />
     </div>
+    <${CoachObjectifs} data=${data} plan=${plan} stats=${stats} lib=${lib} />
     <div className="grid2"><${Card} title="Carte athlète" sub="Ce que voit le client"><${CardEvo} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>
       <${Badges} data=${data} plan=${plan} prog=${prog} lib=${lib} /></div>
     <div className="grid2">

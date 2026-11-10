@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="f5a7be76cc">
+<meta name="app-build" content="6e5866ceb4">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -1970,7 +1970,13 @@ function summarize(data) {
   const last = sorted[0];
   const lastC = ch[0];
   const recentPain = Math.max(0, ...sorted.slice(0, 3).map((l) => Number(l.douleur) || 0), lastC ? Number(lastC.douleur) || 0 : 0);
+  /* garde-fou énergie basse (37_energie.js) : publié dans le résumé pour que le tableau de bord d'Antoine
+     le voie sans ouvrir chaque fiche. Pas de nouvelle écriture : il se recalcule aux enregistrements qui
+     appellent déjà summarize (séance, bilan), ce qui suffit largement pour un signal à fenêtre de 21 jours.
+     Jamais la raison intime (règles) ici : seulement l'écart et le fait qu'il y a un signalement. */
+  const en = typeof energieBasse === "function" ? energieBasse(data, data.plan, todayISO()) : null;
   return {
+    energieBasse: en && en.alerte ? { manquePct: en.manquePct, charge: en.charge, nSignaux: en.signaux.length, at: todayISO() } : null,
     nLogs: logs.length, lastLogAt: last ? last.date : null, lastLogTitle: last ? last.title : null, weeksDone,
     lastPain: recentPain, lastCheckinW: lastC ? lastC.w : null, lastCheckinAt: lastC ? lastC.at : null,
     lastWeight: lastC && num(lastC.poids) !== null ? num(lastC.poids) : null,
@@ -3708,6 +3714,9 @@ function rowInfo(row, lib, today, settings) {
   if ((sum.videoPending || 0) > 0) alerts.push({ tone: "gold", n: plural(sum.videoPending, "vidéo", "vidéos") + " à corriger", k: "videos" });
   if ((sum.aiPending || 0) > 0 && !sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending, "ajustement IA", "ajustements IA") + " à vérifier", k: "ia" });
   else if ((sum.aiPending || 0) > 1 && sum.aiAlert) alerts.push({ tone: "gold", n: plural(sum.aiPending - 1, "autre point IA", "autres points IA") + " à vérifier", k: "ia" });
+  /* apports durablement insuffisants pour la charge (37_energie.js) : drapeau publié par le client, sans
+     jamais la raison intime — le détail est dans sa fiche, onglet Nutrition */
+  if (sum.energieBasse) alerts.push({ tone: "bad", n: "Apports bas pour la charge (" + fmtN(sum.energieBasse.manquePct, 0) + " % sous la référence)", k: "nutrition" });
   let adherence = null, weekDone = 0, weekPlanned = 0;
   if (ps && prog && plan.status !== "archived") {
     if (ps.phase === "en_cours") {
@@ -3903,7 +3912,7 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
       <${Stat} n=${eur(mrr)} label="Revenu mensuel estimé" sub="formules actives" />
     </div>
     <${Card} title="À traiter" sub=${alerts.length ? plural(alerts.length, "point") : "Rien d'urgent"}>
-      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia", "videos", "sante"].includes(a.k) ? a.k : "vue")}>
+      ${alerts.length ? html`<ul className="alerts">${alerts.slice(0, 14).map((a, i) => html`<li key=${i}><button type="button" onClick=${() => openClient(a.r.cid, ["plan", "bilans", "seances", "ia", "videos", "sante", "nutrition"].includes(a.k) ? a.k : "vue")}>
         <${Pill} tone=${a.tone}>${a.n}</${Pill}><b>${a.r.profile.name || "Client"}</b><span className="muted small">${a.r.info.prog ? a.r.info.prog.n : ""}</span></button></li>`)}</ul>`
         : html`<p className="muted small">Tous les bilans ont une réponse et aucun client n'a d'alerte.</p>`}
     </${Card}>
@@ -5139,6 +5148,15 @@ function clientContext({ data, plan, prog, stats, lib }) {
       const ad = nutriAdapt(data, plan, todayISO());
       if (ad && ad.pret && ad.assez) L.push("Recalibrage de la dépense proposé au client : ses repas notés (" + fmtN(ad.apport, 0) + " kcal/j en moyenne sur " + ad.joursNotes + " jours) et l'évolution de son poids (" + (ad.penteSem < 0 ? "−" : "+") + fmtN(Math.abs(ad.penteSem), 2) + " kg/semaine sur " + ad.pesees + " pesées) donnent une dépense d'environ " + fmtN(ad.mesuree, 0) + " kcal/j, contre " + fmtN(ad.equation, 0) + " utilisées pour ses repères, soit " + fmtN(Math.abs(ad.ecartPct), 1) + " % " + (ad.sens === "haut" ? "de plus" : "de moins") + ". " + (ad.sens === "haut" ? "Ce sens est fiable (on sous-déclare toujours un peu ses apports, le biais pousse dans l'autre sens)." : "Prudence : une dépense mesurée plus basse vient le plus souvent de repas non notés (huile, boissons, grignotages), pas d'un métabolisme lent.") + " Tu peux l'expliquer et répondre aux questions, mais tu ne donnes jamais ton propre chiffre de calories à la place, et tu n'appliques rien : le client met à jour ses repères lui-même avec le bouton de sa page Nutrition.");
       else if (ad && !ad.pret) L.push("Recalibrage de la dépense : pas encore possible, il manque " + ad.manque.join(", et ") + ". Si le client demande pourquoi ses repères ne bougent pas, c'est la réponse — et noter ses repas plus régulièrement est ce qui débloque le calcul.");
+      /* garde-fou énergie basse (37_energie.js) : si le schéma est présent, c'est la priorité absolue de la
+         réponse — avant tout conseil de perte de poids, de charge ou de performance */
+      const eb = energieBasse(data, plan, todayISO());
+      /* le cycle n'entre jamais dans le contexte de l'IA (convention posée avec le suivi du cycle le
+         6 novembre) : ce même contexte sert aussi à rédiger le brouillon de réponse d'Antoine, donc un
+         signal intime placé ici ressortirait dans un texte qu'il lit, partage ou pas. Les autres signaux
+         suffisent à motiver la réponse. */
+      const sigIA = eb ? eb.signaux.filter((s) => !s.includes("règles")) : [];
+      if (eb && eb.alerte) L.push("ALERTE ÉNERGIE BASSE : ses apports notés (" + fmtN(eb.apport, 0) + " kcal/j sur " + eb.joursNotes + " jours) sont " + fmtN(eb.manquePct, 0) + " % sous sa dépense de référence (" + fmtN(eb.ref, 0) + " kcal) avec " + fmtN(eb.charge, 0) + " UA d'entraînement par semaine" + (eb.sousPlancher ? ", et sous le plancher de sécurité" : "") + (sigIA.length ? ", et en même temps : " + sigIA.join(" ; ") : "") + ". C'est le schéma que le consensus du CIO sur les REDs associe à une baisse de performance, des troubles du cycle, une santé osseuse dégradée et des blessures à répétition. Priorité absolue de ta réponse : remonter les apports, alléger la charge, et ne JAMAIS conseiller de manger moins, de sauter un repas, d'augmenter la dépense ou d'accélérer une perte de poids, même si le client le demande explicitement. " + (eb.medecin ? "Conseille aussi un avis médical (les signaux réunis le justifient)." : "Renvoie vers Antoine pour l'ajustement.") + " Tu ne poses aucun diagnostic.");
       const exp = expectedWeight(np, todayISO());
       const lastW = lastWeight(data);
       if (exp !== null) L.push("Poids attendu aujourd'hui selon le plan : " + fmtN(exp) + " kg" + (lastW ? " · dernier poids noté : " + fmtN(lastW.v) + " kg (" + fmtD(lastW.d) + ")" : ""));
@@ -6328,7 +6346,8 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
-    ${sub === "objectif" && np && !edit ? html`<${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
+    ${sub === "objectif" && np && !edit ? html`<${EnergieCard} data=${data} plan=${plan} />
+      <${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />
       <${NutriAdaptCard} data=${data} src=${src} plan=${plan} />` : null}
     ${sub === "journal" && np ? html`
       <div className="daynav"><button type="button" className="x" aria-label="Jour précédent" onClick=${() => setDate(addDays(date, -1))}>‹</button>
@@ -6400,6 +6419,7 @@ function CoachNutrition({ data, src }) {
       <${Stat} n=${eq || avg("kcal") === null ? "—" : fmtN(avg("kcal"), 0)} label="kcal moyennes" sub="jours notés" />
       <${Stat} n=${eq || avg("p") === null ? "—" : fmtN(avg("p"), 0) + " g"} label="Protéines moyennes" sub=${eq ? null : "cible " + np.targets.p + " g"} />
     </div>
+    ${eq ? null : html`<${EnergieCard} data=${data} coachView=${true} partage=${cycleShared(data.profile)} />`}
     ${eq ? null : html`<${NutriAdaptCard} data=${data} src=${src} coachView=${true} />`}
     <${Card} title="Objectif" sub=${eq ? "Mode équilibre : aucun chiffre affiché au client" : nutriGoalText(np) + " · statut : " + ({ ok: "réaliste", ambitieux: "ambitieux", rapide: "trop rapide, plan ralenti" }[np.status] || "—")}>
       ${eq ? null : html`<p className="small">Dépense ${np.tdeeSrc === "mesure" ? "mesurée" : "estimée"} ${fmtN(np.tdee, 0)} kcal${np.tdeeSrc === "mesure" ? " (recalibrée le " + fmtD(np.tdeeAt) + (np.tdeeEq ? ", équation de départ " + fmtN(np.tdeeEq, 0) : "") + ")" : ""} · plancher ${fmtN(np.floor, 0)} kcal · ${fmtN(np.targets.steps, 0)} pas · eau ${fmtN(np.targets.water, 1)} L${np.prefs ? " · préférences : " + np.prefs : ""}</p>
@@ -12301,8 +12321,12 @@ function articleOfWeek(today) {
 function ArticleCard() {
   const a = useMemo(() => articleOfWeek(), []);
   if (!a) return null;
-  return html`<${Card} title="Article de la semaine" sub=${a.titre}>
-    <p className="small" style=${{ whiteSpace: "pre-line" }}>${a.texte}</p>
+  /* data-notr : le titre et le texte de l'article sont du contenu rédigé (comme un billet de blog), pas de
+     l'interface. Ils ne sont jamais traduits automatiquement, par nature — c'était déjà le cas en pratique,
+     c'est maintenant écrit dans le balisage, pour que la vérification des langues ne le signale plus comme
+     un oubli et reste utile (un test qui échoue toujours s'apprend à ignorer). */
+  return html`<${Card} title="Article de la semaine" sub=${html`<span data-notr="1" lang="fr">${a.titre}</span>`}>
+    <p className="small" data-notr="1" lang="fr" style=${{ whiteSpace: "pre-line" }}>${a.texte}</p>
     ${a.refs && a.refs.length ? html`<details><summary>Source</summary><ul className="refs">${a.refs.map((r, i) => html`<li key=${i}>${r}</li>`)}</ul></details>` : null}
   </${Card}>`;
 }
@@ -13310,6 +13334,130 @@ function NutriAdaptCard({ data, src, plan, coachView }) {
       <p className="small">Dépense = apports notés − (variation de poids × 7700 / nombre de jours). C'est de la comptabilité d'énergie, pas une estimation de ton métabolisme : la qualité du résultat dépend entièrement de la régularité avec laquelle tu notes tes repas.</p>
       <ol className="refs">${ADAPT_REFS.map((r, i) => html`<li key=${i}>${r}</li>`)}</ol></details>
   </${Card}>`;
+}
+
+/* ===== Garde-fou énergie basse : signaler un schéma, jamais poser un diagnostic =====
+   Dernier différenciateur du Bloc C du comparatif, et le seul qui ait un motif clinique sérieux : le
+   déficit énergétique relatif dans le sport (RED-S, renommé REDs par le consensus 2023 du CIO). Manger
+   durablement trop peu pour la charge d'entraînement produit des conséquences réelles — perte de densité
+   osseuse, troubles du cycle, baisse de performance, blessures à répétition, troubles de l'humeur — et
+   aucune application grand public comparée n'en avertit. L'application d'Antoine a déjà tous les signaux
+   nécessaires : apports notés, charge d'entraînement en sRPE, poids, FC au repos et VFC, sommeil, et le
+   cycle pour les clientes qui l'ont activé.
+
+   CE QUE CE FICHIER NE FAIT PAS, ET POURQUOI C'EST LE POINT LE PLUS IMPORTANT :
+   - Il ne calcule PAS la disponibilité énergétique. La vraie mesure est en kcal par kg de masse maigre et
+     par jour (seuil de référence autour de 30 kcal/kg MM/j, Loucks & Thuma 2003), or l'application ne
+     mesure pas la masse maigre — et on a explicitement refusé de l'estimer à partir de l'IMC dans
+     33_objectifs.js. Sortir un chiffre de disponibilité énergétique en le dérivant d'une estimation de
+     masse grasse serait inventer une précision qui n'existe pas, sur un sujet médical. On s'en tient donc
+     aux données réellement mesurées : l'écart entre ce qui est noté et ce que le plan demande, la charge,
+     et les signaux corroborants.
+   - Il ne pose AUCUN diagnostic et n'affiche aucun score de risque. Les outils d'évaluation du CIO sont
+     destinés à des cliniciens. Ici on nomme un schéma observé, on dit ce qu'il peut entraîner, et on
+     renvoie vers Antoine et, pour les signaux les plus spécifiques, vers un médecin.
+   - Il ne se déclenche pas sur un déficit normal et assorti : une sèche de 3 semaines bien menée n'est pas
+     un signal. Il faut le cœur du schéma (apports durablement très bas ET charge d'entraînement réelle) ET
+     au moins un signal corroborant. C'est volontairement conservateur : une alerte qui crie pour rien est
+     une alerte qu'on apprend à ignorer, et c'est pire que pas d'alerte.
+
+   SIGNAL LE PLUS SPÉCIFIQUE, ET SA CONFIDENTIALITÉ : la disparition des règles est le marqueur clinique le
+   plus parlant du lot. Il n'est utilisé que si la cliente a activé le suivi du cycle, et il n'est montré au
+   coach que si elle a aussi activé le partage — exactement les deux réglages séparés posés le 6 novembre.
+   Sans partage, Antoine voit le signalement sans en voir la raison intime.
+
+   Sources : consensus 2023 du CIO sur les REDs (Mountjoy et al., Br J Sports Med 2023;57(17):1073-1097) et
+   sa version 2018 (RED-S, 2018;52(11):687-697) ; seuil de disponibilité énergétique de Loucks & Thuma
+   (J Clin Endocrinol Metab 2003;88(1):297-311) ; position de l'ACSM sur la triade de l'athlète féminine
+   (Nattiv et al., Med Sci Sports Exerc 2007;39(10):1867-1882). */
+const ENER_FENETRE = 21;          /* jours regardés en arrière, comme le recalibrage */
+const ENER_NOTES_MIN = 12;        /* journées de repas notées : il en faut plus que pour le recalibrage */
+const ENER_MANQUE_PCT = 0.25;     /* apports sous la référence de plus de 25 % = cœur du schéma */
+const ENER_CHARGE_MIN = 900;      /* UA par semaine : en dessous, l'entraînement n'est pas le problème */
+const ENER_PERTE_SEM = 0.01;      /* perte de plus de 1 % du poids par semaine = trop rapide, durablement */
+const ENER_REFS = [
+  "Mountjoy M, Ackerman KE, Bailey DM, et al. 2023 International Olympic Committee's (IOC) consensus statement on Relative Energy Deficiency in Sport (REDs). Br J Sports Med. 2023;57(17):1073-1097. — conséquences d'un apport durablement insuffisant pour la charge : santé osseuse, fonction endocrinienne, performance, risque de blessure.",
+  "Mountjoy M, Sundgot-Borgen JK, Burke LM, et al. IOC consensus statement on relative energy deficiency in sport (RED-S): 2018 update. Br J Sports Med. 2018;52(11):687-697.",
+  "Loucks AB, Thuma JR. Luteinizing hormone pulsatility is disrupted at a threshold of energy availability in regularly menstruating women. J Clin Endocrinol Metab. 2003;88(1):297-311. — seuil de référence autour de 30 kcal par kg de masse maigre et par jour ; cette mesure demande la masse maigre, que l'application ne mesure pas : elle n'est donc pas calculée ici.",
+  "Nattiv A, Loucks AB, Manore MM, et al. American College of Sports Medicine position stand. The female athlete triad. Med Sci Sports Exerc. 2007;39(10):1867-1882.",
+];
+/* charge moyenne par semaine sur la fenêtre, depuis les séances déjà enregistrées (effort × durée, Foster) */
+function chargeFenetre(data, today, jours) {
+  const from = addDays(today, -(jours - 1));
+  let ua = 0;
+  Object.values(data.logs || {}).forEach((l) => { if (l && l.date >= from && l.date <= today) ua += num(l.load) || 0; });
+  Object.values(data.libres || {}).forEach((l) => { if (l && l.d >= from && l.d <= today) ua += num(l.load) || 0; });
+  return Math.round(ua / (jours / 7));
+}
+/* Le schéma, ou rien. Renvoie null si la question ne se pose pas (pas de plan chiffré, mode équilibre,
+   pas assez de journées notées) : l'absence de signalement ne veut jamais dire « tout va bien », et c'est
+   écrit dans la carte. */
+function energieBasse(data, plan, today) {
+  const np = data && data.nutri && data.nutri.plan;
+  if (!np || np.mode === "equilibre" || !np.targets || !np.tdee) return null;
+  const d = today || todayISO();
+  const jours = apportsFenetre(data, d, ENER_FENETRE);
+  if (jours.length < ENER_NOTES_MIN) return null;
+  const apport = jours.reduce((s, x) => s + x.kcal, 0) / jours.length;
+  const ref = np.tdee;
+  const manque = 1 - apport / ref;
+  const charge = chargeFenetre(data, d, ENER_FENETRE);
+  /* cœur du schéma : apports très en dessous de la référence ET entraînement réel en face */
+  const coeur = manque >= ENER_MANQUE_PCT && charge >= ENER_CHARGE_MIN;
+  const sousPlancher = apport < (num(np.floor) || 0);
+  /* signaux corroborants : aucun ne déclenche seul, chacun rend le schéma plus net */
+  const signaux = [];
+  const pts = poidsFenetre(data, d, ENER_FENETRE);
+  const pente = pts.length >= 3 ? penteKgJour(pts) : null;
+  const w = pts.length ? pts[pts.length - 1].y : num(np.weight0);
+  if (pente !== null && w && -pente * 7 / w >= ENER_PERTE_SEM) signaux.push("ton poids descend de plus de 1 % par semaine, c'est plus rapide que ce que ton plan prévoit");
+  const f = typeof santeFlag === "function" ? santeFlag(data, d) : null;
+  if (f && f.lvl !== "ok" && (f.notes || []).length) signaux.push("tes mesures du matin sont sous ta moyenne (" + f.notes.join(", ") + ")");
+  const ck = Object.values(data.checkins || {}).filter(Boolean).sort((a, b) => (Number(b.w) || 0) - (Number(a.w) || 0))[0];
+  if (ck && num(ck.energie) !== null && num(ck.energie) <= 2) signaux.push("tu as noté une énergie basse à ton dernier bilan");
+  /* signal le plus spécifique, et le plus intime : règles en retard marqué ou absentes. Seulement si la
+     cliente a activé le suivi du cycle elle-même (32_cycle.js). */
+  let cycle = false;
+  if (typeof cycleOn === "function" && cycleOn(data.profile) && typeof cycleState === "function") {
+    const cs = cycleState(data, d);
+    if (cs && cs.late) { cycle = true; signaux.push("tes règles ont beaucoup de retard, ou sont absentes"); }
+  }
+  const alerte = (coeur || sousPlancher) && signaux.length > 0;
+  return { alerte, coeur, sousPlancher, apport: Math.round(apport), ref: Math.round(ref), manquePct: Math.round(manque * 1000) / 10,
+    charge, joursNotes: jours.length, signaux, cycle, plancher: num(np.floor) || null,
+    /* ce qui justifie de parler d'un médecin, et pas seulement d'Antoine */
+    medecin: cycle || signaux.length >= 2 };
+}
+/* carte client : calme, factuelle, et qui dit quoi faire */
+function EnergieCard({ data, plan, coachView, partage }) {
+  const e = energieBasse(data, plan, todayISO());
+  if (!e || !e.alerte) return null;
+  /* côté coach, le motif intime n'est montré que si la cliente a activé le partage (32_cycle.js) */
+  const sig = coachView && e.cycle && !partage ? e.signaux.filter((s) => !s.includes("règles")) : e.signaux;
+  return html`<div className="alert warn"><div>
+    <b>${coachView ? "Apports bas pour la charge : à aborder avec le client" : "Tu manges peu pour ce que tu t'entraînes"}</b>
+    <p className="small">${coachView ? "Sur les 3 dernières semaines" : "Sur tes 3 dernières semaines"} : ${fmtN(e.apport, 0)} kcal par jour en moyenne sur ${plural(e.joursNotes, "journée notée", "journées notées")}, soit ${fmtN(e.manquePct, 0)} % sous ${coachView ? "sa" : "ta"} dépense de référence (${fmtN(e.ref, 0)} kcal), avec ${fmtN(e.charge, 0)} UA d'entraînement par semaine${e.sousPlancher ? ", et sous le plancher de sécurité de " + fmtN(e.plancher, 0) + " kcal" : ""}.</p>
+    ${sig.length ? html`<p className="small">${coachView ? "Et en même temps :" : "Et en même temps :"}</p><ul className="small rec-list">${sig.map((s, i) => html`<li key=${i}>${s}</li>`)}</ul>` : null}
+    <p className="small">${coachView
+      ? "Ce n'est pas un diagnostic : c'est un schéma d'apports durablement insuffisants pour la charge, celui que le consensus du CIO sur les REDs associe à une baisse de performance, à des troubles du cycle, à une santé osseuse dégradée et à des blessures à répétition. La priorité est de remonter les apports avant de toucher au programme."
+      : "Ce n'est pas un diagnostic, et ce n'est pas une accusation : c'est un schéma que les préparateurs connaissent bien. Manger durablement trop peu pour sa charge d'entraînement fait baisser les performances au lieu de les améliorer, fatigue les os, dérègle les hormones et augmente les blessures. La bonne nouvelle, c'est que ça se corrige en remontant les apports, pas en s'entraînant plus."}</p>
+    <p className="small"><b>${coachView ? "À faire :" : "Ce qu'il faut faire :"}</b> ${coachView
+      ? "remonter les apports vers la dépense de référence, alléger la charge le temps que ça remonte, et orienter vers un médecin ou un diététicien si les signaux persistent."
+      : "remonte tes apports vers ta dépense de référence et parles-en à Antoine avant de continuer sur ce rythme. Il ajustera la charge."}</p>
+    ${e.medecin ? html`<p className="small"><b>${coachView ? "Avis médical à conseiller" : "Et vois un médecin"}</b> : ${coachView
+      /* ne jamais énumérer d'exemple de signal ici : la cliente peut avoir signalé son cycle sans avoir
+         autorisé Antoine à le voir, et un exemple en dur le lui apprendrait quand même (32_cycle.js) */
+      ? "les signaux réunis ci-dessus justifient un avis médical, pas seulement un ajustement de plan."
+      : "des règles absentes, une fatigue qui ne passe pas ou des blessures qui reviennent méritent un avis médical. Ce n'est pas grave en soi, mais ça ne se règle pas uniquement avec l'application."}</p>` : null}
+    <details><summary>Les sources</summary><ol className="refs">${ENER_REFS.map((r, i) => html`<li key=${i}>${r}</li>`)}</ol>
+      <p className="muted small">L'application ne calcule pas de disponibilité énergétique : la vraie mesure demande la masse maigre, qu'elle ne mesure pas. Elle compare seulement ${coachView ? "ses" : "tes"} apports notés à ${coachView ? "sa" : "ta"} dépense de référence, ${coachView ? "sa" : "ta"} charge et ${coachView ? "ses" : "tes"} autres signaux. Un signalement absent ne veut donc pas dire que tout va bien.</p></details>
+  </div></div>`;
+}
+/* alerte du tableau de bord : calculée sur le résumé publié, sans détail intime */
+function energieAlerte(data, plan, today) {
+  const e = energieBasse(data, plan, today);
+  if (!e || !e.alerte) return null;
+  return { tone: "bad", n: "Apports bas pour la charge (" + fmtN(e.manquePct, 0) + " % sous la référence)", k: "nutrition" };
 }
 
 /* ===== Version site : accueil public, connexion, installation ===== */

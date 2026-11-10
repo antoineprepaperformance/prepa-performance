@@ -207,7 +207,13 @@ function summarize(data) {
   const last = sorted[0];
   const lastC = ch[0];
   const recentPain = Math.max(0, ...sorted.slice(0, 3).map((l) => Number(l.douleur) || 0), lastC ? Number(lastC.douleur) || 0 : 0);
+  /* garde-fou énergie basse (37_energie.js) : publié dans le résumé pour que le tableau de bord d'Antoine
+     le voie sans ouvrir chaque fiche. Pas de nouvelle écriture : il se recalcule aux enregistrements qui
+     appellent déjà summarize (séance, bilan), ce qui suffit largement pour un signal à fenêtre de 21 jours.
+     Jamais la raison intime (règles) ici : seulement l'écart et le fait qu'il y a un signalement. */
+  const en = typeof energieBasse === "function" ? energieBasse(data, data.plan, todayISO()) : null;
   return {
+    energieBasse: en && en.alerte ? { manquePct: en.manquePct, charge: en.charge, nSignaux: en.signaux.length, at: todayISO() } : null,
     nLogs: logs.length, lastLogAt: last ? last.date : null, lastLogTitle: last ? last.title : null, weeksDone,
     lastPain: recentPain, lastCheckinW: lastC ? lastC.w : null, lastCheckinAt: lastC ? lastC.at : null,
     lastWeight: lastC && num(lastC.poids) !== null ? num(lastC.poids) : null,

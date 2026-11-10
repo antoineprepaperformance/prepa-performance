@@ -10,8 +10,12 @@ function articleOfWeek(today) {
 function ArticleCard() {
   const a = useMemo(() => articleOfWeek(), []);
   if (!a) return null;
-  return html`<${Card} title="Article de la semaine" sub=${a.titre}>
-    <p className="small" style=${{ whiteSpace: "pre-line" }}>${a.texte}</p>
+  /* data-notr : le titre et le texte de l'article sont du contenu rédigé (comme un billet de blog), pas de
+     l'interface. Ils ne sont jamais traduits automatiquement, par nature — c'était déjà le cas en pratique,
+     c'est maintenant écrit dans le balisage, pour que la vérification des langues ne le signale plus comme
+     un oubli et reste utile (un test qui échoue toujours s'apprend à ignorer). */
+  return html`<${Card} title="Article de la semaine" sub=${html`<span data-notr="1" lang="fr">${a.titre}</span>`}>
+    <p className="small" data-notr="1" lang="fr" style=${{ whiteSpace: "pre-line" }}>${a.texte}</p>
     ${a.refs && a.refs.length ? html`<details><summary>Source</summary><ul className="refs">${a.refs.map((r, i) => html`<li key=${i}>${r}</li>`)}</ul></details>` : null}
   </${Card}>`;
 }

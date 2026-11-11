@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="6e5866ceb4">
+<meta name="app-build" content="b300689ed2">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -12863,7 +12863,7 @@ function ObjectifsCard({ data, src, plan }) {
 
    Ce qui est promis, et ce qui ne l'est pas. Le comparatif des applications concurrentes a montré que la
    littérature soutient l'autorégulation par le ressenti et les séances réellement terminées (effet groupé 0,64,
-   IC 95 % 0,43-0,85, I² = 0 % — Greig et al. 2020), mais qu'aucune étude ne montre l'autorégulation battre
+   IC 95 % 0,43-0,85, I² = 0 % — Zhang et al. 2021), mais qu'aucune étude ne montre l'autorégulation battre
    décisivement une périodisation fixe bien conçue — et les programmes d'Antoine *sont* une périodisation fixe
    bien conçue. La promesse honnête n'est donc pas « tu progresseras plus vite », c'est « tu peux t'entraîner
    tous les jours sans que ce soit plat ni imprudent, et sans que le coach touche au programme ». C'est une
@@ -12893,7 +12893,8 @@ function ObjectifsCard({ data, src, plan }) {
    effort de fin de séance, douleur, bilans, santé du jour). Désactivé par défaut, réglable par Antoine. */
 const AUTOREG_DEF = { on: false, up: 10, down: 15 };
 const AUTOREG_REFS = [
-  "Greig L, Stephens Hemingway BH, Aspe RR, Cooper K, Comfort P, Swinton PA. Autoregulation in resistance training: addressing the inconsistencies. Sports Med. 2020;50(11):1873-1887. — méta-analyse : effet groupé 0,64 (IC 95 % 0,43-0,85 ; I² = 0 %) en faveur de l'autorégulation par le ressenti contre des charges fixes, sur 8 études et 166 participants entraînés, 5 à 10 semaines.",
+  "Zhang X, Li H, Bi S, Luo Y, Cao Y, Zhang G. Auto-regulation method vs. fixed-loading method in maximum strength training for athletes: a systematic review and meta-analysis. Front Physiol. 2021;12:651112. — effet groupé 0,64 (IC 95 % 0,43-0,85 ; P < 0,001 ; I² = 0 %) en faveur de l'autorégulation contre des charges fixes, sur 8 études et 166 participants (151 hommes, 15 femmes).",
+  "Greig L, Stephens Hemingway BH, Aspe RR, Cooper K, Comfort P, Swinton PA. Autoregulation in resistance training: addressing the inconsistencies. Sports Med. 2020;50(11):1873-1887. — revue conceptuelle : vocabulaire et cadre de l'autorégulation, pas une méta-analyse. Utile pour nommer ce qu'on fait ici, sans en tirer de chiffre d'efficacité.",
   "Mann JB, Thyfault JP, Ivey PA, Sayers SP. The effect of autoregulatory progressive resistance exercise vs. linear periodization on strength improvement in college athletes. J Strength Cond Res. 2010;24(7):1718-1723. — APRE : la charge suivante est fixée par le nombre de répétitions atteint sur une série repère ; c'est la règle dont s'inspire l'ajustement ci-dessous.",
   "Foster C, Florhaug JA, Franklin J, et al. A new approach to monitoring exercise training. J Strength Cond Res. 2001;15(1):109-115. — charge de séance = effort ressenti × durée (déjà utilisée dans l'application).",
   "Zourdos MC, Klemp A, Dolan C, et al. Novel resistance training-specific rating of perceived exertion scale measuring repetitions in reserve. J Strength Cond Res. 2016;30(1):267-275. — échelle RPE fondée sur les répétitions en réserve : fiable chez l'entraîné, bien moins chez le débutant.",

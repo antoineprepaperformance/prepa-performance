@@ -72,10 +72,28 @@ function CycleCard({ data, src, coachView }) {
     </${Card}>`;
   }
   const on = cycleOn(p);
+  const [effacer, setEffacer] = useState(false);
   const setCycle = async (patch) => {
     setBusy(true);
     try { await src.setProfile({ ...p, cycle: { on: true, share: false, ...(p.cycle || {}), ...patch } }); }
     catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  /* Effacement à la demande (RGPD art. 17, et retrait du consentement art. 7.3) : désactiver le suivi
+     arrête l'estimation et le partage, mais les jours notés restent dans la santé du jour — ce sont des
+     données de santé que la cliente doit pouvoir faire disparaître sans écrire à personne. On ne les efface
+     pas automatiquement à la désactivation : une désactivation par erreur ne doit pas détruire un
+     historique. Deux gestes distincts, donc, et celui-ci est confirmé. */
+  const effacerDates = async () => {
+    setBusy(true);
+    try {
+      for (const d of cycleStarts(data)) {
+        const cur = { ...((data.sante && data.sante[d]) || {}) };
+        delete cur.regles;
+        await src.saveSante(d, { ...cur, at: nowISO() });
+      }
+      setEffacer(false);
+      toast("Tes dates ont été effacées.", "ok");
+    } catch (e) { toast("Effacement impossible.", "bad"); } finally { setBusy(false); }
   };
   if (!on) return html`<${Card} title="Suivi du cycle" sub="Facultatif">
     <p className="small">Sais où tu en es dans ton cycle (règles, ovulation…), et un repère de vigilance pendant la fenêtre ovulatoire — voir plus bas, sources à l'appui. Un seul geste au quotidien : indiquer le jour où tes règles commencent.</p>
@@ -99,6 +117,10 @@ function CycleCard({ data, src, coachView }) {
     </details>
     <label className="chk"><input type="checkbox" id="cy-share" checked=${!!(p.cycle && p.cycle.share)} onChange=${(e) => setCycle({ share: e.target.checked })} disabled=${busy} /><span>Partager la phase du jour avec ${COACH_NAME_DEFAULT}</span></label>
     <p className="field-h">Désactivé par défaut : plus sensible que le reste de tes données santé. ${COACH_NAME_DEFAULT} ne verra jamais tes dates de règles, seulement la phase estimée du jour si tu partages.</p>
-    <button type="button" className="linkbtn" onClick=${() => setCycle({ on: false, share: false })} disabled=${busy}>Désactiver le suivi</button>
+    <div className="btnrow"><button type="button" className="linkbtn" onClick=${() => setCycle({ on: false, share: false })} disabled=${busy}>Désactiver le suivi</button>
+      ${cycleStarts(data).length ? html`<button type="button" className="linkbtn bad-t" onClick=${() => setEffacer(true)} disabled=${busy}>Effacer mes dates notées</button>` : null}</div>
+    ${effacer ? html`<div className="alert warn"><div><b>Effacer ${plural(cycleStarts(data).length, "date notée", "dates notées")} ?</b>
+      <p className="small">Les jours où tu as indiqué le début de tes règles seront supprimés de ta santé du jour. L'estimation de ton cycle repartira de zéro. C'est définitif.</p></div>
+      <div className="btnrow"><${Btn} small kind="quiet" onClick=${() => setEffacer(false)} disabled=${busy}>Annuler</${Btn}><${Btn} small onClick=${effacerDates} disabled=${busy}>Effacer définitivement</${Btn}></div></div>` : null}
   </${Card}>`;
 }

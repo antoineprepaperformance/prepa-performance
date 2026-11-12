@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-11-16",
+ "publications": [
+  {
+   "id": "2026-11-16-a",
+   "quand": "2026-11-16T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-b",
+   "quand": "2026-11-17T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_nordic.jpg"
+   ],
+   "auto": true,
+   "legende": "Un seul exercice, et deux fois moins de blessures aux ischio-jambiers. 🦵\nC'est ce que montre une méta-analyse sur près de 8 500 sportifs : les programmes de prévention qui contiennent le Nordic font baisser ces blessures jusqu'à 51 %.\n\nComment le faire :\n1. À genoux sur un tapis, chevilles bloquées par un partenaire (ou sous un banc lourd).\n2. Descends vers l'avant le plus lentement possible, corps aligné des genoux aux épaules.\n3. Rattrape-toi avec les mains et repousse pour remonter.\n\nPour commencer : 2 séries de 5, deux fois par semaine, loin des matchs. Trop dur ? Réduis l'amplitude ou aide-toi d'un élastique.\n👉 Enregistre ce post et montre-le à ton partenaire d'entraînement. Le Nordic est dans l'application, avec sa version facile et sa progression.\n\nSource : van Dyk N, Behan FP, Whiteley R. Br J Sports Med. 2019;53(21):1362-1370.\n\n#preparationphysique #ischiojambiers #prevention #rugby #football #sprint #musculation #blessure"
+  },
+  {
+   "id": "2026-11-16-c",
+   "quand": "2026-11-18T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-d",
+   "quand": "2026-11-19T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_pied_1.jpg",
+    "05_post_jeudi_pied_2.jpg",
+    "06_post_jeudi_pied_3.jpg",
+    "07_post_jeudi_pied_4.jpg",
+    "08_post_jeudi_pied_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Les points au pied se gagnent à l'entraînement, pas le jour du match. 🏉\nLe secret des bons buteurs : une routine qui ne change jamais… et un bras qu'on oublie.\n\nLes 4 étapes de la fiche :\n1. Ballon sur le tee, légèrement incliné ; vise un point précis derrière les poteaux.\n2. Recule de 3 à 4 pas, décale-toi de 2 : toujours les mêmes appuis.\n3. Élan en courbe, pied d'appui à 20-30 cm du ballon, orienté vers la cible.\n4. Frappe avec le haut du pied, bras opposé ouvert puis ramené devant toi.\n\nDose : 3 séries de 5 tirs (face aux poteaux, puis à 15 m et à 5 m de la touche). Pour te mettre en conditions de match : un tir juste après un sprint de 20 m.\n👉 Enregistre le carrousel et envoie-le à ton buteur. La fiche complète, avec son schéma animé, est dans l'application.\n\nSource : Bezodis N, Trewartha G, Wilson C, Irwin G. Contributions of the non-kicking-side arm to rugby place-kicking technique. Sports Biomech. 2007;6(2):171-186.\n\n#rugby #buteur #rugbyamateur #preparationphysique #technique #ouvreur #entrainement #rugbyfeminin"
+  },
+  {
+   "id": "2026-11-16-e",
+   "quand": "2026-11-21T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_genou.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-16-f",
+   "quand": "2026-11-22T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Tu t'entraînes 5, 6 ou 7 jours par semaine ? La charge devrait suivre. 🔁\nDans l'application, elle s'ajuste toute seule : si ta dernière séance de ce type t'a paru facile et que tu l'as finie en entier, elle monte. Si elle t'a cassé, elle redescend. Et si tes mesures du matin sont basses, elle peut seulement baisser — jamais monter.\n\nCe qui change vraiment :\n1. Une règle écrite et bornée, que ton coach règle une fois. Pas une boîte noire : chaque ajustement t'explique pourquoi, en français.\n2. Deux objectifs à la fois, force et perte de gras : quand ils tirent en sens opposés, on te le dit, avec les conditions pour que ça marche quand même.\n3. Tes repères de nutrition se recalent sur tes vrais chiffres (repas notés et évolution du poids), au lieu de rester figés sur une formule du premier jour.\n\nCe qu'on ne te promettra pas : que tu progresseras plus vite. Aucune étude ne le montre. Ce que ça change, c'est que tu peux t'entraîner souvent sans que ce soit plat ni imprudent, et sans que ton coach réécrive ton programme chaque semaine.\n👉 Lien en bio pour les formules, dès 9,90 € par mois.\n\nSource : Zhang X, Li H, Bi S, Luo Y, Cao Y, Zhang G. Auto-regulation method vs. fixed-loading method in maximum strength training for athletes: a systematic review and meta-analysis. Front Physiol. 2021;12:651112 (effet 0,64 ; 8 études ; 166 participants).\n\n#preparationphysique #coachingenligne #coachsportif #musculation #rugby #football #handball #bordeaux"
+  }
+ ]
+}

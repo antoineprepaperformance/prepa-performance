@@ -51397,5 +51397,124 @@
   "kind": "pattern",
   "where": "src/i18n-main",
   "n": 1
+ },
+ {
+  "h": "ee5e51202f",
+  "k": "(facultatif, désactivé par défaut) : si tu l'actives toi-même dans l'onglet Santé, la date de début de tes règles que tu notes sert à estimer où tu en es dans ton cycle et à t'afficher un repère de vigilance.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "f833d34c69",
+  "k": "est un réglage à part, lui aussi désactivé par défaut",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "0147d14860",
+  "k": ": tant que tu ne l'actives pas, il ne voit rien ; si tu l'actives, il voit seulement la phase estimée du jour, jamais une date de règles. Ces données ne sont",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "b2d2024a4d",
+  "k": ", quel que soit ton réglage. Tu peux désactiver le suivi et effacer ces données à tout moment. Base : ton consentement explicite (article 9.2.a du RGPD).",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "0a5b282f0d",
+  "k": "Ajustement automatique de ta charge d'entraînement",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "ceb8ec1f1b",
+  "k": "l'active pour toi) : l'effort que tu notes en fin de séance, les séances que tu termines ou non, les répétitions réalisées, tes courbatures et tes mesures du matin servent à faire monter ou baisser la charge de ta séance du jour, dans des limites que",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "5afd31922c",
+  "k": "règle à l'avance. La décision est prise par une règle écrite dans l'application, pas par une intelligence artificielle, et chaque ajustement t'indique pourquoi il a eu lieu. Elle ne modifie que la charge du jour, jamais ton programme. Base : exécution du contrat ; les données de santé qui y entrent le sont avec ton consentement explicite.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "3c868ac7a8",
+  "k": ": quand tes repas notés restent durablement très en dessous de ta dépense de référence alors que tu t'entraînes beaucoup, l'application te le signale, ainsi qu'à",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "25054a26ef",
+  "k": ", et te conseille d'en parler à un médecin si d'autres signaux vont dans le même sens.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "f0e1039bc3",
+  "k": "voit qu'il y a un signalement et l'écart constaté, mais pas les signaux que tu n'as pas choisi de partager avec lui. C'est un repère, pas un diagnostic. Base : exécution du contrat et ton consentement explicite pour les données de santé concernées.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "ce52398288",
+  "k": "(perdre du gras, garder ton poids, prendre du muscle) : régler tes repères de nutrition et te dire franchement quand cet objectif et ton programme tirent en sens opposés. Base : exécution du contrat.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "b0e41495e3",
+  "k": "dans ton dossier (programme écrit pour toi) : te les donner dans l'application ; supprimées avec ton compte. Si",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "3c42d2cc40",
+  "k": "choisit de transformer l'un de ces PDF en programme à cocher,",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "cf5c329eb7",
+  "k": "le texte du document est envoyé au coach IA",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "dab5646f4a",
+  "k": "pour en extraire les séances et les exercices (voir « Qui y accède ») ; les images du PDF ne le sont pas. Base : exécution du contrat.",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "027d449f06",
+  "k": "Pendant ton accompagnement, puis 3 ans après ton dernier contact pour le suivi commercial ; les données de santé sont supprimées 3 mois après la fin de ton dernier programme si tu ne reprends pas. Désactiver le suivi du cycle arrête aussitôt l'estimation et le partage ; les dates que tu as notées restent dans ta santé du jour jusqu'à ce que tu les effaces, ce que tu peux faire toi-même et à tout moment par le bouton « Effacer mes dates notées ». Factures : 10 ans (obligation légale).",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
+ },
+ {
+  "h": "b165645aed",
+  "k": "Anthropic (hébergement de l'application et coach IA : ton dossier, tes photos de repas, les images de tes vidéos et, le cas échéant, le texte d'un PDF transformé en programme lui sont envoyés), Stripe (paiement et abonnements)",
+  "kind": "literal",
+  "where": "src/13_acces.js",
+  "n": 1
  }
 ]

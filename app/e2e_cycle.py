@@ -105,6 +105,24 @@ async def run():
             await co.get_by_role("radio", name="Santé", exact=True).click(); await co.wait_for_timeout(400)
             ok(not await co.get_by_text("Son cycle").count(), "partage retiré : plus rien côté coach")
 
+            # ---------- effacement des dates notées (RGPD art. 17) : un droit non testé n'est pas garanti ----------
+            await c.bring_to_front()
+            avant = await c.evaluate("() => Object.entries(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter(([k, v]) => k.indexOf('clients/u_cyc1/sante/') === 0 && v && v.regles).length")
+            ok(avant >= 2, "des dates de règles sont bien enregistrées avant l'effacement", avant)
+            # désactiver le suivi ne doit PAS détruire l'historique : une désactivation par erreur ne coûte rien
+            await btn(c, "Désactiver le suivi")
+            garde = await c.evaluate("() => Object.entries(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter(([k, v]) => k.indexOf('clients/u_cyc1/sante/') === 0 && v && v.regles).length")
+            ok(garde == avant, "désactiver le suivi arrête l'estimation sans détruire les dates déjà notées", {"avant": avant, "apres": garde})
+            # puis l'effacement explicite, confirmé, les supprime vraiment
+            await btn(c, "Activer le suivi"); await c.wait_for_timeout(400)
+            await btn(c, "Effacer mes dates notées")
+            ok(await c.get_by_text("C'est définitif.").count() == 1, "l'effacement demande une confirmation avant d'agir")
+            await btn(c, "Effacer définitivement"); await c.wait_for_timeout(700)
+            apres = await c.evaluate("() => Object.entries(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter(([k, v]) => k.indexOf('clients/u_cyc1/sante/') === 0 && v && v.regles).length")
+            ok(apres == 0, "effacement confirmé : plus aucune date de règles dans la santé du jour", {"restantes": apres})
+            reste = await c.evaluate("() => { const db = JSON.parse(localStorage.getItem('__mockdb') || '{}'); const k = Object.keys(db).find((x) => x.indexOf('clients/u_cyc1/sante/') === 0); return k ? Object.keys(db[k]) : []; }")
+            ok("regles" not in reste, "seul le champ des règles est retiré, le reste de la santé du jour est conservé", reste)
+
             ok(not errs, "aucune erreur dans la console", errs)
             print(f"\n{res['ok']} OK, {res['ko']} échecs")
     finally:

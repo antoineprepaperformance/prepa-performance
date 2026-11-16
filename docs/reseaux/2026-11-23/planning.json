@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-11-23",
+ "publications": [
+  {
+   "id": "2026-11-23-a",
+   "quand": "2026-11-23T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-23-b",
+   "quand": "2026-11-24T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_vitesse.jpg"
+   ],
+   "auto": true,
+   "legende": "Plus de répétitions, ce n'est pas toujours plus de progrès. ⚡\nDans une étude, deux groupes ont fait le même squat, à la même charge. Le premier arrêtait chaque série dès que la barre perdait 20 % de sa vitesse ; le second allait jusqu'à 40 %. Résultat : 40 % de répétitions en moins pour le premier groupe, des gains de force comparables… et une détente verticale qui progresse nettement plus (+9,5 % contre +3,5 %).\n\nComment l'appliquer sur tes séances d'explosivité (trap bar dynamique, squat sauté, épaulé) :\n1. Charge légère : garde 4 à 5 répétitions en réserve.\n2. Chaque répétition à vitesse maximale, comme si tu voulais lancer la barre.\n3. Dès que la barre ralentit nettement, la série est finie, même si tu pourrais en faire d'autres.\n\nTu cherches surtout à prendre du muscle ? Là, aller plus loin dans la série a du sens : c'est un autre objectif, une autre dose.\n👉 Enregistre ce post pour ta prochaine séance. La trap bar dynamique est dans l'application, avec son remplaçant si tu n'as pas la barre.\n\nSource : Pareja-Blanco F, Rodríguez-Rosell D, Sánchez-Medina L, et al. Effects of velocity loss during resistance training on athletic performance, strength gains and muscle adaptations. Scand J Med Sci Sports. 2017;27(7):724-735.\n\n#preparationphysique #explosivite #force #musculation #halterophilie #vitesse #rugby #sprint"
+  },
+  {
+   "id": "2026-11-23-c",
+   "quand": "2026-11-25T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-11-23-d",
+   "quand": "2026-11-26T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_controle_1.jpg",
+    "05_post_jeudi_controle_2.jpg",
+    "06_post_jeudi_controle_3.jpg",
+    "07_post_jeudi_controle_4.jpg",
+    "08_post_jeudi_controle_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Le bon contrôle se joue avant que le ballon arrive. ⚽\nLes joueurs qui regardent autour d'eux juste avant de recevoir se retournent plus souvent avec le ballon et jouent plus souvent vers l'avant. Ça s'entraîne.\n\nLa fiche, en 4 étapes :\n1. Passeur à 12 m face à toi ; derrière toi, deux portes de 2 m à gauche et à droite ; un troisième joueur montre la porte.\n2. Pendant la passe, 2 coups d'œil par-dessus l'épaule : repère le bras levé.\n3. Contrôle orienté avec le pied le plus éloigné du passeur : le premier contact emmène déjà le ballon vers la porte.\n4. Passe la porte en 2 touches au plus, puis prends la place du passeur.\n\nDose : 3 séries de 8, on tourne toutes les 8 passes. Plus dur : un défenseur passif ferme une des portes.\n👉 Enregistre le carrousel et envoie-le à tes coéquipiers. La fiche complète, avec son schéma animé, est dans l'application (onglet Technique du football).\n\nSource : McGuckian TB, Cole MH, Jordet G, Chalkley D, Pepping GJ. Don't turn blind! The relationship between exploration before ball possession and on-ball performance in association football. Front Psychol. 2018;9:2520.\n\n#football #footballamateur #technique #controleoriente #entrainement #preparationphysique #footballfeminin #coachfoot"
+  },
+  {
+   "id": "2026-11-23-e",
+   "quand": "2026-11-28T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_wickets.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et une question : à publier toi-même"
+  },
+  {
+   "id": "2026-11-23-f",
+   "quand": "2026-11-29T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Pas de barre chez toi ? Ton programme s'adapte quand même. 🏠\nDans l'application, tu dis ce que tu as : salle complète, haltères, kettlebell, élastiques, ou rien du tout. Chaque exercice impossible est remplacé à l'affichage par un équivalent choisi par un préparateur physique : même geste, même effet, du plus proche au plus simple.\n\nCe que tu choisis :\n1. Ton matériel, et tu le changes quand tu veux (vacances, déménagement, salle fermée).\n2. Tes parties : musculation, cardio, nutrition. Au même prix, quelles que soient tes envies.\n3. Les fiches technique de ton sport (rugby, football, handball…), avec leur schéma animé.\n\nCe qu'on ne te promet pas : un programme figé ni un résultat garanti. Juste un entraînement qui tient compte de ce que tu as vraiment chez toi, pas d'une salle idéale.\n👉 Lien en bio pour les formules, dès 9,90 € par mois.\n\n#preparationphysique #coachingenligne #coachsportif #musculationmaison #rugby #football #handball #bordeaux"
+  }
+ ]
+}

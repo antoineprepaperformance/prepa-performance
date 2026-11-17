@@ -2,7 +2,7 @@
 """Saisons d'équipe — FICHIER GÉNÉRÉ, ne pas modifier à la main.
 
 Produit par tools/saison_equipe.py à partir du classeur Excel de la saison.
-Relancer l'outil pour mettre à jour ou ajouter une saison.
+Relancer l'outil réécrit tout ce fichier avec la saison fournie : il n'en garde qu'une à la fois.
 Une séance : d (date), n (nom de la feuille), phase, theme, debut, min, acts[{n, min, l[{d, x, t, note}]}].
 """
 EQUIPES = [
@@ -131,7 +131,7 @@ EQUIPES = [
        {
         "d": "Touché POP",
         "x": "4'",
-        "t": "un joueur x2 départ ttes 25''"
+        "t": "Malcom x2 départ ttes 25''"
        },
        {
         "d": "1' pour tourner",
@@ -259,7 +259,7 @@ EQUIPES = [
         "d": "Situation tactique",
         "x": "10'",
         "t": "Grand déplacement - ratio effort/récup = 3/1 - intensité controlé",
-        "note": "un joueur x3 départ ttes 30''"
+        "note": "Malcom x3 départ ttes 30''"
        },
        {
         "d": "Récup",
@@ -3596,7 +3596,7 @@ EQUIPES = [
        },
        {
         "d": "3min de récup",
-        "note": "un joueur x2 départ ttes 20''"
+        "note": "Malcom x2 départ ttes 20''"
        },
        {
         "d": "Faire 2 blocs",

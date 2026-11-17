@@ -3,7 +3,7 @@ import pathlib
 HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os, datetime
 from playwright.async_api import async_playwright
-PORT = 8765
+PORT = 8766
 OUT = HERE + "/shots/nutri"
 os.makedirs(OUT, exist_ok=True)
 URL = f"http://localhost:{PORT}/index.html"

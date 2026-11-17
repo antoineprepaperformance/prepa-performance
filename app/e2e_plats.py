@@ -3,7 +3,7 @@ import pathlib
 HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os, datetime, re
 from playwright.async_api import async_playwright
-PORT = 8768
+PORT = 8777
 OUT = HERE + "/shots/plats"
 os.makedirs(OUT, exist_ok=True)
 URL = f"http://localhost:{PORT}/index.html"

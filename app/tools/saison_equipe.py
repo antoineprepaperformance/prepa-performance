@@ -5,7 +5,8 @@
     python3 tools/saison_equipe.py "/chemin/Saison 2025-2026.xlsx" cmfloirac "CM Floirac Rugby" rugby [noms.txt]
 
 Écrit app/content_equipe.py. À relancer tel quel à chaque nouvelle saison : le fichier est GÉNÉRÉ,
-on ne le modifie jamais à la main.
+on ne le modifie jamais à la main. Il ne contient qu'une saison à la fois — relancer l'outil remplace
+celle qui s'y trouve (pour en garder deux de front, il faudra aussi un choix de saison côté coach).
 
 Pourquoi un lecteur maison : un .xlsx est une archive ZIP de XML, et ni openpyxl ni pandas ne sont
 installés sur le Mac d'Antoine. La bibliothèque standard suffit, et ça évite une dépendance de plus.
@@ -204,6 +205,10 @@ def main(xlsx, eid, nom_club, sport, noms=None):
             vides.append(nom)
             continue
         seances.append(s)
+    if not seances:
+        # mauvais fichier, ou feuilles nommées autrement : le dire clairement plutôt que planter
+        sys.exit(f"Aucune séance datée trouvée dans {xlsx}.\nUne feuille par séance, nommée comme « Jeudi 03 Juillet 2025 ». "
+                 f"Feuilles vues : {', '.join(n for n, _ in cl.feuilles) or 'aucune'}")
     seances.sort(key=lambda s: s["d"])
     saison = {"id": eid, "n": nom_club, "sport": sport,
               "du": seances[0]["d"], "au": seances[-1]["d"], "seances": seances}
@@ -213,7 +218,7 @@ def main(xlsx, eid, nom_club, sport, noms=None):
         "# -*- coding: utf-8 -*-\n"
         '"""Saisons d\'équipe — FICHIER GÉNÉRÉ, ne pas modifier à la main.\n\n'
         "Produit par tools/saison_equipe.py à partir du classeur Excel de la saison.\n"
-        "Relancer l'outil pour mettre à jour ou ajouter une saison.\n"
+        "Relancer l'outil réécrit tout ce fichier avec la saison fournie : il n'en garde qu'une à la fois.\n"
         'Une séance : d (date), n (nom de la feuille), phase, theme, debut, min, acts[{n, min, l[{d, x, t, note}]}].\n"""\n'
         "EQUIPES = " + corps + "\n\nEQUIPE_CONTENT = {\"EQUIPES\": EQUIPES}\n",
         encoding="utf-8")

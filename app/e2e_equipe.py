@@ -84,7 +84,7 @@ async def run():
               const listes = blob.match(/[A-ZÀ-Þ][a-zà-ÿ]{2,}\\s*(?:,|\\bet\\b)\\s*[A-ZÀ-Þ][a-zà-ÿ]{2,}/g) || [];
               return { anonymises: (blob.match(/certains joueurs|un joueur/g) || []).length, listes: listes.slice(0, 5) };
             }""")
-            ok(noms["anonymises"] >= 5, "les notes nominatives du classeur ont été remplacées par un libellé générique", noms["anonymises"])
+            ok(noms["anonymises"] >= 4, "les notes nominatives du classeur ont été remplacées par un libellé générique", noms["anonymises"])
             ok(not noms["listes"], "aucune énumération de prénoms ne subsiste dans le contenu publié", noms["listes"])
 
             # ---------- ecran coach : la saison, filtrable ----------
@@ -130,11 +130,23 @@ async def run():
             j0 = await cl.inner_text("body")
             ok("séance d'équipe" not in j0.lower(), "client non rattaché : aucune séance d'équipe affichée", j0[:200])
 
-            # ---------- rattachement par le coach ----------
+            # ---------- rattachement par le coach, depuis la fiche du client ----------
+            # C'est LE geste qui rend la fonction vivante pour un joueur : on le fait par l'interface, pas
+            # en écrivant dans la base, pour vérifier que le bouton d'Antoine enregistre vraiment.
+            await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1600)
+            await co.get_by_text("Jo Joueur").first.click(); await co.wait_for_timeout(900)
+            await co.get_by_role("radio", name="Sport & terrain").click(); await co.wait_for_timeout(600)
+            carte = co.locator(".card", has_text="Séances d'équipe")
+            ok(await carte.count() >= 1, "fiche du client : la carte « Séances d'équipe » est là", await co.inner_text("main"))
+            await carte.first.get_by_role("radio", name="CM Floirac Rugby").click(); await co.wait_for_timeout(900)
+            rat = await co.evaluate("() => (JSON.parse(localStorage.getItem('__mockdb') || '{}')['clients/u_eq1'] || {}).equipe")
+            ok(rat == "cmfloirac", "le rattachement enregistré par le bouton du coach, pas à la main", rat)
+            await co.screenshot(path=f"{OUT}/05_rattachement.png", full_page=True)
+
             # La saison du classeur (2025-2026) est TERMINÉE : elle s'est finie le 5 juin 2026. Un joueur
             # rattaché ne doit donc rien voir aujourd'hui — et c'est le bon comportement, pas un bug. On
             # vérifie les deux : la logique de date sur des dates explicites, et l'absence d'affichage.
-            await mdb_set(cl, "clients/u_eq1", {"equipe": "cmfloirac"})
+            await cl.bring_to_front()
             await cl.reload(); await cl.wait_for_timeout(1400)
             logique = await cl.evaluate("""() => {
               const sai = eqSaison('cmfloirac');

@@ -52069,5 +52069,103 @@
   "kind": "literal",
   "where": "src/i18n-basket",
   "n": 1
+ },
+ {
+  "h": "76aa6c2f89",
+  "k": "{#} minutes",
+  "kind": "extra",
+  "where": "extra i18n/_extra.json",
+  "n": 1
+ },
+ {
+  "h": "039de61f27",
+  "k": "{#} minute",
+  "kind": "extra",
+  "where": "extra i18n/_extra.json",
+  "n": 1
+ },
+ {
+  "h": "3d1247d01c",
+  "k": "Ta séance d'équipe",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "b7025ff920",
+  "k": "Ta séance d'équipe, ce soir",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "084a9b790b",
+  "k": "Ta prochaine séance d'équipe",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "c6565c1527",
+  "k": "Voir le détail",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "dcb182f2ea",
+  "k": "Cette séance est celle de ton club : elle n'est pas comptée dans ta charge de la semaine tant que tu ne l'enregistres pas toi-même, en séance en plus.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "2f6ffb7abc",
+  "k": "‹ Retour",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "8e55122081",
+  "k": "Pas de détail noté pour ce bloc.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "42b74e4d07",
+  "k": "Intense",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "367b2d18c3",
+  "k": "Charge contenue : technique, collectif réduit, peu de déplacement.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "fdcc75a026",
+  "k": "Grosse soirée : jeu de fitness, collectif total, forte sollicitation.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "b8276f38e1",
+  "k": "Qualité : vitesse, réactivité, appuis. Volume court, récupération longue.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "abbe630bcb",
+  "k": "Volume de travail élevé, intensité contenue. Typique de la présaison.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
  }
 ]

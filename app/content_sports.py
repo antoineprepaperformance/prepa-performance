@@ -25,6 +25,9 @@ REFS = {
     "hillhaas11": "Hill-Haas SV, Dawson B, Impellizzeri FM, Coutts AJ. Physiology of small-sided games training in football: a systematic review. Sports Med. 2011;41(3):199-220.",
     "stolen05": "Stølen T, Chamari K, Castagna C, Wisløff U. Physiology of soccer: an update. Sports Med. 2005;35(6):501-536.",
     "dossantos18": "Dos'Santos T, Thomas C, Comfort P, Jones PA. The effect of angle and velocity on change of direction biomechanics: an angle-velocity trade-off. Sports Med. 2018;48(10):2235-2253.",
+    "young15": "Young WB, Dawson B, Henry GJ. Agility and change-of-direction speed are independent skills: implications for training for agility in invasion sports. Int J Sports Sci Coach. 2015;10(1):159-169.",
+    "paul16": "Paul DJ, Gabbett TJ, Nassis GP. Agility in team sports: testing, training and factors affecting performance. Sports Med. 2016;46(3):421-442.",
+    "nimphius16": "Nimphius S, Callaghan SJ, Spiteri T, Lockie RG. Change of direction deficit: a more isolated measure of change of direction performance than total 505 time. J Strength Cond Res. 2016;30(11):3024-3032.",
     "sheppard06": "Sheppard JM, Young WB. Agility literature review: classifications, training and testing. J Sports Sci. 2006;24(9):919-932.",
     "haugen19": "Haugen T, Seiler S, Sandbakk Ø, Tønnessen E. The training and development of elite sprint performance: an integration of scientific and best practice literature. Sports Med Open. 2019;5(1):44.",
     "petrakos16": "Petrakos G, Morin JB, Egan B. Resisted sled sprint training to improve sprint performance: a systematic review. Sports Med. 2016;46(5):381-400.",
@@ -172,6 +175,85 @@ D("g_505", "Test 505 (changement de direction)", COLL + RAQ + ["ski", "baseball"
       "p": [{"k": "sprint", "p": [[0, 3.2], [15, 3.2]], "l": "10 m d'élan + 5 m", "n": 1, "e": "turn"}, {"k": "sprint", "p": [[15, 4.6], [10, 4.6]], "l": "5 m chrono", "lo": 1, "n": 2}, {"k": "jog", "p": [[10, 4.6], [4, 4.6]], "l": "", "lp": 0.6}],
       "t": [[12.5, 9.2, "Demi-tour sur la ligne des 15 m"]]},
   test="t505", z=5)
+
+# ---------- vivacité : freiner, couper, enchaîner, réagir ----------
+# Demande d'Antoine (16 novembre 2026) : « les exercices de vivacité… je crois qu'on peut les utiliser pour tous
+# les sports avec changement de direction ». Vérifié : la vitesse de changement de direction planifié est une
+# qualité physique générale, transférable et testable (505, T-test) ; l'agilité réactive, elle, dépend du signal
+# du sport (adversaire, ballon) et se travaille avec un vrai stimulus (Young 2015 ; Paul 2016). Rien ici n'est
+# repris d'un ouvrage : ces fiches partent des études citées, c'est le standard de l'application.
+D("g_freinage", "Freiner avant de tourner", COLL + RAQ + ["ski", "baseball"], "Agilité", "4 plots",
+  "Apprendre à freiner en deux ou trois appuis : c'est le freinage qui prépare un changement de direction rapide, pas la poussée.",
+  ["Pose un plot de départ, un plot à 10 m, et une zone d'arrêt de 2 m juste derrière (2 plots).",
+   "Sprinte jusqu'au plot des 10 m, puis arrête-toi complètement dans la zone, en 3 appuis au plus.",
+   "Reste 1 s immobile, genoux fléchis, poids sur l'avant des pieds, puis reviens en marchant.",
+   "Quand c'est propre, raccourcis la zone à 1,5 m, puis allonge l'élan à 15 m."],
+  ["Buste droit, hanches qui descendent : freine avec les jambes, pas avec le dos", "Les deux derniers appuis prennent presque tout le freinage", "Genou au-dessus des orteils, jamais vers l'intérieur", "Si tu dépasses la zone, l'élan est trop long : recule le plot"],
+  {"reprise": I(2, 4, 6, 30, 120, "Sprint 10 m, arrêt dans la zone de 2 m", "2 séries de 4 freinages, élan de 10 m, zone de 2 m"),
+   "sportif": I(3, 5, 6, 30, 120, "Sprint 10 m, arrêt dans la zone de 1,5 m", "3 séries de 5 freinages, élan de 10 m, zone de 1,5 m"),
+   "perf": I(3, 6, 7, 30, 150, "Sprint 15 m, arrêt dans la zone de 1,5 m", "3 séries de 6 freinages, élan de 15 m, zone de 1,5 m"),
+   "elite": I(4, 6, 8, 30, 150, "Sprint 20 m, arrêt dans la zone de 1,5 m", "4 séries de 6 freinages, élan de 20 m, zone de 1,5 m")},
+  "Plus on arrive vite, plus le changement de direction est difficile à exécuter : c'est le compromis angle-vitesse. L'avant-dernier appui fait l'essentiel du freinage, et un freinage réparti sur les derniers appuis réduit la charge sur le genou au moment de la coupe (Dos'Santos et al., 2018). On apprend donc à s'arrêter avant d'apprendre à tourner.",
+  ["dossantos18"], z=3,
+  sc={"f": "pelouse", "v": [-2, -2.5, 16, 8], "o": [[0, 2.5, "start", "Départ"], [10, 1, "c", "10 m"], [10, 4, "c", ""], [12, 1, "c", ""], [12, 4, "c", ""]],
+      "z": [[10, 1, 2, 3, "Zone d'arrêt"]],
+      "p": [{"k": "sprint", "p": [[0, 2.5], [10, 2.5]], "l": "Sprint 10 m", "n": 1}, {"k": "lat", "p": [[10, 2.5], [11.6, 2.5]], "l": "3 appuis, arrêt", "n": 2}, {"k": "jog", "p": [[11.6, 2.5], [0, 5.5]], "l": "Retour en marchant", "lp": 0.6}],
+      "t": [[11, 6.2, "Freine en 3 appuis, reste 1 s immobile"]]})
+
+D("sk_coupe", "La coupe à 45° : pied d'appui et genou dans l'axe", COLL + RAQ + ["ski", "baseball"], "Technique", "3 plots",
+  "Changer de direction à 45° en un seul appui franc, genou et pied alignés : le geste de base de toute esquive et de tout crochet.",
+  ["Pose un plot de départ, un plot à 8 m, et un troisième à 5 m du second, décalé à 45° sur la gauche.",
+   "Trottine jusqu'au plot des 8 m, puis coupe vers le troisième plot : l'avant-dernier appui freine, le dernier pousse.",
+   "Le pied d'appui se pose légèrement en dehors de la ligne du corps, pointe vers la nouvelle direction, genou au-dessus.",
+   "Même chose côté droit. Monte en vitesse seulement quand les deux côtés sont propres."],
+  ["Avant-dernier appui : il freine, hanches basses", "Dernier appui : pointe du pied vers où tu vas, genou dans l'axe", "Buste qui penche vers la nouvelle direction, pas vers l'extérieur", "Un seul appui franc : pas de petits pas sur place"],
+  {"reprise": I(2, 4, 8, 25, 90, "Coupe à 45°, en trottinant, 2 par côté", "2 séries de 4 coupes en trottinant (2 par côté)"),
+   "sportif": I(3, 4, 7, 25, 90, "Coupe à 45° à 80 %, 2 par côté", "3 séries de 4 coupes à 80 % (2 par côté)"),
+   "perf": I(3, 6, 6, 25, 120, "Coupe à 45° à fond, 3 par côté", "3 séries de 6 coupes à fond (3 par côté)"),
+   "elite": I(4, 6, 6, 25, 120, "Coupe à 45° à fond, élan de 12 m, 3 par côté", "4 séries de 6 coupes à fond, élan allongé à 12 m (3 par côté)")},
+  "Le temps perdu dans un changement de direction se mesure à part de la vitesse en ligne droite : c'est le « déficit de changement de direction » (Nimphius et al., 2016). Il se travaille par la technique de l'appui : un avant-dernier contact qui freine et un dernier contact orienté vers la nouvelle direction, genou aligné, ce qui améliore la vitesse de sortie et limite la charge sur le genou (Dos'Santos et al., 2018).",
+  ["nimphius16", "dossantos18"], z=3, skill=True, contact="aucun", pub="Tous", test=T("t505"),
+  obj={"ph": "Force de freinage et de poussée sur une jambe, gainage", "te": "Avant-dernier appui qui freine, dernier appui orienté, genou dans l'axe", "ma": "Esquiver, crocheter, se démarquer sans perdre de vitesse ni se blesser"},
+  org="Trois plots sur herbe ou parquet, 8 m puis 5 m à 45°. Seul, ou à deux : le partenaire regarde le genou du pied d'appui.",
+  var=["Coupe à 90° (le plot décalé à angle droit)", "Coupe au signal du partenaire (gauche ou droite annoncé au plot)", "Coupe après réception d'une passe ou balle en main", "Enchaînement de deux coupes (45° puis 90°)"],
+  sc={"f": "pelouse", "v": [-2, -2.5, 16, 9], "o": [[0, 4, "start", "Départ"], [8, 4, "c", "Appui"], [11.5, 0.5, "c", "45°"], [11.5, 7.5, "c", "45°"]],
+      "p": [{"k": "jog", "p": [[0, 4], [8, 4]], "l": "Élan 8 m", "n": 1}, {"k": "sprint", "p": [[8, 4], [11.5, 0.5]], "l": "Coupe gauche", "n": 2}, {"k": "sprint", "p": [[8, 4], [11.5, 7.5]], "l": "Coupe droite", "lo": 1, "n": 3}],
+      "t": [[8, 6.3, "Avant-dernier appui : freine · dernier appui : pousse"]]})
+
+D("g_cod_angles", "Changements de direction planifiés : 45°, 90°, 180°", COLL + RAQ + ["ski", "baseball"], "Agilité", "5 plots, chrono",
+  "Enchaîner des changements de direction d'angle croissant sur un parcours connu : la qualité qui se transfère d'un sport à l'autre.",
+  ["Pose un parcours en zigzag : départ, plot à 5 m, puis 3 plots espacés de 5 m en décalé (coupe à 45°, puis 90°, puis demi-tour à 180° au dernier).",
+   "Cours le parcours à 80 % en soignant chaque appui, puis à fond quand les appuis sont propres.",
+   "Alterne le sens à chaque répétition pour travailler les deux pieds.",
+   "Chronomètre une répétition sur deux : l'écart entre tes meilleurs temps et les autres te dit où tu perds du temps."],
+  ["Freine avant le plot, pas sur le plot", "Plus l'angle est fermé, plus tu arrives lent et plus tu freines tôt", "Regarde la sortie, pas tes pieds", "Arrête la série si tes temps s'effondrent"],
+  {"reprise": I(2, 3, 12, 45, 120, "Parcours à 80 %, sens alterné", "2 séries de 3 parcours à 80 %, en alternant le sens"),
+   "sportif": I(3, 4, 12, 45, 120, "Parcours à fond, sens alterné", "3 séries de 4 parcours à fond, en alternant le sens"),
+   "perf": I(3, 5, 12, 45, 150, "Parcours chronométré, sens alterné", "3 séries de 5 parcours chronométrés, en alternant le sens"),
+   "elite": I(4, 5, 12, 40, 150, "Parcours chronométré, élan 10 m", "4 séries de 5 parcours chronométrés, élan allongé à 10 m")},
+  "La vitesse de changement de direction planifié est une qualité physique en soi, distincte de la vitesse de sprint (Nimphius et al., 2016) et de l'agilité réactive (Young et al., 2015). Elle se travaille avec des parcours connus où la technique de l'appui peut être soignée, en montant progressivement l'angle, parce que chaque degré en plus impose de freiner davantage (Dos'Santos et al., 2018). C'est la part de la vivacité qui se transfère à tous les sports de changement de direction.",
+  ["nimphius16", "young15", "dossantos18"], z=4, test=T("t505"),
+  sc={"f": "pelouse", "v": [-2, -2.5, 22, 10], "o": [[0, 4, "start", "Départ"], [5, 4, "c", "45°"], [9, 1, "c", "90°"], [13, 6, "c", "180°"], [18, 6, "c", "Arrivée"]],
+      "p": [{"k": "sprint", "p": [[0, 4], [5, 4]], "l": "", "n": 1}, {"k": "sprint", "p": [[5, 4], [9, 1]], "l": "Coupe 45°", "n": 2}, {"k": "sprint", "p": [[9, 1], [13, 6]], "l": "Coupe 90°", "n": 3}, {"k": "sprint", "p": [[13, 6], [18, 6]], "l": "Demi-tour puis sprint", "n": 4, "e": "turn"}],
+      "t": [[9, 8.4, "Freine avant chaque plot, jamais dessus"]]})
+
+D("g_cod_signal", "Changement de direction au signal", COLL + RAQ + ["ski", "baseball"] + ["boxe", "lutte"], "Agilité", "4 plots, un partenaire",
+  "Changer de direction en réponse à un signal qu'on ne connaît pas à l'avance : la vraie agilité, celle qui fait la différence en match.",
+  ["Pose un plot de départ et, 8 m plus loin, une porte de deux plots à gauche et une à droite (2 m de large chacune).",
+   "Le partenaire se place derrière les portes. Tu trottines vers lui ; à 2 m de la ligne des portes, il pointe une porte (geste ou voix).",
+   "Tu coupes et sprintes dans la porte annoncée. Le partenaire varie le moment et le côté, sans schéma.",
+   "Version plus dure : il annonce de plus en plus tard, ou il feinte une fois sur trois."],
+  ["Reste bas et prêt à partir des deux côtés avant le signal", "Regarde le partenaire, pas tes pieds", "Première foulée vers la porte, pas un pas sur place", "Le partenaire garde un signal net : un geste franc, pas un indice ambigu"],
+  {"reprise": I(2, 4, 6, 30, 120, "Signal donné tôt, porte à 8 m", "2 séries de 4 réactions, signal donné tôt"),
+   "sportif": I(3, 5, 6, 30, 120, "Signal à 2 m des portes", "3 séries de 5 réactions, signal à 2 m des portes"),
+   "perf": I(3, 6, 6, 25, 150, "Signal tardif, une feinte sur trois", "3 séries de 6 réactions, signal tardif, avec feintes"),
+   "elite": I(4, 6, 6, 25, 150, "Signal tardif, portes à 10 m, feintes", "4 séries de 6 réactions, portes à 10 m, signal tardif avec feintes")},
+  "L'agilité, c'est un changement de direction en réponse à un stimulus (Sheppard & Young, 2006). Elle est indépendante de la vitesse de changement de direction planifié, et c'est elle qui distingue le mieux les joueurs de haut niveau des autres (Young et al., 2015). Un signal humain est le stimulus le plus fiable et le plus proche du match ; les formes de jeu à effectif réduit sont ce qui a le plus amélioré l'agilité dans les études (Paul et al., 2016). D'où le partenaire, et pas une lampe ou un bip.",
+  ["sheppard06", "young15", "paul16"], z=4,
+  sc={"f": "pelouse", "v": [-2, -3, 15, 10], "o": [[0, 3.5, "start", "Départ"], [8, 0.5, "c", ""], [8, 2.5, "c", ""], [8, 4.5, "c", ""], [8, 6.5, "c", ""], [11, 3.5, "pb", "Partenaire"]],
+      "z": [[8, 0.5, 0.3, 2, "Porte G"], [8, 4.5, 0.3, 2, "Porte D"]],
+      "p": [{"k": "jog", "p": [[0, 3.5], [6, 3.5]], "l": "Trottine vers le signal", "n": 1}, {"k": "sprint", "p": [[6, 3.5], [9.5, 1.5]], "l": "Signal gauche", "n": 2}, {"k": "sprint", "p": [[6, 3.5], [9.5, 5.5]], "l": "Signal droite", "lo": 1, "n": 3}],
+      "t": [[6, 8.6, "Le partenaire pointe la porte à 2 m de la ligne"]]})
 
 D("g_acc", "Accélérations et départs variés", COLL + ["baseball", "bob", "sprint", "boxe", "lutte"], "Vitesse", "Plots",
   "Gagner les premiers mètres : réagir et accélérer depuis les positions du match.",
@@ -1567,6 +1649,16 @@ D("sk_hand_reception", "Réceptions et feintes, genou dans l'axe", ["hand"], "Te
 for _sid in ("rugby", "rugby7", "foot", "hand", "basket"):
     _sp = next(x for x in SPORTS if x["id"] == _sid)
     _sp["skills"] = [d["id"] for d in DRILLS if d.get("skill") and _sid in d["sports"]]
+
+# Les fiches vivacité sont rattachées à chaque sport de changement de direction par ses listes « drills » et
+# « skills » (c'est ce que lit drillsFor / skillsFor), sans toucher aux fiches propres à chaque sport.
+VIVACITE_IDS = {"drills": ["g_freinage", "g_cod_angles", "g_cod_signal"], "skills": ["sk_coupe"]}
+for _sp in SPORTS:
+    for _k, _ids in VIVACITE_IDS.items():
+        for _i in _ids:
+            _d = next((x for x in DRILLS if x["id"] == _i), None)
+            if _d and _sp["id"] in _d["sports"] and _i not in _sp.get(_k, []):
+                _sp[_k] = list(_sp.get(_k, [])) + [_i]
 
 SPORTS_CONTENT = {"SPORTS": SPORTS, "DRILLS": DRILLS, "SREFS": REFS}
 

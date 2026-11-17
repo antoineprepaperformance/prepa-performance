@@ -4,7 +4,7 @@ import pathlib
 HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, datetime, json, os, subprocess, sys, time
 from playwright.async_api import async_playwright
-PORT = 8772
+PORT = 8780
 URL = f"http://localhost:{PORT}/index.html"
 OUT = HERE + "/shots/terrain"; os.makedirs(OUT, exist_ok=True)
 for f in os.listdir(OUT): os.remove(os.path.join(OUT, f))

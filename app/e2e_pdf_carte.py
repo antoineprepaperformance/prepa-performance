@@ -4,7 +4,7 @@ import pathlib
 HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, subprocess, sys, time, os, json, datetime
 from playwright.async_api import async_playwright
-PORT = 8774
+PORT = 8782
 OUT = HERE + "/shots/pdf_carte"; os.makedirs(OUT, exist_ok=True)
 URL = f"http://localhost:{PORT}/index.html"
 TODAY = datetime.date.today()

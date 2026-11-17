@@ -151,6 +151,18 @@
         return /^r[a-z0-9]{6,20}$/.test(seg[1] || "") && rk.every(function (k) { return ["at", "name", "email", "ref", "msg", "done"].indexOf(k) >= 0; })
           && typeof data.name === "string" && data.name.length >= 2 && data.name.length <= 100 && typeof data.email === "string" && data.email.length <= 200 && /^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(data.email)
           && typeof data.ref === "string" && data.ref.length <= 60 && typeof data.msg === "string" && data.msg.length <= 500 && typeof data.at === "string" && data.at.length <= 40 && data.done === false;
+      /* demande de devis de l'offre club : envoi libre et limité, suivi par le coach (mêmes bornes que firestore.rules) */
+      case "demandes_club":
+        if (read || data === null) return coach;
+        if (existed) return coach;
+        var ck = Object.keys(data || {});
+        return /^c[a-z0-9]{6,20}$/.test(seg[1] || "") && ck.every(function (k) { return ["at", "club", "sport", "joueurs", "name", "email", "tel", "offre", "msg", "done"].indexOf(k) >= 0; })
+          && typeof data.club === "string" && data.club.length >= 2 && data.club.length <= 100 && typeof data.sport === "string" && data.sport.length <= 40
+          && typeof data.joueurs === "number" && data.joueurs >= 0 && data.joueurs <= 200
+          && typeof data.name === "string" && data.name.length >= 2 && data.name.length <= 100
+          && typeof data.email === "string" && data.email.length <= 200 && /^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(data.email)
+          && typeof data.tel === "string" && data.tel.length <= 30 && ["saison", "cycle", "joueurs"].indexOf(data.offre) >= 0
+          && typeof data.msg === "string" && data.msg.length <= 800 && typeof data.at === "string" && data.at.length <= 40 && data.done === false;
       case "replies": return read ? (coach || self(seg[1])) : coach;
       case "coachnotes": return coach;
       /* registre des factures : lecture et création par le coach ; jamais modifié ni supprimé (sauf compteur et paramètres) */

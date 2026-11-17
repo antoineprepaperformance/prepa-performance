@@ -53,6 +53,59 @@ function eqSeq(s) {
   return acts.map((a, i) => ({ kind: "work", secs: a.min * 60, n: a.n, label: "Activité " + (i + 1) + " sur " + acts.length }));
 }
 
+/* ---------- la saison découpée en cycles : ce qu'un club achète ---------- */
+/* Les dates du classeur d'Antoine ne servent qu'à mettre les séances dans l'ordre. Ce qu'un club achète,
+   c'est une suite de CYCLES de quelques semaines qu'il posera sur son propre calendrier : le découpage se
+   fait donc par semaine de phase (« Présaison - Semaine 2 », « Saison - Semaine 14 ») et non par mois, et
+   un cycle s'arrête quand la phase change ou quand il a sa durée pleine. */
+const EQ_CYCLE_SEM = Number((CONTENT.CLUB || {}).semCycle) || 6;
+/* « Présaison - Semaine 2 » → { ph: "pre", sem: 2 } ; une phase qu'on ne sait pas lire donne { ph: "", sem: 0 } */
+function eqSem(s) {
+  const m = String((s && s.phase) || "").match(/^(Pr[ée]saison|Saison)\s*-\s*Semaine\s*(\d+)/i);
+  return m ? { ph: m[1].toLowerCase().startsWith("pr") ? "pre" : "sai", sem: Number(m[2]) } : { ph: "", sem: 0 };
+}
+function eqPhaseNom(ph) { return ph === "pre" ? "Présaison" : ph === "sai" ? "Saison" : "Hors phase"; }
+function eqCycles(sai) {
+  const out = [];
+  let cur = null, vues = 0, derSem = null;
+  for (const s of (sai && sai.seances) || []) {
+    const { ph, sem } = eqSem(s);
+    const cle = ph + "#" + sem;
+    const nouvelleSem = cle !== derSem;
+    /* nouveau cycle : changement de phase, ou cycle plein (en comptant les semaines, pas les séances) */
+    if (!cur || cur.ph !== ph || (nouvelleSem && vues >= EQ_CYCLE_SEM)) {
+      cur = { n: out.length + 1, ph, sems: [], seances: [] };
+      out.push(cur); vues = 0;
+    }
+    if (nouvelleSem) { vues += 1; cur.sems.push(sem); derSem = cle; }
+    cur.seances.push(s);
+  }
+  return out.map((c) => {
+    const s1 = c.sems[0], s2 = c.sems[c.sems.length - 1];
+    return { ...c, nSem: c.sems.length, titre: "Cycle " + c.n,
+      sous: eqPhaseNom(c.ph) + (s1 ? (s1 === s2 ? " · semaine " + s1 : " · semaines " + s1 + " à " + s2) : ""),
+      min: c.seances.reduce((t, s) => t + (s.min || 0), 0) };
+  });
+}
+/* les thèmes d'un cycle, du plus présent au moins présent : ce que le cycle travaille */
+function eqCycleThemes(c) {
+  const n = {};
+  (c.seances || []).forEach((s) => { if (s.theme) n[s.theme] = (n[s.theme] || 0) + 1; });
+  return Object.entries(n).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ k, v, n: (EQ_THEMES[k] || {}).n || k, t: (EQ_THEMES[k] || {}).t || "" }));
+}
+
+/* liste des cycles : même vue pour le coach et pour un membre du club (sans date pour le membre) */
+function EqCyclesList({ sai, onOpen, dates }) {
+  const cycles = useMemo(() => eqCycles(sai), [sai && sai.id, sai && (sai.seances || []).length]);
+  return html`<div className="stack">${cycles.map((c) => html`<${Card} key=${c.n} title=${c.titre} sub=${c.sous}>
+    <p className="small">${plural(c.nSem, "semaine")} · ${plural(c.seances.length, "séance")}${c.min ? " · " + Math.round(c.min / 60) + " h de terrain" : ""}</p>
+    <div className="chips">${eqCycleThemes(c).map((t) => html`<${Pill} key=${t.k} tone=${t.t}>${t.n} × ${t.v}</${Pill}>`)}</div>
+    <ul className="rlist">${c.seances.map((s, i) => { const q = eqSem(s); return html`<li key=${s.d}>
+      <button type="button" className="linkbtn" onClick=${() => onOpen(s)}><b>${dates ? fmtD(s.d) : "S" + (q.sem || "·") + " · séance " + (i + 1)}</b>
+        <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button></li>`; })}</ul>
+  </${Card}>`)}</div>`;
+}
+
 /* ---------- une séance : sa timeline, telle qu'Antoine l'a écrite ---------- */
 function EqSeance({ s, onStart, onClose, coachView }) {
   if (!s) return null;
@@ -77,6 +130,7 @@ function EquipeScreen() {
   const [sid, setSid] = useState(EQ.length ? EQ[0].id : null);
   const [phase, setPhase] = useState("toutes");
   const [theme, setTheme] = useState("tous");
+  const [vue, setVue] = useState("cycles");
   const [sel, setSel] = useState(null);
   const [play, setPlay] = useState(null);
   const sai = eqSaison(sid);
@@ -100,14 +154,17 @@ function EquipeScreen() {
       action=${html`<${Btn} small onClick=${() => setSel(proch)}>Ouvrir</${Btn}>`}>
       <p className="small">${(proch.acts || []).map((a) => a.n).join(" · ")}</p>
       ${eqTheme(proch) ? html`<p className="muted small">${eqTheme(proch).n} — ${eqTheme(proch).d}</p>` : null}</${Card}>` : null}
-    <div className="tabs-scroll"><${Seg} options=${[{ v: "toutes", n: "Toute la saison" }, { v: "pre", n: "Présaison" }, { v: "sai", n: "Saison" }]} value=${phase} onChange=${setPhase} /></div>
-    <div className="tabs-scroll"><${Seg} options=${[{ v: "tous", n: "Tous les thèmes" }, ...Object.entries(EQ_THEMES).map(([v, t]) => ({ v, n: t.n }))]} value=${theme} onChange=${setTheme} /></div>
-    <p className="muted small">${plural(liste.length, "séance")} ${liste.length === sai.seances.length ? "en tout" : "dans ce filtre"}.</p>
-    ${mois.map((g) => html`<${Card} key=${g.k} title=${fmtMois(g.k)} sub=${plural(g.items.length, "séance")}>
-      <ul className="rlist">${g.items.map((s) => { const th = eqTheme(s), mt = eqMatch(s); return html`<li key=${s.d}>
-        <button type="button" className="linkbtn" onClick=${() => setSel(s)}><b>${fmtD(s.d)}</b> <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button>
-        <span className="chips">${th ? html`<${Pill} tone=${th.t}>${th.n}</${Pill}>` : null}${mt ? html`<${Pill} tone="gold">${mt.j}</${Pill}>` : null}</span></li>`; })}</ul>
-    </${Card}>`)}
+    <div className="tabs-scroll"><${Seg} options=${[{ v: "cycles", n: "Par cycle" }, { v: "mois", n: "Par mois" }]} value=${vue} onChange=${setVue} /></div>
+    ${vue === "cycles" ? html`<p className="muted small">La saison découpée en cycles de ${plural(EQ_CYCLE_SEM, "semaine")} : c'est ce découpage qu'un club achète, en entier ou cycle par cycle.</p>
+      <${EqCyclesList} sai=${sai} dates=${true} onOpen=${(s) => setSel(s)} />`
+    : html`<div className="tabs-scroll"><${Seg} options=${[{ v: "toutes", n: "Toute la saison" }, { v: "pre", n: "Présaison" }, { v: "sai", n: "Saison" }]} value=${phase} onChange=${setPhase} /></div>
+      <div className="tabs-scroll"><${Seg} options=${[{ v: "tous", n: "Tous les thèmes" }, ...Object.entries(EQ_THEMES).map(([v, t]) => ({ v, n: t.n }))]} value=${theme} onChange=${setTheme} /></div>
+      <p className="muted small">${plural(liste.length, "séance")} ${liste.length === sai.seances.length ? "en tout" : "dans ce filtre"}.</p>
+      ${mois.map((g) => html`<${Card} key=${g.k} title=${fmtMois(g.k)} sub=${plural(g.items.length, "séance")}>
+        <ul className="rlist">${g.items.map((s) => { const th = eqTheme(s), mt = eqMatch(s); return html`<li key=${s.d}>
+          <button type="button" className="linkbtn" onClick=${() => setSel(s)}><b>${fmtD(s.d)}</b> <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button>
+          <span className="chips">${th ? html`<${Pill} tone=${th.t}>${th.n}</${Pill}>` : null}${mt ? html`<${Pill} tone="gold">${mt.j}</${Pill}>` : null}</span></li>`; })}</ul>
+      </${Card}>`)}`}
   </div>`;
 }
 /* « 2025-07 » → « Juillet 2025 » */
@@ -121,21 +178,35 @@ function fmtMois(k) {
 /* ---------- côté joueur : sa séance d'équipe du jour ---------- */
 function EqJoueurCard({ data, go }) {
   const sai = eqOf(data.profile);
-  const [ouvert, setOuvert] = useState(false);
+  const [vue, setVue] = useState("");          /* "" | "jour" | "saison" */
+  const [sel, setSel] = useState(null);        /* une séance de la saison, ouverte */
+  const [play, setPlay] = useState(null);      /* séance lancée au minuteur */
   if (!sai) return null;
   const today = todayISO();
   const s = eqSeanceAt(sai, today) || null;
   const proch = s ? null : eqProchaine(sai, today);
-  if (!s && !proch) return null;
   const x = s || proch;
-  const th = eqTheme(x);
-  if (ouvert) return html`<${Card} title="Ta séance d'équipe"><${EqSeance} s=${x} onClose=${() => setOuvert(false)} /></${Card}>`;
+  const th = x ? eqTheme(x) : null;
+  if (play) return html`<${TimerPlayer} title=${"Séance d'équipe · " + fmtD(play.d)} seq=${eqSeq(play)} kind="equipe" onClose=${() => setPlay(null)} onFinish=${() => setPlay(null)} />`;
+  if (sel) return html`<${Card} title="Séance de l'équipe"><${EqSeance} s=${sel} onStart=${(q) => setPlay(q)} onClose=${() => setSel(null)} /></${Card}>`;
+  /* toute la saison du club, par cycles, sans les dates : un cycle se pose sur le calendrier du club */
+  if (vue === "saison") return html`<${Card} title=${"La saison de " + sai.n} sub=${plural((sai.seances || []).length, "séance") + " en " + plural(eqCycles(sai).length, "cycle")}
+    action=${html`<${Btn} small kind="ghost" onClick=${() => setVue("")}>Fermer</${Btn}>`}>
+    <${EqCyclesList} sai=${sai} onOpen=${(q) => setSel(q)} />
+  </${Card}>`;
+  if (vue === "jour" && x) return html`<${Card} title="Ta séance d'équipe"><${EqSeance} s=${x} onStart=${(q) => setPlay(q)} onClose=${() => setVue("")} /></${Card}>`;
+  const voirSaison = html`<${Btn} small kind="ghost" onClick=${() => setVue("saison")}>La saison du club</${Btn}>`;
+  /* hors saison (ou saison terminée) : la programmation reste consultable, c'est ce que le club a acheté */
+  if (!x) return html`<${Card} title=${"La saison de " + sai.n} sub=${plural((sai.seances || []).length, "séance") + " en " + plural(eqCycles(sai).length, "cycle")} action=${voirSaison}>
+    <p className="muted small">Aucune séance d'équipe prévue aujourd'hui. La programmation de ton club reste consultable, cycle par cycle.</p>
+  </${Card}>`;
   return html`<${Card} title=${s ? "Ta séance d'équipe, ce soir" : "Ta prochaine séance d'équipe"}
     sub=${sai.n + " · " + fmtDY(x.d) + (x.debut ? " · " + x.debut : "") + (x.min ? " · " + plural(x.min, "minute") : "")}
-    action=${html`<${Btn} small kind="ghost" onClick=${() => setOuvert(true)}>Voir le détail</${Btn}>`}>
+    action=${html`<${Btn} small kind="ghost" onClick=${() => setVue("jour")}>Voir le détail</${Btn}>`}>
     <p className="small">${(x.acts || []).map((a) => a.n).join(" · ")}</p>
     ${th ? html`<p className="muted small"><b>${th.n}.</b> ${th.d}</p>` : null}
     <p className="muted small">Cette séance est celle de ton club : elle n'est pas comptée dans ta charge de la semaine tant que tu ne l'enregistres pas toi-même, en séance en plus.</p>
+    <div className="btnrow">${voirSaison}</div>
   </${Card}>`;
 }
 /* réglage dans la fiche client, côté coach : rattacher un joueur à une saison d'équipe */

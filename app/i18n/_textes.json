@@ -58023,5 +58023,341 @@
   "kind": "string",
   "where": "src/site/11_site.js:203",
   "n": 2
+ },
+ {
+  "h": "3da78fb15a",
+  "k": "Pour les clubs",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "c8d59f8812",
+  "k": "La programmation physique de ton équipe dans l'application : chaque séance avec son thème, ses activités et ses durées, déroulable au minuteur sur le terrain, avec la bibliothèque d'exercices, les fiches terrain et les tests.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "6755807830",
+  "k": "Le plus pris",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "32ee037ea6",
+  "k": "La saison",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "06b7f84d72",
+  "k": "Toute la programmation de la saison, découpée en cycles de 6 semaines : l'entraîneur ouvre la séance du jour et la déroule au minuteur.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d01fb65351",
+  "k": "la saison, par équipe",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "8dbbaff346",
+  "k": "Un cycle",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "078915f281",
+  "k": "Un bloc de 6 semaines pour essayer sur une période précise : reprise, trêve, fin de saison.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "dd18226018",
+  "k": "le cycle, par équipe",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "947e65580d",
+  "k": "Accès joueurs",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "4e1463f686",
+  "k": "Chaque joueur voit la séance d'équipe du jour et suit son programme individuel, avec ses tests et sa carte athlète.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "0c19685ef6",
+  "k": "par joueur, la saison",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "7305828580",
+  "k": "À partir de 15 joueurs, en plus de la saison ou d'un cycle.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "da6ff583fb",
+  "k": "La saison découpée en cycles : chaque cycle a ses semaines et ses séances, prêtes à mener.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "71a8ccbc62",
+  "k": "Chaque séance avec son thème (Modéré, Intense, Vitesse, Volume), ses activités et leurs durées.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "9f21f0494c",
+  "k": "Le minuteur qui enchaîne les activités de la séance, sur le terrain, au téléphone.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "06becc361c",
+  "k": "La bibliothèque : exercices animés, fiches terrain par sport et par poste, tests de référence.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "3fd7bfdf1a",
+  "k": "Avec l'accès joueurs : chaque joueur voit la séance d'équipe du jour et suit son programme individuel.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "fb47ab6696",
+  "k": "Les accès sont ouverts par Antoine : un pour l'entraîneur, et un par joueur si tu prends l'accès joueurs.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "7516161e96",
+  "k": "Le club reste responsable de l'encadrement de ses séances, de la santé de ses joueurs et du respect des consignes. L'offre club ne comprend pas de présence sur le terrain ni de suivi individuel des joueurs par Antoine : c'est l'accès joueurs et les formules individuelles qui ouvrent ce suivi.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "1eb2ed109a",
+  "k": "Vente entre professionnels : devis, virement et facture, sans abonnement ni reconduction (article 2 bis des conditions de vente).",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "8a1f1c6ce7",
+  "k": "Demander un devis",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "bb5b6a1674",
+  "k": "Offre club : demander un devis",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "ef21e9762c",
+  "k": "Dis-moi l'essentiel : je réponds avec un devis et, si tu veux, un cycle d'exemple à regarder avant de décider.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "aa40e08a0d",
+  "k": "Nom du club",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "bbc6045bb1",
+  "k": "Sport et niveau",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "2c1ca92074",
+  "k": "Nombre de joueurs",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "aaad418ac4",
+  "k": "Ce qui t'intéresse",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "5a33832187",
+  "k": "La saison complète",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "5852eae853",
+  "k": "Un cycle pour essayer",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d59164d4e7",
+  "k": "Saison + accès joueurs",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "3df6595103",
+  "k": "Ton nom",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "beb630bcb4",
+  "k": "Ton e-mail",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "a47e7faa4d",
+  "k": "Téléphone (facultatif)",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "bd28781f71",
+  "k": "Ta situation, en deux lignes (facultatif)",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "b4fa1b2f63",
+  "k": "Effectif, jours d'entraînement, ce que tu cherches à améliorer.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "39bb3839f9",
+  "k": "Ce que je reçois : ce que tu écris ici, rien de plus. Aucune donnée de joueur. Supprimé 3 ans après le dernier contact, ou tout de suite si tu le demandes.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "2e01373d94",
+  "k": "2 bis. Offre club",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "268e116693",
+  "k": "L'offre club est vendue à un club (association ou société) pour ses propres équipes, et non à un particulier. Elle donne accès dans l'application à la programmation physique d'une saison d'équipe — chaque séance avec son thème, ses activités et leurs durées, le minuteur de séance, la bibliothèque d'exercices, les fiches terrain et les tests — pour la saison complète ou pour un ou plusieurs cycles de 6 semaines. L'accès joueurs, s'il est pris, ouvre à chaque joueur désigné par le club un compte qui affiche la séance d'équipe du jour et son programme individuel.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "bbc811b70b",
+  "k": "Ce que le club garde à sa charge.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "44f1a377d2",
+  "k": "Le club encadre lui-même ses séances : il reste responsable de l'encadrement, de la santé de ses joueurs, des certificats médicaux et du respect des consignes. L'offre club ne comprend ni présence sur le terrain ni suivi individuel des joueurs par le vendeur ; ce suivi passe par l'accès joueurs et les formules individuelles.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "840c1c1414",
+  "k": "Droit d'usage.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "8910701f61",
+  "k": "La programmation est fournie pour les équipes du club et pour la durée achetée. Elle ne peut être ni revendue, ni diffusée hors du club, ni réutilisée par un autre club ou dans une offre concurrente (article 12).",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "1e6c3ab772",
+  "k": "Vente entre professionnels.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d72531d625",
+  "k": "Le club contracte pour son activité : le droit de rétractation de 14 jours de l'article 8, réservé aux consommateurs, ne s'applique pas. Le devis accepté et la facture tiennent lieu de contrat. Sauf accord écrit différent, le paiement se fait par virement à 30 jours à compter de la facture. En cas de retard, sont dues de plein droit des pénalités au taux de refinancement de la Banque centrale européenne majoré de 10 points et l'indemnité forfaitaire de 40 € pour frais de recouvrement (articles L441-10 et D441-5 du code de commerce).",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d61c70cac5",
+  "k": "Offre club (article 2 bis) : 590 € la saison complète, 149 € le cycle de 6 semaines, 25 € par joueur et par saison pour l'accès joueurs (à partir de 15 joueurs), sur devis et sans abonnement.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "9de65c735e",
+  "k": "Demande de devis d'un club",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d853b0566f",
+  "k": "Quand un club remplit le formulaire de l'offre club sur le site, le vendeur reçoit ce que le club a écrit : nom du club, sport, nombre de joueurs, nom et coordonnées de la personne à contacter, et son message. Ces données servent uniquement à répondre à la demande et à établir un devis (base : mesures précontractuelles et intérêt légitime à répondre à une sollicitation). Elles ne concernent pas les joueurs, ne sont pas croisées avec les dossiers des clients, et sont supprimées 3 ans après le dernier contact — tout de suite sur simple demande (voir « Tes droits »). Aucune prospection automatisée n'est faite à partir de ce formulaire.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
  }
 ]

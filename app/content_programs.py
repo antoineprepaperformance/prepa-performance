@@ -511,3 +511,29 @@ OFFERS = [
     {"id": "suivi", "n": "Suivi (grille d'octobre)", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan (sous 24 h ouvrées), ajustements de ton programme et de tes cibles nutrition, correction vidéo d'un exercice par semaine.", "prix": [119, 319, 599, 1139], "retired": True, "durs": True},
     {"id": "hybride", "n": "Hybride", "desc": "Essentiel + 2 séances d'1 h par mois en présentiel avec Antoine (Bordeaux Métropole) : technique, tests et corrections sur place.", "prix": [139, 265, 375], "retired": True},
 ]
+
+# Offre club (17 novembre 2026) : la programmation d'une saison d'équipe vendue à un club, en entier ou par
+# cycle. Ce n'est pas une formule individuelle : l'acheteur est une personne morale (association), la vente
+# est entre professionnels, et le prix ne dépend pas d'une durée en mois mais du découpage de la saison.
+# Étude de prix (comparables relevés le 17 novembre 2026, voir le journal) : une saison de préparation
+# physique vendue en PDF à un club de football amateur, 99,90 € ; une plateforme de suivi de charge pour
+# club amateur ou semi-pro, à partir de 79 €/mois (≈ 790 € la saison) mais sans programmation ; les
+# plateformes nord-américaines de préparation physique par équipe, 900 $/an pour 30 athlètes (≈ 28 €
+# par athlète et par an) ; une heure de préparateur physique indépendant, 60 à 150 € ; employer un
+# préparateur physique, 22 000 à 32 000 € par an. Les prix publics sont rares dans ce marché (presque
+# tout se fait sur devis) : afficher le prix est un avantage pour un petit club.
+CLUB = {
+    "semCycle": 6,
+    "prix": {"cycle": 149, "saison": 590, "joueur": 25},
+    "minJ": 15,
+    "desc": "La programmation physique de ton équipe dans l'application : chaque séance avec son thème, ses activités et ses durées, déroulable au minuteur sur le terrain, avec la bibliothèque d'exercices, les fiches terrain et les tests.",
+    "quoi": [
+        "La saison découpée en cycles : chaque cycle a ses semaines et ses séances, prêtes à mener.",
+        "Chaque séance avec son thème (Modéré, Intense, Vitesse, Volume), ses activités et leurs durées.",
+        "Le minuteur qui enchaîne les activités de la séance, sur le terrain, au téléphone.",
+        "La bibliothèque : exercices animés, fiches terrain par sport et par poste, tests de référence.",
+        "Avec l'accès joueurs : chaque joueur voit la séance d'équipe du jour et suit son programme individuel.",
+        "Les accès sont ouverts par Antoine : un pour l'entraîneur, et un par joueur si tu prends l'accès joueurs.",
+    ],
+    "nonInclus": "Le club reste responsable de l'encadrement de ses séances, de la santé de ses joueurs et du respect des consignes. L'offre club ne comprend pas de présence sur le terrain ni de suivi individuel des joueurs par Antoine : c'est l'accès joueurs et les formules individuelles qui ouvrent ce suivi.",
+}

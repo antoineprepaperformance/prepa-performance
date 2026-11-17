@@ -734,7 +734,7 @@ function useLiteSync(db, rows) {
 const ESSAI_CODE = "ESSAI7", PIONNIERS = { code: "PIONNIERS", pct: 20, max: 20, until: "2027-01-31" };
 function CodesView({ db, codes, rows, lib, settings }) {
   const toast = useToast();
-  const blank = () => ({ kind: "essai", offer: "ia", weeks: 2, programId: "", max: 1, pct: 20, expires: "", note: "", code: genCode("ESSAI") });
+  const blank = () => ({ kind: "essai", offer: "suivi2", weeks: 2, programId: "", max: 1, pct: 20, expires: "", note: "", code: genCode("ESSAI") });
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));

@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="5d99dc635e">
+<meta name="app-build" content="63e6d64890">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -4417,7 +4417,7 @@ function useLiteSync(db, rows) {
 const ESSAI_CODE = "ESSAI7", PIONNIERS = { code: "PIONNIERS", pct: 20, max: 20, until: "2027-01-31" };
 function CodesView({ db, codes, rows, lib, settings }) {
   const toast = useToast();
-  const blank = () => ({ kind: "essai", offer: "ia", weeks: 2, programId: "", max: 1, pct: 20, expires: "", note: "", code: genCode("ESSAI") });
+  const blank = () => ({ kind: "essai", offer: "suivi2", weeks: 2, programId: "", max: 1, pct: 20, expires: "", note: "", code: genCode("ESSAI") });
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));

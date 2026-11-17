@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="7f592ce918">
+<meta name="app-build" content="5d99dc635e">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -4463,7 +4463,7 @@ function CodesView({ db, codes, rows, lib, settings }) {
       <div className="row-end"><p className="small">${"Essai gratuit de 7 jours : Autonomie + coach IA, une fois par personne, sans paiement. Un bouton « Essayer 7 jours gratuitement » s'affiche sur la page d'accueil tant que le code " + ESSAI_CODE + " est actif."}</p>
         ${settings && settings.essai && settings.essai.on ? html`<${Pill} tone="ok">En ligne</${Pill}>` : html`<${Btn} small onClick=${() => preset("essai")} disabled=${busy}>Mettre l'essai en ligne</${Btn}>`}</div>
       <div className="row-end"><p className="small">${"Code pionniers " + PIONNIERS.code + " : −" + PIONNIERS.pct + " % sur une première commande payante, pour les " + PIONNIERS.max + " premiers clients, jusqu'au " + fmtDY(PIONNIERS.until) + ". Chaque utilisation se compte quand tu actives la commande. Avec Stripe, crée aussi ce code promotionnel dans Stripe (voir le guide de mise en ligne)."}</p>
-        ${codes[PIONNIERS.code] ? html`<${Pill} tone="ok">Créé</${Pill}>` : html`<${Btn} small onClick=${() => preset("promo")} disabled=${busy}>Créer le code pionniers</${Btn}>`}</div>
+        ${codes[PIONNIERS.code] ? html`<${Pill} tone="ok">Créé</${Pill}>` : html`<${Btn} small onClick=${() => preset("promo")} disabled=${busy}>Mettre le code pionniers en ligne</${Btn}>`}</div>
     </div></${Card}>
     <${Card} title="Créer un code"><div className="form">
       <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }, { v: "promo", n: "Réduction" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : v === "promo" ? "REDUC" : "OFFERT")); }} /></${Field}>

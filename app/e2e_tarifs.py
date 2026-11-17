@@ -220,7 +220,7 @@ async def run():
         # ---------- lancement (17 novembre 2026) : essai gratuit de 7 jours et code pionniers ----------
         await co.bring_to_front(); await btn(co, "Codes & essais", exact=True)
         await co.locator(".card", has_text="Lancement").get_by_role("button", name="Mettre l'essai en ligne").click(); await co.wait_for_timeout(800)
-        await co.locator(".card", has_text="Lancement").get_by_role("button", name="Créer le code pionniers").click(); await co.wait_for_timeout(800)
+        await co.locator(".card", has_text="Lancement").get_by_role("button", name="Mettre le code pionniers en ligne").click(); await co.wait_for_timeout(800)
         st = await db(co, "settings/app"); e7 = await db(co, "codes/ESSAI7"); pi = await db(co, "codes/PIONNIERS")
         ok(st and st.get("essai") == {"on": True, "code": "ESSAI7"} and e7 and e7["kind"] == "essai" and e7["offer"] == "ia" and e7["weeks"] == 1 and pi and pi["kind"] == "promo" and pi["pct"] == 20 and pi["max"] == 20,
            "lancement : essai ESSAI7 et code PIONNIERS en ligne (règles Firestore)", [st and st.get("essai"), e7, pi])

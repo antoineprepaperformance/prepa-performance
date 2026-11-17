@@ -56,7 +56,7 @@ async def run():
             st = await mdb(co, "settings/app") or {}
             ok(e7.get("kind") == "essai" and e7.get("offer") == "ia" and e7.get("weeks") == 1 and e7.get("max", 0) >= 1000 and e7.get("active") is True, "essai : code public ESSAI7, Autonomie + coach IA, 1 semaine", e7)
             ok(st.get("essai") == {"on": True, "code": "ESSAI7"}, "essai : annoncé dans les réglages (bouton de la page d'accueil)", st.get("essai"))
-            await co.locator(".card", has_text="Lancement").get_by_role("button", name="Créer le code pionniers").click(); await co.wait_for_timeout(600)
+            await co.locator(".card", has_text="Lancement").get_by_role("button", name="Mettre le code pionniers en ligne").click(); await co.wait_for_timeout(600)
             pi = await mdb(co, "codes/PIONNIERS") or {}
             ok(pi.get("kind") == "promo" and pi.get("pct") == 20 and pi.get("max") == 20 and pi.get("expiresMs") and not pi.get("offer"), "code pionniers : −20 %, 20 utilisations, date limite, toutes formules", pi)
             ok(await has(co, "Réduction de 20 % sur une première commande"), "liste des codes : réduction décrite")

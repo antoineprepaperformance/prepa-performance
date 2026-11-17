@@ -136,6 +136,15 @@
         var pp = A["plans/" + u.uid];
         return !!(pp && pp.source && pp.source.id === seg[1]);
       case "clients": return coach || self(seg[1]);
+      /* offre Club (comme firestore.rules) : modèles lus par le coach seul ; saison d'un club lue par le coach et par ses membres */
+      case "modeles": return coach;
+      case "clubs":
+        if (!read) return coach;
+        if (coach) return true;
+        if (!signed || op === "list") return false;
+        var club = B[path] || {}, prof = B["clients/" + u.uid] || {}, cc = typeof prof.clubCode === "string" ? prof.clubCode : "";
+        var cd = cc ? B["codes/" + cc] : null;
+        return !!((club.membres && u.uid in club.membres) || (cd && cd.club === seg[1] && cd.usedBy && u.uid in cd.usedBy));
       case "plans":
         if (read) return coach || self(seg[1]);
         if (coach) return true;

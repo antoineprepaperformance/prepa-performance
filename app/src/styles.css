@@ -526,6 +526,8 @@ h1.who { display: flex; flex-wrap: wrap; }
 .l-sub > b { font-family: var(--f-display); font-size: 17px; }
 .l-sub .l-prices { margin-top: 0; }
 .l-auto .linkbtn { align-self: flex-start; text-align: left; }
+.l-club { max-width: 760px; }
+.l-club .l-prices { margin-top: 0; }
 .l-offer { display: flex; flex-direction: column; gap: 8px; position: relative; }
 .l-offer.top { border-color: var(--gold); }
 .l-badge { position: absolute; top: -10px; right: 12px; background: var(--btn-bg); color: var(--btn-fg); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; }

@@ -75,7 +75,9 @@ async def run():
         await home.goto(URL); await home.evaluate("window.__fakefs.reset()"); await home.reload()
         ok(await has(home, "Comment ça marche"), "accueil : section « Comment ça marche »")
         ok(await home.locator(".l-sec .pcard").count() == 8, "accueil : 8 programmes")
-        ok(await home.locator(".l-offer").count() == 3 and await home.locator(".l-auto").count() == 1 and await home.locator(".l-offer.lite").count() == 0, "accueil : 3 cartes (Autonomie en deux niveaux, Suivi, Sur mesure), plus de Lite")
+        ok(await home.locator(".l-offers .l-offer").count() == 3 and await home.locator(".l-auto").count() == 1 and await home.locator(".l-offer.lite").count() == 0, "accueil : 3 cartes (Autonomie en deux niveaux, Suivi, Sur mesure), plus de Lite")
+        club = await home.locator("#club .l-club").inner_text() if await home.locator("#club .l-club").count() == 1 else ""
+        ok("2 849" in club.replace("\u202f", " ").replace("\xa0", " ") and "Demander un devis".upper() in club.upper(), "accueil : section « Pour les clubs », prix par équipe et devis", club[:300])
         ok(await home.locator(".l-card svg").count() >= 1, "accueil : carte athlète d'exemple")
         ok(await overflow(home) == 0, "accueil ordinateur : pas de défilement horizontal")
         await shot(home, "accueil_ordinateur")

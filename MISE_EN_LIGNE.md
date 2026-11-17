@@ -174,6 +174,16 @@ Espace coach › **Codes & essais** › carte **Lancement** : un clic met en lig
 
 Pour un code sur mesure : choisis le type (essai, offert, ou réduction en pourcentage sur une première commande payante), la formule, la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
 
+### Offre Club (vendue au club, sur devis)
+
+1. Espace coach › **Équipe** › **Importer un classeur** : choisis ton classeur de saison (`.xlsx`, une feuille par séance, nommée comme « Jeudi 03 Juillet 2025 »). Il est lu dans ton navigateur ; seules les séances sont gardées, dans ta base, lues par toi seul.
+2. **Coche les prénoms de tes joueurs** parmi les mots proposés (ajoute ceux qui manquent dans « Autres prénoms ») : ils restent dans ton modèle mais n'apparaîtront chez aucun autre club. Les adversaires, dans le titre des séances, sont retirés d'office.
+3. **Nouveau club** : nom, jours d'entraînement, heure, jour de match, date de début et durée (1, 3, 6 ou 12 mois, comme le devis). L'aperçu dit combien de séances il recevra. L'application reprend la même période de ta saison (un club qui démarre en novembre reçoit tes séances de novembre) et donne à chaque jour du club la séance de ta semaine qui était à la même distance du match.
+4. Deux codes sont créés : **joueurs** (30 places) et **entraîneur** (3 places). Envoie-les au club avec le lien (« Copier le lien »). Chaque code ouvre l'Autonomie (sans coach IA) pour la durée achetée et rattache au club : le joueur voit sa séance d'équipe du jour, l'entraîneur toute la saison avec le minuteur.
+5. Le club te paie directement (virement), pas par les liens Stripe des clients : fais-lui un devis, un contrat et une facture comme pour tes autres prestations, et note l'encaissement dans ton classeur de pilotage (mentions et facture électronique : CONFORMITE.md, point 15).
+
+Sans les règles Firestore du 17 novembre 2026 (étape 1), l'onglet Équipe ne peut rien enregistrer : recolle `firestore.rules` si ce n'est pas fait.
+
 ---
 
 ## Étape 8 · L'installer comme une application

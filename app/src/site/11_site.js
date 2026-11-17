@@ -191,6 +191,11 @@ function Landing() {
       <p className="small">${o.desc}</p><p className="muted small">${aiLimitTxt(settings, o.id)}</p>
       ${prices(o)}</div>`)}</div>
       <p className="muted small">${tvaLine(settings)}. Toutes les formules : paiement unique pour 1, 3, 6 ou 12 mois, sans abonnement ni renouvellement automatique. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
+    <section className="l-sec" id="club"><h2>Pour les clubs</h2><div className="card l-offer l-club"><h3>Club</h3>
+      <p className="small">Pour un club sans préparateur physique : la programmation de présaison et de saison d'Antoine, recalée sur vos jours d'entraînement et votre jour de match. Chaque séance est minutée et se lance au minuteur par l'entraîneur ; chaque joueur, jusqu'à 30, voit sa séance d'équipe du jour dans l'application. Tout se passe par écrit.</p>
+      <div className="l-prices">${CLUB_PRIX.map((v, i) => html`<div key=${i}><b>${eur2(v)}</b><small>${DURS[i] ? DURS[i].n : ""}</small></div>`)}</div>
+      <p className="muted small">Par équipe, sur devis : les conditions du contrat sont remises avec le devis.</p>
+      <div className="btnrow"><${Btn} kind="ghost" onClick=${() => setContact(true)}>Demander un devis</${Btn}></div></div></section>
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><div className="btnrow center"><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}><${Btn} kind="ghost" onClick=${() => setContact(true)}>Une question ? Me contacter</${Btn}></div></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       ${coach.instagram ? html`<div className="small muted">Instagram : ${coach.instagram}</div>` : null}

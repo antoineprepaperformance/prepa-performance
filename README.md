@@ -23,7 +23,7 @@ Préparation physique en ligne par Antoine Limousi : page d'accueil publique, co
 
 Les codes se créent dans l'espace coach, onglet **Codes** (durée, programme imposé ou libre, nombre d'utilisations, date limite).
 
-**Offre Club** (vendue au club, sur devis) : dans l'espace coach, onglet **Équipe**, tu importes ton classeur de saison (`.xlsx`, une feuille par séance), puis tu crées chaque club (jours d'entraînement, heure, jour de match, début, durée). L'application recale tes séances sur ses jours et crée deux codes : joueurs (30 places) et entraîneur (3 places). Classeur et saisons des clubs restent privés dans ta base Firestore (`modeles/`, `clubs/`), jamais dans ce dépôt public.
+**Offre club** (vendue au club, sur devis, prix dans Offres & réglages) : dans l'espace coach, onglet **Équipe**, tu importes ton classeur de saison (`.xlsx`, une feuille par séance), découpé en cycles. Pour chaque club, tu choisis ce qu'il achète (la saison ou un cycle), ses accès joueurs, ses jours, son heure, son jour de match et sa date de début : l'application pose les séances sur ses jours et crée ses codes (entraîneur 3 places, joueurs autant que d'accès achetés). Classeur et saisons des clubs restent privés dans ta base Firestore (`modeles/`, `clubs/`), jamais dans ce dépôt public.
 
 ## Organisation
 
@@ -49,7 +49,7 @@ app/
     22_ciqual.js      table Ciqual de l'ANSES : recherche d'aliments, valeurs des repas estimés par l'IA
     23_profil.js      profil sportif : taille, poids, âge, records par discipline (charges, allures, tests)
     28_pdf.js         séances en PDF : dépôt par le coach, ouverture par le client (morceaux dans Firestore, gratuit)
-    38_equipe.js      offre Club : lecture du classeur .xlsx dans le navigateur, modèles et clubs privés, recalage sur les jours de chaque club, codes, carte du joueur et de l'entraîneur
+    38_equipe.js      offre club : lecture du classeur .xlsx dans le navigateur, modèles et clubs privés, découpage en cycles, recalage de la saison ou du cycle acheté sur les jours de chaque club, codes, carte du joueur et de l'entraîneur
   src/00_i18n.js      langues : choix FR / EN / ES, traduction de l'affichage au fil de l'eau
   src/site/           spécifique au site : Firebase, coach IA par le relais (01_ia.js), page d'accueil, connexion
   i18n/               _textes.json (textes extraits du code), en.json et es.json (traductions), _extra.json (textes composés), work/ (lots de traduction)

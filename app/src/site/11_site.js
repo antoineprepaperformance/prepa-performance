@@ -131,6 +131,75 @@ function PublicCancel({ settings, onLogin }) {
       <div className="actions"><${Btn} kind="danger" onClick=${send} disabled=${busy}>${busy ? "Envoi…" : "Confirmer la résiliation"}</${Btn}><${Btn} kind="quiet" onClick=${() => setStep(1)}>Modifier</${Btn}></div>`}
   </div>`;
 }
+/* ---------- offre club : la section de la page d'accueil et la demande de devis ----------
+   Un club n'achète pas comme un particulier : il demande un devis, paie par virement et reçoit une
+   facture (conditions de vente, article 2 bis). Le formulaire écrit une demande qu'Antoine voit dans
+   son tableau de bord ; aucune donnée de joueur n'y passe. Les prix sont publics exprès : dans ce marché
+   presque tout se fait sur devis, et un petit club veut connaître le prix avant d'écrire. */
+const CLUB_OFFRES = [{ v: "saison", n: "La saison complète" }, { v: "cycle", n: "Un cycle pour essayer" }, { v: "joueurs", n: "Saison + accès joueurs" }];
+function ClubDevis({ settings, onClose }) {
+  const [f, setF] = useState({ club: "", sport: "", joueurs: "", name: "", email: "", tel: "", offre: "saison", msg: "" });
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(null);
+  const L = legalInfo(settings);
+  const ok = f.club.trim().length >= 2 && f.name.trim().length >= 2 && /^\S+@\S+\.\S+$/.test(f.email.trim());
+  const recap = (d) => ["DEMANDE DE DEVIS — OFFRE CLUB", "", L.marque + " — " + L.editeur + (L.siret ? " — SIRET " + L.siret : ""), L.email, "",
+    "Envoyée le : " + new Date(d.at).toLocaleString("fr-FR"), "Club : " + d.club, "Sport : " + (d.sport || "—"), "Joueurs : " + (d.joueurs || "—"),
+    "Contact : " + d.name + " — " + d.email + (d.tel ? " — " + d.tel : ""), "Demande : " + ((CLUB_OFFRES.find((o) => o.v === d.offre) || {}).n || d.offre),
+    d.msg ? "Message : " + d.msg : "", "", "Prix affichés au moment de la demande : " + eur(clubPrice(settings, "saison")) + " la saison, " + eur(clubPrice(settings, "cycle")) + " le cycle, "
+      + eur(clubPrice(settings, "joueur")) + " par joueur et par saison. Devis ferme à venir."].filter(Boolean).join("\n");
+  const send = async () => {
+    setBusy(true); setErr("");
+    try {
+      const id = "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      const d = { at: nowISO(), club: f.club.trim().slice(0, 100), sport: f.sport.trim().slice(0, 40), joueurs: clamp(Math.round(num(f.joueurs) || 0), 0, 200),
+        name: f.name.trim().slice(0, 100), email: f.email.trim().toLowerCase().slice(0, 200), tel: f.tel.trim().slice(0, 30), offre: f.offre, msg: f.msg.trim().slice(0, 800), done: false };
+      await window.SITE.fs.doc("demandes_club/" + id).set(d);
+      setDone(d);
+    } catch (e) { setErr("Envoi impossible : vérifie ta connexion, ou écris à " + (L.email || "Antoine") + "."); } finally { setBusy(false); }
+  };
+  if (done) return html`<div className="stack"><div className="alert okb" role="status"><div><b>Demande reçue</b>
+    <p>${L.editeur} te répond avec un devis, sous 48 h ouvrées. Rien n'est engagé : le devis fixe le prix, le périmètre et la date de début, et c'est toi qui décides ensuite.</p></div></div>
+    <button type="button" className="linkbtn" onClick=${() => saveText("demande-devis-club.txt", recap(done))}>Télécharger le récapitulatif</button></div>`;
+  return html`<div className="stack form">
+    <p className="small">Dis-moi l'essentiel : je réponds avec un devis et, si tu veux, un cycle d'exemple à regarder avant de décider.</p>
+    <div className="row2"><${Field} label="Nom du club" id="cd-c"><input id="cd-c" value=${f.club} onChange=${(e) => setF({ ...f, club: e.target.value })} placeholder="US Exemple Rugby" /></${Field}>
+      <${Field} label="Sport et niveau" id="cd-s"><input id="cd-s" value=${f.sport} onChange=${(e) => setF({ ...f, sport: e.target.value })} placeholder="Rugby, Fédérale 3" /></${Field}></div>
+    <div className="row2"><${Field} label="Nombre de joueurs" id="cd-j"><input id="cd-j" type="number" min="0" max="200" value=${f.joueurs} onChange=${(e) => setF({ ...f, joueurs: e.target.value })} /></${Field}>
+      <${Field} label="Ce qui t'intéresse"><${Seg} id="cd-o" options=${CLUB_OFFRES} value=${f.offre} onChange=${(v) => setF({ ...f, offre: v })} /></${Field}></div>
+    <div className="row2"><${Field} label="Ton nom" id="cd-n"><input id="cd-n" value=${f.name} onChange=${(e) => setF({ ...f, name: e.target.value })} /></${Field}>
+      <${Field} label="Ton e-mail" id="cd-e"><input id="cd-e" type="email" value=${f.email} onChange=${(e) => setF({ ...f, email: e.target.value })} /></${Field}></div>
+    <${Field} label="Téléphone (facultatif)" id="cd-t"><input id="cd-t" value=${f.tel} onChange=${(e) => setF({ ...f, tel: e.target.value })} /></${Field}>
+    <${Field} label="Ta situation, en deux lignes (facultatif)" id="cd-m" hint="Effectif, jours d'entraînement, ce que tu cherches à améliorer."><textarea id="cd-m" rows="3" value=${f.msg} onChange=${(e) => setF({ ...f, msg: e.target.value })}></textarea></${Field}>
+    ${err ? html`<p className="small warn-t" role="alert">${err}</p>` : null}
+    <p className="muted small">Ce que je reçois : ce que tu écris ici, rien de plus. Aucune donnée de joueur. Supprimé 3 ans après le dernier contact, ou tout de suite si tu le demandes.</p>
+    <${Btn} block onClick=${send} disabled=${!ok || busy}>${busy ? "Envoi…" : "Demander un devis"}</${Btn}>
+  </div>`;
+}
+function ClubSection({ settings, onDevis }) {
+  if (!clubOn(settings)) return null;
+  const minJ = clubMinJ(settings);
+  return html`<section className="l-sec" id="clubs">
+    <h2>Pour les clubs</h2>
+    <p className="muted">${CLUB.desc}</p>
+    <div className="l-offers">
+      <div className="card l-offer top"><span className="l-badge">Le plus pris</span><h3>La saison</h3>
+        <p className="small">${"Toute la programmation de la saison, découpée en cycles de " + plural(CLUB.semCycle || 6, "semaine") + " : l'entraîneur ouvre la séance du jour et la déroule au minuteur."}</p>
+        <div className="l-prices"><div><b>${eur(clubPrice(settings, "saison"))}</b><small>la saison, par équipe</small></div></div></div>
+      <div className="card l-offer"><h3>Un cycle</h3>
+        <p className="small">${"Un bloc de " + plural(CLUB.semCycle || 6, "semaine") + " pour essayer sur une période précise : reprise, trêve, fin de saison."}</p>
+        <div className="l-prices"><div><b>${eur(clubPrice(settings, "cycle"))}</b><small>le cycle, par équipe</small></div></div></div>
+      <div className="card l-offer"><h3>Accès joueurs</h3>
+        <p className="small">Chaque joueur voit la séance d'équipe du jour et suit son programme individuel, avec ses tests et sa carte athlète.</p>
+        <div className="l-prices"><div><b>${eur(clubPrice(settings, "joueur"))}</b><small>par joueur, la saison</small></div></div>
+        <p className="muted small">${"À partir de " + plural(minJ, "joueur") + ", en plus de la saison ou d'un cycle."}</p></div>
+    </div>
+    <ul className="rlist small">${(CLUB.quoi || []).map((t, i) => html`<li key=${i}><span>${t}</span></li>`)}</ul>
+    <p className="muted small">${tvaLine(settings)}. ${CLUB.nonInclus} Vente entre professionnels : devis, virement et facture, sans abonnement ni reconduction (article 2 bis des conditions de vente).</p>
+    <div className="btnrow center"><${Btn} onClick=${onDevis}>Demander un devis</${Btn}></div>
+  </section>`;
+}
 /* lien d'offre : ?code=XXXX est gardé jusqu'à la fin de l'inscription */
 function pendingCodeFromUrl() {
   try {
@@ -148,6 +217,7 @@ function Landing() {
   const [settings, setSettings] = useState(null);
   const [cancel, setCancel] = useState(() => (location.hash || "") === "#resilier");
   const [contact, setContact] = useState(() => (location.hash || "") === "#contact");
+  const [club, setClub] = useState(() => (location.hash || "") === "#clubs");
   useEffect(() => { let a = true; (async () => { try { const s = await window.SITE.fs.doc("settings/app").get(); if (a && s.exists) setSettings(s.data()); } catch (e) {} })(); return () => { a = false; }; }, []);
   const demo = useMemo(() => demoWorld().demo_lucas, []);
   const dprog = PB.vitesse;
@@ -191,11 +261,7 @@ function Landing() {
       <p className="small">${o.desc}</p><p className="muted small">${aiLimitTxt(settings, o.id)}</p>
       ${prices(o)}</div>`)}</div>
       <p className="muted small">${tvaLine(settings)}. Toutes les formules : paiement unique pour 1, 3, 6 ou 12 mois, sans abonnement ni renouvellement automatique. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
-    <section className="l-sec" id="club"><h2>Pour les clubs</h2><div className="card l-offer l-club"><h3>Club</h3>
-      <p className="small">Pour un club sans préparateur physique : la programmation de présaison et de saison d'Antoine, recalée sur vos jours d'entraînement et votre jour de match. Chaque séance est minutée et se lance au minuteur par l'entraîneur ; chaque joueur, jusqu'à 30, voit sa séance d'équipe du jour dans l'application. Tout se passe par écrit.</p>
-      <div className="l-prices">${CLUB_PRIX.map((v, i) => html`<div key=${i}><b>${eur2(v)}</b><small>${DURS[i] ? DURS[i].n : ""}</small></div>`)}</div>
-      <p className="muted small">Par équipe, sur devis : les conditions du contrat sont remises avec le devis.</p>
-      <div className="btnrow"><${Btn} kind="ghost" onClick=${() => setContact(true)}>Demander un devis</${Btn}></div></div></section>
+    <${ClubSection} settings=${settings} onDevis=${() => setClub(true)} />
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><div className="btnrow center"><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}><${Btn} kind="ghost" onClick=${() => setContact(true)}>Une question ? Me contacter</${Btn}></div></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       ${coach.instagram ? html`<div className="small muted">Instagram : ${coach.instagram}</div>` : null}
@@ -204,6 +270,7 @@ function Landing() {
       <p className="small">Une question sur un programme, une formule ou ta situation ? Écris-moi dans la messagerie de l'application : crée ton compte gratuit (une minute, sans engagement ni paiement), puis touche la bulle en haut à droite de ton espace.</p>
       <div className="btnrow"><${Btn} onClick=${() => { setContact(false); setAuth("signup"); }}>Créer mon compte et t'écrire</${Btn}><${Btn} kind="ghost" onClick=${() => { setContact(false); setAuth("login"); }}>J'ai déjà un compte</${Btn}></div>
       ${contactItems(coach).length ? html`<p className="muted small">Tu peux aussi m'écrire sur Instagram :</p><${ContactLinks} coach=${coach} />` : null}</div>` : null}</${Modal}>
+    <${Modal} open=${club} title="Offre club : demander un devis" onClose=${() => setClub(false)}>${club ? html`<${ClubDevis} settings=${settings} onClose=${() => setClub(false)} />` : null}</${Modal}>
     <${Modal} open=${cancel} title="Résilier votre contrat" onClose=${() => setCancel(false)}>${cancel ? html`<${PublicCancel} settings=${settings} onLogin=${() => { setCancel(false); setAuth("login"); }} />` : null}</${Modal}>
     <${Modal} open=${!!auth} title=${auth === "login" ? "Connexion" : "Créer mon compte"} onClose=${() => setAuth(null)}>${auth ? html`<${AuthPanel} mode0=${auth} onClose=${() => setAuth(null)} />` : null}</${Modal}>
     <${LegalModal} open=${!!legal} kind0=${legal || "cgv"} settings=${settings} onClose=${() => { setLegal(null); try { if (location.hash) history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }} />

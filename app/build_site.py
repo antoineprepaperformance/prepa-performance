@@ -16,7 +16,7 @@ REPO = ROOT.parent if (ROOT.parent / "MISE_EN_LIGNE.md").exists() else ROOT.pare
 OUT = (ROOT / "site_test") if TEST else (REPO / "docs")
 sys.path.insert(0, str(ROOT))
 from content_exercises import LIB
-from content_programs import PROGRAMS, T, TESTS, CHECKIN, SCREENING, OFFERS
+from content_programs import PROGRAMS, T, TESTS, CHECKIN, SCREENING, OFFERS, CLUB
 from content_niveaux import NIVEAU_CONTENT
 from content_extras import EXTRAS_CONTENT
 from content_recettes import RECETTES_CONTENT
@@ -29,7 +29,7 @@ from content_articles import ARTICLES_CONTENT
 LIB = LIB + EX_SPORT
 TESTS = {**TESTS, **TESTS_SPORT}
 
-content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT}
+content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, "CLUB": CLUB, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ORDER = ["00_i18n.js", "site/00_platform.js", "site/01_ia.js", "01_core.js", "02_data.js", "03_ui.js", "04_client.js", "05_coach.js", "06_library.js",
          "08_ai.js", "09_nutrition.js", "10_card.js", "12_niveau.js", "13_acces.js", "14_motion.js", "15_moves.js", "16_video.js", "17_extras.js", "18_sante.js", "19_recettes.js", "20_terrain.js", "21_messages.js", "22_ciqual.js", "23_profil.js", "24_finances.js", "25_perso.js", "26_saisons.js", "27_materiel.js", "28_pdf.js", "29_planning.js", "30_article.js", "31_pdfimport.js", "32_cycle.js", "33_objectifs.js", "34_autoreg.js", "35_demarrage.js", "36_nutriadapt.js", "37_energie.js", "38_equipe.js", "site/11_site.js", "07_main.js"]
@@ -358,6 +358,22 @@ service cloud.firestore {
         && request.resource.data.email is string && request.resource.data.email.size() <= 200 && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
         && request.resource.data.ref is string && request.resource.data.ref.size() <= 60
         && request.resource.data.msg is string && request.resource.data.msg.size() <= 500
+        && request.resource.data.at is string && request.resource.data.at.size() <= 40 && request.resource.data.done == false;
+      allow read, update, delete: if isCoach();
+    }
+    // demande de devis de l'offre club (formulaire public du site) : envoi libre et limite, suivi par le coach.
+    // Aucune donnee de joueur ici : seulement le club, son sport, son effectif et la personne a contacter.
+    match /demandes_club/{cid} {
+      allow create: if cid.matches('^c[a-z0-9]{6,20}$')
+        && request.resource.data.keys().hasOnly(['at', 'club', 'sport', 'joueurs', 'name', 'email', 'tel', 'offre', 'msg', 'done'])
+        && request.resource.data.club is string && request.resource.data.club.size() >= 2 && request.resource.data.club.size() <= 100
+        && request.resource.data.sport is string && request.resource.data.sport.size() <= 40
+        && request.resource.data.joueurs is int && request.resource.data.joueurs >= 0 && request.resource.data.joueurs <= 200
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200 && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && request.resource.data.tel is string && request.resource.data.tel.size() <= 30
+        && request.resource.data.offre in ['saison', 'cycle', 'joueurs']
+        && request.resource.data.msg is string && request.resource.data.msg.size() <= 800
         && request.resource.data.at is string && request.resource.data.at.size() <= 40 && request.resource.data.done == false;
       allow read, update, delete: if isCoach();
     }

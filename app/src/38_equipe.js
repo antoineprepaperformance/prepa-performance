@@ -14,12 +14,16 @@
    dans « modeles/{id} » (lu par lui seul). Chaque club reçoit sa saison recalée dans « clubs/{id} », lue par
    Antoine et par les membres du club : ceux qui ont utilisé l'un de ses codes, ou qu'Antoine y a rattachés.
 
-   Recalage (eqRecaler). Pour chaque semaine du club : la semaine du modèle à la même période de la saison
-   (un club qui démarre en novembre reçoit les séances de novembre, pas la présaison) ; pour chaque jour
-   d'entraînement du club, la séance de cette semaine dont la place avant le match est la plus proche (la
-   séance de veille de match reste la veille du match). Pas de séance inventée : un jour sans séance
-   correspondante reste vide. Pour un autre club que celui du classeur, les prénoms cochés à l'import et les
-   noms des adversaires sont retirés.
+   Ce qu'un club achète (offre club, article 2 bis des conditions de vente) : la saison complète ou un cycle. Les dates
+   du classeur ne servent qu'à mettre les séances dans l'ordre : la saison est découpée en cycles (eqCycles) d'après ce
+   qu'Antoine a écrit (« Présaison - Semaine 2 », « Saison - Semaine 14 ») ; un cycle s'arrête au changement de phase
+   ou quand il a sa durée pleine.
+
+   Recalage (eqRecaler). Les semaines achetées (la saison à partir d'un cycle choisi, ou un seul cycle) sont posées
+   l'une après l'autre à partir de la date de début du club ; dans chaque semaine, chaque jour d'entraînement du club
+   reçoit la séance dont la place avant le match est la plus proche (la séance de veille de match reste la veille du
+   match). Pas de séance inventée : un jour sans séance correspondante reste vide. Pour un autre club que celui du
+   classeur, les prénoms cochés à l'import et les noms des adversaires sont retirés.
 
    Ce qui n'est PAS fait, volontairement : la séance d'équipe n'est pas comptée automatiquement dans la
    charge hebdomadaire du joueur (il ne la coche pas : la compter reviendrait à inventer un effort qu'on n'a
@@ -31,10 +35,7 @@ const EQ_THEMES = {
   volume: { n: "Volume", t: "okb", d: "Volume de travail élevé, intensité contenue. Typique de la présaison." },
 };
 const EQ_JOURS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
-const EQ_DUREES = [{ w: 4, n: "1 mois" }, { w: 12, n: "3 mois" }, { w: 26, n: "6 mois" }, { w: 52, n: "12 mois" }];
-const EQ_MAX_JOUEURS = 30, EQ_MAX_ENTRAINEURS = 3;
-/* offre Club (grille du 17 novembre 2026) : par équipe, 1, 3, 6 et 12 mois, sur devis */
-const CLUB_PRIX = [299, 799, 1499, 2849];
+const EQ_MAX_JOUEURS = 100, EQ_MAX_ENTRAINEURS = 3;
 function eqTheme(s) { return (s && EQ_THEMES[s.theme]) || null; }
 function eqSeanceAt(sai, d) { return sai ? (sai.seances || []).find((s) => s.d === d) || null : null; }
 /* prochaine séance à venir (ou celle du jour) */
@@ -60,6 +61,64 @@ function fmtMois(k) {
   let n = "";
   try { n = new Date(Number(y), Math.max(0, Math.min(11, Number(m) - 1)), 1).toLocaleDateString(LOCALE, { month: "long" }); } catch (e) {}
   return n.charAt(0).toUpperCase() + n.slice(1) + " " + y;
+}
+
+/* ---------- la saison découpée en cycles : ce qu'un club achète ---------- */
+/* Les dates du classeur d'Antoine ne servent qu'à mettre les séances dans l'ordre. Ce qu'un club achète,
+   c'est une suite de CYCLES de quelques semaines qu'il pose sur son propre calendrier : le découpage se
+   fait donc par semaine de phase (« Présaison - Semaine 2 », « Saison - Semaine 14 ») et non par mois, et
+   un cycle s'arrête quand la phase change ou quand il a sa durée pleine. */
+const EQ_CYCLE_SEM = Number((CONTENT.CLUB || {}).semCycle) || 6;
+/* « Présaison - Semaine 2 » → { ph: "pre", sem: 2 } ; une phase qu'on ne sait pas lire donne { ph: "", sem: 0 } */
+function eqSem(s) {
+  const m = String((s && s.phase) || "").match(/^(Pr[ée]saison|Saison)\s*-\s*Semaine\s*(\d+)/i);
+  return m ? { ph: m[1].toLowerCase().startsWith("pr") ? "pre" : "sai", sem: Number(m[2]) } : { ph: "", sem: 0 };
+}
+/* la semaine d'une séance : sa semaine de phase, ou à défaut sa semaine du calendrier */
+function eqCleSem(s) { const q = eqSem(s); return q.ph ? q.ph + "#" + q.sem : "w#" + eqLundi(s.d); }
+function eqPhaseNom(ph) { return ph === "pre" ? "Présaison" : ph === "sai" ? "Saison" : "Hors phase"; }
+function eqCycles(sai) {
+  const out = [];
+  const list = (sai && sai.seances) || [];
+  /* saison d'un club : chaque séance porte le numéro de son cycle dans le modèle (« Cycle 4 » reste le cycle 4) */
+  const numerote = list.length > 0 && list.every((s) => Number.isInteger(s.cycle) && s.cycle > 0);
+  let cur = null, vues = 0, derSem = null;
+  for (const s of list) {
+    const { ph, sem } = eqSem(s);
+    const cle = eqCleSem(s);
+    const nouvelleSem = cle !== derSem;
+    /* nouveau cycle : changement de phase, ou cycle plein (en comptant les semaines, pas les séances) */
+    if (numerote ? !cur || cur.n !== s.cycle : !cur || cur.ph !== ph || (nouvelleSem && vues >= EQ_CYCLE_SEM)) {
+      cur = { n: numerote ? s.cycle : out.length + 1, ph, sems: [], seances: [] };
+      out.push(cur); vues = 0;
+    }
+    if (nouvelleSem) { vues += 1; cur.sems.push(sem); derSem = cle; }
+    cur.seances.push(s);
+  }
+  return out.map((c) => {
+    const s1 = c.sems[0], s2 = c.sems[c.sems.length - 1];
+    return { ...c, nSem: c.sems.length, titre: "Cycle " + c.n,
+      sous: eqPhaseNom(c.ph) + (s1 ? (s1 === s2 ? " · semaine " + s1 : " · semaines " + s1 + " à " + s2) : ""),
+      min: c.seances.reduce((t, s) => t + (s.min || 0), 0) };
+  });
+}
+/* les thèmes d'un cycle, du plus présent au moins présent : ce que le cycle travaille */
+function eqCycleThemes(c) {
+  const n = {};
+  (c.seances || []).forEach((s) => { if (s.theme) n[s.theme] = (n[s.theme] || 0) + 1; });
+  return Object.entries(n).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ k, v, n: (EQ_THEMES[k] || {}).n || k, t: (EQ_THEMES[k] || {}).t || "" }));
+}
+
+/* liste des cycles : même vue pour le coach et pour un membre du club */
+function EqCyclesList({ sai, onOpen, dates }) {
+  const cycles = useMemo(() => eqCycles(sai), [sai && sai.id, sai && sai.updatedAt, sai && (sai.seances || []).length]);
+  return html`<div className="stack">${cycles.map((c) => html`<${Card} key=${c.n} title=${c.titre} sub=${c.sous}>
+    <p className="small">${plural(c.nSem, "semaine")} · ${plural(c.seances.length, "séance")}${c.min ? " · " + Math.round(c.min / 60) + " h de terrain" : ""}</p>
+    <div className="chips">${eqCycleThemes(c).map((t) => html`<${Pill} key=${t.k} tone=${t.t}>${t.n} × ${t.v}</${Pill}>`)}</div>
+    <ul className="rlist">${c.seances.map((s, i) => { const q = eqSem(s); return html`<li key=${s.d}>
+      <button type="button" className="linkbtn" onClick=${() => onOpen(s)}><b>${dates ? fmtD(s.d) : "S" + (q.sem || "·") + " · séance " + (i + 1)}</b>${" "}
+        <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button></li>`; })}</ul>
+  </${Card}>`)}</div>`;
 }
 
 /* ---------- lecture d'un classeur .xlsx dans le navigateur (aucune bibliothèque, rien n'est envoyé) ----------
@@ -222,24 +281,29 @@ function eqEcart(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 8640000
 function eqJourSem(iso) { return (parseISO(iso).getDay() + 6) % 7; }   // 0 = lundi … 6 = dimanche
 /* jours avant le match (le jour du match lui-même compte pour 7 : une séance le jour du match est la plus éloignée du suivant) */
 function eqAvantMatch(jour, match) { return ((match - jour + 7) % 7) || 7; }
-/* semaine du modèle à la même période de la saison qu'une semaine du club : son lundi, ramené à l'année du modèle, tombe
-   dans la semaine du modèle la plus proche (2 novembre 2026 → semaine du 3 novembre 2025) ; -1 hors saison (trêve d'été) */
-function eqSemaineModele(m, lundi, nbSem) {
-  const m0 = eqLundi(m.du), y = Number(String(m.du).slice(0, 4)), md = String(lundi).slice(4);
-  for (const yy of [y, y + 1, y - 1]) {
-    const w = Math.round(eqEcart(m0, yy + (md === "-02-29" ? "-02-28" : md)) / 7);
-    if (w >= 0 && w < nbSem) return w;
-  }
-  return -1;
+/* ce qu'un club achète → les séances du modèle, dans l'ordre : la saison à partir d'un cycle (1 par défaut), ou un seul cycle */
+function eqAchat(m, c) {
+  const cs = eqCycles(m);
+  if (!cs.length) return [];
+  const k = Math.min(Math.max(1, Number(c.cycle) || 1), cs.length);
+  return c.offre === "cycle" ? cs[k - 1].seances : cs.slice(k - 1).flatMap((x) => x.seances);
 }
-/* m : modèle { du, seances, noms } ; c : { du, jours[], heure, match, weeks, anon } → séances datées du club.
-   Chaque semaine du club reprend la semaine du modèle à la même date : un club qui démarre en novembre a les séances de
-   novembre ; sur 12 mois, la trêve reste une trêve et la présaison revient en juillet. Aucune séance n'est inventée. */
+/* titre de séance pour un autre club : la phase et la semaine, sans la journée ni l'adversaire */
+function eqPhaseSansAdv(s) {
+  const p = String((s && s.phase) || "");
+  const m = p.match(/^(Pr[ée]saison|Saison)\s*-\s*Semaine\s*(\d+)/i);
+  return m ? (m[1].toLowerCase().startsWith("pr") ? "Présaison" : "Saison") + " - Semaine " + m[2] : (/^pr/i.test(p) ? "Présaison" : "Saison");
+}
+/* durée des codes d'accès (formule Autonomie) pour un achat de n semaines : jusqu'à 12 semaines telle quelle, puis 6 ou 12 mois */
+function eqCodeWeeks(n) { const w = Math.max(1, Number(n) || 1); return w <= 12 ? w : w <= 26 ? 26 : 52; }
+function eqDureeTxt(w) { return Number(w) === 52 ? "12 mois" : Number(w) === 26 ? "6 mois" : plural(Number(w) || 0, "semaine"); }
+/* m : modèle { seances, noms } ; c : { du, jours[], heure, match, anon, offre: "saison" | "cycle", cycle } → { seances, sems, total }.
+   Les semaines achetées sont posées l'une après l'autre à partir de la semaine de début ; si un jour d'entraînement de cette
+   semaine tombe avant la date de début, on part de la semaine suivante (aucune séance perdue en route). */
 function eqRecaler(m, c) {
-  const m0 = eqLundi(m.du), parSem = {};
-  (m.seances || []).forEach((s) => { const w = Math.floor(eqEcart(m0, s.d) / 7); (parSem[w] = parSem[w] || []).push(s); });
-  const nbSem = Math.max(0, ...Object.keys(parSem).map(Number)) + 1;
-  const c0 = eqLundi(c.du);
+  const achat = eqAchat(m, c);
+  const sems = [];
+  achat.forEach((s) => { const k = eqCleSem(s); const der = sems[sems.length - 1]; if (der && der.k === k) der.l.push(s); else sems.push({ k, l: [s] }); });
   const jours = [...new Set((c.jours || []).map(Number))].filter((j) => j >= 0 && j <= 6);
   const match = Number.isInteger(Number(c.match)) ? Number(c.match) : 6;
   /* le modèle joue le dimanche ; on sert d'abord le jour le plus proche du match (la veille reste la veille) ;
@@ -247,26 +311,33 @@ function eqRecaler(m, c) {
   const ordre = [...jours].sort((a, b) => eqAvantMatch(a, match) - eqAvantMatch(b, match));
   const noms = c.anon ? (m.noms || []) : [];
   const net = (t) => eqSansNoms(t, noms);
+  const cyc = {};
+  eqCycles(m).forEach((x) => x.seances.forEach((s) => { cyc[s.d] = x.n; }));
+  let c0 = c.du ? eqLundi(c.du) : null;
+  if (!c0 || !jours.length) return { seances: [], sems: sems.length, total: achat.length };
+  if (addDays(c0, Math.min(...jours)) < c.du) c0 = addDays(c0, 7);
   const out = [];
-  for (let k = 0; k < (Number(c.weeks) || 4); k++) {
-    const mw = eqSemaineModele(m, addDays(c0, k * 7), nbSem);
-    if (mw < 0) continue;
-    const libres = [...(parSem[mw] || [])].sort((a, b) => (a.d < b.d ? -1 : 1));
+  sems.forEach((w, k) => {
+    const libres = [...w.l].sort((a, b) => (a.d < b.d ? -1 : 1));
     ordre.forEach((j) => {
+      if (!libres.length) return;
       const d = addDays(c0, k * 7 + j);
-      if (d < c.du || !libres.length) return;
       const cible = eqAvantMatch(j, match);
       let best = 0;
       libres.forEach((s, i) => { if (Math.abs(eqAvantMatch(eqJourSem(s.d), 6) - cible) < Math.abs(eqAvantMatch(eqJourSem(libres[best].d), 6) - cible)) best = i; });
       const s = libres.splice(best, 1)[0];
-      const pm = String(s.phase || "").match(/^(Pr[ée]saison|Saison)/i);
-      const phase = (pm ? (pm[1].toLowerCase().startsWith("pr") ? "Présaison" : "Saison") : "Saison") + " - Semaine " + (k + 1);
-      out.push({ ...s, d, n: EQ_JOURS[j] + " " + fmtD(d), phase: c.anon ? phase : s.phase, debut: c.heure || s.debut, modele: s.d,
+      out.push({ ...s, d, n: EQ_JOURS[j] + " " + fmtD(d), phase: c.anon ? eqPhaseSansAdv(s) : s.phase, debut: c.heure || s.debut, modele: s.d, cycle: cyc[s.d] || null,
         acts: (s.acts || []).map((a) => ({ ...a, n: net(a.n), l: (a.l || []).map((l) => ({ ...l, d: net(l.d), ...(l.note ? { note: net(l.note) } : {}) })) })) });
     });
-  }
+  });
   out.sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : 0));
-  return out;
+  return { seances: out, sems: sems.length, total: achat.length };
+}
+/* ce que le club a acheté, en clair */
+function eqAchatTxt(c) {
+  const k = Number(c.cycle) || 1;
+  return (c.offre === "cycle" ? "Cycle " + k : "Saison complète" + (k > 1 ? " à partir du cycle " + k : ""))
+    + (Number(c.places) > 0 ? " · " + plural(Number(c.places), "accès joueur", "accès joueurs") : " · sans accès joueurs");
 }
 
 /* ---------- une séance : sa timeline, telle qu'Antoine l'a écrite ---------- */
@@ -289,7 +360,8 @@ ${l.note ? html`<br /><span className="muted small">${l.note}</span>` : null}</s
 }
 
 /* ---------- une saison : groupée par mois, filtrable, chaque séance s'ouvre et se lance au minuteur ---------- */
-function EqSaisonView({ sai, titre, sub, coachView, onBack, extra }) {
+function EqSaisonView({ sai, titre, sub, coachView, onBack, extra, dates = true }) {
+  const [vue, setVue] = useState("cycles");
   const [phase, setPhase] = useState("toutes");
   const [theme, setTheme] = useState("tous");
   const [sel, setSel] = useState(null);
@@ -315,14 +387,17 @@ function EqSaisonView({ sai, titre, sub, coachView, onBack, extra }) {
       action=${html`<${Btn} small onClick=${() => setSel(proch)}>Ouvrir</${Btn}>`}>
       <p className="small">${(proch.acts || []).map((a) => a.n).join(" · ")}</p>
       ${eqTheme(proch) ? html`<p className="muted small">${eqTheme(proch).n} — ${eqTheme(proch).d}</p>` : null}</${Card}>` : all.length ? html`<p className="muted small">La saison est terminée : toutes ses séances restent consultables.</p>` : null}
-    <div className="tabs-scroll"><${Seg} options=${[{ v: "toutes", n: "Toute la saison" }, { v: "pre", n: "Présaison" }, { v: "sai", n: "Saison" }]} value=${phase} onChange=${setPhase} /></div>
-    <div className="tabs-scroll"><${Seg} options=${[{ v: "tous", n: "Tous les thèmes" }, ...Object.entries(EQ_THEMES).map(([v, t]) => ({ v, n: t.n }))]} value=${theme} onChange=${setTheme} /></div>
-    <p className="muted small">${plural(liste.length, "séance")} ${liste.length === all.length ? "en tout" : "dans ce filtre"}.</p>
-    ${mois.map((g) => html`<${Card} key=${g.k} title=${fmtMois(g.k)} sub=${plural(g.items.length, "séance")}>
-      <ul className="rlist">${g.items.map((s) => { const th = eqTheme(s), mt = eqMatch(s); return html`<li key=${s.d}>
-        <button type="button" className="linkbtn" onClick=${() => setSel(s)}><b>${fmtD(s.d)}</b> <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button>
-        <span className="chips">${th ? html`<${Pill} tone=${th.t}>${th.n}</${Pill}>` : null}${mt ? html`<${Pill} tone="gold">${mt.j}</${Pill}>` : null}</span></li>`; })}</ul>
-    </${Card}>`)}
+    <div className="tabs-scroll"><${Seg} options=${[{ v: "cycles", n: "Par cycle" }, { v: "mois", n: "Par mois" }]} value=${vue} onChange=${setVue} /></div>
+    ${vue === "cycles" ? html`${coachView && !sai.modele ? html`<p className="muted small">La saison découpée en cycles de ${plural(EQ_CYCLE_SEM, "semaine")} : c'est ce découpage qu'un club achète, en entier ou cycle par cycle.</p>` : null}
+      <${EqCyclesList} sai=${sai} dates=${dates} onOpen=${(s) => setSel(s)} />`
+    : html`<div className="tabs-scroll"><${Seg} options=${[{ v: "toutes", n: "Toute la saison" }, { v: "pre", n: "Présaison" }, { v: "sai", n: "Saison" }]} value=${phase} onChange=${setPhase} /></div>
+      <div className="tabs-scroll"><${Seg} options=${[{ v: "tous", n: "Tous les thèmes" }, ...Object.entries(EQ_THEMES).map(([v, t]) => ({ v, n: t.n }))]} value=${theme} onChange=${setTheme} /></div>
+      <p className="muted small">${plural(liste.length, "séance")} ${liste.length === all.length ? "en tout" : "dans ce filtre"}.</p>
+      ${mois.map((g) => html`<${Card} key=${g.k} title=${fmtMois(g.k)} sub=${plural(g.items.length, "séance")}>
+        <ul className="rlist">${g.items.map((s) => { const th = eqTheme(s), mt = eqMatch(s); return html`<li key=${s.d}>
+          <button type="button" className="linkbtn" onClick=${() => setSel(s)}><b>${fmtD(s.d)}</b> <span className="muted small">${(s.acts || []).map((a) => a.n).slice(0, 2).join(" · ")}${s.min ? " · " + s.min + " min" : ""}</span></button>
+          <span className="chips">${th ? html`<${Pill} tone=${th.t}>${th.n}</${Pill}>` : null}${mt ? html`<${Pill} tone="gold">${mt.j}</${Pill}>` : null}</span></li>`; })}</ul>
+      </${Card}>`)}`}
   </div>`;
 }
 
@@ -343,45 +418,45 @@ function EquipeScreen({ db }) {
   if (!db) return html`<${Empty} title="Saisons d'équipe" text="Les saisons d'équipe et les clubs sont rangés dans ta base : ouvre ton espace coach sur le site." />`;
   const M = modeles.items, C = clubs.items;
   if (vue && vue.kind === "import") return html`<${EqImport} db=${db} onDone=${(id) => setVue(id ? { kind: "modele", id } : null)} />`;
-  if (vue && vue.kind === "nouveau") return html`<${EqNouveauClub} db=${db} modeles=${M} modeleId=${vue.modele} club=${vue.id ? C[vue.id] : null} onDone=${(id) => setVue(id ? { kind: "club", id } : null)} />`;
+  if (vue && vue.kind === "nouveau") return html`<${EqNouveauClub} db=${db} modeles=${M} codes=${codes.items} modeleId=${vue.modele} club=${vue.id ? C[vue.id] : null} onDone=${(id) => setVue(id ? { kind: "club", id } : null)} />`;
   if (vue && vue.kind === "modele" && M[vue.id]) {
     const m = M[vue.id];
     return html`<${EqSaisonView} sai=${m} titre=${m.n} coachView=${true} onBack=${() => setVue(null)}
-      sub=${"Ton modèle : " + plural((m.seances || []).length, "séance") + " du " + fmtD(m.du) + " au " + fmtD(m.au) + ". Privé : rangé dans ta base, lu par toi seul."}
+      sub=${"Ton modèle : " + plural((m.seances || []).length, "séance") + " en " + plural(eqCycles(m).length, "cycle") + ", du " + fmtD(m.du) + " au " + fmtD(m.au) + ". Privé : rangé dans ta base, lu par toi seul."}
       extra=${html`<${Card} title="Prénoms retirés pour les autres clubs" sub=${(m.noms || []).length ? (m.noms || []).join(", ") : "Aucun : coche-les en important à nouveau ton classeur."}>
         <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => setVue({ kind: "nouveau", modele: m.id })}>Créer un club avec ce modèle</${Btn}></div></${Card}>`} />`;
   }
   if (vue && vue.kind === "club" && C[vue.id]) {
     const c = C[vue.id];
-    const cj = (c.codes && codes.items[c.codes.joueurs]) || null, ce = (c.codes && codes.items[c.codes.entraineur]) || null;
+    const cj = (c.codes && c.codes.joueurs && codes.items[c.codes.joueurs]) || null, ce = (c.codes && codes.items[c.codes.entraineur]) || null;
     const copier = async (t) => { try { await navigator.clipboard.writeText(t); toast("Copié.", "ok"); } catch (e) { toast(t, "ok"); } };
     const supprimer = async () => {
       if (!confirm("Supprimer le club « " + c.n + " » ? Ses joueurs gardent leur accès jusqu'à son terme, mais ne verront plus les séances d'équipe.")) return;
       setBusy(true);
       try {
-        for (const k of ["joueurs", "entraineur"]) { const x = c.codes && codes.items[c.codes[k]]; if (x) await dbSet(db, "codes/" + x.code, { ...x, active: false }); }
+        for (const k of ["joueurs", "entraineur"]) { const x = c.codes && c.codes[k] && codes.items[c.codes[k]]; if (x) await dbSet(db, "codes/" + x.code, { ...x, active: false }); }
         await dbDel(db, "clubs/" + c.id); setVue(null); toast("Club supprimé.", "ok");
       } catch (e) { toast("Suppression impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
     };
     return html`<${EqSaisonView} sai=${c} titre=${c.n} coachView=${true} onBack=${() => setVue(null)} sub=${eqClubSub(c)}
-      extra=${html`<${Card} title="Accès du club" sub=${"Chaque code ouvre la formule Autonomie (sans coach IA) pour " + (EQ_DUREES.find((d) => d.w === Number(c.weeks)) || { n: c.weeks + " semaines" }).n + " et rattache au club."}>
-        <ul className="rlist">${[["Joueurs", cj, EQ_MAX_JOUEURS], ["Entraîneur", ce, EQ_MAX_ENTRAINEURS]].map(([n, x, mx]) => html`<li key=${n}><span><b>${n} : ${x ? x.code : "—"}</b>${" "}
+      extra=${html`<${Card} title="Accès du club" sub=${eqAchatTxt(c) + ". Chaque code ouvre la formule Autonomie (sans coach IA) pour " + eqDureeTxt((ce || cj || {}).weeks || eqCodeWeeks(c.weeks)) + " et rattache au club."}>
+        <ul className="rlist">${[...(c.codes && c.codes.joueurs ? [["Joueurs", cj, Number(c.places) || EQ_MAX_JOUEURS]] : []), ["Entraîneur", ce, EQ_MAX_ENTRAINEURS]].map(([n, x, mx]) => html`<li key=${n}><span><b>${n} : ${x ? x.code : "—"}</b>${" "}
           <span className="muted small">· ${x ? (Number(x.uses) || 0) + " place" + ((Number(x.uses) || 0) > 1 ? "s" : "") + " prise" + ((Number(x.uses) || 0) > 1 ? "s" : "") + " sur " + (Number(x.max) || mx) + (x.active === false ? " · désactivé" : "") : "code introuvable"}</span></span>
           ${x ? html`<span className="btnrow"><${Btn} small kind="ghost" onClick=${() => copier(x.code)}>Copier le code</${Btn}>${window.IS_SITE ? html`<${Btn} small kind="ghost" onClick=${() => copier(codeLink(x.code))}>Copier le lien</${Btn}>` : null}</span>` : null}</li>`)}</ul>
         <p className="muted small">Les joueurs voient leur séance d'équipe du jour ; l'entraîneur voit toute la saison et lance chaque séance au minuteur. Tout se passe par écrit, dans l'application.</p>
         ${c.demandes ? html`<p className="small"><b>Demandes du club :</b> ${c.demandes}</p>` : null}
-        <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => setVue({ kind: "nouveau", id: c.id })} disabled=${busy}>Changer les jours ou les dates</${Btn}><${Btn} small kind="quiet" onClick=${supprimer} disabled=${busy}>Supprimer le club</${Btn}></div>
+        <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => setVue({ kind: "nouveau", id: c.id })} disabled=${busy}>Changer l'achat, les jours ou les dates</${Btn}><${Btn} small kind="quiet" onClick=${supprimer} disabled=${busy}>Supprimer le club</${Btn}></div>
       </${Card}>`} />`;
   }
   const lm = Object.values(M).sort((a, b) => String(b.importedAt || "").localeCompare(String(a.importedAt || "")));
   const lc = Object.values(C).sort((a, b) => String(a.n).localeCompare(String(b.n), "fr"));
   return html`<div className="stack">
     <header className="page-h"><div><div className="eyebrow">Équipe et clubs</div><h1>Saisons d'équipe</h1>
-      <p className="muted small">Importe ton classeur de saison : il devient ton modèle. Pour chaque club, l'application recale tes séances sur ses jours d'entraînement et son jour de match, puis crée ses codes d'accès. Tout est privé : rien n'est publié dans le code du site.</p></div></header>
+      <p className="muted small">Importe ton classeur de saison : il devient ton modèle, découpé en cycles. Pour chaque club, la saison complète ou le cycle qu'il achète est posé sur ses jours d'entraînement et son jour de match, à partir de sa date de début, et ses codes d'accès sont créés. Tout est privé : rien n'est publié dans le code du site.</p></div></header>
     <${Card} title="Clubs" sub=${lc.length ? plural(lc.length, "club") : "Aucun club pour l'instant"} action=${lm.length ? html`<${Btn} small onClick=${() => setVue({ kind: "nouveau" })}>Nouveau club</${Btn}>` : null}>
       ${lc.length ? html`<ul className="rlist">${lc.map((c) => html`<li key=${c.id}><button type="button" className="linkbtn" onClick=${() => setVue({ kind: "club", id: c.id })}><b>${c.n}</b></button>
-        <span className="muted small">${eqClubSub(c)} · ${plural((c.seances || []).length, "séance")}</span></li>`)}</ul>`
-        : html`<p className="muted small">${lm.length ? "Crée ton premier club : nom, jours d'entraînement, heure, jour de match, date de début et durée." : "Importe d'abord ton classeur de saison."}</p>`}
+        <span className="muted small">${eqAchatTxt(c)} · ${eqClubSub(c)} · ${plural((c.seances || []).length, "séance")}</span></li>`)}</ul>`
+        : html`<p className="muted small">${lm.length ? "Crée ton premier club : ce qu'il achète (la saison ou un cycle), ses jours d'entraînement, son heure, son jour de match et sa date de début." : "Importe d'abord ton classeur de saison."}</p>`}
     </${Card}>
     <${Card} title="Tes modèles de saison" sub=${lm.length ? plural(lm.length, "modèle") : "Aucun modèle"} action=${html`<${Btn} small kind=${lm.length ? "ghost" : undefined} onClick=${() => setVue({ kind: "import" })}>Importer un classeur</${Btn}>`}>
       ${lm.length ? html`<ul className="rlist">${lm.map((m) => html`<li key=${m.id}><button type="button" className="linkbtn" onClick=${() => setVue({ kind: "modele", id: m.id })}><b>${m.n}</b></button>
@@ -439,37 +514,47 @@ function EqImport({ db, onDone }) {
   </div>`;
 }
 
-/* nouveau club (ou changement de jours / dates) : recalage, codes joueurs et entraîneur */
-function EqNouveauClub({ db, modeles, modeleId, club, onDone }) {
+/* nouveau club (ou changement d'achat, de jours, de dates) : recalage, codes joueurs et entraîneur */
+function EqNouveauClub({ db, modeles, codes, modeleId, club, onDone }) {
   const toast = useToast();
   const lm = Object.values(modeles || {});
   const m1 = (modeleId && modeles[modeleId]) || lm[0];
-  const [f, setF] = useState(() => club ? { n: club.n, sport: club.sport || "", modele: club.modele, jours: club.jours || [], heure: club.heure || "", match: Number(club.match ?? 6), du: club.du, weeks: Number(club.weeks) || 52, demandes: club.demandes || "", anon: club.anon !== false }
-    : { n: "", sport: (m1 && m1.sport) || "rugby", modele: m1 ? m1.id : "", jours: [1, 3], heure: "19h00", match: 6, du: todayISO(), weeks: 52, demandes: "", anon: true });
+  const [f, setF] = useState(() => club ? { n: club.n, sport: club.sport || "", modele: club.modele, offre: club.offre === "cycle" ? "cycle" : "saison", cycle: Number(club.cycle) || 1,
+      places: Number(club.places ?? 0), jours: club.jours || [], heure: club.heure || "", match: Number(club.match ?? 6), du: club.du, demandes: club.demandes || "", anon: club.anon !== false }
+    : { n: "", sport: (m1 && m1.sport) || "rugby", modele: m1 ? m1.id : "", offre: "saison", cycle: 1, places: clubMinJ(null), jours: [1, 3], heure: "19h00", match: 6, du: todayISO(), demandes: "", anon: true });
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((x) => ({ ...x, [k]: v }));
   const m = modeles[f.modele];
-  const apercu = m && f.jours.length ? eqRecaler(m, f) : [];
+  const cs = m ? eqCycles(m) : [];
+  const r = m && f.jours.length && f.du ? eqRecaler(m, f) : { seances: [], sems: 0, total: 0 };
+  const apercu = r.seances;
+  const places = Math.max(0, Math.min(EQ_MAX_JOUEURS, Math.round(Number(f.places) || 0)));
   const save = async () => {
     if (!m || !f.n.trim() || !f.jours.length || !f.du) return;
-    if (!apercu.length) { toast("Aucune séance à cette période du modèle : change la date de début.", "warn"); return; }
+    if (!apercu.length) { toast("Aucune séance à poser : choisis au moins un jour d'entraînement.", "warn"); return; }
     setBusy(true);
     try {
       const id = club ? club.id : eqId("c");
       const au = apercu[apercu.length - 1].d;
-      const fin = parseISO(addDays(f.du, Number(f.weeks) * 7)).setHours(23, 59, 59, 999);
-      let cds = club && club.codes;
-      if (!cds) {
-        const mk = async (prefix, role, max) => {
-          const code = genCode(prefix);
-          await dbSet(db, "codes/" + code, { code, kind: "offert", offer: "auto", weeks: Number(f.weeks), programId: null, max, uses: 0, usedBy: {}, active: true, expiresMs: fin,
-            note: "Club " + f.n.trim() + " · " + (role === "entraineur" ? "entraîneur" : "joueurs"), club: id, role, createdAt: nowISO() });
-          return code;
-        };
-        cds = { joueurs: await mk("CLUB", "joueur", EQ_MAX_JOUEURS), entraineur: await mk("ENTR", "entraineur", EQ_MAX_ENTRAINEURS) };
-      }
-      await dbSet(db, "clubs/" + id, { ...(club || {}), id, n: f.n.trim(), sport: f.sport.trim(), modele: m.id, jours: [...f.jours].sort(), heure: f.heure.trim(), match: Number(f.match), du: f.du, au,
-        weeks: Number(f.weeks), demandes: f.demandes.trim(), anon: !!f.anon, seances: apercu, codes: cds, membres: (club && club.membres) || {}, updatedAt: nowISO(), createdAt: (club && club.createdAt) || nowISO() });
+      const weeks = eqCodeWeeks(r.sems);
+      const fin = parseISO(au).setHours(23, 59, 59, 999);
+      const note = (role) => "Club " + f.n.trim() + " · " + (role === "entraineur" ? "entraîneur" : "joueurs");
+      const mk = async (prefix, role, max) => {
+        const code = genCode(prefix);
+        await dbSet(db, "codes/" + code, { code, kind: "offert", offer: "auto", weeks, programId: null, max, uses: 0, usedBy: {}, active: true, expiresMs: fin,
+          note: note(role), club: id, role, createdAt: nowISO() });
+        return code;
+      };
+      /* codes existants : mêmes codes, nouvelles limites (places, durée, terme) ; ceux qui ont déjà pris une place les gardent */
+      const maj = async (code, role, max) => { const x = code && codes && codes[code]; if (!x) return null; await dbSet(db, "codes/" + code, { ...x, weeks, max: Math.max(max, Number(x.uses) || 0), expiresMs: fin, note: note(role), active: max > 0 }); return code; };
+      const old = (club && club.codes) || {};
+      const cds = {
+        entraineur: (await maj(old.entraineur, "entraineur", EQ_MAX_ENTRAINEURS)) || (await mk("ENTR", "entraineur", EQ_MAX_ENTRAINEURS)),
+        joueurs: places > 0 ? ((await maj(old.joueurs, "joueur", places)) || (await mk("CLUB", "joueur", places))) : ((await maj(old.joueurs, "joueur", 0)) || null),
+      };
+      await dbSet(db, "clubs/" + id, { ...(club || {}), id, n: f.n.trim(), sport: f.sport.trim(), modele: m.id, offre: f.offre, cycle: Number(f.cycle) || 1, places,
+        jours: [...f.jours].sort(), heure: f.heure.trim(), match: Number(f.match), du: f.du, au, weeks: r.sems, demandes: f.demandes.trim(), anon: !!f.anon,
+        seances: apercu, codes: cds, membres: (club && club.membres) || {}, updatedAt: nowISO(), createdAt: (club && club.createdAt) || nowISO() });
       toast(club ? "Saison du club recalée." : "Club créé : ses codes sont prêts.", "ok");
       onDone(id);
     } catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
@@ -477,54 +562,71 @@ function EqNouveauClub({ db, modeles, modeleId, club, onDone }) {
   if (!lm.length) return html`<${Empty} title="Aucun modèle" text="Importe d'abord ton classeur de saison." />`;
   return html`<div className="stack">
     <button type="button" className="linkbtn back-l" onClick=${() => onDone(club ? club.id : null)}>‹ Retour</button>
-    <header className="page-h"><div><div className="eyebrow">Offre Club</div><h1>${club ? "Recaler la saison de " + club.n : "Nouveau club"}</h1>
-      <p className="muted small">Tes séances sont recalées sur les jours du club, à la même période de la saison que dans ton classeur, la séance la plus proche du match restant la plus proche de son match.</p></div></header>
+    <header className="page-h"><div><div className="eyebrow">Offre club</div><h1>${club ? "Recaler la saison de " + club.n : "Nouveau club"}</h1>
+      <p className="muted small">Ce que le club achète est posé sur ses jours d'entraînement, semaine après semaine, à partir de sa date de début ; la séance la plus proche du match reste la plus proche de son match.</p></div></header>
     <${Card} title="Le club"><div className=${busy ? "form dim" : "form"}>
       <div className="row2"><${Field} label="Nom du club" id="cl-nom"><input id="cl-nom" value=${f.n} onChange=${(e) => set("n", e.target.value)} /></${Field}>
         <${Field} label="Sport" id="cl-sport"><input id="cl-sport" value=${f.sport} onChange=${(e) => set("sport", e.target.value)} /></${Field}></div>
       ${lm.length > 1 ? html`<${Field} label="Modèle"><${Seg} options=${lm.map((x) => ({ v: x.id, n: x.n }))} value=${f.modele} onChange=${(v) => set("modele", v)} /></${Field}>` : null}
+      <${Field} label="Ce que le club achète"><${Seg} options=${[{ v: "saison", n: "La saison complète" }, { v: "cycle", n: "Un cycle" }]} value=${f.offre} onChange=${(v) => set("offre", v)} /></${Field}>
+      <div className="row2"><${Field} label=${f.offre === "cycle" ? "Cycle" : "À partir du cycle"} id="cl-cycle" hint=${f.offre === "cycle" ? null : "Un club qui démarre en cours de saison commence au cycle qui lui correspond."}>
+          <select id="cl-cycle" value=${f.cycle} onChange=${(e) => set("cycle", Number(e.target.value))}>${cs.map((x) => html`<option key=${x.n} value=${x.n}>${x.titre + " · " + x.sous + " · " + plural(x.seances.length, "séance")}</option>`)}</select></${Field}>
+        <${Field} label="Accès joueurs (places)" id="cl-places" hint=${"0 : sans accès joueurs. Grille : à partir de " + plural(clubMinJ(null), "joueur") + "."}><input id="cl-places" type="number" min="0" max=${EQ_MAX_JOUEURS} inputMode="numeric" value=${f.places} onChange=${(e) => set("places", e.target.value)} /></${Field}></div>
       <${Field} label="Jours d'entraînement"><div className="chips">${EQ_JOURS.map((n, j) => html`<button key=${j} type="button" className=${"chipbtn" + (f.jours.includes(j) ? " on" : "")} aria-pressed=${f.jours.includes(j)}
         onClick=${() => set("jours", f.jours.includes(j) ? f.jours.filter((x) => x !== j) : [...f.jours, j])}>${n}</button>`)}</div></${Field}>
       <div className="row2"><${Field} label="Heure de début" id="cl-heure"><input id="cl-heure" value=${f.heure} placeholder="19h00" onChange=${(e) => set("heure", e.target.value)} /></${Field}>
         <${Field} label="Jour de match" id="cl-match"><select id="cl-match" value=${f.match} onChange=${(e) => set("match", Number(e.target.value))}>${EQ_JOURS.map((n, j) => html`<option key=${j} value=${j}>${n}</option>`)}</select></${Field}></div>
-      <div className="row2"><${Field} label="Début" id="cl-du"><input id="cl-du" type="date" value=${f.du} onChange=${(e) => set("du", e.target.value)} /></${Field}>
-        <${Field} label="Durée"><${Seg} options=${EQ_DUREES.map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", Number(v))} /></${Field}></div>
+      <${Field} label="Date de début" id="cl-du"><input id="cl-du" type="date" value=${f.du} onChange=${(e) => set("du", e.target.value)} /></${Field}>
       <${Field} label="Demandes du club" id="cl-dem" hint="Ce qu'ils t'ont demandé (niveau, priorités, contraintes de terrain) : gardé dans la fiche du club."><textarea id="cl-dem" rows="2" value=${f.demandes} onChange=${(e) => set("demandes", e.target.value)}></textarea></${Field}>
       <label className="chk"><input type="checkbox" checked=${f.anon} onChange=${(e) => set("anon", e.target.checked)} /><span>Autre club que celui du classeur : retirer les prénoms cochés à l'import et les noms des adversaires</span></label>
-      <p className=${apercu.length ? "small ok-t" : "small warn-t"}>${apercu.length ? plural(apercu.length, "séance") + " du " + fmtD(apercu[0].d) + " au " + fmtD(apercu[apercu.length - 1].d) + (m ? " (à partir de ta séance du " + fmtDY(apercu[0].modele) + ")" : "") + "." : "Choisis au moins un jour d'entraînement et une date de début."}</p>
+      <p className=${apercu.length ? "small ok-t" : "small warn-t"}>${apercu.length ? plural(apercu.length, "séance") + " sur " + r.total + " du modèle, en " + plural(r.sems, "semaine") + " : du " + fmtD(apercu[0].d) + " au " + fmtD(apercu[apercu.length - 1].d) + (/\.$/.test(fmtD(apercu[apercu.length - 1].d)) ? "" : ".") + (apercu.length < r.total ? " Le club s'entraîne moins souvent que ton modèle : dans chaque semaine, ce sont les séances les plus proches de ses jours, à la même distance du match, qui sont gardées." : "") : "Choisis au moins un jour d'entraînement et une date de début."}</p>
       <div className="actions"><${Btn} onClick=${save} disabled=${busy || !f.n.trim() || !apercu.length}>${club ? "Recaler la saison" : "Créer le club et ses codes"}</${Btn}></div>
     </div></${Card}>
   </div>`;
 }
 
-/* ---------- côté joueur : sa séance d'équipe du jour ; côté entraîneur : toute la saison ---------- */
+/* ---------- côté joueur : sa séance d'équipe du jour et la saison de son club ; côté entraîneur : toute la saison ---------- */
 function EqJoueurCard({ data, go, db }) {
   const p = data.profile || {};
   const club = useDocData(p.club ? db : null, "clubs/" + (p.club || "x"));
-  const [ouvert, setOuvert] = useState(false);
+  const [vue, setVue] = useState("");          /* "" | "jour" | "saison" */
+  const [sel, setSel] = useState(null);        /* une séance de la saison, ouverte */
+  const [play, setPlay] = useState(null);      /* séance lancée au minuteur */
   const sai = club.data;
   if (!p.club || !sai) return null;
   const today = todayISO();
   if (p.clubRole === "entraineur") {
-    if (ouvert) return html`<${EqSaisonView} sai=${sai} titre=${sai.n} sub=${eqClubSub(sai)} onBack=${() => setOuvert(false)} />`;
+    if (vue === "saison") return html`<${EqSaisonView} sai=${sai} titre=${sai.n} sub=${eqClubSub(sai)} onBack=${() => setVue("")} />`;
     const x = eqSeanceAt(sai, today) || eqProchaine(sai, today);
-    return html`<${Card} title="Ta saison d'équipe" sub=${sai.n + " · " + plural((sai.seances || []).length, "séance")}
-      action=${html`<${Btn} small onClick=${() => setOuvert(true)}>Ouvrir la saison</${Btn}>`}>
+    return html`<${Card} title="Ta saison d'équipe" sub=${sai.n + " · " + plural((sai.seances || []).length, "séance") + " en " + plural(eqCycles(sai).length, "cycle")}
+      action=${html`<${Btn} small onClick=${() => setVue("saison")}>Ouvrir la saison</${Btn}>`}>
       ${x ? html`<p className="small"><b>${x.d === today ? "Ce soir" : fmtDY(x.d)}${x.debut ? " · " + x.debut : ""}</b> : ${(x.acts || []).map((a) => a.n).join(" · ")}</p>` : html`<p className="muted small">La saison est terminée : toutes ses séances restent consultables.</p>`}
       <p className="muted small">Ouvre une séance pour la lancer au minuteur sur le terrain : les activités s'enchaînent avec leurs durées.</p></${Card}>`;
   }
   const s = eqSeanceAt(sai, today) || null;
   const proch = s ? null : eqProchaine(sai, today);
-  if (!s && !proch) return null;
   const x = s || proch;
-  const th = eqTheme(x);
-  if (ouvert) return html`<${Card} title="Ta séance d'équipe"><${EqSeance} s=${x} onClose=${() => setOuvert(false)} /></${Card}>`;
+  const th = x ? eqTheme(x) : null;
+  if (play) return html`<${TimerPlayer} title=${fmtDY(play.d) + (play.debut ? " · " + play.debut : "")} seq=${eqSeq(play)} kind="equipe" onClose=${() => setPlay(null)} onFinish=${() => setPlay(null)} />`;
+  if (sel) return html`<${Card} title="Séance de l'équipe"><${EqSeance} s=${sel} onStart=${(q) => setPlay(q)} onClose=${() => setSel(null)} /></${Card}>`;
+  /* toute la saison du club, par cycles, à ses dates */
+  if (vue === "saison") return html`<${Card} title=${"La saison de " + sai.n} sub=${plural((sai.seances || []).length, "séance") + " en " + plural(eqCycles(sai).length, "cycle")}
+    action=${html`<${Btn} small kind="ghost" onClick=${() => setVue("")}>Fermer</${Btn}>`}>
+    <${EqCyclesList} sai=${sai} dates=${true} onOpen=${(q) => setSel(q)} />
+  </${Card}>`;
+  if (vue === "jour" && x) return html`<${Card} title="Ta séance d'équipe"><${EqSeance} s=${x} onStart=${(q) => setPlay(q)} onClose=${() => setVue("")} /></${Card}>`;
+  const voirSaison = html`<${Btn} small kind="ghost" onClick=${() => setVue("saison")}>La saison du club</${Btn}>`;
+  /* saison terminée : la programmation reste consultable, c'est ce que le club a acheté */
+  if (!x) return html`<${Card} title=${"La saison de " + sai.n} sub=${plural((sai.seances || []).length, "séance") + " en " + plural(eqCycles(sai).length, "cycle")} action=${voirSaison}>
+    <p className="muted small">Aucune séance d'équipe prévue aujourd'hui. La programmation de ton club reste consultable, cycle par cycle.</p>
+  </${Card}>`;
   return html`<${Card} title=${s ? "Ta séance d'équipe, ce soir" : "Ta prochaine séance d'équipe"}
     sub=${sai.n + " · " + fmtDY(x.d) + (x.debut ? " · " + x.debut : "") + (x.min ? " · " + plural(x.min, "minute") : "")}
-    action=${html`<${Btn} small kind="ghost" onClick=${() => setOuvert(true)}>Voir le détail</${Btn}>`}>
+    action=${html`<${Btn} small kind="ghost" onClick=${() => setVue("jour")}>Voir le détail</${Btn}>`}>
     <p className="small">${(x.acts || []).map((a) => a.n).join(" · ")}</p>
     ${th ? html`<p className="muted small"><b>${th.n}.</b> ${th.d}</p>` : null}
     <p className="muted small">Cette séance est celle de ton club : elle n'est pas comptée dans ta charge de la semaine tant que tu ne l'enregistres pas toi-même, en séance en plus.</p>
+    <div className="btnrow">${voirSaison}</div>
   </${Card}>`;
 }
 /* réglage dans la fiche client, côté coach : rattacher un joueur (ou l'entraîneur) à un club */

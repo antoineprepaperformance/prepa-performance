@@ -110,12 +110,13 @@ async def run():
         ok(len(ms) == 1 and len(ms[0].get("seances", [])) == NB and ms[0].get("noms") == ["Zébulon"], "site coach : modèle enregistré dans Firestore (modeles/)")
         await btn(co, "Créer un club avec ce modèle")
         await co.fill("#cl-nom", "Club Site"); await co.fill("#cl-heure", "19h30")
-        await co.get_by_role("radio", name="1 mois").click(); await co.wait_for_timeout(300)
+        await co.get_by_role("radio", name="Un cycle").click(); await co.select_option("#cl-cycle", "4"); await co.fill("#cl-places", "20"); await co.wait_for_timeout(300)
         await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1200)
         cs = await prefix(co, "clubs/")
         club = cs[0] if cs else {}
         cid = club.get("id", "x"); cj = (club.get("codes") or {}).get("joueurs", ""); ce = (club.get("codes") or {}).get("entraineur", "")
-        ok(len(cs) == 1 and len(club.get("seances", [])) >= 6 and cj.startswith("CLUB") and ce.startswith("ENTR"), "site coach : club et ses deux codes enregistrés", {k: club.get(k) for k in ("id", "codes", "du", "au")})
+        ok(len(cs) == 1 and len(club.get("seances", [])) == 12 and club.get("offre") == "cycle" and club.get("places") == 20 and cj.startswith("CLUB") and ce.startswith("ENTR"),
+           "site coach : club (cycle 4, 20 places) et ses deux codes enregistrés", {k: club.get(k) for k in ("id", "codes", "du", "au", "offre", "places")})
         ok("Zébulon" not in json.dumps(club.get("seances"), ensure_ascii=False), "site coach : prénom retiré de la saison du club")
         await shot(co, "coach_club")
         ok(await co.get_by_role("button", name="Copier le lien").count() == 2, "site coach : lien d'accès à partager pour chaque code")
@@ -125,7 +126,7 @@ async def run():
         uj = await inscription(j, "joueur@test.fr", "Jo Joueur", cj)
         pl = await db(j, f"plans/{uj}") or {}
         prof = await db(j, f"clients/{uj}") or {}
-        ok(pl.get("offer") == "auto" and pl.get("weeks") == 4, "site joueur : accès Autonomie 1 mois par le code du club", {k: pl.get(k) for k in ("offer", "weeks", "status")})
+        ok(pl.get("offer") == "auto" and pl.get("weeks") == 6, "site joueur : accès Autonomie pour les 6 semaines du cycle, par le code du club", {k: pl.get(k) for k in ("offer", "weeks", "status")})
         ok(prof.get("club") == cid and prof.get("clubCode") == cj and prof.get("clubRole") == "joueur", "site joueur : profil rattaché au club", {k: prof.get(k) for k in ("club", "clubCode", "clubRole")})
         code = await db(j, f"codes/{cj}") or {}
         ok(code.get("uses") == 1 and uj in (code.get("usedBy") or {}), "site joueur : une place du code utilisée")
@@ -133,6 +134,13 @@ async def run():
         await btn(j, "Voir le détail")
         ok(await has(j, "Fitness Game") and await has(j, "19h30"), "site joueur : déroulé et horaire du club")
         await shot(j, "joueur_seance")
+        await btn(j, "‹ Retour")
+        await btn(j, "La saison du club"); await j.wait_for_timeout(500)
+        ok(await has(j, "Cycle 4") and await has(j, "Saison · semaines 15 à 20"), "site joueur : la saison de son club, avec le cycle acheté")
+        await j.locator("button.linkbtn", has_text="ECHAUFFEMENT").first.click(); await j.wait_for_timeout(400)
+        await btn(j, "Lancer la séance au minuteur"); await j.wait_for_timeout(500)
+        ok(await j.get_by_role("button", name="Démarrer").count() >= 1, "site joueur : n'importe quelle séance de la saison se lance au minuteur")
+        await j.reload(); await j.wait_for_timeout(1500)
         ok(await essai(j, f"await firebase.firestore().doc('clubs/{cid}').get()") == "ok", "règles : le joueur lit la saison de son club")
         ok(await essai(j, f"await firebase.firestore().doc('clubs/{cid}').update({{ n: 'Pirate' }})") == "permission-denied", "règles : le joueur ne modifie pas son club")
         ok(await essai(j, "await firebase.firestore().collection('modeles').get()") == "permission-denied", "règles : le joueur ne lit pas les modèles d'Antoine")
@@ -144,7 +152,7 @@ async def run():
         ok(((await db(e, f"clients/{ue}")) or {}).get("clubRole") == "entraineur", "site entraîneur : rôle entraîneur")
         ok(await has(e, "Ta saison d'équipe", 8000), "site entraîneur : carte « Ta saison d'équipe »")
         await btn(e, "Ouvrir la saison"); await e.wait_for_timeout(500)
-        ok(await has(e, "séances en tout"), "site entraîneur : toute la saison du club")
+        ok(await has(e, "Cycle 4") and await e.get_by_role("radio", name="Par mois").count() == 1, "site entraîneur : toute la saison du club, par cycle ou par mois")
         await e.locator("button.linkbtn", has_text="ECHAUFFEMENT").first.click(); await e.wait_for_timeout(400)
         await btn(e, "Lancer la séance au minuteur"); await e.wait_for_timeout(500)
         ok(await e.get_by_role("button", name="Démarrer").count() >= 1, "site entraîneur : séance lancée au minuteur")

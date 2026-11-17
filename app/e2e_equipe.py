@@ -76,50 +76,78 @@ async def run():
             s0 = (m.get("seances") or [{}])[0]
             ok(s0.get("theme") == "volume" and s0.get("debut") == "18h30" and s0.get("min") == 60 and [a["n"] for a in s0.get("acts", [])] == ["ECHAUFFEMENT", "Fitness Game", "Physique"],
                "séance lue comme dans le classeur : thème, horaire, durée, blocs", s0)
-            ok(await has(co, "Ton modèle :"), "le modèle s'ouvre comme une saison (archive, minuteur)")
+            ok(await has(co, "Ton modèle :") and await has(co, "Cycle 1") and await has(co, "c'est ce découpage qu'un club achète"), "le modèle s'ouvre par cycles (ce qu'un club achète)")
 
-            # ---------- nouveau club : recalé sur ses jours, son match, la période de la saison ----------
+            # ---------- les cycles (offre club) : lus dans les phases du classeur ----------
+            cyc = await co.evaluate("""(m) => { const cs = eqCycles(m);
+              return { n: cs.length, total: cs.reduce((t, c) => t + c.seances.length, 0), ordre: cs.flatMap((c) => c.seances.map((s) => s.d)).join("|") === m.seances.map((s) => s.d).join("|"),
+                       maxSem: Math.max(...cs.map((c) => c.nSem)), melange: cs.filter((c) => new Set(c.seances.map((s) => eqSem(s).ph)).size > 1).length,
+                       t: cs.map((c) => [c.titre, c.sous, c.nSem, c.seances.length]) }; }""", m)
+            ok(cyc["total"] == NB and cyc["ordre"], "les cycles reprennent toutes les séances, dans l'ordre, sans perte ni doublon", cyc)
+            ok(cyc["maxSem"] <= 6 and cyc["melange"] == 0, "aucun cycle ne dépasse 6 semaines ni ne mélange présaison et saison", cyc["t"][:4])
+            ok(cyc["t"][0][:2] == ["Cycle 1", "Présaison · semaines 1 à 6"] and cyc["t"][1][:2] == ["Cycle 2", "Présaison · semaines 7 à 8"] and cyc["t"][3][:2] == ["Cycle 4", "Saison · semaines 15 à 20"],
+               "cycles nommés et situés : la présaison coupée à sa fin, puis la saison par 6 semaines", cyc["t"][:4])
+
+            # ---------- nouveau club : un cycle, posé sur ses jours et son match, à sa date de début ----------
             await btn(co, "Créer un club avec ce modèle")
             await co.fill("#cl-nom", "Club Test")
+            await co.get_by_role("radio", name="Un cycle").click(); await co.select_option("#cl-cycle", "4")
+            await co.fill("#cl-places", "20")
             for j in ["Mardi", "Jeudi", "Lundi", "Mercredi"]:
                 await co.get_by_role("button", name=j, exact=True).click(); await co.wait_for_timeout(100)
             await co.fill("#cl-heure", "19h30"); await co.select_option("#cl-match", "5")
-            await co.fill("#cl-du", "2026-11-02"); await co.get_by_role("radio", name="1 mois").click(); await co.wait_for_timeout(300)
+            await co.fill("#cl-du", "2026-11-02"); await co.wait_for_timeout(300)
             await co.fill("#cl-dem", "Équipe réserve, terrain synthétique le mercredi")
-            ok(await has(co, "8 séances du 2 nov. au 25 nov.") or await has(co, "8 séances du"), "aperçu : 8 séances (4 semaines × 2 jours)", await co.inner_text("main"))
+            ok(await has(co, "12 séances sur 18 du modèle, en 6 semaines"), "aperçu : le cycle 4 (6 semaines × 3 séances) sur 2 jours par semaine = 12 séances", await co.inner_text("main"))
             await co.screenshot(path=f"{OUT}/02_nouveau_club.png", full_page=True)
             await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1000)
             cs = await mdb_prefix(co, "clubs/")
             c = cs[0] if cs else {}
             S = c.get("seances", [])
-            ok(len(cs) == 1 and len(S) == 8 and all(wd(s["d"]) in (0, 2) for s in S) and S[0]["d"] >= "2026-11-02" and all(s["debut"] == "19h30" for s in S),
-               "club : séances seulement les lundis et mercredis, à 19h30, à partir du 2 novembre", [(s["d"], s.get("debut")) for s in S])
-            ok(all(s.get("modele", "").startswith("2025-11") for s in S[:2]) and all("Saison - Semaine" in s["phase"] for s in S),
-               "même période de la saison : un club qui démarre en novembre reçoit les séances de novembre, pas la présaison", [(s["d"], s.get("modele"), s["phase"]) for s in S[:4]])
+            ok(len(cs) == 1 and len(S) == 12 and all(wd(s["d"]) in (0, 2) for s in S) and S[0]["d"] == "2026-11-02" and S[-1]["d"] == "2026-12-09" and all(s["debut"] == "19h30" for s in S),
+               "club : 12 séances, seulement les lundis et mercredis, à 19h30, du 2 novembre au 9 décembre", [(s["d"], s.get("debut")) for s in S])
+            ok(all(s.get("cycle") == 4 for s in S) and all("2025-10-13" <= s.get("modele", "") <= "2025-11-23" for s in S),
+               "le club reçoit le cycle acheté, et rien d'autre", sorted({s.get("modele") for s in S})[:3])
             mer = [s for s in S if wd(s["d"]) == 2]; lun = [s for s in S if wd(s["d"]) == 0]
             ok(all(wd(s["modele"]) == 3 for s in mer) and all(wd(s["modele"]) == 1 for s in lun),
                "match le samedi : le mercredi (J-3) reçoit la séance du jeudi (J-3 avant le match du dimanche), le lundi celle du mardi (J-5)", [(s["d"], s["modele"]) for s in S])
+            ok([s["modele"] for s in S] == sorted(s["modele"] for s in S), "les semaines du cycle restent dans leur ordre")
             txt = json.dumps(S, ensure_ascii=False)
-            ok("Zébulon" not in txt and "un joueur" in txt and "Adversaire" not in txt, "autre club : prénom coché et adversaire retirés")
+            ok("Zébulon" not in txt and "un joueur" in txt and "Adversaire" not in txt and "Match" not in txt and S[0]["phase"] == "Saison - Semaine 15",
+               "autre club : prénom coché, journée et adversaire retirés", S[0]["phase"])
             ok(len(S) == len({s["d"] for s in S}), "aucune séance en double, aucune inventée")
-            cj = await mdb(co, "codes/" + (c.get("codes") or {}).get("joueurs", "x")) or {}
-            ce = await mdb(co, "codes/" + (c.get("codes") or {}).get("entraineur", "x")) or {}
-            ok(cj.get("kind") == "offert" and cj.get("offer") == "auto" and cj.get("weeks") == 4 and cj.get("max") == 30 and cj.get("club") == c.get("id") and cj.get("role") == "joueur",
-               "code joueurs : Autonomie 1 mois, 30 places, rattaché au club", cj)
-            ok(ce.get("max") == 3 and ce.get("role") == "entraineur" and ce.get("club") == c.get("id"), "code entraîneur : 3 places", ce)
-            ok(c.get("demandes") == "Équipe réserve, terrain synthétique le mercredi" and c.get("match") == 5 and c.get("weeks") == 4, "demandes du club gardées dans sa fiche", {k: c.get(k) for k in ["demandes", "match", "weeks", "jours"]})
-            ok(await has(co, "Accès du club") and await has(co, cj.get("code", "???")), "fiche du club : ses codes à partager")
+            cj = await mdb(co, "codes/" + ((c.get("codes") or {}).get("joueurs") or "x")) or {}
+            ce = await mdb(co, "codes/" + ((c.get("codes") or {}).get("entraineur") or "x")) or {}
+            ok(cj.get("kind") == "offert" and cj.get("offer") == "auto" and cj.get("weeks") == 6 and cj.get("max") == 20 and cj.get("club") == c.get("id") and cj.get("role") == "joueur",
+               "code joueurs : Autonomie pour les 6 semaines du cycle, 20 places achetées, rattaché au club", cj)
+            ok(ce.get("max") == 3 and ce.get("role") == "entraineur" and ce.get("club") == c.get("id") and ce.get("weeks") == 6, "code entraîneur : 3 places", ce)
+            ok(c.get("offre") == "cycle" and c.get("cycle") == 4 and c.get("places") == 20 and c.get("demandes") == "Équipe réserve, terrain synthétique le mercredi" and c.get("match") == 5 and c.get("weeks") == 6,
+               "achat et demandes du club gardés dans sa fiche", {k: c.get(k) for k in ["offre", "cycle", "places", "demandes", "match", "weeks", "jours"]})
+            ok(await has(co, "Accès du club") and await has(co, cj.get("code", "???")) and await has(co, "Cycle 4 · 20 accès joueurs"), "fiche du club : ce qu'il a acheté et ses codes à partager")
+            cyc_club = await co.evaluate("(c) => eqCycles(c).map((x) => [x.titre, x.sous, x.seances.length])", c)
+            ok(cyc_club == [["Cycle 4", "Saison · semaines 15 à 20", 12]], "la saison du club garde le numéro du cycle acheté", cyc_club)
             await co.screenshot(path=f"{OUT}/03_club.png", full_page=True)
-            # son propre club : rien n'est retiré
+
+            # ---------- recalage : la saison à partir d'un cycle, et une date de début en milieu de semaine ----------
+            rr = await co.evaluate("""(m) => { const base = { jours: [0, 2], match: 5, heure: '19h30', anon: true };
+              const sai = eqRecaler(m, { ...base, du: '2026-11-02', offre: 'saison', cycle: 4 });
+              const mer = eqRecaler(m, { ...base, du: '2026-11-04', offre: 'cycle', cycle: 4 });
+              return { premier: sai.seances[0].modele, cyc: sai.seances[0].cycle, sems: sai.sems, n: sai.seances.length, mer: [mer.seances[0].d, mer.seances.length] }; }""", m)
+            ok(rr["cyc"] == 4 and "2025-10-13" <= rr["premier"] <= "2025-10-19", "saison complète à partir du cycle 4 : elle commence à la première semaine de ce cycle", rr)
+            ok(rr["mer"] == ["2026-11-09", 12], "début un mercredi : on part du lundi suivant, aucune séance du cycle perdue", rr["mer"])
+
+            # ---------- son propre club : la saison complète, rien n'est retiré, pas d'accès joueurs ----------
             await btn(co, "‹ Retour"); await btn(co, "Nouveau club")
-            await co.fill("#cl-nom", "Mon club"); await co.uncheck("label.chk input"); await co.fill("#cl-du", "2026-11-02")
+            await co.fill("#cl-nom", "Mon club"); await co.uncheck("label.chk input"); await co.fill("#cl-places", "0"); await co.fill("#cl-du", "2026-07-06")
             await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1000)
             mien = [x for x in await mdb_prefix(co, "clubs/") if x.get("n") == "Mon club"]
-            ok(mien and "Zébulon" in json.dumps(mien[0].get("seances"), ensure_ascii=False) and all(wd(s["d"]) in (1, 3) for s in mien[0]["seances"]),
-               "son propre club : notes intactes, jours par défaut (mardi, jeudi)")
-            ms_ = [x["d"] for x in (mien[0]["seances"] if mien else [])]
-            ok(any(d.startswith("2027-07") for d in ms_) and not any("2027-06-27" <= d <= "2027-07-04" for d in ms_) and max(ms_ or ["0"]) <= "2027-11-01",
-               "12 mois : la trêve d'été reste une trêve, la présaison revient en juillet, rien après le terme", [min(ms_ or [""]), max(ms_ or [""]), len(ms_)])
+            mc = mien[0] if mien else {}
+            ok(mien and "Zébulon" in json.dumps(mc.get("seances"), ensure_ascii=False) and "Adversaire Imaginaire" in json.dumps(mc.get("seances"), ensure_ascii=False) and all(wd(s["d"]) in (1, 3) for s in mc["seances"]),
+               "son propre club : notes et titres intacts, jours par défaut (mardi, jeudi)")
+            ok(mc.get("offre") == "saison" and mc.get("weeks") == len({s["phase"].split(" - Match")[0] for s in m["seances"]}) and (mc.get("codes") or {}).get("joueurs") is None and (mc.get("codes") or {}).get("entraineur"),
+               "saison complète : toutes les semaines du modèle ; sans accès joueurs, seul le code entraîneur est créé", {k: mc.get(k) for k in ("offre", "weeks", "codes")})
+            ce2 = await mdb(co, "codes/" + ((mc.get("codes") or {}).get("entraineur") or "x")) or {}
+            ok(ce2.get("weeks") == 52, "saison complète : codes de 12 mois", ce2.get("weeks"))
 
             # ---------- rattachement d'un client depuis sa fiche ----------
             await mdb_set(co, "clients/u_eq1", {"name": "Jo Joueur", "sportId": "rugby", "sex": "H", "height": 182, "weight": 88, "birthYear": 2000})

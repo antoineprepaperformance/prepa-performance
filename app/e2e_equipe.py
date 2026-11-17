@@ -91,6 +91,11 @@ async def run():
             await co.locator(".side-nav button", has_text="Équipe").first.click(); await co.wait_for_timeout(800)
             txt = await co.inner_text("body")
             ok(dans("CM Floirac Rugby", txt) and dans("99 séances", txt), "écran Équipe : la saison et son nombre de séances", txt[:300])
+            # la vue par défaut est le découpage en cycles : c'est ce qu'un club achète
+            ok(dans("Cycle 1", txt) and dans("Présaison · semaine", txt) and dans("cycles de 6 semaines", txt),
+               "écran Équipe : la saison découpée en cycles, vue par défaut", txt[:600])
+            await co.get_by_role("radio", name="Par mois").click(); await co.wait_for_timeout(500)
+            txt = await co.inner_text("body")
             ok(dans("Juillet 2025", txt) or dans("Novembre 2025", txt), "séances groupées par mois", txt[:400])
             await co.get_by_role("radio", name="Présaison").click(); await co.wait_for_timeout(500)
             t2 = await co.inner_text("body")
@@ -162,8 +167,32 @@ async def run():
             ok(logique["prochDedans"] == "2025-11-04", "la prochaine séance est bien la suivante, pas une passée", logique["prochDedans"])
             ok(logique["apres"] is None, "après la fin de saison : plus aucune séance à venir", logique["apres"])
             j1 = await cl.inner_text("body")
-            ok("séance d'équipe" not in j1.lower(),
-               "saison terminée : rien n'est affiché au joueur — correct, et pas un oubli", j1[:200])
+            ok(dans("Aucune séance d'équipe prévue aujourd'hui", j1) and not dans("ce soir", j1) and not dans("prochaine séance d'équipe", j1),
+               "saison terminée : aucune séance du jour annoncée, mais la programmation reste consultable", j1[:300])
+
+            # ---------- la saison par cycles, ce qu'un club achete ----------
+            cyc = await cl.evaluate("""() => {
+              const sai = eqSaison('cmfloirac'), cs = eqCycles(sai);
+              const seances = cs.reduce((n, c) => n + c.seances.length, 0);
+              const ids = cs.map((c) => c.seances.map((s) => s.d).join("|")).join("||");
+              const toutes = (sai.seances || []).map((s) => s.d).join("|");
+              return { n: cs.length, seances, ordre: ids.split("||").join("|") === toutes,
+                       phases: [...new Set(cs.map((c) => c.ph))], maxSem: Math.max(...cs.map((c) => c.nSem)),
+                       melange: cs.filter((c) => new Set(c.seances.map((s) => eqSem(s).ph)).size > 1).length,
+                       titres: cs.slice(0, 3).map((c) => [c.titre, c.sous, c.nSem, c.seances.length]) };
+            }""")
+            ok(cyc["seances"] == 99 and cyc["ordre"], "les cycles reprennent les 99 séances, dans l'ordre, sans perte ni doublon", cyc)
+            ok(4 <= cyc["n"] <= 12, "la saison tient en un nombre de cycles vendable", cyc["n"])
+            ok(cyc["maxSem"] <= 6 and cyc["melange"] == 0, "aucun cycle ne dépasse 6 semaines ni ne mélange présaison et saison", {k: cyc[k] for k in ("maxSem", "melange")})
+            ok(cyc["titres"] and cyc["titres"][0][0] == "Cycle 1" and "saison" in cyc["titres"][0][1].lower(), "chaque cycle est nommé et situé dans la saison", cyc["titres"])
+            await cl.get_by_role("button", name="La saison du club").click(); await cl.wait_for_timeout(700)
+            js = await cl.inner_text("body")
+            ok(dans("Cycle 1", js) and dans("séance 1", js) and not dans("3 juil.", js),
+               "le joueur voit la saison par cycles, en semaines et sans dates", js[:400])
+            await cl.get_by_role("button", name="S1 · séance 1").first.click(); await cl.wait_for_timeout(700)
+            jd = await cl.inner_text("body")
+            ok(dans("ECHAUFFEMENT", jd) and dans("Lancer la séance au minuteur", jd), "une séance de la saison s'ouvre, déroulable au minuteur", jd[:300])
+            await cl.screenshot(path=f"{OUT}/06_saison_joueur.png", full_page=True)
             await cl.screenshot(path=f"{OUT}/04_joueur.png", full_page=True)
 
             # ---------- ce que le joueur voit est traduit ----------

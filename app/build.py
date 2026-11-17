@@ -5,7 +5,7 @@ ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
 sys.path.insert(0, str(ROOT))
 from content_exercises import LIB
-from content_programs import PROGRAMS, T, TESTS, CHECKIN, SCREENING, OFFERS
+from content_programs import PROGRAMS, T, TESTS, CHECKIN, SCREENING, OFFERS, CLUB
 from content_niveaux import NIVEAU_CONTENT
 from content_extras import EXTRAS_CONTENT
 from content_recettes import RECETTES_CONTENT
@@ -18,7 +18,7 @@ from content_equipe import EQUIPE_CONTENT   # saisons d'équipe (généré par t
 LIB = LIB + EX_SPORT
 TESTS = {**TESTS, **TESTS_SPORT}
 
-content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT, **EQUIPE_CONTENT}
+content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, "CLUB": CLUB, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT, **EQUIPE_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ciqjson = json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 (ROOT / "content.json").write_text(json.dumps(content, ensure_ascii=False, indent=1))

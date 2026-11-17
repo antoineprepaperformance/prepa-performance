@@ -218,6 +218,31 @@ function PublicCancels({ db, rows, openClient }) {
       ${r ? html` · <button type="button" className="linkbtn" onClick=${() => openClient(r.cid)}>Ouvrir la fiche</button>` : " · compte introuvable"} · <button type="button" className="linkbtn" onClick=${() => done(x)}>Traitée</button></p>`; })}
     <p className="small">À faire : arrêter l'abonnement dans Stripe (fin de période), puis confirmer par e-mail au client la date de fin et l'arrêt des prélèvements.</p></div></div>`;
 }
+/* demandes de devis de l'offre club, envoyées depuis la page d'accueil du site */
+const CLUB_OFFRES_N = { saison: "la saison", cycle: "un cycle", joueurs: "saison + accès joueurs" };
+function ClubDemandes({ db, settings }) {
+  const toast = useToast();
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    let u = null;
+    try { u = db.collection("demandes_club").onSnapshot((s) => setList(s.docs.map((d) => ({ id: d.id, ...d.data() })).filter((x) => !x.done).sort((a, b) => String(b.at).localeCompare(String(a.at)))), () => {}); } catch (e) {}
+    return () => { try { u && u(); } catch (e) {} };
+  }, [db]);
+  if (!list.length) return null;
+  const done = async (x) => { try { await db.doc("demandes_club/" + x.id).update({ done: true, doneAt: nowISO() }); toast("Demande traitée.", "ok"); } catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); } };
+  /* le prix de la demande telle qu'elle est faite : ce qu'il reste à écrire dans le devis */
+  const chiffre = (x) => {
+    const base = x.offre === "cycle" ? clubPrice(settings, "cycle") : clubPrice(settings, "saison");
+    const nj = Math.max(Number(x.joueurs) || 0, clubMinJ(settings));
+    const j = x.offre === "joueurs" ? nj * (clubPrice(settings, "joueur") || 0) : 0;
+    return eur((base || 0) + j) + (j ? " (" + eur(base) + " + " + plural(nj, "joueur") + ")" : "");
+  };
+  return html`<div className="alert gold"><div><b>${plural(list.length, "demande de devis club", "demandes de devis club")}</b>
+    ${list.map((x) => html`<p key=${x.id}>${new Date(x.at).toLocaleString("fr-FR")} · <b>${x.club}</b>${x.sport ? " · " + x.sport : ""}${x.joueurs ? " · " + plural(x.joueurs, "joueur") : ""} · ${CLUB_OFFRES_N[x.offre] || x.offre} → ${chiffre(x)}
+      <br /><span className="muted small">${x.name} · ${x.email}${x.tel ? " · " + x.tel : ""}${x.msg ? " · « " + x.msg + " »" : ""}</span>
+      · <button type="button" className="linkbtn" onClick=${() => done(x)}>Traitée</button></p>`)}
+    <p className="small">À faire : envoyer le devis, puis à l'accord ouvrir la saison ou le cycle au club et créer les accès joueurs.</p></div></div>`;
+}
 /* ---------- Tableau de bord ---------- */
 function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings, db }) {
   const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && (r.info.lite ? r.info.liteOk : r.info.dated ? r.info.datedOk : r.info.ps && r.info.ps.phase !== "fini"));
@@ -231,7 +256,7 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
   return html`<div className="stack">
     <header className="page-h"><div><div className="eyebrow">${JOURS[now.getDay()]} ${fmtD(todayISO())}</div><h1>Bonjour ${name}</h1></div>
       <div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}</div></header>
-    ${window.IS_SITE && db ? html`<${PublicCancels} db=${db} rows=${rows} openClient=${openClient} />` : null}
+    ${window.IS_SITE && db ? html`<${PublicCancels} db=${db} rows=${rows} openClient=${openClient} /><${ClubDemandes} db=${db} settings=${settings} />` : null}
     ${legalMissing(settings).length ? html`<div className="alert warn"><div><b>Informations légales à compléter</b><p>${legalMissing(settings).join(", ")} : elles s'affichent dans tes conditions de vente et tes mentions légales.</p></div></div>` : null}
     ${demoOn ? html`<div className="alert gold"><div><b>${realCount ? "Exemples affichés" : "Exemples affichés en attendant tes premiers clients"}</b><p>Les clients marqués EXEMPLE ne sont pas enregistrés : ils montrent ce que tu verras.</p></div><${Btn} small kind="ghost" onClick=${() => setShowDemo(false)}>Masquer</${Btn}></div>`
       : html`<div className="right"><button type="button" className="linkbtn" onClick=${() => setShowDemo(true)}>Afficher les exemples</button></div>`}

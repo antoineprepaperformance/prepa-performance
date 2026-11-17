@@ -208,6 +208,22 @@ service cloud.firestore {
         && request.resource.data.at is string && request.resource.data.at.size() <= 40 && request.resource.data.done == false;
       allow read, update, delete: if isCoach();
     }
+    // demande de devis de l'offre club (formulaire public du site) : envoi libre et limite, suivi par le coach.
+    // Aucune donnee de joueur ici : seulement le club, son sport, son effectif et la personne a contacter.
+    match /demandes_club/{cid} {
+      allow create: if cid.matches('^c[a-z0-9]{6,20}$')
+        && request.resource.data.keys().hasOnly(['at', 'club', 'sport', 'joueurs', 'name', 'email', 'tel', 'offre', 'msg', 'done'])
+        && request.resource.data.club is string && request.resource.data.club.size() >= 2 && request.resource.data.club.size() <= 100
+        && request.resource.data.sport is string && request.resource.data.sport.size() <= 40
+        && request.resource.data.joueurs is int && request.resource.data.joueurs >= 0 && request.resource.data.joueurs <= 200
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200 && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && request.resource.data.tel is string && request.resource.data.tel.size() <= 30
+        && request.resource.data.offre in ['saison', 'cycle', 'joueurs']
+        && request.resource.data.msg is string && request.resource.data.msg.size() <= 800
+        && request.resource.data.at is string && request.resource.data.at.size() <= 40 && request.resource.data.done == false;
+      allow read, update, delete: if isCoach();
+    }
     // paiements confirmés par le relais Stripe
     match /payments/{pid} {
       allow read: if isCoach() || (signedIn() && resource.data.uid == request.auth.uid);

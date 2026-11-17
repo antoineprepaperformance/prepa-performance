@@ -498,13 +498,17 @@ SCREENING = [
     "As-tu été opéré(e) au cours des 12 derniers mois ou es-tu enceinte ?",
 ]
 
-# Formules (par ordre de prix). « prix » : 1, 3, 6 et 12 mois (grille du 28 octobre 2026, voir l'étude des prix).
-# « retired » : plus en vente, gardée pour les commandes déjà passées (ses prix restent ceux de l'ancienne grille : 1, 2, 3 mois).
+# Formules (par ordre de prix). « prix » : 1, 3, 6 et 12 mois (grille du 17 novembre 2026, voir l'étude des prix).
+# « auto » : sans réponse personnelle d'Antoine ; « noAI » : sans coach IA (protège l'allocation gratuite de l'IA, partagée entre tous les clients).
+# « retired » : plus en vente, gardée pour les commandes déjà passées ; « durs » : vendue sur la grille 1, 3, 6, 12 mois
+# (sans « durs », ses prix sont ceux de l'ancienne grille : 1, 2, 3 mois).
 OFFERS = [
-    {"id": "ia", "n": "Coach IA", "desc": "Programme standardisé et nutrition, conduits par le coach IA (une intelligence artificielle) : il répond à tes questions, estime tes repas en photo, analyse ton bilan chaque semaine et ajuste ton programme dans des limites de sécurité. Sans réponse personnelle d'Antoine.", "prix": [29, 79, 149, 279], "auto": True},
-    {"id": "essentiel", "n": "Essentiel", "desc": "Coach IA + une réponse courte d'Antoine à ton bilan chaque semaine (sous 48 h ouvrées) et la messagerie avec Antoine.", "prix": [59, 159, 299, 569]},
-    {"id": "suivi", "n": "Suivi", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan (sous 24 h ouvrées), ajustements de ton programme et de tes cibles nutrition, correction vidéo d'un exercice par semaine.", "prix": [119, 319, 599, 1139], "top": True},
-    {"id": "surmesure", "n": "Sur mesure", "desc": "Suivi + un programme écrit par Antoine pour ton sport, ton poste et ton calendrier de compétition, réécrit à chaque bloc ; deux corrections vidéo par semaine ; réponses en priorité. Tout se passe par écrit.", "prix": [199, 539, 999, 1899], "places": 5},
+    {"id": "auto", "n": "Autonomie", "desc": "En autonomie : tous les programmes et les profils, des séances guidées qui s'ajustent toutes seules à tes résultats, les tests, les séances terrain, flash et récup, la santé au quotidien et la nutrition complète (objectif calculé, journal des repas, plats types, scan des produits, recettes). Sans coach IA et sans réponse personnelle d'Antoine.", "prix": [12.9, 33, 59, 109], "auto": True, "noAI": True},
+    {"id": "ia", "n": "Autonomie + coach IA", "desc": "Autonomie + le coach IA (une intelligence artificielle) : il répond à tes questions, estime tes repas en photo, analyse ton bilan chaque semaine et ajuste ton programme dans des limites de sécurité. Sans réponse personnelle d'Antoine.", "prix": [19, 49, 89, 159], "auto": True},
+    {"id": "suivi2", "n": "Suivi", "desc": "Autonomie + coach IA + la réponse d'Antoine à ton bilan chaque semaine (sous 48 h ouvrées), la messagerie avec Antoine, et les ajustements de ton programme et de tes cibles nutrition selon ses consignes, appliqués par le coach IA.", "prix": [89, 239, 449, 849], "top": True},
+    {"id": "surmesure", "n": "Sur mesure", "desc": "Suivi + un programme construit pour ton sport, ton poste et ton calendrier de compétition : tu démarres tout de suite sur une base adaptée à ton profil, qu'Antoine ajuste et réécrit à chaque bloc ; réponse détaillée et prioritaire ; deux corrections vidéo par semaine. Tout se passe par écrit.", "prix": [199, 539, 999, 1899], "places": 5},
+    {"id": "essentiel", "n": "Essentiel", "desc": "Coach IA + une réponse courte d'Antoine à ton bilan chaque semaine (sous 48 h ouvrées) et la messagerie avec Antoine.", "prix": [59, 159, 299, 569], "retired": True, "durs": True},
+    {"id": "suivi", "n": "Suivi (grille d'octobre)", "desc": "Essentiel + réponse détaillée d'Antoine à chaque bilan (sous 24 h ouvrées), ajustements de ton programme et de tes cibles nutrition, correction vidéo d'un exercice par semaine.", "prix": [119, 319, 599, 1139], "retired": True, "durs": True},
     {"id": "hybride", "n": "Hybride", "desc": "Essentiel + 2 séances d'1 h par mois en présentiel avec Antoine (Bordeaux Métropole) : technique, tests et corrections sur place.", "prix": [139, 265, 375], "retired": True},
 ]
 

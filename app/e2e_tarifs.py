@@ -87,25 +87,28 @@ async def run():
         await btn(co, "J'ai confirmé mon adresse")
         ok(await has(co, "Bonjour", 8000), "coach connecté")
         await btn(co, "Offres & réglages", exact=True)
-        grid = {k: await co.input_value("#pr-" + k) for k in ["ia0", "ia3", "essentiel0", "essentiel3", "suivi1", "suivi2", "surmesure0", "surmesure3"]}
-        ok(grid == {"ia0": "29", "ia3": "279", "essentiel0": "59", "essentiel3": "569", "suivi1": "319", "suivi2": "599", "surmesure0": "199", "surmesure3": "1899"}, "grille par défaut : 4 formules × 1, 3, 6, 12 mois", grid)
-        ok(await co.locator("#pl-surmesure52").count() == 1 and await co.locator("#pl-essentiel8").count() == 0, "liens Stripe : 16 liens (plus de lien 2 mois)")
+        grid = {k: await co.input_value("#pr-" + k) for k in ["auto0", "auto3", "ia0", "ia3", "suivi21", "suivi22", "surmesure0", "surmesure3"]}
+        ok(grid == {"auto0": "12.9", "auto3": "109", "ia0": "19", "ia3": "159", "suivi21": "239", "suivi22": "449", "surmesure0": "199", "surmesure3": "1899"}, "grille du 17 novembre : 4 formules × 1, 3, 6, 12 mois", grid)
+        ok(await co.locator("#pl-surmesure52").count() == 1 and await co.locator("#pl-auto8").count() == 0 and await co.locator("#pl-essentiel4").count() == 0, "liens Stripe : 16 liens (plus de lien 2 mois, plus d'Essentiel)")
         ok(await co.input_value("#lt-nm") == "14.9" and await co.input_value("#lt-na") == "129", "Lite + Nutrition : 14,90 € / mois, 129 € / an par défaut")
         await co.get_by_role("radio", name="Automatique (relais installé)").click()
-        links = {"essentiel52": "test_ess52", "essentiel4": "test_ess4", "suivi4": "test_suivi4", "suivi26": "test_suivi26", "surmesure4": "test_sm4"}
+        links = {"auto52": "test_auto52", "auto4": "test_auto4", "suivi24": "test_suivi4", "suivi226": "test_suivi26", "surmesure4": "test_sm4"}
         for k, v in links.items(): await co.fill("#pl-" + k, "https://buy.stripe.com/" + v)
         await co.fill("#pl-lite-mois_avance", "https://buy.stripe.com/test_lite_mois_avance")
         await co.fill("#pl-liten-mois_avance", "https://buy.stripe.com/test_liten_mois_avance")
         await co.fill("#sm-places", "3")
-        await co.fill("#pr-suivi0", "125")
+        await co.fill("#pr-suivi20", "125")
         for k, v in [("siret", "123 456 789 00012"), ("adresse", "12 rue du Stade, 33270 Floirac"), ("email", "contact@antoine-prepa.fr"), ("telephone", "06 12 34 56 78"),
                      ("cartePro", "03312ED0123"), ("assurance", "Assureur Test, contrat 123"), ("mediateur", "Médiateur Test, 1 rue de Paris")]:
             await co.fill("#lg-" + k, v)
         await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(600)
         st = await db(co, "settings/app")
-        ok(st and st["tarifs"]["essentiel"]["52"] == 569 and st["tarifs"]["suivi"]["4"] == 125 and st["surmesure"] == {"on": True, "places": 3} and st["lite"]["nmois"] == 14.9 and st["pay"]["links"]["lite_mois_avance_n"].endswith("test_liten_mois_avance") and "offers" not in st,
+        ok(st and st["tarifs"]["auto"]["52"] == 109 and st["tarifs"]["suivi2"]["4"] == 125 and st["surmesure"] == {"on": True, "places": 3} and st["lite"]["nmois"] == 14.9 and st["pay"]["links"]["lite_mois_avance_n"].endswith("test_liten_mois_avance") and "offers" not in st,
            "réglages : grille « tarifs », places Sur mesure, prix et lien Lite + Nutrition", st and [st.get("tarifs"), st.get("surmesure"), st.get("lite")])
-        await co.fill("#pr-suivi0", "119"); await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(500)
+        await co.fill("#pr-suivi20", "89"); await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(500)
+        # le Lite n'est plus vendu depuis le 17 novembre 2026 : « lite.vente » le remet en vente pour tester ses codes et ses paiements
+        await co.evaluate("(() => { const B = window.__fakefs.load(); const s = B['settings/app'] || {}; B['settings/app'] = { ...s, lite: { ...(s.lite || {}), vente: true } }; window.__fakefs.save(B); })()")
+        await co.reload(); await co.wait_for_timeout(1500)
         await shot(co, "coach_grille")
         # code offert : Sur mesure 6 mois
         await btn(co, "Codes & essais", exact=True)
@@ -124,28 +127,29 @@ async def run():
         # même base côté serveur : les réglages du coach (autre navigateur) arrivent sur la page d'accueil
         await ev(vis, "(d => { const s = window.__fakefs.load(); s['settings/app'] = d; window.__fakefs.save(s); })(" + json.dumps(await db(co, "settings/app")) + ")")
         await vis.reload(); await vis.wait_for_timeout(1500)
-        ok(await has(vis, "3 places seulement") and await has(vis, "soit 47 €/mois") and await has(vis, "Recommandé") and await has(vis, "+ Nutrition · par mois"), "accueil : places Sur mesure, prix mensuel des 12 mois, Lite + Nutrition")
+        ok(await has(vis, "3 places seulement") and await has(vis, "soit 71 €/mois") and await has(vis, "Recommandé") and await has(vis, "Programme + nutrition") and await has(vis, "Avec le coach IA") and await has(vis, "12,90 €"), "accueil : places Sur mesure, prix mensuel des 12 mois, Autonomie en deux niveaux au centime")
+        ok(not await has(vis, "Essayer 7 jours gratuitement", 1000), "accueil : pas de bouton d'essai tant que l'essai n'est pas en ligne")
         await vis.locator(".l-offers").scroll_into_view_if_needed(); await shot(vis, "accueil_formules")
         await vis.goto(URL + "?v=2#cgv"); await vis.wait_for_timeout(1500)
-        ok(await has(vis, "7 ter. Blessure ou contre-indication médicale") and await has(vis, "Sur mesure (Suivi, plus un programme écrit par"), "CGV : clause blessure des 6 et 12 mois, contenu de chaque formule")
+        ok(await has(vis, "7 ter. Blessure ou contre-indication médicale") and await has(vis, "Sur mesure (Suivi, plus un programme construit pour le sport"), "CGV : clause blessure des 6 et 12 mois, contenu de chaque formule")
 
-        # ---------- client E : Essentiel 12 mois ----------
+        # ---------- client E : Autonomie 12 mois ----------
         ce = await A.new_page(); hook(ce, "E"); await ce.set_viewport_size({"width": 390, "height": 844})
         await signup(ce, "emma@test.fr"); await onboard(ce, "Emma Annee", "Handball", "Régional", "6 mois à 2 ans", "Prépa sports collectifs")
         uE = await uid_of(ce)
-        await ce.get_by_role("radio", name="Essentiel", exact=True).click(); await ce.get_by_role("radio", name="12 mois").click(); await ce.wait_for_timeout(200)
-        ok(await has(ce, "Soit 47 € par mois, payés en une fois") and await has(ce, "Fin de l'accès") and await has(ce, "En cas de blessure ou de contre-indication médicale"), "commande 12 mois : prix mensuel, date de fin et clause blessure")
+        await ce.get_by_role("radio", name="Autonomie", exact=True).click(); await ce.get_by_role("radio", name="12 mois").click(); await ce.wait_for_timeout(200)
+        ok(await has(ce, "Soit 9 € par mois, payés en une fois") and await has(ce, "Fin de l'accès") and await has(ce, "En cas de blessure ou de contre-indication médicale"), "commande 12 mois : prix mensuel, date de fin et clause blessure")
         await ce.fill("#pu-start", iso(TODAY))
         await shot(ce, "commande_12mois")
         ref, url = await checkout(ce, stripe_urls)
-        ok(ref[0] == uE and ref[1] == "essentiel" and ref[2] == "52" and "test_ess52" in url, "Stripe : lien Essentiel 12 mois, référence 52 semaines", ref)
+        ok(ref[0] == uE and ref[1] == "auto" and ref[2] == "52" and "test_auto52" in url, "Stripe : lien Autonomie 12 mois, référence 52 semaines", ref)
         oE = ref[3]
-        await relay_pay(co, "cs_E1", {"uid": uE, "offer": "essentiel", "weeks": 52, "orderId": oE, "amount": 56900, "expected": 56900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
+        await relay_pay(co, "cs_E1", {"uid": uE, "offer": "auto", "weeks": 52, "orderId": oE, "amount": 10900, "expected": 10900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         await ce.goto(URL + "?paiement=ok&session_id=cs_E1")
         ok(await has(ce, "prochaine séance", 10000), "paiement : accès de 12 mois activé")
         pE = await db(ce, f"plans/{uE}")
         span = pE and (pE["untilMs"] - pE["startMs"]) / DAY
-        ok(pE and pE["offer"] == "essentiel" and pE["weeks"] == 12 and pE["grantWeeks"] == 52 and 364.9 <= span <= 366.1 and pE["start"] == iso(TODAY) and "lite" not in pE, "plan daté : programme de 12 semaines, accès d'un an", pE)
+        ok(pE and pE["offer"] == "auto" and pE["weeks"] == 12 and pE["grantWeeks"] == 52 and 364.9 <= span <= 366.1 and pE["start"] == iso(TODAY) and "lite" not in pE, "plan daté : programme de 12 semaines, accès d'un an", pE)
         ok(await has(ce, "accès jusqu'au"), "aujourd'hui : fin de l'accès affichée")
         fraud = await ev(ce, """(async () => { const db = firebase.firestore(); const me = firebase.auth().currentUser.uid; const r = {};
           const t = async (k, f) => { try { await f(); r[k] = 'ok'; } catch (e) { r[k] = e.code; } };
@@ -156,7 +160,7 @@ async def run():
           return r; })()""")
         ok(fraud == {"allonger_acces": "permission-denied", "passer_en_sur_mesure": "permission-denied", "reutiliser_paiement": "permission-denied"}, "règles : accès daté non modifiable, paiement non réutilisable", fraud)
         # paiement d'un mois transformé en accès d'un an : refusé
-        await relay_pay(co, "cs_E_triche", {"uid": uE, "offer": "essentiel", "weeks": 4, "orderId": "otriche1", "amount": 5900, "expected": 5900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
+        await relay_pay(co, "cs_E_triche", {"uid": uE, "offer": "auto", "weeks": 4, "orderId": "otriche1", "amount": 1290, "expected": 1290, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         trick = await ev(ce, """(async () => { const db = firebase.firestore(); const me = firebase.auth().currentUser.uid;
           const pl = (await db.doc('plans/' + me).get()).data();
           try { const b = db.batch(); b.update(db.doc('payments/cs_E_triche'), { used: true, usedAt: 'x' });
@@ -167,21 +171,23 @@ async def run():
         add = pE2 and (pE2["untilMs"] - pE["untilMs"]) / DAY
         ok(trick == "permission-denied", "règles : 1 mois payé ne donne pas 200 jours", trick)
         ok(pE2 and 27.9 <= add <= 31.1 and pE2["startMs"] == pE["startMs"] and pE2["programId"] == pE["programId"] and pE2["cycle"] == pE["cycle"], "paiement d'un mois sans commande : l'accès daté est prolongé d'un mois, programme inchangé", [add, pE2 and pE2.get("source")])
-        vc = await ev(ce, """[videoCoachOk({}, { offer: 'essentiel' }), videoCoachOk({ video: { coach: 'toutes' } }, { offer: 'essentiel' }), videoCoachOk({}, { offer: 'surmesure' }), videoCoachOk({}, { offer: 'ia', status: 'active' }),
+        vc = await ev(ce, """[videoCoachOk({}, { offer: 'suivi2' }), videoCoachOk({ video: { coach: 'toutes' } }, { offer: 'suivi2' }), videoCoachOk({}, { offer: 'surmesure' }), videoCoachOk({}, { offer: 'ia', status: 'active' }),
           videoWeekMax({ offer: 'suivi' }), videoWeekMax({ offer: 'surmesure' }), videoWeekSent({ videos: { a: { toCoach: true, at: new Date().toISOString() }, b: { toCoach: true, at: new Date(Date.now() - 8 * 86400000).toISOString() }, c: { toCoach: false, at: new Date().toISOString() } } }).length,
           aiQuota({}, 'surmesure').q, aiQuota({}, 'surmesure').ph]""")
-        ok(vc == [False, True, True, False, 1, 2, 1, 30, 8], "vidéo : Suivi et Sur mesure (Essentiel si ouvert), 1 puis 2 par semaine glissante ; IA Sur mesure 30 questions et 8 photos", vc)
+        ok(vc == [False, True, True, False, 1, 2, 1, 30, 8], "vidéo : Sur mesure (Suivi si ouvert ; le Suivi d'octobre garde la sienne), 1 puis 2 par semaine glissante ; IA Sur mesure 30 questions et 8 photos", vc)
+        na = await ev(ce, "[aiQuota({}, 'auto').q, aiQuota({ ai: { quota: { auto: { q: 5, ph: 2 } } } }, 'auto').q, noAI({ offer: 'auto' }), noAI({ offer: 'ia' }), aiQuota({}, 'suivi2').q]")
+        ok(na == [0, 0, True, False, 20], "Autonomie sans coach IA : quota toujours nul, même réglé ; Suivi 20 questions", na)
 
         # ---------- client S : Suivi 1 mois puis passage à 6 mois (programme conservé) ----------
         cs = await A.new_page(); hook(cs, "S"); await cs.set_viewport_size({"width": 390, "height": 844})
         await signup(cs, "sacha@test.fr"); await onboard(cs, "Sacha Suivi", "Rugby", "Régional", "6 mois à 2 ans", "Prépa sports collectifs")
         uS = await uid_of(cs)
         await cs.get_by_role("radio", name="Suivi", exact=True).click(); await cs.get_by_role("radio", name="1 mois").click()
-        ok(await has(cs, "Commander avec obligation de paiement · 119 €"), "Suivi 1 mois : 119 €")
+        ok(await has(cs, "Commander avec obligation de paiement · 89 €"), "Suivi 1 mois : 89 €")
         await cs.fill("#pu-start", iso(TODAY))
         ref, url = await checkout(cs, stripe_urls)
-        ok(ref[1] == "suivi" and ref[2] == "4" and "test_suivi4" in url, "Stripe : Suivi 1 mois", ref)
-        await relay_pay(co, "cs_S1", {"uid": uS, "offer": "suivi", "weeks": 4, "orderId": ref[3], "amount": 11900, "expected": 11900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
+        ok(ref[1] == "suivi2" and ref[2] == "4" and "test_suivi4" in url, "Stripe : Suivi 1 mois", ref)
+        await relay_pay(co, "cs_S1", {"uid": uS, "offer": "suivi2", "weeks": 4, "orderId": ref[3], "amount": 8900, "expected": 8900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         await cs.goto(URL + "?paiement=ok&session_id=cs_S1")
         ok(await has(cs, "prochaine séance", 10000), "Suivi 1 mois activé")
         pS = await db(cs, f"plans/{uS}")
@@ -202,7 +208,7 @@ async def run():
         ok(ref[2] == "26" and "test_suivi26" in url, "Stripe : Suivi 6 mois", ref)
         od = await db(co, f"clients/{uS}/orders/{ref[3]}")
         ok(od and od["ext"] is True and od["weeks"] == 26, "commande de prolongation enregistrée", od)
-        await relay_pay(co, "cs_S2", {"uid": uS, "offer": "suivi", "weeks": 26, "orderId": ref[3], "amount": 59900, "expected": 59900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
+        await relay_pay(co, "cs_S2", {"uid": uS, "offer": "suivi2", "weeks": 26, "orderId": ref[3], "amount": 44900, "expected": 44900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         await cs.goto(URL + "?paiement=ok&session_id=cs_S2"); await cs.wait_for_timeout(2500)
         pS2 = await db(cs, f"plans/{uS}")
         endShort = datetime.datetime.combine(TODAY + datetime.timedelta(days=7), datetime.time()).timestamp() * 1000
@@ -210,6 +216,50 @@ async def run():
         ok(pS2 and pS2["start"] == iso(TODAY - datetime.timedelta(days=21)) and pS2["programId"] == pS["programId"] and pS2["weeks"] == 12 and pS2["grantWeeks"] == 26 and pS2["cycle"] == pS["cycle"] and 180 <= months <= 185,
            "plan converti : même programme et même début, accès de 6 mois après la fin du mois payé", [pS2 and {k: pS2.get(k) for k in ["start", "weeks", "grantWeeks", "cycle"]}, months])
         ok(await has(cs, "accès jusqu'au"), "client : accès daté affiché")
+
+        # ---------- lancement (17 novembre 2026) : essai gratuit de 7 jours et code pionniers ----------
+        await co.bring_to_front(); await btn(co, "Codes & essais", exact=True)
+        await co.locator(".card", has_text="Lancement").get_by_role("button", name="Mettre l'essai en ligne").click(); await co.wait_for_timeout(800)
+        await co.locator(".card", has_text="Lancement").get_by_role("button", name="Mettre le code pionniers en ligne").click(); await co.wait_for_timeout(800)
+        st = await db(co, "settings/app"); e7 = await db(co, "codes/ESSAI7"); pi = await db(co, "codes/PIONNIERS")
+        ok(st and st.get("essai") == {"on": True, "code": "ESSAI7"} and e7 and e7["kind"] == "essai" and e7["offer"] == "ia" and e7["weeks"] == 1 and pi and pi["kind"] == "promo" and pi["pct"] == 20 and pi["max"] == 20,
+           "lancement : essai ESSAI7 et code PIONNIERS en ligne (règles Firestore)", [st and st.get("essai"), e7, pi])
+        # client P : Autonomie 1 mois avec le code pionniers
+        cp = await A.new_page(); hook(cp, "P"); await cp.set_viewport_size({"width": 390, "height": 844})
+        await signup(cp, "paul@test.fr"); await onboard(cp, "Paul Pionnier", "Fitness", "Loisir ou départemental", "6 mois à 2 ans", "Remise en forme")
+        uP = await uid_of(cp)
+        await cp.get_by_role("radio", name="Autonomie", exact=True).click(); await cp.get_by_role("radio", name="1 mois").click()
+        await cp.fill("#pu-code", "PIONNIERS"); await btn(cp, "Appliquer", exact=True); await cp.wait_for_timeout(800)
+        ok(await has(cp, "Code PIONNIERS : −20 % sur ta commande.") and await has(cp, "Commander avec obligation de paiement · 10,32 €") and await has(cp, "au lieu de 12,90 € (code PIONNIERS)") and await has(cp, "Ajouter un code promotionnel"),
+           "site : code pionniers accepté, prix réduit au centime, rappel du code pour la page Stripe")
+        await cp.fill("#pu-start", iso(TODAY)); await shot(cp, "commande_pionniers")
+        ref, url = await checkout(cp, stripe_urls)
+        od = await db(co, f"clients/{uP}/orders/{ref[3]}")
+        ok(ref[1] == "auto" and "test_auto4" in url and od and abs(od["price"] - 10.32) < 0.001 and od.get("promo") == {"code": "PIONNIERS", "pct": 20, "base": 12.9}, "commande réduite enregistrée avant paiement (code et prix affiché gardés)", od)
+        # Stripe a appliqué le même code : le relais voit un montant inférieur à la grille, le coach vérifie et active
+        await relay_pay(co, "cs_P1", {"uid": uP, "offer": "auto", "weeks": 4, "orderId": ref[3], "amount": 1032, "expected": 1290, "currency": "eur", "ok": False, "used": False, "at": now_iso()})
+        await co.reload(); await co.wait_for_timeout(1500); await btn(co, "Tableau de bord", exact=True); await co.wait_for_timeout(600)
+        ok(await has(co, "10,32 € (code PIONNIERS, −20 %)"), "coach : paiement réduit à vérifier, avec le code")
+        await btn(co, "Clients", exact=True)
+        await co.locator("table.ctable tbody tr", has_text="Paul").click(); await co.wait_for_timeout(400)
+        await co.get_by_role("radio", name="Plan").click(); await co.wait_for_timeout(300)
+        await btn(co, "Paiement reçu · activer"); await co.wait_for_timeout(3000)
+        pP = await db(co, f"plans/{uP}"); pi = await db(co, "codes/PIONNIERS")
+        ok(pP and pP["offer"] == "auto" and pi and pi["uses"] == 1 and uP in (pi.get("usedBy") or {}), "activation : accès Autonomie, code compté à l'activation (1 sur 20)", [pP and pP.get("offer"), pi])
+        # visiteur : essai gratuit de 7 jours depuis la page d'accueil
+        cv = await A.new_page(); hook(cv, "essai"); await cv.set_viewport_size({"width": 390, "height": 844})
+        await cv.goto(URL); await cv.wait_for_timeout(1500)
+        ok(await has(cv, "Essayer 7 jours gratuitement") and await has(cv, "Essai gratuit de 7 jours avec le coach IA, sans paiement"), "accueil : bouton et mention de l'essai gratuit")
+        await btn(cv, "Essayer 7 jours gratuitement")
+        await cv.fill("#au-e", "ines.essai@test.fr"); await cv.fill("#au-p", PW)
+        await cv.locator(".modal").get_by_role("button", name="Créer mon compte").click(); await cv.wait_for_timeout(1200)
+        await onboard(cv, "Ines Essai", "Fitness", "Loisir ou départemental", "6 mois à 2 ans", "Remise en forme")
+        uV = await uid_of(cv)
+        ok(await has(cv, "Activer mon accès offert", 6000), "essai : le code est appliqué tout seul à la fin de l'inscription")
+        await cv.check("#pu-cgv"); await btn(cv, "Activer mon accès offert"); await cv.wait_for_timeout(1800)
+        pV = await db(cv, f"plans/{uV}"); e7 = await db(cv, "codes/ESSAI7")
+        ok(pV and pV["offer"] == "ia" and pV["source"]["kind"] == "code" and pV["source"]["id"] == "ESSAI7" and pV["weeks"] == 1 and e7["uses"] == 1, "essai : 7 jours d'Autonomie + coach IA, sans paiement", [pV and {k: pV.get(k) for k in ["offer", "weeks", "grantWeeks", "source"]}, e7 and e7.get("uses")])
+        await cv.close()
 
         # ---------- client M : Sur mesure 6 mois offert par code ----------
         cm = await A.new_page(); hook(cm, "M"); await cm.set_viewport_size({"width": 390, "height": 844})

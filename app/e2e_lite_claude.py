@@ -52,6 +52,8 @@ async def run():
             await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(400)
             st = await mdb(co, "settings/app")
             ok(st and st["lite"]["mois"] == 12 and st["pay"]["links"]["lite_mois_abo"].endswith("mois_abo"), "prix Lite modifiable (12 € / mois)", st and st.get("lite"))
+            # le Lite n'est plus vendu depuis le 17 novembre 2026 : « lite.vente » le remet en vente pour tester son parcours
+            await co.evaluate("(() => { const d = JSON.parse(localStorage.getItem('__mockdb') || '{}'); const s = d['settings/app'] || {}; d['settings/app'] = { ...s, lite: { ...(s.lite || {}), vente: true } }; localStorage.setItem('__mockdb', JSON.stringify(d)); })()")
             # client : Lite mensuel en abonnement
             c1 = await A.new_page(); hook(c1, "c1"); await c1.set_viewport_size({"width": 390, "height": 844})
             await c1.goto(URL + "?as=lite1"); await c1.wait_for_timeout(700)

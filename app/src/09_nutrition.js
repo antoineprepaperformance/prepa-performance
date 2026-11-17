@@ -883,7 +883,7 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   const tDay = np && !eq ? dayTargets(np, en) : null;
   const npDay = tDay && en && en.bonus ? { ...np, targets: tDay } : np;
   const v = dayVerdict(npDay, tot, (day.meals || []).length, isToday);
-  const canAI = conf.on && ai.sample && !(plan && plan.offer === "lite");
+  const canAI = conf.on && ai.sample && !noAI(plan);
   const addMeal = async (meal) => {
     const cur = src.get().food[date] || { meals: [] };
     try { await src.saveFood(date, { meals: [...(cur.meals || []), meal], updatedAt: nowISO() }); toast("Repas ajouté.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); }
@@ -1020,8 +1020,10 @@ function CoachEnergy({ data, src, np }) {
     <label className="chk"><input type="checkbox" id="cn-bonus" checked=${bon} onChange=${(e) => toggle(e.target.checked)} /><span>Bonus d'activité : ajouter à sa cible du jour la moitié de ce qu'il dépense en plus de son plan (400 kcal au plus)</span></label>
   </${Card}>`;
 }
-function CoachAI({ data, src, plan }) {
+function CoachAI({ data, src, plan, settings, lib }) {
   const toast = useToast();
+  const ai = useAI();
+  const [run, setRun] = useState(null); // { busy, text, events }
   const [note, setNote] = useState((plan && plan.aiNote) || "");
   useEffect(() => { setNote((plan && plan.aiNote) || ""); }, [plan && plan.aiNote]);
   const adj = Object.entries(data.ai || {}).map(([id, a]) => ({ id, ...a })).sort((a, b) => String(b.at).localeCompare(String(a.at)));
@@ -1036,6 +1038,18 @@ function CoachAI({ data, src, plan }) {
     toast("Ajustement annulé.", "ok");
   };
   const saveNote = async () => { if (!plan) return; try { await src.setPlan({ ...plan, aiNote: note.trim() }); toast("Consigne enregistrée.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } };
+  /* « Appliquer maintenant » : le coach IA ajuste tout de suite le programme et la nutrition selon la consigne */
+  const canApply = !!(plan && !noAI(plan) && ai.ready && ai.sample && ai.tools && note.trim());
+  const applyNow = async () => {
+    if (!canApply || (run && run.busy)) return;
+    setRun({ busy: true, text: "", events: [] });
+    try {
+      if (note.trim() !== ((plan && plan.aiNote) || "")) await src.setPlan({ ...plan, aiNote: note.trim() });
+      const prog = persoProg(sportProg(progOf(plan.programId, lib), data.profile), data.profile);
+      const r = await applyNote({ ai, src, plan, prog, lib, settings, note: note.trim(), onEvent: (ev) => setRun((o) => ({ ...o, events: ev })) });
+      setRun({ busy: false, text: r.text, events: r.events });
+    } catch (e) { setRun(null); toast("Le coach IA n'a pas pu appliquer la consigne" + (e && e.message ? " : " + e.message : "."), "bad"); }
+  };
   const pending = adj.filter((a) => !a.seen && a.status !== "annule");
   return html`<div className="stack">
     <${Card} title="Ajustements et signalements du coach IA" sub="Appliqués tout de suite au programme du client ; tu peux les annuler" action=${pending.length ? html`<${Btn} small kind="ghost" onClick=${async () => { for (const a of pending) await mark(a, { seen: true }); }}>Tout marquer comme vu</${Btn}>` : null}>
@@ -1046,9 +1060,11 @@ function CoachAI({ data, src, plan }) {
         ${a.status !== "annule" ? html`<div className="btnrow">${!a.seen ? html`<${Btn} small kind="ghost" onClick=${() => mark(a, { seen: true })}>${a.kind === "alerte" ? "Traité" : "Valider"}</${Btn}>` : null}${a.kind !== "alerte" ? html`<${Btn} small kind="quiet" onClick=${() => cancel(a)}>Annuler</${Btn}>` : null}</div>` : null}
       </li>`)}</ul>` : html`<p className="muted small">Aucun ajustement pour l'instant.</p>`}
     </${Card}>
-    <${Card} title="Consigne pour le coach IA" sub="Lue à chaque réponse pour ce client (ex. « pas de sauts jusqu'à nouvel ordre », « vise 2 000 kcal max »)">
+    <${Card} title="Ta consigne pour ce client" sub="Le coach IA la lit à chaque réponse et à chaque bilan (ex. « moins de volume jambes, genou sensible », « pas de sauts jusqu'à nouvel ordre », « vise 2 000 kcal max »). « Appliquer maintenant » lui fait ajuster tout de suite le programme et la nutrition : chaque ajustement s'affiche ci-dessus et s'annule.">
       <textarea id="ai-note" rows="3" value=${note} onChange=${(e) => setNote(e.target.value)} disabled=${!plan}></textarea>
-      <div className="actions"><${Btn} onClick=${saveNote} disabled=${!plan}>Enregistrer</${Btn}>${!plan ? html`<span className="muted small">Valide d'abord le plan du client.</span>` : null}</div></${Card}>
+      <div className="actions"><${Btn} onClick=${saveNote} disabled=${!plan}>Enregistrer</${Btn}><${Btn} kind="ghost" onClick=${applyNow} disabled=${!canApply || (run && run.busy)}>${run && run.busy ? "Le coach IA applique ta consigne…" : "Appliquer maintenant"}</${Btn}>
+        ${!plan ? html`<span className="muted small">Valide d'abord le plan du client.</span>` : noAI(plan) ? html`<span className="muted small">Sa formule ne comprend pas le coach IA.</span>` : ai.ready && !(ai.sample && ai.tools) ? html`<span className="muted small">Coach IA indisponible ici : la consigne s'appliquera à son prochain bilan.</span>` : null}</div>
+      ${run && (run.events.length || run.text) ? html`<div className="note">${run.events.length ? html`<div className="evs">${run.events.map((x, k) => html`<span key=${k} className="ev">✓ ${x}</span>`)}</div>` : null}${run.text ? String(run.text).split(/\n{2,}/).map((x, k) => html`<p key=${k} className="small">${x}</p>`) : null}</div>` : null}</${Card}>
     <${Card} title="Conversations avec le coach IA" sub=${msgs.length ? plural(msgs.length, "message") + " récents" : null}>
       ${msgs.length ? html`<div className="msgs ro">${msgs.map((m, i) => html`<div key=${i} className=${"msg " + (m.r === "u" ? "u" : "a")}><div className="muted small">${m.r === "u" ? "Client" : m.kind === "bilan" ? "Coach IA · analyse du bilan S" + (m.w || "") : "Coach IA"} · ${fmtD(m.at)} ${String(m.at).slice(11, 16)}</div>
         ${String(m.t).split(/\n{2,}/).map((p, k) => html`<p key=${k}>${p}</p>`)}${m.ev && m.ev.length ? html`<div className="evs">${m.ev.map((x, k) => html`<span key=${k} className="ev">✓ ${x}</span>`)}</div>` : null}</div>`)}</div>` : html`<p className="muted small">Aucune conversation.</p>`}

@@ -162,7 +162,7 @@ service cloud.firestore {
     function planKeysOk(p) {
       return p.keys().hasOnly(['programId', 'offer', 'weeks', 'start', 'equipment', 'status', 'niveau', 'medicalHold', 'compDate', 'message', 'extra',
           'validatedAt', 'cycle', 'source', 'grantWeeks', 'updatedAt', 'reviewedAt', 'aiNote', 'startMs', 'untilMs', 'until', 'lite', 'customCycle', 'customAt'])
-        && p.status == 'active' && p.programId is string && p.offer in ['ia', 'essentiel', 'suivi', 'surmesure', 'hybride', 'lite']
+        && p.status == 'active' && p.programId is string && p.offer in ['auto', 'ia', 'suivi2', 'essentiel', 'suivi', 'surmesure', 'hybride', 'lite']
         && p.weeks is int && p.weeks >= 1 && p.weeks <= 12 && p.grantWeeks is int
         && p.start is string && p.start.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && p.niveau in ['reprise', 'sportif', 'perf', 'elite'] && p.cycle is int;
@@ -235,7 +235,7 @@ service cloud.firestore {
     // ---- formules de 6 et 12 mois, et prolongations d'un accès daté : début (startMs) → fin (untilMs), comme le Lite ----
     function moMax(g) { return (g == 4 ? 32 : g == 12 ? 93 : g == 26 ? 186 : 367) * dayMs(); }
     function datedShapeOk(p, g) {
-      return p.offer in ['ia', 'essentiel', 'suivi', 'surmesure'] && !('lite' in p) && g in [4, 12, 26, 52] && p.grantWeeks == g
+      return p.offer in ['auto', 'ia', 'suivi2', 'essentiel', 'suivi', 'surmesure'] && !('lite' in p) && g in [4, 12, 26, 52] && p.grantWeeks == g
         && p.startMs is int && p.untilMs is int && p.until is string && p.untilMs > p.startMs;
     }
     function datedNewOk(p, g) {

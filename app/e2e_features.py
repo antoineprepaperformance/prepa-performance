@@ -49,16 +49,16 @@ async def run():
             co = await A.new_page(); hook(co, "coach")
             await co.goto(URL + "?as=owner"); await co.evaluate("localStorage.removeItem('__mockdb')"); await co.reload(); await co.wait_for_timeout(800)
             await btn(co, "Codes & essais", exact=True)
-            await co.get_by_role("radio", name="Offert").click(); await co.get_by_role("radio", name="Suivi", exact=True).click(); await co.get_by_role("radio", name="1 mois").click()
+            await co.get_by_role("radio", name="Offert").click(); await co.get_by_role("radio", name="Sur mesure", exact=True).click(); await co.get_by_role("radio", name="1 mois").click()
             await co.fill("#cd-code", "SUIVI-TEST2345"); await btn(co, "Créer le code"); await co.wait_for_timeout(300)
-            # client : Suivi, Force & haltérophilie
+            # client : Sur mesure (correction vidéo par Antoine depuis la grille du 17 novembre), Force & haltérophilie
             c = await A.new_page(); hook(c, "client"); await c.set_viewport_size({"width": 390, "height": 844})
             await c.goto(URL + "?as=f1"); await c.wait_for_timeout(700)
             await onboard(c, "Hugo Force", "Rugby", "Régional", "Plus de 2 ans", "Force & haltérophilie")
             await c.fill("#pu-code", "SUIVI-TEST2345"); await btn(c, "Appliquer", exact=True)
             await c.fill("#pu-start", TODAY.isoformat()); await c.check("#pu-cgv"); await btn(c, "Envoyer mon code à Antoine"); await c.wait_for_timeout(500)
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1500)
-            ok((await mdb(co, "plans/u_f1") or {}).get("offer") == "suivi", "accès Suivi activé par l'espace coach")
+            ok((await mdb(co, "plans/u_f1") or {}).get("offer") == "surmesure", "accès Sur mesure activé par l'espace coach")
             await c.bring_to_front(); await c.reload(); await c.wait_for_timeout(1200)
             ok(await has(c, "prochaine séance", 6000), "client : séance du jour")
 
@@ -107,7 +107,7 @@ async def run():
             ok(pr and pr["images"] == 1 and "Angle" in pr["all"], "l'IA reçoit l'image et la mesure", pr and {"images": pr["images"]})
             await shot(c, "correction_video")
             await btn(c, "Envoyer à Antoine"); await c.wait_for_timeout(600)
-            ok(await has(c, "Vidéo envoyée"), "envoyé au coach (formule Suivi)")
+            ok(await has(c, "Vidéo envoyée"), "envoyé au coach (formule Sur mesure)")
             vk = await mkeys(c, "clients/u_f1/videos/")
             vd = await mdb(c, vk[0]) if vk else None
             size = len(json.dumps(vd)) if vd else 0

@@ -18,7 +18,7 @@
   function changedKeys(a, b) { a = a || {}; b = b || {}; var ks = {}; Object.keys(a).concat(Object.keys(b)).forEach(function (k) { if (!same(a[k], b[k])) ks[k] = 1; }); return Object.keys(ks); }
   function getf(o, k, d) { return o && o[k] !== undefined ? o[k] : d; }
   /* ---- règles (miroir de firestore.rules) ---- */
-  var OFFERS = ["ia", "essentiel", "suivi", "surmesure", "hybride", "lite"], NIVS = ["reprise", "sportif", "perf", "elite"];
+  var OFFERS = ["auto", "ia", "suivi2", "essentiel", "suivi", "surmesure", "hybride", "lite"], NIVS = ["reprise", "sportif", "perf", "elite"];
   var PLAN_KEYS = ["programId", "offer", "weeks", "start", "equipment", "status", "niveau", "medicalHold", "compDate", "message", "extra", "validatedAt", "cycle", "source", "grantWeeks", "updatedAt", "reviewedAt", "aiNote", "startMs", "untilMs", "until", "lite", "customCycle", "customAt"];
   var DAY = 86400000;
   function nowMs() { return Date.now() + (window.__CLOCK_SKEW || 0); }
@@ -30,7 +30,7 @@
     && getf(p, "validatedAt", "") === getf(d, "validatedAt", "") && nutriB(p.lite) === nutriB(d.lite); }
   /* formules de 6 et 12 mois et prolongations d'un accès daté */
   function moMax(g) { return (g === 4 ? 32 : g === 12 ? 93 : g === 26 ? 186 : 367) * DAY; }
-  function datedShapeOk(p, g) { return ["ia", "essentiel", "suivi", "surmesure"].indexOf(p.offer) >= 0 && !("lite" in p) && [4, 12, 26, 52].indexOf(g) >= 0 && p.grantWeeks === g && isInt(p.startMs) && isInt(p.untilMs) && typeof p.until === "string" && p.untilMs > p.startMs; }
+  function datedShapeOk(p, g) { return ["auto", "ia", "suivi2", "essentiel", "suivi", "surmesure"].indexOf(p.offer) >= 0 && !("lite" in p) && [4, 12, 26, 52].indexOf(g) >= 0 && p.grantWeeks === g && isInt(p.startMs) && isInt(p.untilMs) && typeof p.until === "string" && p.untilMs > p.startMs; }
   function datedNewOk(p, g, prev) { return g >= 26 && p.untilMs - p.startMs <= moMax(g) && p.startMs >= nowMs() - 2 * DAY && p.startMs <= nowMs() + 61 * DAY && ((!prev && p.cycle === 1) || (!!prev && p.cycle === getf(prev, "cycle", 1) + 1)); }
   function shortEndMs(d) { var x = d.start.split("-"); return Date.UTC(parseInt(x[0], 10), parseInt(x[1], 10) - 1, parseInt(x[2], 10)) + d.weeks * 7 * DAY; }
   function datedConvOk(p, g, d) {

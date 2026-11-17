@@ -20,10 +20,10 @@ function useAI() {
    Une « question » = une demande du client (message, repas, étiquette, vidéo, recette) ; une « photo » = une demande avec image.
    L'analyse automatique du bilan de la semaine ne compte pas. Le coach n'a pas de limite. Sur le site, le relais applique
    aussi ces limites (avec 2 demandes de marge pour les analyses de bilan). */
-const AI_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
+const AI_QUOTA_DEF = { auto: { q: 0, ph: 0 }, ia: { q: 10, ph: 3 }, suivi2: { q: 20, ph: 5 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
 const AI_QUOTA_MAX = 200;
 function aiQuota(settings, offer) {
-  if (!offer || offer === "lite") return { q: 0, ph: 0 };
+  if (!offer || offer === "lite" || (OFFERS_ALL.find((x) => x.id === offer) || {}).noAI) return { q: 0, ph: 0 };
   const d = AI_QUOTA_DEF[offer] || AI_QUOTA_DEF.essentiel;
   const s = (settings && settings.ai && settings.ai.quota && settings.ai.quota[offer]) || {};
   const n = (v, def) => { const x = Math.round(Number(v)); return Number.isFinite(x) && v !== "" && v !== null && v !== undefined ? clamp(x, 0, AI_QUOTA_MAX) : def; };
@@ -281,7 +281,7 @@ function aiRules(conf, data, plan, ai) {
   return [
     "Tu es « Coach IA », l'assistant d'Antoine Limousi, préparateur physique (Antoine Prépa Performance, Bordeaux), intégré à l'application de suivi de ses clients. Tu réponds directement au client, en " + (LANG === "fr" ? "français" : LANG_NAME[LANG]) + ", en le tutoyant, de façon chaleureuse, concrète et brève (4 à 10 lignes en général ; une liste ou un menu seulement si c'est demandé). Pas de titres Markdown.",
     ...(LANG === "fr" ? [] : [aiLang()]),
-    ...(plan && offerAuto(plan.offer) ? ["Formule Coach IA : c'est toi qui conduis son programme au quotidien ; Antoine ne répond pas personnellement à ses bilans ni à ses messages. Fais toi-même les ajustements utiles dans tes limites, et préviens Antoine (signaler_coach) pour toute douleur, tout malaise ou toute question médicale."] : []),
+    ...(plan && offerAuto(plan.offer) ? ["Formule Autonomie + coach IA : c'est toi qui conduis son programme au quotidien ; Antoine ne répond pas personnellement à ses bilans ni à ses messages. Fais toi-même les ajustements utiles dans tes limites, et préviens Antoine (signaler_coach) pour toute douleur, tout malaise ou toute question médicale."] : []),
     "",
     "Méthode à chaque réponse :",
     "1. Relis le contexte ci-dessous (séances, charges, douleurs, bilans, tests, repas, objectif) et appuie ta réponse sur ces données, en citant les chiffres utiles.",
@@ -477,6 +477,22 @@ async function weeklyReview({ ai, src, plan, prog, lib, settings, w, onText, onE
   const r = await ai.sample(prompt, { cache: false, signal, tools, onText, system: true });
   await pushChat(src, src.get(), { r: "a", t: r.text, at: nowISO(), kind: "bilan", w, ev: events.length ? events : undefined });
   return { text: r.text, events };
+}
+
+/* ---------- consigne d'Antoine appliquée tout de suite (Suivi, Sur mesure) ----------
+   Antoine écrit une demande (« moins de volume jambes, genou sensible ») ; le coach IA l'applique au programme et à la nutrition
+   du client avec ses outils, dans les mêmes limites de sécurité qu'au bilan. Chaque ajustement apparaît dans la fiche et s'annule. */
+async function applyNote({ ai, src, plan, prog, lib, settings, note, onEvent }) {
+  const data = src.get();
+  const conf = aiConf(settings, data);
+  const p2 = { ...plan, aiNote: note };
+  const stats = computeStats(data, p2, prog, lib, todayISO());
+  const events = [];
+  const tools = makeTools({ data, src, plan: p2, prog, stats, conf, onEvent: (l) => { events.push(l); onEvent && onEvent([...events]); } });
+  const prompt = aiRules(conf, data, p2, ai) + "\n\n" + clientContext({ data, plan: p2, prog, stats, lib }) + (conf.allow.subst ? "\n\n" + exerciseCatalog() : "") +
+    "\n\nTâche : consigne_coach. Antoine vient de te donner cette consigne pour ce client : « " + note + " ». Applique-la maintenant à son programme et à ses cibles nutrition avec tes outils, dans les limites de sécurité. Ne change rien qui sorte de la consigne. Termine par un compte rendu pour Antoine, en 3 lignes au plus : ce que tu as changé, et ce que tu n'as pas pu faire, avec la raison.";
+  const r = await ai.sample(prompt, { cache: false, tools, system: true });
+  return { text: (r.text || "").trim(), events };
 }
 
 /* ---------- brouillon de réponse pour le coach ---------- */

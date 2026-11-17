@@ -106,6 +106,9 @@ async def run():
             await co.fill("#lg-" + k, v)
         await shot(co, "coach_reglages_lite")
         await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(500)
+        # le Lite n'est plus vendu depuis le 17 novembre 2026 : « lite.vente » le remet en vente pour tester tout son parcours
+        await co.evaluate("(() => { const B = window.__fakefs.load(); const s = B['settings/app'] || {}; B['settings/app'] = { ...s, lite: { ...(s.lite || {}), vente: true } }; window.__fakefs.save(B); })()")
+        await co.reload(); await co.wait_for_timeout(1500)
         st = await db(co, "settings/app")
         ok(st and st["lite"]["mois"] == 9.9 and st["lite"]["an"] == 89 and st["lite"]["portail"].startswith("https://billing") and st["pay"]["links"].get("lite_an_avance") == "https://buy.stripe.com/test_lite_an_avance" and st["video"]["coach"] == "suivi", "réglages Lite enregistrés (prix, 4 liens, portail, vidéo)", st and [st.get("lite"), st.get("pay")])
         # code Lite offert 2 semaines
@@ -118,8 +121,7 @@ async def run():
         V = await b.new_context(viewport={"width": 390, "height": 844}, accept_downloads=True); await V.add_init_script("window.__RELAY_UID = 'relais-test';")
         vis = await V.new_page(); hook(vis, "visiteur")
         await vis.goto(URL); await vis.wait_for_timeout(1500)
-        ok(await has(vis, "par mois") and await has(vis, "En abonnement (résiliable en quelques clics)"), "accueil : formule Lite avec ses prix")
-        await vis.locator(".l-offer.lite").scroll_into_view_if_needed(); await shot(vis, "accueil_lite", full=False)
+        ok(await has(vis, "Programme + nutrition") and not await has(vis, "En abonnement (résiliable en quelques clics)", 1500), "accueil : le Lite n'est plus affiché, l'Autonomie le remplace")
 
         # ---------- client L : Lite mensuel en abonnement ----------
         cl = await A.new_page(); hook(cl, "L"); await cl.set_viewport_size({"width": 390, "height": 844})

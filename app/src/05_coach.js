@@ -18,7 +18,7 @@ function rowInfo(row, lib, today, settings) {
   else if (ps && ps.phase === "en_cours") status = { tone: "ok", n: "Semaine " + ps.week + "/" + ps.weeks };
   else if (ps && ps.phase === "fini") status = { tone: "muted", n: "Terminé" };
   const lite = plan && plan.offer === "lite" && plan.status === "active";
-  /* formule Coach IA : l'IA répond aux bilans ; seules la sécurité et la vente restent à Antoine */
+  /* Autonomie (avec ou sans coach IA) : personne ne répond aux bilans ; seules la sécurité et la vente restent à Antoine */
   const auto = !!(plan && offerAuto(plan.offer) && plan.status === "active");
   const lo0 = p.access && p.access.lastOrder;
   const liteOk = lite && Date.now() < liteEndMs(plan, lo0 && lo0.id ? { orders: { [lo0.id]: lo0 } } : null);
@@ -31,8 +31,9 @@ function rowInfo(row, lib, today, settings) {
   if (plan && plan.offer === "surmesure" && plan.status === "active" && plan.customCycle !== cycOf(plan)) alerts.push({ tone: "gold", n: "Sur mesure : programme du cycle " + cycOf(plan) + " à écrire", k: "plan" });
   if (p.screeningFlag && (!plan || plan.medicalHold !== false)) alerts.push({ tone: "warn", n: plan && plan.medicalHold ? "Avis médical à recevoir (séances en Reprise)" : "Questionnaire santé : avis médical", k: "plan" });
   const lo = p.access && p.access.lastOrder;
-  const recentAuto = lo && lo.kind === "paiement" && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
-  if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : lo.kind === "paiement" ? "Paiement Stripe à vérifier · " + eur2(lo.price || 0) : "Commande à encaisser · " + eur2(lo.price || 0), k: "plan" });
+  /* paiement automatique : on laisse 15 minutes au relais ; une commande avec code de réduction ne s'active jamais seule (montant inférieur à la grille), elle s'affiche tout de suite */
+  const recentAuto = lo && lo.kind === "paiement" && !lo.promo && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
+  if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : (lo.kind === "paiement" ? "Paiement Stripe à vérifier · " : "Commande à encaisser · ") + eur2(lo.price || 0) + (lo.promo ? " (code " + lo.promo.code + ", −" + lo.promo.pct + " %)" : ""), k: "plan" });
   if (lo && lo.withdrawal && !lo.withdrawal.refundedAt) alerts.push({ tone: "bad", n: "Rétractation : rembourser " + eur2(lo.withdrawal.refund || 0), k: "plan" });
   if (lo && lo.cancel && lo.cancel.stripe !== "ok" && !lo.cancel.doneAt) alerts.push({ tone: "bad", n: "Résiliation : arrêter l'abonnement dans Stripe", k: "plan" });
   if (lo && lo.cancel && lo.cancel.refund > 0 && !lo.cancel.refundedAt) alerts.push({ tone: "bad", n: "Résiliation : rembourser " + eur2(lo.cancel.refund), k: "plan" });
@@ -143,7 +144,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "prog" && progSel ? html`<${ProgramViewer} prog=${progSel} lib=${lib} exo=${exo} db=${db} onBack=${() => go("programmes")} edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
       ${view === "edit" && editDoc ? html`<${DocEditor} doc=${editDoc} db=${db} lib=${lib} exo=${exo} onDone=${() => go("programmes")} />` : null}
       ${view === "exos" ? html`<${ExercisesView} exo=${exo} db=${db} />` : null}
-      ${view === "codes" ? html`<${CodesView} db=${db} codes=${codes.items} rows=${rows} lib=${lib} />` : null}
+      ${view === "codes" ? html`<${CodesView} db=${db} codes=${codes.items} rows=${rows} lib=${lib} settings=${settings} />` : null}
       ${view === "dash" && db ? html`<${FinAlert} fin=${fin} go=${go} />` : null}
       ${view === "finances" ? html`<${FinancesView} db=${db} fin=${fin} settings=${settings} rows=${rows} />` : null}
       ${view === "reglages" ? html`<${SettingsView} settings=${settings} db=${db} dl=${dl} rows=${rows} onPreview=${(d) => { try { sessionStorage.setItem("saison_preview", d); } catch (e) {} setPreview(true); }} />` : null}
@@ -320,7 +321,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "messages" ? html`<${CoachMessages} data=${data} src=${src} cid=${row.cid} seenAt=${msgSeen} db=${db} demo=${!!row.demo} name=${p.name} />` : null}
     ${tab === "bilans" ? html`<${CoachBilans} data=${data} src=${src} plan=${plan} prog=${prog} lib=${lib} settings=${settings} />` : null}
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
-    ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
+    ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} settings=${settings} lib=${lib} />` : null}
     ${tab === "terrain" ? html`<${EqClientCard} data=${data} src=${src} /><${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}${plan ? html`<${AutoregSettings} data=${data} src=${src} plan=${plan} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
@@ -488,7 +489,7 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
   const req = p.request || {};
   const init = () => {
     if (data.plan) return clone(data.plan);
-    const x = { programId: req.programId || "vitesse", offer: req.offer || "suivi", weeks: req.weeks || 12, start: req.start || nextMonday(), equipment: req.equipment || "salle", status: "pending", message: "", extra: [] };
+    const x = { programId: req.programId || "vitesse", offer: req.offer || "suivi2", weeks: req.weeks || 12, start: req.start || nextMonday(), equipment: req.equipment || "salle", status: "pending", message: "", extra: [] };
     if (x.offer === "lite" || !isLongW(x.weeks)) return x;
     /* demande de 6 ou 12 mois : accès daté à partir du début demandé */
     const startMs = msOfISO(x.start), untilMs = addPeriodMs(startMs, "mois", monthsOfW(x.weeks));
@@ -556,7 +557,7 @@ function PlanEditor({ data, src, lib, settings, cid, exo, demo }) {
         <${TrSend} text=${f.message || ""} setText=${(v) => set("message", v)} to=${p.lang} id="pe-msg-trad" />
         <${Field} label="Statut"><${Seg} options=${[{ v: "pending", n: "En attente" }, { v: "active", n: "Actif" }, { v: "paused", n: "En pause" }, { v: "archived", n: "Archivé" }]} value=${f.status} onChange=${(v) => set("status", v)} /></${Field}>
         <p className="muted small">${isDated ? "Prix : " + eur(offerPrice(settings, f.offer, isLongW(f.grantWeeks) ? f.grantWeeks : 52)) + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, Math.min(12, maxWeeks) * 7 - 1))
-          : isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance", !!(f.lite && f.lite.nutri)) + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
+          : isLite ? "Prix : " + litePriceTxt(settings, (f.lite && f.lite.period) || "mois", f.lite && f.lite.mode === "abo" ? "abo" : "avance", !!(f.lite && f.lite.nutri)) + " · accès jusqu'au " + fmtDY(untilISO) + " · programme en cours jusqu'au " + fmtDY(addDays(f.start, maxWeeks * 7 - 1)) : "Prix : " + eur2(offerPrice(settings, f.offer, f.weeks)) + " · fin le " + fmtDY(addDays(f.start, Number(f.weeks) * 7 - 1))}</p>
       </div>
       <div className="actions">${f.status === "pending" ? html`<${Btn} onClick=${() => save("active")}>Valider et activer</${Btn}>` : null}<${Btn} kind=${f.status === "pending" ? "ghost" : "primary"} onClick=${() => save()}>Enregistrer</${Btn}></div>
     </${Card}>
@@ -597,6 +598,8 @@ function CoachOrders({ data, src, cid, demo, settings }) {
   const pmOf = (o) => pm[o.id] || (o.kind === "paiement" ? "Carte bancaire (Stripe)" : "Virement");
   const activate = async (o) => {
     if (demo) { toast("Exemple : rien n'est enregistré.", "warn"); return; }
+    /* version Claude : un code de réduction arrive comme un code à vérifier ; il n'ouvre pas d'accès offert */
+    if (o.kind === "code" && o.code && src.codeDoc) { const c = await src.codeDoc(normCode(o.code)).catch(() => null); if (c && c.kind === "promo") { toast("Le code " + normCode(o.code) + " est un code de réduction (−" + c.pct + " %) : encaisse la commande au prix réduit, il n'ouvre pas d'accès offert.", "warn"); return; } }
     setBusy(true);
     try {
       const next = planFromOrder(data.plan, o, p, { kind: "coach", id: o.kind });
@@ -605,6 +608,7 @@ function CoachOrders({ data, src, cid, demo, settings }) {
       const done = { ...o, status: "active", activatedAt: now, activatedBy: "coach", ...(o.kind === "code" ? {} : { payMethod: pmOf(o), paidAt: now, paidAmount: Number(o.paidAmount ?? o.price) || 0 }) };
       await src.saveOrder(o.id, done);
       await src.setProfile({ ...p, access: accessSummary(done) });
+      if (o.promo && o.promo.code && src.promoUse) await src.promoUse(o.promo.code).catch(() => {});
       toast("Accès activé.", "ok");
     } catch (e) { toast("Activation impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
   };
@@ -654,7 +658,8 @@ function useAutoActivate(db, rows, codes) {
       doneRef.current[o.id] = 1;
       const c = codes.items[normCode(o.code)];
       const st = codeState(c, r.cid);
-      if (!st.ok) return;
+      /* un code de réduction n'ouvre jamais d'accès offert : il s'applique à une commande payante */
+      if (!st.ok || c.kind === "promo") return;
       const order = { ...o, offer: c.offer, weeks: Number(c.weeks), programId: c.programId || o.programId };
       try {
         const now = nowISO();
@@ -726,9 +731,11 @@ function useLiteSync(db, rows) {
   }, [db, rows]);
 }
 /* ---------- codes d'essai et codes offerts ---------- */
-function CodesView({ db, codes, rows, lib }) {
+/* lancement : l'essai gratuit de 7 jours (code public, proposé sur la page d'accueil) et le code pionniers (réduction sur une première commande) */
+const ESSAI_CODE = "ESSAI7", PIONNIERS = { code: "PIONNIERS", pct: 20, max: 20, until: "2027-01-31" };
+function CodesView({ db, codes, rows, lib, settings }) {
   const toast = useToast();
-  const blank = () => ({ kind: "essai", offer: "suivi", weeks: 2, programId: "", max: 1, expires: "", note: "", code: genCode("ESSAI") });
+  const blank = () => ({ kind: "essai", offer: "suivi2", weeks: 2, programId: "", max: 1, pct: 20, expires: "", note: "", code: genCode("ESSAI") });
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
@@ -741,23 +748,48 @@ function CodesView({ db, codes, rows, lib }) {
     if (codes[code]) { toast("Ce code existe déjà.", "warn"); return; }
     setBusy(true);
     try {
-      await dbSet(db, "codes/" + code, { code, kind: f.kind, offer: f.offer, ...(f.offer === "lite" && f.nutri ? { nutri: true } : {}), weeks: Number(f.weeks), programId: f.programId || null, max: Math.max(1, Math.min(500, Number(f.max) || 1)), uses: 0, usedBy: {}, active: true,
+      if (f.kind === "promo") await dbSet(db, "codes/" + code, { code, kind: "promo", pct: Math.max(5, Math.min(50, Math.round(Number(f.pct) || 20))), max: Math.max(1, Math.min(500, Number(f.max) || 1)), uses: 0, usedBy: {}, active: true,
+        expiresMs: f.expires ? parseISO(f.expires).setHours(23, 59, 59, 999) : null, note: f.note.trim(), createdAt: nowISO() });
+      else await dbSet(db, "codes/" + code, { code, kind: f.kind, offer: f.offer, ...(f.offer === "lite" && f.nutri ? { nutri: true } : {}), weeks: Number(f.weeks), programId: f.programId || null, max: Math.max(1, Math.min(500, Number(f.max) || 1)), uses: 0, usedBy: {}, active: true,
         expiresMs: f.expires ? parseISO(f.expires).setHours(23, 59, 59, 999) : null, note: f.note.trim(), createdAt: nowISO() });
       toast("Code " + code + " créé.", "ok");
-      setF({ ...blank(), kind: f.kind, code: genCode(f.kind === "essai" ? "ESSAI" : "OFFERT") });
+      setF({ ...blank(), kind: f.kind, code: genCode(f.kind === "essai" ? "ESSAI" : f.kind === "promo" ? "REDUC" : "OFFERT") });
     } catch (e) { toast("Création impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
   };
-  const toggle = async (c) => { try { await dbSet(db, "codes/" + c.code, { ...c, active: c.active === false }); } catch (e) { toast("Modification impossible" + errWhy(e, true), "bad"); } };
-  const remove = async (c) => { try { await dbDel(db, "codes/" + c.code); toast("Code supprimé.", "ok"); } catch (e) { toast("Suppression impossible" + errWhy(e, true), "bad"); } };
+  /* l'essai de la page d'accueil suit l'état de son code */
+  const essaiSet = async (code, on) => { await dbSet(db, "settings/app", { ...(settings || {}), essai: { on: !!on, code } }); };
+  const isEssai = (c) => !!(settings && settings.essai && settings.essai.code === c.code);
+  const toggle = async (c) => { try { await dbSet(db, "codes/" + c.code, { ...c, active: c.active === false }); if (isEssai(c)) await essaiSet(c.code, c.active === false); } catch (e) { toast("Modification impossible" + errWhy(e, true), "bad"); } };
+  const remove = async (c) => { try { await dbDel(db, "codes/" + c.code); if (isEssai(c)) await essaiSet(c.code, false); toast("Code supprimé.", "ok"); } catch (e) { toast("Suppression impossible" + errWhy(e, true), "bad"); } };
+  const preset = async (kind) => {
+    if (!db) { toast("Enregistrement indisponible ici.", "warn"); return; }
+    const code = kind === "essai" ? ESSAI_CODE : PIONNIERS.code;
+    if (codes[code] && !(kind === "essai" && !isEssai(codes[code]))) { toast("Le code " + code + " existe déjà.", "warn"); return; }
+    setBusy(true);
+    try {
+      if (!codes[code]) await dbSet(db, "codes/" + code, kind === "essai"
+        ? { code, kind: "essai", offer: "ia", weeks: 1, programId: null, max: 100000, uses: 0, usedBy: {}, active: true, expiresMs: null, note: "Essai gratuit de 7 jours (page d'accueil)", createdAt: nowISO() }
+        : { code, kind: "promo", pct: PIONNIERS.pct, max: PIONNIERS.max, uses: 0, usedBy: {}, active: true, expiresMs: parseISO(PIONNIERS.until).setHours(23, 59, 59, 999), note: "Code pionniers : les premiers clients", createdAt: nowISO() });
+      if (kind === "essai") await essaiSet(code, true);
+      toast(kind === "essai" ? "Essai gratuit de 7 jours en ligne : le bouton apparaît sur la page d'accueil." : "Code " + code + " créé : −" + PIONNIERS.pct + " % pour les " + PIONNIERS.max + " premiers clients, jusqu'au " + fmtDY(PIONNIERS.until) + ".", "ok");
+    } catch (e) { toast("Création impossible" + errWhy(e, true), "bad"); } finally { setBusy(false); }
+  };
   const copy = (txt) => { try { navigator.clipboard.writeText(txt).then(() => toast("Copié.", "ok"), () => toast(txt, "ok")); } catch (e) { toast(txt, "ok"); } };
   return html`<div className="stack">
     <header className="page-h"><div><h1>Codes & essais</h1><p className="muted small">Offre un programme sans paiement : essai d'une semaine, joueurs d'un club, partenariat… Le client saisit le code (ou ouvre ton lien) à la dernière étape.</p></div></header>
+    <${Card} title="Lancement" sub="En un clic : l'essai gratuit de la page d'accueil et le code des premiers clients"><div className="stack">
+      <div className="row-end"><p className="small">${"Essai gratuit de 7 jours : Autonomie + coach IA, une fois par personne, sans paiement. Un bouton « Essayer 7 jours gratuitement » s'affiche sur la page d'accueil tant que le code " + ESSAI_CODE + " est actif."}</p>
+        ${settings && settings.essai && settings.essai.on ? html`<${Pill} tone="ok">En ligne</${Pill}>` : html`<${Btn} small onClick=${() => preset("essai")} disabled=${busy}>Mettre l'essai en ligne</${Btn}>`}</div>
+      <div className="row-end"><p className="small">${"Code pionniers " + PIONNIERS.code + " : −" + PIONNIERS.pct + " % sur une première commande payante, pour les " + PIONNIERS.max + " premiers clients, jusqu'au " + fmtDY(PIONNIERS.until) + ". Chaque utilisation se compte quand tu actives la commande. Avec Stripe, crée aussi ce code promotionnel dans Stripe (voir le guide de mise en ligne)."}</p>
+        ${codes[PIONNIERS.code] ? html`<${Pill} tone="ok">Créé</${Pill}>` : html`<${Btn} small onClick=${() => preset("promo")} disabled=${busy}>Mettre le code pionniers en ligne</${Btn}>`}</div>
+    </div></${Card}>
     <${Card} title="Créer un code"><div className="form">
-      <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : "OFFERT")); }} /></${Field}>
-        <${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, true)} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}></div>
+      <div className="row2"><${Field} label="Type"><${Seg} options=${[{ v: "essai", n: "Essai" }, { v: "offert", n: "Offert" }, { v: "promo", n: "Réduction" }]} value=${f.kind} onChange=${(v) => { set("kind", v); set("code", genCode(v === "essai" ? "ESSAI" : v === "promo" ? "REDUC" : "OFFERT")); }} /></${Field}>
+        ${f.kind === "promo" ? html`<${Field} label="Réduction (%)" id="cd-pct" hint="Sur le prix affiché d'une première commande payante, toutes formules"><input id="cd-pct" inputMode="numeric" value=${f.pct} onChange=${(e) => set("pct", e.target.value.replace(/\D/g, ""))} /></${Field}>`
+          : html`<${Field} label="Formule"><${Seg} options=${offerOptions(f.offer, f.offer === "lite" || liteOn(settings))} value=${f.offer} onChange=${(v) => set("offer", v)} /></${Field}>`}</div>
       ${f.offer === "lite" ? html`<${Field} label="Contenu du Lite"><${Seg} options=${[{ v: false, n: "Lite" }, { v: true, n: "Lite + Nutrition" }]} value=${!!f.nutri} onChange=${(v) => set("nutri", v)} /></${Field}>` : null}
-      <${Field} label=${f.offer === "lite" ? "Durée d'accès Lite offerte" : "Durée offerte"}><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>
-      <div className="row2"><${Field} label="Programme" id="cd-prog"><select id="cd-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Au choix du client</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>
+      ${f.kind !== "promo" ? html`<${Field} label=${f.offer === "lite" ? "Durée d'accès Lite offerte" : "Durée offerte"}><${Seg} options=${[...TRIAL_DURS, ...DURS].map((d) => ({ v: d.w, n: d.n }))} value=${Number(f.weeks)} onChange=${(v) => set("weeks", v)} /></${Field}>` : null}
+      <div className="row2">${f.kind !== "promo" ? html`<${Field} label="Programme" id="cd-prog"><select id="cd-prog" value=${f.programId} onChange=${(e) => set("programId", e.target.value)}><option value="">Au choix du client</option>${PROGS.map((x) => html`<option key=${x.id} value=${x.id}>${x.n}</option>`)}</select></${Field}>` : null}
         <${Field} label="Nombre d'utilisations" id="cd-max" hint="1 pour une personne, plus pour un groupe ou un club"><input id="cd-max" inputMode="numeric" value=${f.max} onChange=${(e) => set("max", e.target.value.replace(/\D/g, ""))} /></${Field}></div>
       <div className="row2"><${Field} label="Valable jusqu'au (facultatif)" id="cd-exp"><input id="cd-exp" type="date" min=${todayISO()} value=${f.expires} onChange=${(e) => set("expires", e.target.value)} /></${Field}>
         <${Field} label="Code" id="cd-code" hint="Garde la partie aléatoire : un code trop simple se devine."><input id="cd-code" value=${f.code} onChange=${(e) => set("code", normCode(e.target.value))} /></${Field}></div>
@@ -783,7 +815,7 @@ function CodesView({ db, codes, rows, lib }) {
 /* ---------- Ajout manuel & import ---------- */
 function AddClient({ db, lib, settings, onDone }) {
   const toast = useToast();
-  const [f, setF] = useState({ name: "", email: "", phone: "", sport: "", programId: "vitesse", offer: "suivi", weeks: 12, start: nextMonday(), equipment: "salle" });
+  const [f, setF] = useState({ name: "", email: "", phone: "", sport: "", programId: "vitesse", offer: "suivi2", weeks: 12, start: nextMonday(), equipment: "salle" });
   const set = (k, v) => setF((o) => ({ ...o, [k]: v }));
   const create = async () => {
     if (!db) { toast("Ouvre l'application depuis claude.ai pour créer un client.", "warn"); return; }

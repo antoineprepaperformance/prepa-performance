@@ -89,7 +89,7 @@ async def run():
         ok(await has(co, "Déclaration URSSAF") and await has(co, "Aucune facture pour l'instant"), "page Finances : déclaration du mois et registre vide")
         await btn(co, "Offres & réglages", exact=True)
         await co.get_by_role("radio", name="Automatique (relais installé)").click()
-        await co.fill("#pl-suivi4", "https://buy.stripe.com/test_suivi4")
+        await co.fill("#pl-suivi24", "https://buy.stripe.com/test_suivi4")
         for k, v in [("siret", "123 456 789 00012"), ("adresse", "12 rue du Stade, 33270 Floirac"), ("email", "contact@antoine-prepa.fr"), ("telephone", "06 12 34 56 78"),
                      ("cartePro", "03312ED0123"), ("assurance", "Assureur Test, contrat 123"), ("mediateur", "Médiateur Test, 1 rue de Paris")]:
             await co.fill("#lg-" + k, v)
@@ -104,7 +104,7 @@ async def run():
         await cb.fill("#pu-start", iso(TODAY))
         ref, url = await checkout(cb, stripe_urls)
         oB = ref[3]
-        await relay_pay(co, "cs_B1", {"uid": uB, "offer": "suivi", "weeks": 4, "orderId": oB, "amount": 11900, "expected": 11900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
+        await relay_pay(co, "cs_B1", {"uid": uB, "offer": "suivi2", "weeks": 4, "orderId": oB, "amount": 8900, "expected": 8900, "currency": "eur", "ok": True, "used": False, "at": now_iso()})
         await cb.goto(URL + "?paiement=ok&session_id=cs_B1")
         ok(await has(cb, "prochaine séance", 10000), "paiement Stripe : accès activé")
 
@@ -112,7 +112,7 @@ async def run():
         await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(3000)
         f1 = await db(co, f"factures/{Y}-0001")
         odB = await db(co, f"clients/{uB}/orders/{oB}")
-        ok(f1 and f1["kind"] == "facture" and f1["montant"] == 119 and f1["orderId"] == oB and f1["moyen"] == "Carte bancaire (Stripe)" and f1["client"]["name"] == "Bastien Facture" and f1["vendeur"]["siret"] == "123 456 789 00012"
+        ok(f1 and f1["kind"] == "facture" and f1["montant"] == 89 and f1["orderId"] == oB and f1["moyen"] == "Carte bancaire (Stripe)" and f1["client"]["name"] == "Bastien Facture" and f1["vendeur"]["siret"] == "123 456 789 00012"
            and f1["periode"]["du"] == iso(TODAY) and odB.get("facture", {}).get("num") == f"{Y}-0001", "facture n° 1 établie automatiquement (montant, moyen, période, vendeur), copiée dans la commande", f1)
         cpt = await db(co, "factures/compteur")
         ok(cpt and cpt["dernier"] == 1 and cpt["annee"] == TODAY.year, "compteur des factures à 1", cpt)
@@ -121,14 +121,14 @@ async def run():
         async with cb.expect_download(timeout=8000) as dl:
             await cb.get_by_role("button", name="Télécharger ma facture").first.click()
         fh = open(await (await dl.value).path(), encoding="utf-8").read()
-        ok(f"FACTURE N° {Y}-0001" in fh and "Antoine Limousi EI" in fh and "SIRET 123 456 789 00012" in fh and "TVA non applicable, article 293 B du CGI" in fh and "Facture acquittée" in fh and "Bastien Facture" in fh and "119,00" in fh and "formule Suivi" in fh,
+        ok(f"FACTURE N° {Y}-0001" in fh and "Antoine Limousi EI" in fh and "SIRET 123 456 789 00012" in fh and "TVA non applicable, article 293 B du CGI" in fh and "Facture acquittée" in fh and "Bastien Facture" in fh and "89,00" in fh and "formule Suivi" in fh,
            "client : facture téléchargée avec les mentions obligatoires (EI, SIRET, TVA, acquittée)")
 
-        # ---------- client C : Essentiel payé en direct (espèces) ----------
+        # ---------- client C : Autonomie + coach IA payée en direct (espèces) ----------
         cc = await A.new_page(); hook(cc, "C"); await cc.set_viewport_size({"width": 390, "height": 844})
         await signup(cc, "chloe@test.fr"); await onboard(cc, "Chloe Especes", "Football", "Régional", "6 mois à 2 ans", "Prépa sports collectifs")
         uC = await uid_of(cc)
-        await cc.get_by_role("radio", name="Essentiel", exact=True).click(); await cc.get_by_role("radio", name="1 mois").click()
+        await cc.get_by_role("radio", name="Autonomie + coach IA", exact=True).click(); await cc.get_by_role("radio", name="1 mois").click()
         await cc.fill("#pu-start", iso(TODAY)); await cc.check("#pu-cgv")
         if await cc.locator("#pu-early").count(): await cc.check("#pu-early")
         await btn(cc, "Commander avec obligation de paiement"); await cc.wait_for_timeout(800)
@@ -139,7 +139,7 @@ async def run():
         await co.get_by_label("Moyen de paiement reçu").select_option("Espèces")
         await btn(co, "Paiement reçu · activer"); await co.wait_for_timeout(3000)
         f2 = await db(co, f"factures/{Y}-0002")
-        ok(f2 and f2["moyen"] == "Espèces" and f2["montant"] == 59 and f2["cid"] == uC, "paiement direct : facture n° 2 avec le moyen de paiement choisi", f2)
+        ok(f2 and f2["moyen"] == "Espèces" and f2["montant"] == 19 and f2["cid"] == uC, "paiement direct : facture n° 2 avec le moyen de paiement choisi", f2)
 
         # ---------- rétractation de B : avoir sur la facture n° 1 ----------
         await cb.bring_to_front()
@@ -167,7 +167,7 @@ async def run():
         ok(await has(co, f"déclare ton chiffre d'affaires de {MO[prev.month - 1]} {prev.year}"), "tableau de bord : rappel de la déclaration URSSAF du mois précédent")
         await co.locator(".alert", has_text="URSSAF").get_by_role("button", name="Voir").click(); await co.wait_for_timeout(500)
         ok(await has(co, "Ventes de l'application en " + Y) and await has(co, "Toutes les ventes ont leur facture"), "page Finances : ventes de l'année, factures à jour")
-        net = 119 + 59 - odB["withdrawal"]["refund"]
+        net = 89 + 19 - odB["withdrawal"]["refund"]
         row = co.locator("table.fin-table tbody tr", has_text=MO[TODAY.month - 1] + " " + Y).first
         txt = await row.inner_text()
         ok(f"{net:,.2f}".replace(",", " ").replace(".", ",") in txt.replace("\u202f", " ").replace("\xa0", " "), "mois en cours : ventes − remboursement = chiffre d'affaires", [txt, net])

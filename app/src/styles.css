@@ -520,7 +520,12 @@ h1.who { display: flex; flex-wrap: wrap; }
 .l-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .l-step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 6px; }
 .l-n { font-family: var(--f-display); font-weight: 700; font-size: 30px; color: var(--gold); line-height: 1; }
-.l-offers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.l-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+/* Autonomie : deux niveaux dans la même carte */
+.l-sub { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
+.l-sub > b { font-family: var(--f-display); font-size: 17px; }
+.l-sub .l-prices { margin-top: 0; }
+.l-auto .linkbtn { align-self: flex-start; text-align: left; }
 .l-offer { display: flex; flex-direction: column; gap: 8px; position: relative; }
 .l-offer.top { border-color: var(--gold); }
 .l-badge { position: absolute; top: -10px; right: 12px; background: var(--btn-bg); color: var(--btn-fg); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; }
@@ -534,7 +539,7 @@ h1.who { display: flex; flex-wrap: wrap; }
 .l-offer.lite > p.small:not(.muted) { grid-area: d; margin: 0; }
 .l-offer.lite > p.muted { grid-area: n; margin: 0; }
 .l-offer.lite .l-prices { grid-area: p; grid-template-columns: repeat(2, minmax(0, 1fr)); align-self: center; margin-top: 0; }
-@media (max-width: 1180px) and (min-width: 861px) { .l-offers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1180px) and (min-width: 861px) { .l-offers { grid-template-columns: repeat(2, minmax(0, 1fr)); } .l-auto { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; align-items: start; } .l-auto > h3, .l-auto > p, .l-auto > .linkbtn { grid-column: 1 / -1; } }
 .l-cta { align-items: flex-start; }
 .l-foot { border-top: 1px solid var(--line); padding-block: 20px 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
 .center { text-align: center; }

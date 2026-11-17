@@ -96,6 +96,9 @@ function dbSource(db, cid) {
     },
     async saveTest(id, t) { const k = pre() + id; await qwrite(base + "/tests/" + k, () => db.doc(base + "/tests/" + k).set(clone(t))); },
     async saveOrder(id, o) { await qwrite(base + "/orders/" + id, () => db.doc(base + "/orders/" + id).set(clone(o))); },
+    /* code de réduction : une utilisation de plus, comptée par le coach à l'activation de la commande (une fois par client) */
+    async codeDoc(code) { const s = await db.doc("codes/" + code).get(); return s.exists ? s.data() : null; },
+    async promoUse(code) { const ref = db.doc("codes/" + code); const s = await ref.get(); if (!s.exists) return; const d = s.data(); if (d.usedBy && d.usedBy[cid]) return; await ref.set({ ...d, uses: (Number(d.uses) || 0) + 1, usedBy: { ...(d.usedBy || {}), [cid]: nowISO() } }); },
     async saveHabits(month, h) { await qwrite(base + "/habits/" + month, () => db.doc(base + "/habits/" + month).set(clone(h))); },
     async setPlan(p) { await qwrite("plans/" + cid, () => db.doc("plans/" + cid).set(clone(p))); },
     async saveNutri(p) { await qwrite(base + "/nutri/plan", () => db.doc(base + "/nutri/plan").set(clone(p))); },
@@ -412,13 +415,13 @@ function demoWorld() {
   // 1. Lucas — vitesse, semaine 6
   {
     const start = addDays(today, -38), prog = PB.vitesse;
-    const plan = { programId: "vitesse", offer: "suivi", weeks: 12, start, equipment: "salle", status: "active", niveau: "perf", cycle: 1, message: "Super régularité Lucas. Cette semaine on travaille le sprint résisté : pousse fort sur les 10 premiers mètres.", extra: [] };
+    const plan = { programId: "vitesse", offer: "suivi2", weeks: 12, start, equipment: "salle", status: "active", niveau: "perf", cycle: 1, message: "Super régularité Lucas. Cette semaine on travaille le sprint résisté : pousse fort sur les 10 premiers mètres.", extra: [] };
     const logs = mkLogs(prog, plan, 6, ["w3-C"], 0, { squat_barre: 80, sdt_roumain: 60, split_squat: 16, mollets_unipodal: 10, epaule_suspension: 50, hip_thrust: 90 });
     const checkins = mkCheckins(5, start, (w) => ({ poids: 72.4 + (w % 2) * 0.3, sommeil: 3 + (w % 2), energie: 4, stress: 2, courbatures: w % 4 === 3 ? 4 : 2, nutrition: 4, douleur: w === 3 ? 2 : 0, victoire: w === 5 ? "Record sur le 20 m en séance !" : "", question: w === 5 ? "Je peux ajouter une séance de foot le samedi ?" : "" }));
     const replies = {}; [1, 2, 3, 4].forEach((w) => { replies["w" + w] = { text: "Très bien, on continue comme ça. Garde la même routine d'échauffement.", at: addDays(start, w * 7) + "T08:00:00.000Z" }; });
     const tests = { t0: { w: 0, at: start, values: { sprint10: 1.86, sprint30: 4.32, cmj: 41, longueur: 238 } }, t4: { w: 4, at: addDays(start, 27), values: { sprint10: 1.81, sprint30: 4.25, cmj: 43.5, longueur: 246 } } };
     const profile = { name: "Lucas M.", sport: "Rugby", level: "Confirmé", createdAt: addDays(start, -3), consent: { at: addDays(start, -3) }, demo: true,
-      request: { programId: "vitesse", niveau: "perf", answers: { compet: 3, xp: 3, freq: 3 }, offer: "suivi", weeks: 12, start, equipment: "salle" } };
+      request: { programId: "vitesse", niveau: "perf", answers: { compet: 3, xp: 3, freq: 3 }, offer: "suivi2", weeks: 12, start, equipment: "salle" } };
     const nutri = { plan: mkNutri({ sex: "H", age: "23", height: "180", weight: "72.4", goal: "maintien", act: 1.5, prefs: "" }, addDays(start, 2), 3) };
     const food = foodDays(5, ["pdj"], (i) => (i % 2 ? ["pdj", "dej", "col", "din"] : ["pdj", "dej", "salade"]));
     const ai = { ia_demo1: { kind: "charge", e: "epaule_suspension", text: "Garde 55 kg : priorité à la vitesse de barre", fromW: 6, toW: 6, reason: "Effort 8/10 à 55 kg en semaine 5 et sprint 10 m stable", at: addDays(today, -1) + "T20:10:00.000Z", by: "ia", seen: false, status: "active" } };
@@ -431,7 +434,7 @@ function demoWorld() {
   // 2. Sophie — perte de poids, semaine 9
   {
     const start = addDays(today, -60), prog = PB.perte;
-    const plan = { programId: "perte", offer: "essentiel", weeks: 12, start, equipment: "maison", status: "active", niveau: "reprise", cycle: 1, message: "", extra: [] };
+    const plan = { programId: "perte", offer: "suivi2", weeks: 12, start, equipment: "maison", status: "active", niveau: "reprise", cycle: 1, message: "", extra: [] };
     const logs = mkLogs(prog, plan, 9, ["w2-B", "w5-C", "w7-B"], 0, { squat_goblet: 12, sdt_roumain: 16, rowing_haltere: 10, dm_halteres: 6, split_squat: 8, pont_fessier: 0, fente_arriere: 6, hip_thrust: 30, dc_halteres: 8 });
     const checkins = mkCheckins(8, start, (w) => ({ poids: Math.round((78.4 - w * 0.45 + (w % 3 === 0 ? 0.3 : 0)) * 10) / 10, taille: Math.round((92 - w * 0.6) * 10) / 10, sommeil: 3, energie: 3 + (w > 4 ? 1 : 0), stress: 3, courbatures: 2, nutrition: w % 4 === 2 ? 2 : 4, douleur: 0, pas: 6500 + w * 350, victoire: w === 8 ? "J'ai remis mon jean d'avant !" : "" }));
     const replies = {}; for (let w = 1; w <= 8; w++) replies["w" + w] = { text: "Bravo pour ta constance.", at: addDays(start, w * 7) + "T08:00:00.000Z" };
@@ -455,7 +458,7 @@ function demoWorld() {
   // 3. Karim — retour à la course, semaine 3, douleur
   {
     const start = addDays(today, -16), prog = PB.retour;
-    const plan = { programId: "retour", offer: "suivi", weeks: 8, start, equipment: "salle", status: "active", niveau: "sportif", cycle: 1, message: "Respecte bien la règle des 3/10 de douleur.", extra: [] };
+    const plan = { programId: "retour", offer: "suivi2", weeks: 8, start, equipment: "salle", status: "active", niveau: "sportif", cycle: 1, message: "Respecte bien la règle des 3/10 de douleur.", extra: [] };
     const logs = mkLogs(prog, plan, 3, [], 5, { squat_unipodal_box: 0, pont_fessier: 0, mollets_unipodal: 0, step_down: 0, sdt_jambe: 12, split_squat: 10, leg_curl_glisse: 0 });
     const checkins = mkCheckins(2, start, (w) => ({ sommeil: 4, energie: 3, stress: 2, courbatures: 3, nutrition: 3, douleur: w === 2 ? 3 : 2, zone: "Genou gauche" }));
     const replies = { w1: { text: "Bon démarrage, on garde le même volume.", at: addDays(start, 7) + "T08:00:00.000Z" } };
@@ -469,8 +472,8 @@ function demoWorld() {
   // 4. Emma — demande en attente
   {
     const profile = { name: "Emma L.", sport: "Handball", level: "Intermédiaire", createdAt: addDays(today, -1), consent: { at: addDays(today, -1) }, demo: true,
-      request: { programId: "masse", niveau: "sportif", answers: { compet: 1, xp: 2, freq: 3 }, offer: "suivi", weeks: 12, equipment: "salle", start: nextMonday() }, screening: SCREENING.map(() => false),
-      access: { lastOrder: { id: "odemo1", at: nowISO(), kind: "paiement", offer: "suivi", weeks: 12, programId: "masse", niveau: "sportif", start: nextMonday(), price: 319, status: "en_attente", cgv: { v: CGV_VERSION, at: nowISO() }, early: true } } };
+      request: { programId: "masse", niveau: "sportif", answers: { compet: 1, xp: 2, freq: 3 }, offer: "suivi2", weeks: 12, equipment: "salle", start: nextMonday() }, screening: SCREENING.map(() => false),
+      access: { lastOrder: { id: "odemo1", at: nowISO(), kind: "paiement", offer: "suivi2", weeks: 12, programId: "masse", niveau: "sportif", start: nextMonday(), price: 319, status: "en_attente", cgv: { v: CGV_VERSION, at: nowISO() }, early: true } } };
     const d = { cid: "demo_emma", profile, plan: null, logs: {}, checkins: {}, tests: {}, habits: {}, replies: {}, orders: { odemo1: clone(profile.access.lastOrder) } };
     d.profile.sum = summarize(d); W.demo_emma = d;
   }

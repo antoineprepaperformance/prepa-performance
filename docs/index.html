@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="63e6d64890">
+<meta name="app-build" content="ae7229f02b">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3714,7 +3714,8 @@ function rowInfo(row, lib, today, settings) {
   if (plan && plan.offer === "surmesure" && plan.status === "active" && plan.customCycle !== cycOf(plan)) alerts.push({ tone: "gold", n: "Sur mesure : programme du cycle " + cycOf(plan) + " à écrire", k: "plan" });
   if (p.screeningFlag && (!plan || plan.medicalHold !== false)) alerts.push({ tone: "warn", n: plan && plan.medicalHold ? "Avis médical à recevoir (séances en Reprise)" : "Questionnaire santé : avis médical", k: "plan" });
   const lo = p.access && p.access.lastOrder;
-  const recentAuto = lo && lo.kind === "paiement" && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
+  /* paiement automatique : on laisse 15 minutes au relais ; une commande avec code de réduction ne s'active jamais seule (montant inférieur à la grille), elle s'affiche tout de suite */
+  const recentAuto = lo && lo.kind === "paiement" && !lo.promo && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
   if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : (lo.kind === "paiement" ? "Paiement Stripe à vérifier · " : "Commande à encaisser · ") + eur2(lo.price || 0) + (lo.promo ? " (code " + lo.promo.code + ", −" + lo.promo.pct + " %)" : ""), k: "plan" });
   if (lo && lo.withdrawal && !lo.withdrawal.refundedAt) alerts.push({ tone: "bad", n: "Rétractation : rembourser " + eur2(lo.withdrawal.refund || 0), k: "plan" });
   if (lo && lo.cancel && lo.cancel.stripe !== "ok" && !lo.cancel.doneAt) alerts.push({ tone: "bad", n: "Résiliation : arrêter l'abonnement dans Stripe", k: "plan" });

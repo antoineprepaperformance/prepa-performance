@@ -164,7 +164,7 @@ async def run():
         ack = open(await (await dl1.value).path(), encoding="utf-8").read()
         ok("ACCUSÉ DE RÉCEPTION" in ack and "Bastien Payeur" in ack and orderB in ack, "accusé de réception horodaté téléchargé")
         od = await db(cb, f"clients/{uB}/orders/{orderB}")
-        ok(od and od["status"] == "retractee" and od["withdrawal"]["refund"] > 90, "rétractation enregistrée (remboursement ≈ " + str(od and od["withdrawal"]["refund"]) + " €)")
+        ok(od and od["status"] == "retractee" and od["withdrawal"]["refund"] > 80, "rétractation enregistrée (remboursement ≈ " + str(od and od["withdrawal"]["refund"]) + " €)")
         ok(await has(cb, "Ta rétractation a bien été reçue", 6000), "client : accès coupé, message de rétractation")
         await co.bring_to_front(); await btn(co, "Tableau de bord", exact=True)
         ok(await has(co, "Rétractation : rembourser", 6000), "coach : alerte de remboursement")

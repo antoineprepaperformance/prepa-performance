@@ -31,7 +31,8 @@ function rowInfo(row, lib, today, settings) {
   if (plan && plan.offer === "surmesure" && plan.status === "active" && plan.customCycle !== cycOf(plan)) alerts.push({ tone: "gold", n: "Sur mesure : programme du cycle " + cycOf(plan) + " à écrire", k: "plan" });
   if (p.screeningFlag && (!plan || plan.medicalHold !== false)) alerts.push({ tone: "warn", n: plan && plan.medicalHold ? "Avis médical à recevoir (séances en Reprise)" : "Questionnaire santé : avis médical", k: "plan" });
   const lo = p.access && p.access.lastOrder;
-  const recentAuto = lo && lo.kind === "paiement" && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
+  /* paiement automatique : on laisse 15 minutes au relais ; une commande avec code de réduction ne s'active jamais seule (montant inférieur à la grille), elle s'affiche tout de suite */
+  const recentAuto = lo && lo.kind === "paiement" && !lo.promo && payMode(settings) === "auto" && Date.now() - new Date(lo.at).getTime() < 15 * 60 * 1000;
   if (lo && lo.status === "en_attente" && !recentAuto && !(plan && plan.source && plan.source.orderId === lo.id)) alerts.push({ tone: "gold", n: lo.kind === "code" ? "Code " + (lo.code || "") + " à activer" : (lo.kind === "paiement" ? "Paiement Stripe à vérifier · " : "Commande à encaisser · ") + eur2(lo.price || 0) + (lo.promo ? " (code " + lo.promo.code + ", −" + lo.promo.pct + " %)" : ""), k: "plan" });
   if (lo && lo.withdrawal && !lo.withdrawal.refundedAt) alerts.push({ tone: "bad", n: "Rétractation : rembourser " + eur2(lo.withdrawal.refund || 0), k: "plan" });
   if (lo && lo.cancel && lo.cancel.stripe !== "ok" && !lo.cancel.doneAt) alerts.push({ tone: "bad", n: "Résiliation : arrêter l'abonnement dans Stripe", k: "plan" });

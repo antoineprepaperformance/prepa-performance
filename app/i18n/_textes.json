@@ -51516,5 +51516,656 @@
   "kind": "literal",
   "where": "src/13_acces.js",
   "n": 1
+ },
+ {
+  "h": "b053b28844",
+  "k": "Tir en suspension (élan et lâcher)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "34770b172b",
+  "k": "Fermer sur le tireur (close-out)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "68ecae4b54",
+  "k": "Changement de direction en dribble (crossover)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "c120f9b98b",
+  "k": "Ballons, un panier",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "4f462139ea",
+  "k": "Un ballon",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "ecdd09228b",
+  "k": "Tirer juste après une passe, avec un petit saut d'arrêt et un lâcher qui part des jambes.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "85c7695c2c",
+  "k": "Fermer vite sur un tireur sans lui laisser le temps ni l'espace de tirer, sans sauter dans ses jambes.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "e14f90740d",
+  "k": "Changer de main et de direction assez vite pour éliminer un défenseur, ballon protégé.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "61ced3aa8c",
+  "k": "Départ à 4-5 m du panier, ballon chez le passeur.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "8299a08425",
+  "k": "Passe reçue avec un petit saut d'arrêt : les deux pieds se posent presque ensemble, genoux fléchis, ballon déjà remonté vers le visage.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "3f40d522f9",
+  "k": "Extension des jambes puis du bras : coude sous le ballon, aligné avec le cercle ; le poignet retombe sur la balle au lâcher, doigts qui pointent vers le cercle.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "feb15c3024",
+  "k": "Retombée équilibrée sur les mêmes appuis, prêt à repartir en rebond offensif.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "327bb676f3",
+  "k": "Départ en position d'aide, près de la raquette, genoux fléchis, mains actives.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "8e97e3ed36",
+  "k": "Sprinte vers le tireur sur les trois premiers quarts de la distance.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "1b47004530",
+  "k": "Ralentis en petits pas chassés sur le dernier mètre : jamais à pleine vitesse jusqu'au bout.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "452f519edd",
+  "k": "Arrivée en position basse : une main haute du côté du ballon, l'autre basse et active, pied extérieur légèrement avancé pour couper la ligne vers la ligne de fond.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "08b39cfab0",
+  "k": "Dribble face à un défenseur, à 2-3 m, genoux fléchis, ballon dans la main extérieure.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "a36f17dbca",
+  "k": "Pousse un dribble fort et bas vers un côté pour faire avancer le défenseur de ce côté (feinte de départ).",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "1e05224eaa",
+  "k": "Change de main devant toi, dribble bas et rapide de l'autre côté : le premier pas part EN MÊME TEMPS que le changement de main, pas après.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "7df17d4a3a",
+  "k": "Accélère sur 2-3 appuis pour prendre l'avantage, ballon protégé par le corps.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "ce144891d8",
+  "k": "Les deux pieds se posent presque ensemble, pas une course qui continue",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "3e71448656",
+  "k": "Le coude est sous le ballon, jamais écarté sur le côté",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "12d1b0a364",
+  "k": "Le poignet retombe après le lâcher : les doigts pointent vers le cercle",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "4382d63552",
+  "k": "Ralentis avant d'arriver : à pleine vitesse jusqu'au bout, tu voles au-dessus du tireur ou tu glisses",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "71df769c75",
+  "k": "Une seule main levée, l'autre reste basse et active",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "e085e9acab",
+  "k": "Pied extérieur avancé pour couper la ligne de dribble",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "9a99812fcc",
+  "k": "Dribble bas, sous le genou, pendant le changement : plus dur à intercepter",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "3552dca047",
+  "k": "Le premier pas part en même temps que le changement de main",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "a5475ff3ad",
+  "k": "Épaule et pied avancent du même côté que la nouvelle direction",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "717d212718",
+  "k": "1 tir en suspension, 2 touches au plus",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "09c5151fde",
+  "k": "1 tir en suspension sous pression",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "40d386f8ea",
+  "k": "1 close-out, trot puis pas chassés",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "316e6d2e89",
+  "k": "1 close-out",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "4c54fc2eae",
+  "k": "1 close-out, côté annoncé tard",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "e135981155",
+  "k": "Close-out + contre un premier dribble",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "1fe5c5d3db",
+  "k": "1 crossover lent + accélération courte",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "f5673c4d56",
+  "k": "1 crossover",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "cca83dcdbc",
+  "k": "1 crossover rapide",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "21a3e39074",
+  "k": "Crossover + finition au panier",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "cf1cc2dc30",
+  "k": "3 séries de 6 tirs, change de côté à chaque série",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "310b839f26",
+  "k": "3 séries de 8 tirs, passe suivie du tir en 2 touches au plus",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "7ba99ee60a",
+  "k": "4 séries de 8 tirs, un défenseur passif lève un bras au moment du tir",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "f368e6ca3c",
+  "k": "2 séries de 5, départ au trot",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "ffc0c98195",
+  "k": "3 séries de 6, départ au sprint court",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "12fd20259d",
+  "k": "3 séries de 8, côté du tireur annoncé au dernier moment",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "6edae6001b",
+  "k": "4 séries de 8, le tireur part en dribble une fois sur deux : contrôle sans faute",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "1d87bee72c",
+  "k": "2 séries de 6, défenseur passif ou plot",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "4032dc02a5",
+  "k": "3 séries de 8, défenseur réagit au changement",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "3ce13b5b67",
+  "k": "4 séries de 8, terminées par un tir ou un lay-up après l'élimination",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "daa4d7db45",
+  "k": "Le tir en suspension part d'abord des membres inférieurs : l'extension des chevilles, des genoux et des hanches précède celle du bras, qui n'ajuste que la trajectoire (Struzik, Pietraszewski et Zawadzki, 2014).",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "7c0d288550",
+  "k": "Les déplacements défensifs — sprinter puis ralentir pour fermer sur un tireur — font partie des efforts les plus fréquents du basketteur, avec les sauts et les sprints (Stojanović, 2018).",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "049a2b5e84",
+  "k": "Changer de direction vite demande un appui extérieur puissant et un angle de course ajusté à la vitesse : plus l'angle est serré, plus il faut ralentir avant pour rester efficace (Dos'Santos, Thomas, Comfort et Jones, 2018).",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "f9ebc66eac",
+  "k": "Détente et coordination jambes-bras",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "0bb887e60f",
+  "k": "Petit saut d'arrêt, montée du ballon, extension et lâcher, retombée équilibrée",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "a617e1daf3",
+  "k": "Tirer vite et juste après une passe, sans perdre l'équilibre",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "03162e9927",
+  "k": "Vitesse de déplacement puis freinage contrôlé",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "a46f20f3ab",
+  "k": "Sprint, ralenti en pas chassés, position basse à l'arrivée",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "aa0826ad79",
+  "k": "Empêcher le tir sans se faire éliminer en sautant",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "ecded41e72",
+  "k": "Vitesse du premier pas et gainage",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "aae1fc4a60",
+  "k": "Feinte, changement de main bas, premier pas explosif",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "db1146d1a9",
+  "k": "Éliminer un défenseur en un dribble pour attaquer le panier",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "57cfb39e42",
+  "k": "À 4-5 m du panier, face au cercle. Un passeur te fait la passe (ou un sac de ballons si tu es seul) ; change de côté à chaque série.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "b9f0646bb1",
+  "k": "Départ en aide près de la raquette, un partenaire fait office de tireur à 4-6 m ; on tourne après chaque série.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "3db1cc79f9",
+  "k": "2-3 m face à un défenseur (ou un plot pour travailler seul) ; alterne les côtés à chaque série.",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "bae518f778",
+  "k": "Tir après un dribble plutôt qu'une passe",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "f24e2db9f3",
+  "k": "Tir sous la pression d'un défenseur passif qui lève un bras",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "d3bbac242d",
+  "k": "Tir à 3 points pour les joueurs confirmés",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "e85b1081dd",
+  "k": "Distance de départ plus longue",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "2d7fab5876",
+  "k": "Le tireur peut partir en dribble à la réception",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "357626d185",
+  "k": "Deux close-out d'affilée (aide puis rotation)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "f3ab2d4dcb",
+  "k": "Crossover entre les jambes plutôt que devant",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "1921a34756",
+  "k": "Défenseur qui réagit vraiment (pas seulement passif)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "cc8e943232",
+  "k": "Crossover suivi d'un tir ou d'une passe",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "0f2118fa06",
+  "k": "Réception + petit saut",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "2935c7fe17",
+  "k": "Départ (aide)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "e238f27d7d",
+  "k": "Tireur",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "66eecfacb7",
+  "k": "Petits pas, mains hautes",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "022933a991",
+  "k": "Feinte (dribble fort)",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "c226f982a6",
+  "k": "Change de main, accélère",
+  "kind": "literal",
+  "where": "src/i18n-basket",
+  "n": 1
+ },
+ {
+  "h": "76aa6c2f89",
+  "k": "{#} minutes",
+  "kind": "extra",
+  "where": "extra i18n/_extra.json",
+  "n": 1
+ },
+ {
+  "h": "039de61f27",
+  "k": "{#} minute",
+  "kind": "extra",
+  "where": "extra i18n/_extra.json",
+  "n": 1
+ },
+ {
+  "h": "3d1247d01c",
+  "k": "Ta séance d'équipe",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "b7025ff920",
+  "k": "Ta séance d'équipe, ce soir",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "084a9b790b",
+  "k": "Ta prochaine séance d'équipe",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "c6565c1527",
+  "k": "Voir le détail",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "dcb182f2ea",
+  "k": "Cette séance est celle de ton club : elle n'est pas comptée dans ta charge de la semaine tant que tu ne l'enregistres pas toi-même, en séance en plus.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "2f6ffb7abc",
+  "k": "‹ Retour",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "8e55122081",
+  "k": "Pas de détail noté pour ce bloc.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "42b74e4d07",
+  "k": "Intense",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "367b2d18c3",
+  "k": "Charge contenue : technique, collectif réduit, peu de déplacement.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "fdcc75a026",
+  "k": "Grosse soirée : jeu de fitness, collectif total, forte sollicitation.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "b8276f38e1",
+  "k": "Qualité : vitesse, réactivité, appuis. Volume court, récupération longue.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
+ },
+ {
+  "h": "abbe630bcb",
+  "k": "Volume de travail élevé, intensité contenue. Typique de la présaison.",
+  "kind": "literal",
+  "where": "src/i18n-equipe",
+  "n": 1
  }
 ]

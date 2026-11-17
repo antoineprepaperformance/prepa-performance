@@ -1,7 +1,7 @@
 /* ===== Espace coach ===== */
 const COACH_NAV = [
   { id: "dash", n: "Tableau de bord" }, { id: "clients", n: "Clients" }, { id: "messages", n: "Messages" }, { id: "programmes", n: "Programmes" },
-  { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "finances", n: "Finances" }, { id: "reglages", n: "Offres & réglages" },
+  { id: "equipe", n: "Équipe" }, { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "finances", n: "Finances" }, { id: "reglages", n: "Offres & réglages" },
 ];
 
 function rowInfo(row, lib, today, settings) {
@@ -133,6 +133,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "messages" ? html`<${CoachInbox} rows=${rows} seen=${msgSeen} openClient=${openClient} />` : null}
       ${view === "dash" ? html`<${Dashboard} rows=${rows} demoOn=${demoOn} realCount=${realIds.length} setShowDemo=${setShowDemo} openClient=${openClient}
           onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
+      ${view === "equipe" ? html`<${EquipeScreen} />` : null}
       ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
           settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")}
@@ -320,7 +321,7 @@ function ClientDetail({ row, demoData, db, lib, exo, settings, note, msgSeen, ta
     ${tab === "bilans" ? html`<${CoachBilans} data=${data} src=${src} plan=${plan} prog=${prog} lib=${lib} settings=${settings} />` : null}
     ${tab === "nutrition" ? html`<${CoachNutrition} data=${data} src=${src} />` : null}
     ${tab === "ia" ? html`<${CoachAI} data=${data} src=${src} plan=${data.plan} />` : null}
-    ${tab === "terrain" ? html`<${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
+    ${tab === "terrain" ? html`<${EqClientCard} data=${data} src=${src} /><${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} coachView=${true} /><${CoachTerrain} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "seances" ? html`${plan && prog ? html`<${WeekPlanning} prog=${prog} plan=${plan} w=${stats.ps.phase === "en_cours" ? stats.ps.week : stats.ps.phase === "fini" ? plan.weeks : 1} lib=${lib} logs=${data.logs} coachView=${true} />` : null}${plan ? html`<${AutoregSettings} data=${data} src=${src} plan=${plan} />` : null}<${CoachLogs} data=${data} src=${src} plan=${plan} prog=${prog} exo=${exo} />` : null}
     ${tab === "tests" ? html`<${CoachTests} data=${data} src=${src} plan=${plan} prog=${prog} />` : null}
     ${tab === "videos" ? html`<${CoachVideos} data=${data} src=${src} />` : null}

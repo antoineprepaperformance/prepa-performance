@@ -25,6 +25,9 @@ REFS = {
     "hillhaas11": "Hill-Haas SV, Dawson B, Impellizzeri FM, Coutts AJ. Physiology of small-sided games training in football: a systematic review. Sports Med. 2011;41(3):199-220.",
     "stolen05": "Stølen T, Chamari K, Castagna C, Wisløff U. Physiology of soccer: an update. Sports Med. 2005;35(6):501-536.",
     "dossantos18": "Dos'Santos T, Thomas C, Comfort P, Jones PA. The effect of angle and velocity on change of direction biomechanics: an angle-velocity trade-off. Sports Med. 2018;48(10):2235-2253.",
+    "young15": "Young WB, Dawson B, Henry GJ. Agility and change-of-direction speed are independent skills: implications for training for agility in invasion sports. Int J Sports Sci Coach. 2015;10(1):159-169.",
+    "paul16": "Paul DJ, Gabbett TJ, Nassis GP. Agility in team sports: testing, training and factors affecting performance. Sports Med. 2016;46(3):421-442.",
+    "nimphius16": "Nimphius S, Callaghan SJ, Spiteri T, Lockie RG. Change of direction deficit: a more isolated measure of change of direction performance than total 505 time. J Strength Cond Res. 2016;30(11):3024-3032.",
     "sheppard06": "Sheppard JM, Young WB. Agility literature review: classifications, training and testing. J Sports Sci. 2006;24(9):919-932.",
     "haugen19": "Haugen T, Seiler S, Sandbakk Ø, Tønnessen E. The training and development of elite sprint performance: an integration of scientific and best practice literature. Sports Med Open. 2019;5(1):44.",
     "petrakos16": "Petrakos G, Morin JB, Egan B. Resisted sled sprint training to improve sprint performance: a systematic review. Sports Med. 2016;46(5):381-400.",
@@ -43,6 +46,7 @@ REFS = {
     "ronnestad16": "Rønnestad BR, Hansen J. Optimizing interval training at power output associated with peak oxygen uptake in well-trained cyclists. J Strength Cond Res. 2016;30(4):999-1006.",
     "gabbett16": "Gabbett TJ. The training-injury prevention paradox: should athletes be training smarter and harder? Br J Sports Med. 2016;50(5):273-280.",
     "andersson17": "Andersson SH, Bahr R, Clarsen B, Myklebust G. Preventing overuse shoulder injuries among throwing athletes: a cluster-randomised controlled trial in 660 elite handball players. Br J Sports Med. 2017;51(14):1073-1080.",
+    "struzik14": "Struzik A, Pietraszewski B, Zawadzki J. Biomechanical analysis of the jump shot in basketball. J Hum Kinet. 2014;42:73-79.",
 }
 
 # ---------------------------------------------------------------------------------------------
@@ -171,6 +175,85 @@ D("g_505", "Test 505 (changement de direction)", COLL + RAQ + ["ski", "baseball"
       "p": [{"k": "sprint", "p": [[0, 3.2], [15, 3.2]], "l": "10 m d'élan + 5 m", "n": 1, "e": "turn"}, {"k": "sprint", "p": [[15, 4.6], [10, 4.6]], "l": "5 m chrono", "lo": 1, "n": 2}, {"k": "jog", "p": [[10, 4.6], [4, 4.6]], "l": "", "lp": 0.6}],
       "t": [[12.5, 9.2, "Demi-tour sur la ligne des 15 m"]]},
   test="t505", z=5)
+
+# ---------- vivacité : freiner, couper, enchaîner, réagir ----------
+# Demande d'Antoine (16 novembre 2026) : « les exercices de vivacité… je crois qu'on peut les utiliser pour tous
+# les sports avec changement de direction ». Vérifié : la vitesse de changement de direction planifié est une
+# qualité physique générale, transférable et testable (505, T-test) ; l'agilité réactive, elle, dépend du signal
+# du sport (adversaire, ballon) et se travaille avec un vrai stimulus (Young 2015 ; Paul 2016). Rien ici n'est
+# repris d'un ouvrage : ces fiches partent des études citées, c'est le standard de l'application.
+D("g_freinage", "Freiner avant de tourner", COLL + RAQ + ["ski", "baseball"], "Agilité", "4 plots",
+  "Apprendre à freiner en deux ou trois appuis : c'est le freinage qui prépare un changement de direction rapide, pas la poussée.",
+  ["Pose un plot de départ, un plot à 10 m, et une zone d'arrêt de 2 m juste derrière (2 plots).",
+   "Sprinte jusqu'au plot des 10 m, puis arrête-toi complètement dans la zone, en 3 appuis au plus.",
+   "Reste 1 s immobile, genoux fléchis, poids sur l'avant des pieds, puis reviens en marchant.",
+   "Quand c'est propre, raccourcis la zone à 1,5 m, puis allonge l'élan à 15 m."],
+  ["Buste droit, hanches qui descendent : freine avec les jambes, pas avec le dos", "Les deux derniers appuis prennent presque tout le freinage", "Genou au-dessus des orteils, jamais vers l'intérieur", "Si tu dépasses la zone, l'élan est trop long : recule le plot"],
+  {"reprise": I(2, 4, 6, 30, 120, "Sprint 10 m, arrêt dans la zone de 2 m", "2 séries de 4 freinages, élan de 10 m, zone de 2 m"),
+   "sportif": I(3, 5, 6, 30, 120, "Sprint 10 m, arrêt dans la zone de 1,5 m", "3 séries de 5 freinages, élan de 10 m, zone de 1,5 m"),
+   "perf": I(3, 6, 7, 30, 150, "Sprint 15 m, arrêt dans la zone de 1,5 m", "3 séries de 6 freinages, élan de 15 m, zone de 1,5 m"),
+   "elite": I(4, 6, 8, 30, 150, "Sprint 20 m, arrêt dans la zone de 1,5 m", "4 séries de 6 freinages, élan de 20 m, zone de 1,5 m")},
+  "Plus on arrive vite, plus le changement de direction est difficile à exécuter : c'est le compromis angle-vitesse. L'avant-dernier appui fait l'essentiel du freinage, et un freinage réparti sur les derniers appuis réduit la charge sur le genou au moment de la coupe (Dos'Santos et al., 2018). On apprend donc à s'arrêter avant d'apprendre à tourner.",
+  ["dossantos18"], z=3,
+  sc={"f": "pelouse", "v": [-2, -2.5, 16, 8], "o": [[0, 2.5, "start", "Départ"], [10, 1, "c", "10 m"], [10, 4, "c", ""], [12, 1, "c", ""], [12, 4, "c", ""]],
+      "z": [[10, 1, 2, 3, "Zone d'arrêt"]],
+      "p": [{"k": "sprint", "p": [[0, 2.5], [10, 2.5]], "l": "Sprint 10 m", "n": 1}, {"k": "lat", "p": [[10, 2.5], [11.6, 2.5]], "l": "3 appuis, arrêt", "n": 2}, {"k": "jog", "p": [[11.6, 2.5], [0, 5.5]], "l": "Retour en marchant", "lp": 0.6}],
+      "t": [[11, 6.2, "Freine en 3 appuis, reste 1 s immobile"]]})
+
+D("sk_coupe", "La coupe à 45° : pied d'appui et genou dans l'axe", COLL + RAQ + ["ski", "baseball"], "Technique", "3 plots",
+  "Changer de direction à 45° en un seul appui franc, genou et pied alignés : le geste de base de toute esquive et de tout crochet.",
+  ["Pose un plot de départ, un plot à 8 m, et un troisième à 5 m du second, décalé à 45° sur la gauche.",
+   "Trottine jusqu'au plot des 8 m, puis coupe vers le troisième plot : l'avant-dernier appui freine, le dernier pousse.",
+   "Le pied d'appui se pose légèrement en dehors de la ligne du corps, pointe vers la nouvelle direction, genou au-dessus.",
+   "Même chose côté droit. Monte en vitesse seulement quand les deux côtés sont propres."],
+  ["Avant-dernier appui : il freine, hanches basses", "Dernier appui : pointe du pied vers où tu vas, genou dans l'axe", "Buste qui penche vers la nouvelle direction, pas vers l'extérieur", "Un seul appui franc : pas de petits pas sur place"],
+  {"reprise": I(2, 4, 8, 25, 90, "Coupe à 45°, en trottinant, 2 par côté", "2 séries de 4 coupes en trottinant (2 par côté)"),
+   "sportif": I(3, 4, 7, 25, 90, "Coupe à 45° à 80 %, 2 par côté", "3 séries de 4 coupes à 80 % (2 par côté)"),
+   "perf": I(3, 6, 6, 25, 120, "Coupe à 45° à fond, 3 par côté", "3 séries de 6 coupes à fond (3 par côté)"),
+   "elite": I(4, 6, 6, 25, 120, "Coupe à 45° à fond, élan de 12 m, 3 par côté", "4 séries de 6 coupes à fond, élan allongé à 12 m (3 par côté)")},
+  "Le temps perdu dans un changement de direction se mesure à part de la vitesse en ligne droite : c'est le « déficit de changement de direction » (Nimphius et al., 2016). Il se travaille par la technique de l'appui : un avant-dernier contact qui freine et un dernier contact orienté vers la nouvelle direction, genou aligné, ce qui améliore la vitesse de sortie et limite la charge sur le genou (Dos'Santos et al., 2018).",
+  ["nimphius16", "dossantos18"], z=3, skill=True, contact="aucun", pub="Tous", test=T("t505"),
+  obj={"ph": "Force de freinage et de poussée sur une jambe, gainage", "te": "Avant-dernier appui qui freine, dernier appui orienté, genou dans l'axe", "ma": "Esquiver, crocheter, se démarquer sans perdre de vitesse ni se blesser"},
+  org="Trois plots sur herbe ou parquet, 8 m puis 5 m à 45°. Seul, ou à deux : le partenaire regarde le genou du pied d'appui.",
+  var=["Coupe à 90° (le plot décalé à angle droit)", "Coupe au signal du partenaire (gauche ou droite annoncé au plot)", "Coupe après réception d'une passe ou balle en main", "Enchaînement de deux coupes (45° puis 90°)"],
+  sc={"f": "pelouse", "v": [-2, -2.5, 16, 9], "o": [[0, 4, "start", "Départ"], [8, 4, "c", "Appui"], [11.5, 0.5, "c", "45°"], [11.5, 7.5, "c", "45°"]],
+      "p": [{"k": "jog", "p": [[0, 4], [8, 4]], "l": "Élan 8 m", "n": 1}, {"k": "sprint", "p": [[8, 4], [11.5, 0.5]], "l": "Coupe gauche", "n": 2}, {"k": "sprint", "p": [[8, 4], [11.5, 7.5]], "l": "Coupe droite", "lo": 1, "n": 3}],
+      "t": [[8, 6.3, "Avant-dernier appui : freine · dernier appui : pousse"]]})
+
+D("g_cod_angles", "Changements de direction planifiés : 45°, 90°, 180°", COLL + RAQ + ["ski", "baseball"], "Agilité", "5 plots, chrono",
+  "Enchaîner des changements de direction d'angle croissant sur un parcours connu : la qualité qui se transfère d'un sport à l'autre.",
+  ["Pose un parcours en zigzag : départ, plot à 5 m, puis 3 plots espacés de 5 m en décalé (coupe à 45°, puis 90°, puis demi-tour à 180° au dernier).",
+   "Cours le parcours à 80 % en soignant chaque appui, puis à fond quand les appuis sont propres.",
+   "Alterne le sens à chaque répétition pour travailler les deux pieds.",
+   "Chronomètre une répétition sur deux : l'écart entre tes meilleurs temps et les autres te dit où tu perds du temps."],
+  ["Freine avant le plot, pas sur le plot", "Plus l'angle est fermé, plus tu arrives lent et plus tu freines tôt", "Regarde la sortie, pas tes pieds", "Arrête la série si tes temps s'effondrent"],
+  {"reprise": I(2, 3, 12, 45, 120, "Parcours à 80 %, sens alterné", "2 séries de 3 parcours à 80 %, en alternant le sens"),
+   "sportif": I(3, 4, 12, 45, 120, "Parcours à fond, sens alterné", "3 séries de 4 parcours à fond, en alternant le sens"),
+   "perf": I(3, 5, 12, 45, 150, "Parcours chronométré, sens alterné", "3 séries de 5 parcours chronométrés, en alternant le sens"),
+   "elite": I(4, 5, 12, 40, 150, "Parcours chronométré, élan 10 m", "4 séries de 5 parcours chronométrés, élan allongé à 10 m")},
+  "La vitesse de changement de direction planifié est une qualité physique en soi, distincte de la vitesse de sprint (Nimphius et al., 2016) et de l'agilité réactive (Young et al., 2015). Elle se travaille avec des parcours connus où la technique de l'appui peut être soignée, en montant progressivement l'angle, parce que chaque degré en plus impose de freiner davantage (Dos'Santos et al., 2018). C'est la part de la vivacité qui se transfère à tous les sports de changement de direction.",
+  ["nimphius16", "young15", "dossantos18"], z=4, test=T("t505"),
+  sc={"f": "pelouse", "v": [-2, -2.5, 22, 10], "o": [[0, 4, "start", "Départ"], [5, 4, "c", "45°"], [9, 1, "c", "90°"], [13, 6, "c", "180°"], [18, 6, "c", "Arrivée"]],
+      "p": [{"k": "sprint", "p": [[0, 4], [5, 4]], "l": "", "n": 1}, {"k": "sprint", "p": [[5, 4], [9, 1]], "l": "Coupe 45°", "n": 2}, {"k": "sprint", "p": [[9, 1], [13, 6]], "l": "Coupe 90°", "n": 3}, {"k": "sprint", "p": [[13, 6], [18, 6]], "l": "Demi-tour puis sprint", "n": 4, "e": "turn"}],
+      "t": [[9, 8.4, "Freine avant chaque plot, jamais dessus"]]})
+
+D("g_cod_signal", "Changement de direction au signal", COLL + RAQ + ["ski", "baseball"] + ["boxe", "lutte"], "Agilité", "4 plots, un partenaire",
+  "Changer de direction en réponse à un signal qu'on ne connaît pas à l'avance : la vraie agilité, celle qui fait la différence en match.",
+  ["Pose un plot de départ et, 8 m plus loin, une porte de deux plots à gauche et une à droite (2 m de large chacune).",
+   "Le partenaire se place derrière les portes. Tu trottines vers lui ; à 2 m de la ligne des portes, il pointe une porte (geste ou voix).",
+   "Tu coupes et sprintes dans la porte annoncée. Le partenaire varie le moment et le côté, sans schéma.",
+   "Version plus dure : il annonce de plus en plus tard, ou il feinte une fois sur trois."],
+  ["Reste bas et prêt à partir des deux côtés avant le signal", "Regarde le partenaire, pas tes pieds", "Première foulée vers la porte, pas un pas sur place", "Le partenaire garde un signal net : un geste franc, pas un indice ambigu"],
+  {"reprise": I(2, 4, 6, 30, 120, "Signal donné tôt, porte à 8 m", "2 séries de 4 réactions, signal donné tôt"),
+   "sportif": I(3, 5, 6, 30, 120, "Signal à 2 m des portes", "3 séries de 5 réactions, signal à 2 m des portes"),
+   "perf": I(3, 6, 6, 25, 150, "Signal tardif, une feinte sur trois", "3 séries de 6 réactions, signal tardif, avec feintes"),
+   "elite": I(4, 6, 6, 25, 150, "Signal tardif, portes à 10 m, feintes", "4 séries de 6 réactions, portes à 10 m, signal tardif avec feintes")},
+  "L'agilité, c'est un changement de direction en réponse à un stimulus (Sheppard & Young, 2006). Elle est indépendante de la vitesse de changement de direction planifié, et c'est elle qui distingue le mieux les joueurs de haut niveau des autres (Young et al., 2015). Un signal humain est le stimulus le plus fiable et le plus proche du match ; les formes de jeu à effectif réduit sont ce qui a le plus amélioré l'agilité dans les études (Paul et al., 2016). D'où le partenaire, et pas une lampe ou un bip.",
+  ["sheppard06", "young15", "paul16"], z=4,
+  sc={"f": "pelouse", "v": [-2, -3, 15, 10], "o": [[0, 3.5, "start", "Départ"], [8, 0.5, "c", ""], [8, 2.5, "c", ""], [8, 4.5, "c", ""], [8, 6.5, "c", ""], [11, 3.5, "pb", "Partenaire"]],
+      "z": [[8, 0.5, 0.3, 2, "Porte G"], [8, 4.5, 0.3, 2, "Porte D"]],
+      "p": [{"k": "jog", "p": [[0, 3.5], [6, 3.5]], "l": "Trottine vers le signal", "n": 1}, {"k": "sprint", "p": [[6, 3.5], [9.5, 1.5]], "l": "Signal gauche", "n": 2}, {"k": "sprint", "p": [[6, 3.5], [9.5, 5.5]], "l": "Signal droite", "lo": 1, "n": 3}],
+      "t": [[6, 8.6, "Le partenaire pointe la porte à 2 m de la ligne"]]})
 
 D("g_acc", "Accélérations et départs variés", COLL + ["baseball", "bob", "sprint", "boxe", "lutte"], "Vitesse", "Plots",
   "Gagner les premiers mètres : réagir et accélérer depuis les positions du match.",
@@ -426,6 +509,70 @@ D("b_box", "Défense en boîte (raquette)", ["basket"], "Agilité", "4 plots",
   ["stojanovic18", "pauole00"],
   sc={"f": "basket", "v": [-1.2, 3, 8.5, 12], "o": [[0, 5.05, "c", "Départ"], [0, 9.95, "c", ""], [5.8, 9.95, "c", ""], [5.8, 5.05, "c", ""]],
       "p": [{"k": "lat", "p": [[0.4, 5.05], [0.4, 9.95]], "l": "Glisse", "n": 1, "lo": 1}, {"k": "sprint", "p": [[0.4, 9.6], [5.8, 9.6]], "l": "Sprint", "n": 2, "lo": 1}, {"k": "lat", "p": [[5.4, 9.95], [5.4, 5.05]], "l": "Glisse", "n": 3, "lo": 1}, {"k": "back", "p": [[5.8, 5.4], [0, 5.4]], "l": "Course arrière", "n": 4}]}, z=5)
+
+D("sk_basket_tir", "Tir en suspension (élan et lâcher)", ["basket"], "Technique", "Ballons, un panier",
+  "Tirer juste après une passe, avec un petit saut d'arrêt et un lâcher qui part des jambes.",
+  ["Départ à 4-5 m du panier, ballon chez le passeur.",
+   "Passe reçue avec un petit saut d'arrêt : les deux pieds se posent presque ensemble, genoux fléchis, ballon déjà remonté vers le visage.",
+   "Extension des jambes puis du bras : coude sous le ballon, aligné avec le cercle ; le poignet retombe sur la balle au lâcher, doigts qui pointent vers le cercle.",
+   "Retombée équilibrée sur les mêmes appuis, prêt à repartir en rebond offensif."],
+  ["Les deux pieds se posent presque ensemble, pas une course qui continue", "Le coude est sous le ballon, jamais écarté sur le côté", "Le poignet retombe après le lâcher : les doigts pointent vers le cercle"],
+  {"reprise": I(2, 5, 6, 30, 120, "1 tir à 70 %, petit saut", "2 séries de 5 tirs à 70 %, petit saut"),
+   "sportif": I(3, 6, 6, 30, 120, "1 tir en suspension", "3 séries de 6 tirs, change de côté à chaque série"),
+   "perf": I(3, 8, 6, 25, 120, "1 tir en suspension, 2 touches au plus", "3 séries de 8 tirs, passe suivie du tir en 2 touches au plus"),
+   "elite": I(4, 8, 6, 25, 150, "1 tir en suspension sous pression", "4 séries de 8 tirs, un défenseur passif lève un bras au moment du tir")},
+  "Le tir en suspension part d'abord des membres inférieurs : l'extension des chevilles, des genoux et des hanches précède celle du bras, qui n'ajuste que la trajectoire (Struzik, Pietraszewski et Zawadzki, 2014).",
+  ["struzik14"],
+  sc={"f": "basket", "v": [-1.2, 3, 8.5, 12], "o": [[7.8, 5.3, "pb", "Partenaire"], [6.3, 7.5, "pa", "Toi"]],
+      "p": [{"k": "ball", "p": [[7.8, 5.6], [6.3, 7.3]], "l": "Passe", "lo": -1, "n": 1},
+            {"k": "jog", "p": [[6.3, 7.5], [5.8, 7.5]], "l": "Réception + petit saut", "lo": 1, "n": 2, "e": "jump", "w": 0.3},
+            {"k": "ball", "p": [[5.6, 7.4], [1.9, 7.5]], "l": "Tir", "lo": 1, "lp": 0.5, "n": 3}]},
+  obj={"ph": "Détente et coordination jambes-bras", "te": "Petit saut d'arrêt, montée du ballon, extension et lâcher, retombée équilibrée", "ma": "Tirer vite et juste après une passe, sans perdre l'équilibre"},
+  org="À 4-5 m du panier, face au cercle. Un passeur te fait la passe (ou un sac de ballons si tu es seul) ; change de côté à chaque série.",
+  var=["Tir après un dribble plutôt qu'une passe", "Tir sous la pression d'un défenseur passif qui lève un bras", "Tir à 3 points pour les joueurs confirmés"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_basket_closeout", "Fermer sur le tireur (close-out)", ["basket"], "Technique", "Aucun",
+  "Fermer vite sur un tireur sans lui laisser le temps ni l'espace de tirer, sans sauter dans ses jambes.",
+  ["Départ en position d'aide, près de la raquette, genoux fléchis, mains actives.",
+   "Sprinte vers le tireur sur les trois premiers quarts de la distance.",
+   "Ralentis en petits pas chassés sur le dernier mètre : jamais à pleine vitesse jusqu'au bout.",
+   "Arrivée en position basse : une main haute du côté du ballon, l'autre basse et active, pied extérieur légèrement avancé pour couper la ligne vers la ligne de fond."],
+  ["Ralentis avant d'arriver : à pleine vitesse jusqu'au bout, tu voles au-dessus du tireur ou tu glisses", "Une seule main levée, l'autre reste basse et active", "Pied extérieur avancé pour couper la ligne de dribble"],
+  {"reprise": I(2, 5, 8, 30, 90, "1 close-out, trot puis pas chassés", "2 séries de 5, départ au trot"),
+   "sportif": I(3, 6, 8, 25, 90, "1 close-out", "3 séries de 6, départ au sprint court"),
+   "perf": I(3, 8, 8, 20, 90, "1 close-out, côté annoncé tard", "3 séries de 8, côté du tireur annoncé au dernier moment"),
+   "elite": I(4, 8, 8, 20, 120, "Close-out + contre un premier dribble", "4 séries de 8, le tireur part en dribble une fois sur deux : contrôle sans faute")},
+  "Les déplacements défensifs — sprinter puis ralentir pour fermer sur un tireur — font partie des efforts les plus fréquents du basketteur, avec les sauts et les sprints (Stojanović, 2018).",
+  ["stojanovic18"],
+  sc={"f": "basket", "v": [1, 5, 8.5, 12], "o": [[3, 10, "start", "Départ (aide)"], [7.5, 7.5, "pa", "Tireur"]],
+      "p": [{"k": "sprint", "p": [[3, 10], [6.2, 8]], "l": "Sprint", "lo": -1, "n": 1},
+            {"k": "lat", "p": [[6.2, 8], [7.2, 7.6]], "l": "Petits pas, mains hautes", "lo": 1, "n": 2}]},
+  obj={"ph": "Vitesse de déplacement puis freinage contrôlé", "te": "Sprint, ralenti en pas chassés, position basse à l'arrivée", "ma": "Empêcher le tir sans se faire éliminer en sautant"},
+  org="Départ en aide près de la raquette, un partenaire fait office de tireur à 4-6 m ; on tourne après chaque série.",
+  var=["Distance de départ plus longue", "Le tireur peut partir en dribble à la réception", "Deux close-out d'affilée (aide puis rotation)"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_basket_crossover", "Changement de direction en dribble (crossover)", ["basket"], "Technique", "Un ballon",
+  "Changer de main et de direction assez vite pour éliminer un défenseur, ballon protégé.",
+  ["Dribble face à un défenseur, à 2-3 m, genoux fléchis, ballon dans la main extérieure.",
+   "Pousse un dribble fort et bas vers un côté pour faire avancer le défenseur de ce côté (feinte de départ).",
+   "Change de main devant toi, dribble bas et rapide de l'autre côté : le premier pas part EN MÊME TEMPS que le changement de main, pas après.",
+   "Accélère sur 2-3 appuis pour prendre l'avantage, ballon protégé par le corps."],
+  ["Dribble bas, sous le genou, pendant le changement : plus dur à intercepter", "Le premier pas part en même temps que le changement de main", "Épaule et pied avancent du même côté que la nouvelle direction"],
+  {"reprise": I(2, 6, 8, 25, 90, "1 crossover lent + accélération courte", "2 séries de 6, défenseur passif ou plot"),
+   "sportif": I(3, 6, 8, 20, 90, "1 crossover", "3 séries de 6, côtés alternés"),
+   "perf": I(3, 8, 6, 20, 90, "1 crossover rapide", "3 séries de 8, défenseur réagit au changement"),
+   "elite": I(4, 8, 6, 15, 120, "Crossover + finition au panier", "4 séries de 8, terminées par un tir ou un lay-up après l'élimination")},
+  "Changer de direction vite demande un appui extérieur puissant et un angle de course ajusté à la vitesse : plus l'angle est serré, plus il faut ralentir avant pour rester efficace (Dos'Santos, Thomas, Comfort et Jones, 2018).",
+  ["dossantos18"],
+  sc={"f": "basket", "v": [0.2, 4.5, 9.2, 11], "o": [[3.3, 6.3, "pb", "Défenseur"], [5.9, 9.3, "pa", "Toi"]],
+      "p": [{"k": "lat", "p": [[5.9, 9.3], [7.5, 8.9]], "l": "Feinte (dribble fort)", "lo": 1, "lp": 0.8, "n": 1},
+            {"k": "sprint", "p": [[7.2, 9.0], [4.3, 7.6], [1.9, 6.9]], "l": "Change de main, accélère", "lo": 1, "lp": 0.7, "n": 2}]},
+  obj={"ph": "Vitesse du premier pas et gainage", "te": "Feinte, changement de main bas, premier pas explosif", "ma": "Éliminer un défenseur en un dribble pour attaquer le panier"},
+  org="2-3 m face à un défenseur (ou un plot pour travailler seul) ; alterne les côtés à chaque série.",
+  var=["Crossover entre les jambes plutôt que devant", "Défenseur qui réagit vraiment (pas seulement passif)", "Crossover suivi d'un tir ou d'une passe"],
+  contact="aucun", pub="Tous", skill=True, z=4)
 
 # ---------- volley ----------
 D("v_att", "Attaques répétées", ["volley"], "Puissance", "Filet ou ligne au sol",
@@ -1238,7 +1385,7 @@ D("sk_passe", "Passe vissée des deux côtés", ["rugby", "rugby7"], "Technique"
    "elite": I(4, 20, 2, 3, 60, "Passes à 10-12 m", "4 séries de 20 passes, 10 à 12 m, ballon reçu en mouvement")},
   "Chez des joueurs de première division, les passes du côté non préféré partaient bien plus souvent en avant (57 % contre 15 %) et allaient moins loin : le côté faible doit être travaillé en priorité (Pavely, 2009).",
   ["pavely09"],
-  sc={"f": "rugby", "v": [16, 28, 36, 42], "o": [[20, 35, "pa", "Passeur"], [30, 35, "pb", "Cible"]],
+  sc={"f": "rugby", "v": [16, 28, 36, 42], "o": [[20, 35, "pa", "Toi"], [30, 35, "pb", "Cible"]],
       "p": [{"k": "ball", "p": [[20.8, 34.6], [29.2, 34.6]], "l": "5 à 10 m", "n": 3}],
       "t": [[25, 39.5, "Côté fort · côté faible × 2"]]},
   obj={"ph": "Rotation du tronc et des hanches", "te": "Passe vissée, précision des deux côtés", "ma": "Faire vivre le ballon vite et loin, sans en-avant"},
@@ -1403,7 +1550,7 @@ D("sk_foot_controle", "Contrôle orienté après prise d'information", ["foot"],
    "elite": I(4, 10, 5, 10, 90, "Contrôle orienté + porte, défenseur passif", "4 séries de 10, un défenseur passif ferme une des portes")},
   "Chez des footballeurs de haut niveau, regarder autour de soi plus souvent dans les secondes qui précèdent la réception est associé à des passes plus souvent vers l'avant et à des pertes de balle moins fréquentes (McGuckian, 2018).",
   ["mcguckian18"],
-  sc={"f": "foot", "v": [30, 18, 66, 50], "o": [[37, 34, "pb", "Passeur"], [49, 34, "pa", "Toi"], [57, 26, "c", ""], [57, 29, "c", "Porte"], [57, 39, "c", ""], [57, 42, "c", "Porte"], [62, 34, "pb", "Montre"]],
+  sc={"f": "foot", "v": [30, 18, 66, 50], "o": [[37, 34, "pb", "Partenaire"], [49, 34, "pa", "Toi"], [57, 26, "c", ""], [57, 29, "c", "Porte"], [57, 39, "c", ""], [57, 42, "c", "Porte"], [62, 34, "pb", "Montre"]],
       "p": [{"k": "ball", "p": [[37, 34], [48.5, 34]], "l": "Passe", "lo": -1, "n": 1},
             {"k": "jog", "p": [[49, 34], [52.5, 31], [59, 27.5]], "l": "Contrôle orienté", "lo": 1, "lp": 0.3, "n": 2}],
       "t": [[48, 21.5, "2 coups d'œil derrière avant de recevoir"]]},
@@ -1499,9 +1646,19 @@ D("sk_hand_reception", "Réceptions et feintes, genou dans l'axe", ["hand"], "Te
   var=["Réception sur une jambe dès le centre", "Côté annoncé au dernier moment", "Ballon reçu en l'air avant la réception"],
   contact="aucun", pub="Tous, et le retour après une entorse ou un ligament croisé (avec l'accord du kiné)", skill=True, z=3)
 
-for _sid in ("rugby", "rugby7", "foot", "hand"):
+for _sid in ("rugby", "rugby7", "foot", "hand", "basket"):
     _sp = next(x for x in SPORTS if x["id"] == _sid)
     _sp["skills"] = [d["id"] for d in DRILLS if d.get("skill") and _sid in d["sports"]]
+
+# Les fiches vivacité sont rattachées à chaque sport de changement de direction par ses listes « drills » et
+# « skills » (c'est ce que lit drillsFor / skillsFor), sans toucher aux fiches propres à chaque sport.
+VIVACITE_IDS = {"drills": ["g_freinage", "g_cod_angles", "g_cod_signal"], "skills": ["sk_coupe"]}
+for _sp in SPORTS:
+    for _k, _ids in VIVACITE_IDS.items():
+        for _i in _ids:
+            _d = next((x for x in DRILLS if x["id"] == _i), None)
+            if _d and _sp["id"] in _d["sports"] and _i not in _sp.get(_k, []):
+                _sp[_k] = list(_sp.get(_k, [])) + [_i]
 
 SPORTS_CONTENT = {"SPORTS": SPORTS, "DRILLS": DRILLS, "SREFS": REFS}
 

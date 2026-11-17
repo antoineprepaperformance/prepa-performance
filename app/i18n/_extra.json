@@ -63,5 +63,7 @@
  "{#} sur {#}",
  "Bloc {#}",
  "Semaine {#}",
- "corriger"
+ "corriger",
+ "{#} minutes",
+ "{#} minute"
 ]

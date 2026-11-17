@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Traductions ajoutees a la main pour le lot basket du 16 novembre 2026 (3 fiches Technique), quand Node
+"""Traductions ajoutees a la main pour le lot basket du 17 novembre 2026 (3 fiches Technique), quand Node
 n'est pas disponible. Meme mecanisme que i18n_main.py : voir ce fichier pour le detail. A lancer depuis app/ :
 python3 tools/i18n_basket.py
 """

@@ -101,20 +101,21 @@ Sans Stripe, tes clients passent commande et tu confirmes toi-même chaque paiem
 1. Crée un compte sur **stripe.com** et complète la vérification de ton activité (SIRET, IBAN).
 2. **Paramètres › Informations publiques** : nom de l'activité, e-mail d'assistance, et les liens `https://ton-pseudo.github.io/prepa-performance/#cgv` (conditions) et `…/#confidentialite` (confidentialité).
 3. **Paramètres › E-mails clients** : active les reçus de paiement réussi.
-4. **Liens de paiement › Nouveau** : un lien par formule et par durée, au prix de ta grille (exemple : « Suivi — 1 mois », 119 €, paiement unique).
+4. **Liens de paiement › Nouveau** : un lien par formule et par durée, au prix de ta grille (exemple : « Suivi — 1 mois », 89 €, paiement unique). Coche **Autoriser les codes promotionnels** dans chaque lien (pour le code pionniers, plus bas).
    - **Après le paiement** › **Ne pas afficher de page de confirmation, rediriger les clients vers votre site** :
      `https://ton-pseudo.github.io/prepa-performance/?paiement=ok&session_id={CHECKOUT_SESSION_ID}`
 5. Copie chaque lien (`https://buy.stripe.com/…`) dans ton espace coach : **Offres & réglages › Paiement en ligne**, case de la formule et de la durée › **Enregistrer**.
-   - Grille du 28 octobre 2026, 16 liens (1, 3, 6 et 12 mois, paiement unique) :
+   - Grille du 17 novembre 2026, 16 liens (1, 3, 6 et 12 mois, paiement unique) :
 
      | Formule | 1 mois | 3 mois | 6 mois | 12 mois |
      |---|---|---|---|---|
-     | Coach IA | 29 € | 79 € | 149 € | 279 € |
-     | Essentiel | 59 € | 159 € | 299 € | 569 € |
-     | Suivi | 119 € | 319 € | 599 € | 1 139 € |
+     | Autonomie (programme + nutrition, sans coach IA) | 12,90 € | 33 € | 59 € | 109 € |
+     | Autonomie + coach IA | 19 € | 49 € | 89 € | 159 € |
+     | Suivi | 89 € | 239 € | 449 € | 849 € |
      | Sur mesure (places limitées) | 199 € | 539 € | 999 € | 1 899 € |
 
-   - **Désactive les anciens liens** (Liens de paiement › … › Désactiver) : tous les liens « 2 mois », la formule Hybride, et les anciens prix 1 et 3 mois. Un paiement à un ancien prix arrive quand même, mais en « montant à vérifier » : tu l'actives à la main.
+   - **Désactive les anciens liens** (Liens de paiement › … › Désactiver) : Coach IA à 29 €, Essentiel, Suivi à 119 € et ses durées, tous les liens « 2 mois », la formule Hybride et les liens Lite de **nouvelle souscription** (garde seulement ce qui sert aux abonnements Lite en cours). Un paiement à un ancien prix arrive quand même, mais en « montant à vérifier » : tu l'actives à la main.
+   - **Code pionniers** (−20 % sur une première commande, 20 utilisations, jusqu'au 31 janvier 2027) : crée-le d'abord dans l'application (**Codes & essais › Lancement › Créer le code**), puis dans Stripe : **Catalogue de produits › Coupons › Nouveau** (−20 %, durée « une fois ») › **Ajouter un code promotionnel** `PIONNIERS` (première commande seulement, 20 utilisations, date d'expiration 31 janvier 2027). Le client saisit le code dans l'application (prix réduit dans le récapitulatif) puis sur la page Stripe. Un paiement réduit arrive en « montant à vérifier » : compare-le au montant affiché dans « À traiter », puis **Paiement reçu · activer** (l'utilisation du code se compte à ce moment-là).
    - 6 et 12 mois : le client paie une fois ; ses programmes de 12 semaines s'enchaînent jusqu'à la date de fin. En cas de blessure ou de contre-indication médicale avec certificat, il peut demander la pause (tu repousses la date de fin dans sa fiche › Plan) ou le remboursement au prorata (article 7 ter des conditions de vente).
    - Sur mesure : nombre de places dans **Offres & réglages › Prix des formules** ; passe la formule en « Complète » quand toutes les places sont prises.
 
@@ -124,7 +125,10 @@ Dès qu'un client paie, sa commande apparaît dans « À traiter » : vérifie l
 
 > Si tu changes un prix dans l'application, change aussi le lien Stripe correspondant.
 
-### Forfait Lite (abonnement ou paiement d'avance)
+### Forfait Lite (abonnés en cours seulement)
+
+> Le Lite n'est plus vendu depuis le 17 novembre 2026 : la formule Autonomie le remplace. Ne crée plus de nouveaux liens Lite ; ce qui suit sert seulement si tu as encore des abonnés Lite (portail client, relances, résiliation).
+
 
 1. **Catalogue de produits › Ajouter un produit** « Lite » avec **quatre prix** :
    - 9,90 € **récurrent, mensuel** ;
@@ -166,7 +170,9 @@ Si un montant ne correspond pas à ta grille (code promo Stripe, prix modifié d
 
 ## Étape 7 · Codes d'essai et accès offerts
 
-Espace coach › **Codes & essais** : choisis le type (essai ou offert), la formule (y compris Lite), la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
+Espace coach › **Codes & essais** › carte **Lancement** : un clic met en ligne l'**essai gratuit de 7 jours** (Autonomie + coach IA, code `ESSAI7`, une fois par personne, sans paiement : un bouton « Essayer 7 jours gratuitement » apparaît sur la page d'accueil tant que le code est actif) ; un autre crée le **code pionniers** `PIONNIERS` (voir l'étape 5).
+
+Pour un code sur mesure : choisis le type (essai, offert, ou réduction en pourcentage sur une première commande payante), la formule, la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
 
 ---
 

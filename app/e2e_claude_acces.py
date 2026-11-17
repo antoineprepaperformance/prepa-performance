@@ -49,7 +49,7 @@ async def run():
             ok(code.startswith("ESSAI-"), "code créé : " + code)
             await btn(co, "Offres & réglages", exact=True)
             ok(await co.get_by_role("radio", name="Automatique (relais installé)").count() == 0, "version Claude : pas de mode automatique (pas de relais)")
-            await co.fill("#pl-suivi4", "https://buy.stripe.com/test_suivi1")
+            await co.fill("#pl-suivi24", "https://buy.stripe.com/test_suivi1")
             await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(400)
             # client 1 : code
             c1 = await A.new_page(); hook(c1, "c1"); await c1.set_viewport_size({"width": 390, "height": 844})
@@ -90,11 +90,11 @@ async def run():
                 await btn(c3, "Commander avec obligation de paiement")
             sp = await np.value
             await sp.wait_for_load_state()
-            ok("buy.stripe.com/test_suivi1" in sp.url and "client_reference_id=u_k3__suivi__4__" in sp.url, "page Stripe ouverte dans un nouvel onglet avec la référence", sp.url)
+            ok("buy.stripe.com/test_suivi1" in sp.url and "client_reference_id=u_k3__suivi2__4__" in sp.url, "page Stripe ouverte dans un nouvel onglet avec la référence", sp.url)
             await sp.close(); await c3.wait_for_timeout(500)
             ok(await has(c3, "Commande en attente de paiement") and await has(c3, "Reprendre le paiement"), "client : commande en attente, paiement reprenable")
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1000)
-            ok(await has(co, "Paiement Stripe à vérifier · 119 €"), "coach : paiement à vérifier dans Stripe")
+            ok(await has(co, "Paiement Stripe à vérifier · 89 €"), "coach : paiement à vérifier dans Stripe")
             await co.locator("ul.alerts button", has_text="Paul").first.click(); await co.wait_for_timeout(500)
             await btn(co, "Paiement reçu · activer"); await co.wait_for_timeout(600)
             await shot(co, "coach_commandes")

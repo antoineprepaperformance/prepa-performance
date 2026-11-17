@@ -110,7 +110,7 @@ async def run():
                 await co.bring_to_front(); await co.goto(URL + "?as=owner&lang=fr"); await co.wait_for_timeout(1500)
                 await c.bring_to_front(); await c.goto(URL + f"?as={cid}&lang={lang}"); await c.wait_for_timeout(1300)
                 plan = await mdb(c, f"plans/u_{cid}") or {}
-                ok(plan.get("offer") == "suivi" and plan.get("status") == "active", f"[{lang}] inscription et commande dans la langue choisie : accès actif", plan)
+                ok(plan.get("offer") == "suivi2" and plan.get("status") == "active", f"[{lang}] inscription et commande dans la langue choisie : accès actif", plan)
                 prof = await mdb(c, f"clients/u_{cid}") or {}
                 ok(prof.get("lang") == lang, f"[{lang}] langue enregistrée dans le profil (Antoine la voit)", prof.get("lang"))
                 await scan(c, lang, "aujourd'hui"); await shot(c, f"{lang}_aujourdhui", full=True)

@@ -17,7 +17,7 @@
    Aucune donnée bancaire ne passe par ce relais : seulement le montant, l'e-mail et la référence de commande.
 
    Coach IA sur le site (facultatif, gratuit) : adresse « …/ia ». Le relais vérifie que la personne est connectée et
-   qu'elle est le coach ou un client avec une formule en cours (hors Lite), puis fait répondre un modèle d'IA ouvert
+   qu'elle est le coach ou un client avec une formule en cours qui comprend le coach IA (ni Lite ni Autonomie), puis fait répondre un modèle d'IA ouvert
    (Gemma 4 de Google, licence Apache 2.0) exécuté par Cloudflare Workers AI : 10 000 « neurones » gratuits par jour
    sur l'offre Workers Free. Au-delà, l'IA répond « limite du jour atteinte » : rien n'est jamais facturé sans
    passer à une offre payante.
@@ -37,7 +37,9 @@
      SANTE_ECART_MIN        (facultatif) minutes entre deux envois du Raccourci iPhone pour un même jour, par défaut 15. */
 
 /* grille en vigueur : prix par formule et par durée en semaines (1, 3, 6 et 12 mois) ; réglage « tarifs » de l'espace coach */
-const DEFAULT_TARIFS = { ia: { 4: 29, 12: 79, 26: 149, 52: 279 }, essentiel: { 4: 59, 12: 159, 26: 299, 52: 569 }, suivi: { 4: 119, 12: 319, 26: 599, 52: 1139 }, surmesure: { 4: 199, 12: 539, 26: 999, 52: 1899 } };
+const DEFAULT_TARIFS = { auto: { 4: 12.9, 12: 33, 26: 59, 52: 109 }, ia: { 4: 19, 12: 49, 26: 89, 52: 159 }, suivi2: { 4: 89, 12: 239, 26: 449, 52: 849 }, surmesure: { 4: 199, 12: 539, 26: 999, 52: 1899 },
+  /* grille d'octobre 2026 : plus en vente, gardée pour les liens encore actifs */
+  essentiel: { 4: 59, 12: 159, 26: 299, 52: 569 }, suivi: { 4: 119, 12: 319, 26: 599, 52: 1139 } };
 /* ancienne grille (1, 2 et 3 mois) : seulement pour les liens de 2 mois encore actifs et l'ancienne formule Hybride */
 const LEGACY_PRICES = { ia: [25, 47, 67], essentiel: [49, 95, 135], suivi: [99, 189, 269], hybride: [139, 265, 375] };
 const LEGACY_W = [4, 8, 12];
@@ -214,12 +216,12 @@ async function iaEtat(request, env) {
   return new Response(JSON.stringify({ ok: true, ia: !!(env.AI && typeof env.AI.run === "function"), quota: !!env.QUOTA }), { status: 200, headers: H });
 }
 function dayKey() { return new Date().toISOString().slice(0, 10); }
-/* formule en cours (hors Lite) d'après le document plans/{uid}, lu avec le jeton du client lui-même : renvoie son identifiant */
+/* formule en cours avec coach IA (ni Lite ni Autonomie) d'après le document plans/{uid}, lu avec le jeton du client lui-même : renvoie son identifiant */
 function planActif(fields, now) {
   if (!fields) return null;
   const g = (k) => fromFs(fields[k]);
   const offer = String(g("offer") || "");
-  if (g("status") !== "active" || !["ia", "essentiel", "suivi", "surmesure", "hybride"].includes(offer)) return null;
+  if (g("status") !== "active" || !["ia", "suivi2", "essentiel", "suivi", "surmesure", "hybride"].includes(offer)) return null;
   /* formules de 6 et 12 mois : accès daté (startMs → untilMs) */
   const untilMs = Number(g("untilMs")) || 0;
   if (untilMs) { const startMs = Number(g("startMs")) || 0; return now >= startMs - 31 * 86400000 && now <= untilMs + 86400000 ? offer : null; }
@@ -230,7 +232,7 @@ function planActif(fields, now) {
 }
 /* limites du coach IA par formule et par jour : réglées par le coach (settings/app › ai › quota), sinon par défaut.
    Le relais accepte 2 demandes de plus que la limite affichée au client, pour l'analyse automatique du bilan de la semaine. */
-const IA_QUOTA_DEF = { ia: { q: 10, ph: 3 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
+const IA_QUOTA_DEF = { ia: { q: 10, ph: 3 }, suivi2: { q: 20, ph: 5 }, essentiel: { q: 10, ph: 3 }, suivi: { q: 20, ph: 5 }, surmesure: { q: 30, ph: 8 }, hybride: { q: 10, ph: 3 } };
 function iaLimites(aiFields, offer) {
   const d = IA_QUOTA_DEF[offer] || IA_QUOTA_DEF.essentiel;
   const qm = aiFields && aiFields.quota && aiFields.quota.mapValue && aiFields.quota.mapValue.fields;

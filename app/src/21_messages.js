@@ -120,7 +120,7 @@ function MessagesScreen({ data, src, settings, plan, coach, onClose, demo }) {
       <div><div className="eyebrow">Messagerie privée</div><h2>${name}</h2></div></header>
     ${open ? html`<p className="muted small">${name} te répond dès que possible, en général dans la journée. Pour une urgence médicale, appelle le 15 ou le 112.</p>
       <${MessageThread} data=${data} src=${src} me="client" other=${name} onSeen=${onSeen} demo=${demo} />`
-      : html`<${Card} title="Messagerie"><p className="small">${(plan && plan.offer === "lite" ? "La messagerie avec " + name + " n'est pas incluse dans le forfait Lite." : plan && offerAuto(plan.offer) ? "La messagerie avec " + name + " n'est pas incluse dans la formule Coach IA : pose tes questions au coach IA." : "La messagerie n'est pas disponible pour le moment.") + (legal.email ? " Pour une question sur ton abonnement ou ton accès : " + legal.email + "." : "")}</p></${Card}>`}
+      : html`<${Card} title="Messagerie"><p className="small">${(plan && plan.offer === "lite" ? "La messagerie avec " + name + " n'est pas incluse dans le forfait Lite." : plan && plan.offer === "auto" ? "La messagerie avec " + name + " n'est pas incluse dans la formule Autonomie." : plan && offerAuto(plan.offer) ? "La messagerie avec " + name + " n'est pas incluse dans ta formule : pose tes questions au coach IA." : "La messagerie n'est pas disponible pour le moment.") + (legal.email ? " Pour une question sur ton abonnement ou ton accès : " + legal.email + "." : "")}</p></${Card}>`}
   </div>`;
 }
 /* bouton d'en-tête du client (avec le nombre de messages non lus) */

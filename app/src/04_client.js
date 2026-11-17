@@ -13,6 +13,8 @@ const CONSENT_SITE = "J'accepte que mes données d'entraînement et de santé (q
 function offerName(id) { if (id === "lite") return "Lite"; const o = OFFERS_ALL.find((x) => x.id === id); return o ? o.n : "—"; }
 /* formule « Coach IA » : le programme est conduit par l'IA, sans réponse personnelle du coach aux bilans */
 function offerAuto(offer) { return !!(OFFERS_ALL.find((x) => x.id === offer) || {}).auto; }
+/* formules sans coach IA : Lite et Autonomie (l'allocation gratuite de l'IA est partagée entre tous les clients) */
+function noAI(plan) { return !!plan && (plan.offer === "lite" || !!(OFFERS_ALL.find((x) => x.id === plan.offer) || {}).noAI); }
 /* choix de formule (coach) : formules en vente, + l'ancienne formule du client si elle n'est plus vendue */
 function offerOptions(cur, withLite) {
   const old = OFFERS_ALL.find((x) => x.id === cur && x.retired);
@@ -27,7 +29,7 @@ function offerPrice(settings, offer, weeks) {
   const w = Number(weeks), o = OFFERS_ALL.find((x) => x.id === offer) || {};
   const t = settings && settings.tarifs && settings.tarifs[offer];
   if (t && t[w] !== undefined && t[w] !== null && t[w] !== "" && Number.isFinite(Number(t[w]))) return Number(t[w]);
-  if (o.retired || w === 8) {
+  if ((o.retired && !o.durs) || w === 8) {
     const old = (settings && settings.offers && settings.offers[offer]) || (o.retired ? o.prix : null), i = { 4: 0, 8: 1, 12: 2 }[w];
     return old && i !== undefined && old[i] !== undefined ? old[i] : null;
   }
@@ -126,7 +128,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   useAppBadge(demo ? 0 : msgN);
   const canMsg = src && src.mode !== "local" && typeof src.sendMessage === "function";
   const conf = aiConf(settings, data);
-  const showAI = conf.on && ai.ready && !!ai.sample && !(data.plan && data.plan.offer === "lite");
+  const showAI = conf.on && ai.ready && !!ai.sample && !noAI(data.plan);
   const aiq = useAIQuota(data, src, settings, plan, !!demo);
   /* thème, couleur et taille du texte choisis par le client ; thème de saison et son défi */
   usePrefsApply(data.profile, !!data.ready);
@@ -160,7 +162,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
     const w = open.w;
     const entry0 = weekSessions(prog, plan, w, libAll).find((x) => x.key === open.key);
     const entry = entry0 ? { ...entry0, s: { ...entry0.s, items: adjItems(entry0, data, prog) } } : null;
-    if (entry) return html`<div className="client">${banner}<${SessionPlayer} entry=${entry} prog=${prog} plan=${plan} exo=${exoAll} data=${data} src=${src} settings=${settings} ai=${conf.on && plan.offer !== "lite" ? ai : null}
+    if (entry) return html`<div className="client">${banner}<${SessionPlayer} entry=${entry} prog=${prog} plan=${plan} exo=${exoAll} data=${data} src=${src} settings=${settings} ai=${conf.on && !noAI(plan) ? ai : null}
       onClose=${() => setOpen(null)} isCurrent=${ps && ps.week === w} /></div>`;
   }
   return html`<div className=${"client has-nav" + (wide ? " wide" : "")}>
@@ -308,7 +310,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const todo = [
     /* la séance à faire est déjà le grand bouton au-dessus : ici, seulement quand elle est faite */
     !train || !sessions.length ? null : doneToday ? { k: "seance", ok: true, n: "Séance du jour faite" } : !next ? { k: "seance", ok: true, n: "Séances de la semaine faites" } : null,
-    prevMissing ? { k: "bilan", n: "Ton bilan de la semaine " + (w - 1), sub: isLite ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé.", btn: "Remplir", act: () => go("bilan") }
+    prevMissing ? { k: "bilan", n: "Ton bilan de la semaine " + (w - 1), sub: noAI(plan) ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour dire à ton coach comment ça s'est passé.", btn: "Remplir", act: () => go("bilan") }
       : !ck && (ps.day >= 6 || !next) ? { k: "bilan", n: "Ton bilan de la semaine " + w, sub: "À remplir en fin de semaine.", btn: "Remplir", act: () => go("bilan") }
       : ck ? { k: "bilan", ok: true, n: "Bilan de la semaine envoyé" } : null,
     testDue ? { k: "tests", n: "Tes tests de fin de bloc", sub: "Fais-les en fin de semaine et note tes résultats.", btn: "Saisir", act: () => openTests(testPoint) } : null,
@@ -577,9 +579,10 @@ function Bilans({ data, plan, prog, stats, src, lib, settings, ai, openChat }) {
   const lastRev = chatMsgs(data).filter((m) => m.kind === "bilan" && m.w === w).slice(-1)[0];
   if (!maxW) return html`<div className="stack"><${Empty} title="Pas encore de bilan" text="Ton premier bilan sera à remplir à la fin de ta première semaine." /></div>`;
   return html`<div className="stack">
-    <div className="hero"><div className="eyebrow">Bilan hebdomadaire</div><h1>${plan.offer === "lite" ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour faire le point avec ton coach."}</h1>
+    <div className="hero"><div className="eyebrow">Bilan hebdomadaire</div><h1>${noAI(plan) ? "Deux minutes pour faire le point sur ta semaine." : offerAuto(plan.offer) ? "Deux minutes pour faire le point avec ton coach IA." : "Deux minutes pour faire le point avec ton coach."}</h1>
       ${plan.offer === "lite" ? html`<p className="muted small">Formule Lite : tes bilans suivent ta forme et ta progression (carte athlète, tendances) ; ils ne reçoivent pas de réponse personnelle.</p>` : null}
-      ${offerAuto(plan.offer) ? html`<p className="muted small">Formule Coach IA : ton bilan est analysé par le coach IA (une intelligence artificielle), qui ajuste ton programme dans des limites de sécurité. ${COACH_NAME_DEFAULT} ne répond pas personnellement aux bilans ; il est prévenu en cas de douleur ou d'alerte.</p>` : null}</div>
+      ${plan.offer === "auto" ? html`<p className="muted small">Formule Autonomie : tes bilans suivent ta forme et ta progression (carte athlète, tendances) ; ils ne reçoivent pas de réponse personnelle.</p>` : null}
+      ${offerAuto(plan.offer) && !noAI(plan) ? html`<p className="muted small">Formule Autonomie + coach IA : ton bilan est analysé par le coach IA (une intelligence artificielle), qui ajuste ton programme dans des limites de sécurité. ${COACH_NAME_DEFAULT} ne répond pas personnellement aux bilans ; il est prévenu en cas de douleur ou d'alerte.</p>` : null}</div>
     <div className="weeks">${Array.from({ length: maxW }, (_, i) => i + 1).map((k) => html`<button key=${k} type="button" className=${"wk" + (k === w ? " on" : "") + (data.checkins["w" + k] ? " full" : "")} onClick=${() => setW(k)}><span>${WK}${k}</span><small>${data.checkins["w" + k] ? "✓" : "à faire"}</small></button>`)}</div>
     <${CheckinForm} key=${"ck" + w} w=${w} prog=${prog} existing=${data.checkins["w" + w]} reply=${data.replies["w" + w]} src=${src} onSaved=${(wk) => { setSent(wk); if (ai) review(wk); }} />
     ${sent === w ? html`<${Card} title="Ta carte athlète cette semaine" sub="Mise à jour avec ton bilan"><${CardEvo} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>` : null}
@@ -851,7 +854,7 @@ function Onboarding({ settings, onSubmit, onCode }) {
       level: { reprise: "Débutant", sportif: "Intermédiaire", perf: "Confirmé", elite: "Confirmé" }[niveau] || "Intermédiaire",
       materiel: f.materiel, modules: f.modules, persoAt: nowISO(),
       corps: f.corps || corpsDefault(f.programId), corpsAt: todayISO(),
-      side: f.side || "", prereq: f.prereq, request: { programId: f.programId, niveau, answers: f.answers, offer: "suivi", weeks: 4, equipment: lieu, start: nextMonday(), code: pendingCode || null },
+      side: f.side || "", prereq: f.prereq, request: { programId: f.programId, niveau, answers: f.answers, offer: "suivi2", weeks: 4, equipment: lieu, start: nextMonday(), code: pendingCode || null },
       screening: f.screening, screeningDetails: f.screening.map((x, i) => (x ? String(f.screeningDetails[i] || "").trim().slice(0, 400) : "")), screeningFlag: flag, consent: { at: nowISO(), text: consentTxt, v: window.IS_SITE ? "site2" : 3 },
       parent: minor ? { name: f.parentName.trim(), email: f.parentEmail.trim(), at: nowISO(), ok: true } : null, createdAt: nowISO() };
     try { await onSubmit(profile); } catch (e) { toast("Inscription impossible : " + (e.message || "réessaie."), "bad"); } finally { setBusy(false); }

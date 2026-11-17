@@ -43,7 +43,8 @@ function orderPeriod(o) {
 }
 function orderLabel(o) {
   if (o.offer === "lite") return (o.nutri ? "Forfait Lite + Nutrition" : "Forfait Lite") + " — " + (o.period === "an" ? "annuel" : "mensuel") + (o.mode === "abo" ? ", abonnement" : ", paiement d'avance") + (o.kind === "renouvellement" ? " (renouvellement)" : "");
-  return "Accompagnement en ligne, formule " + offerName(o.offer) + " — " + durName(o.weeks) + (PB[o.programId] ? ", programme " + PB[o.programId].n : "") + (o.ext ? " (prolongation)" : "");
+  return "Accompagnement en ligne, formule " + offerName(o.offer) + " — " + durName(o.weeks) + (PB[o.programId] ? ", programme " + PB[o.programId].n : "") + (o.ext ? " (prolongation)" : "")
+    + (o.promo && o.promo.code ? " — réduction de " + (Number(o.promo.pct) || 0) + " % (code " + o.promo.code + ", prix affiché " + eur2(o.promo.base) + ")" : "");
 }
 /* toutes les lignes d'encaissement (ventes positives, remboursements négatifs) */
 function salesLines(orderSets, names) {

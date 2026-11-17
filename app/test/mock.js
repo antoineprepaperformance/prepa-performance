@@ -87,6 +87,12 @@
       ] });
       else if (/Tâche : traduction/.test(all)) text = /en anglais/.test(all) ? "Great week, keep it up." : /en espagnol/.test(all) ? "Gran semana, sigue así." : "Super semaine, continue comme ça.";
       else if (/Tâche : brouillon_reponse/.test(all)) text = "Belle semaine : tes séances sont faites et ton énergie remonte. Pour le vélo à la place du rameur, aucun souci : garde la même intensité.";
+      else if (/Tâche : consigne_coach/.test(all)) {
+        const t = (opts.tools || []).find((x) => x.name === "remplacer_exercice");
+        let r = "";
+        if (t) { try { r = await t.execute({ exercice_actuel: "squat_goblet", nouvel_exercice: "pont_fessier", seance: "toutes", raison: "Consigne d'Antoine : genou sensible" }, sig()); } catch (e) { r = "Error: " + e.message; } }
+        text = "Consigne appliquée : moins de charge sur les genoux.\n\n" + r;
+      }
       else if (/Tâche : bilan_hebdo/.test(all)) {
         const t = (opts.tools || []).find((x) => x.name === "ajuster_nutrition");
         let r = "";

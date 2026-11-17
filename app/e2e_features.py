@@ -58,7 +58,7 @@ async def run():
             await c.fill("#pu-code", "SUIVI-TEST2345"); await btn(c, "Appliquer", exact=True)
             await c.fill("#pu-start", TODAY.isoformat()); await c.check("#pu-cgv"); await btn(c, "Envoyer mon code à Antoine"); await c.wait_for_timeout(500)
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1500)
-            ok((await mdb(co, "plans/u_f1") or {}).get("offer") == "suivi", "accès Suivi activé par l'espace coach")
+            ok((await mdb(co, "plans/u_f1") or {}).get("offer") == "suivi2", "accès Suivi activé par l'espace coach")
             await c.bring_to_front(); await c.reload(); await c.wait_for_timeout(1200)
             ok(await has(c, "prochaine séance", 6000), "client : séance du jour")
 

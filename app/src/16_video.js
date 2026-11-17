@@ -74,7 +74,7 @@ function VideoCheck({ e, ex, data, src, plan, settings, ai, onClose }) {
   const sentW = coachOk ? videoWeekSent(data) : [], maxW = videoWeekMax(plan);
   const canCoach = coachOk && sentW.length < maxW;
   const nextW = coachOk && !canCoach && sentW.length ? fmtD(new Date(Date.parse(sentW[sentW.length - maxW].at) + 7 * 86400000).toISOString()) : "";
-  const canAI = ai && ai.sample && ai.images && plan && plan.offer !== "lite";
+  const canAI = ai && ai.sample && ai.images && plan && !noAI(plan);
   /* dessin de la couche de mesure au format de la vidéo */
   const redraw = useCallback(() => {
     const v = vid.current, c = cv.current; if (!v || !c) return;
@@ -186,7 +186,7 @@ function VideoCheck({ e, ex, data, src, plan, settings, ai, onClose }) {
         <${Btn} kind=${canCoach ? "ghost" : ""} onClick=${() => save(false)} disabled=${busy || !frames.length}>Garder pour moi</${Btn}>
         <${Btn} kind="quiet" onClick=${() => { setFile(null); setFrames([]); setMarks([]); }}>Autre vidéo</${Btn}>
       </div>
-      ${!canCoach && plan ? html`<p className="muted small">${coachOk ? "Tu as déjà envoyé " + plural(sentW.length, "vidéo") + " à Antoine ces 7 derniers jours (" + maxW + " par semaine dans ta formule). Prochain envoi possible le " + nextW + " ; en attendant, garde-la pour toi." : plan.offer === "lite" ? "La correction par Antoine n'est pas incluse dans le forfait Lite." : "La correction vidéo par Antoine est incluse à partir de la formule " + (((settings && settings.video && settings.video.coach) || "suivi") === "toutes" ? "Essentiel" : "Suivi") + "."}</p>` : null}
+      ${!canCoach && plan ? html`<p className="muted small">${coachOk ? "Tu as déjà envoyé " + plural(sentW.length, "vidéo") + " à Antoine ces 7 derniers jours (" + maxW + " par semaine dans ta formule). Prochain envoi possible le " + nextW + " ; en attendant, garde-la pour toi." : plan.offer === "lite" ? "La correction par Antoine n'est pas incluse dans le forfait Lite." : "La correction vidéo par Antoine est incluse à partir de la formule " + (((settings && settings.video && settings.video.coach) || "suivi") === "toutes" ? "Suivi" : "Sur mesure") + "."}</p>` : null}
     `}
   </div>`;
 }

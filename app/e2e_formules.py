@@ -38,9 +38,9 @@ async def run():
 
             # ---------- réglages : formules et limites ----------
             await btn(co, "Offres & réglages", exact=True)
-            ok(await co.locator("#pr-ia0").count() == 1 and await co.locator("#pr-hybride0").count() == 0, "grille des prix : Coach IA présente, Hybride retirée")
-            ok(await co.input_value("#pr-ia0") == "29" and await co.input_value("#pr-essentiel0") == "59", "Coach IA moins chère que les formules avec Antoine (29 € contre 59 €)")
-            ok(await co.input_value("#aiq-ia") == "10" and await co.input_value("#aiph-ia") == "3" and await co.input_value("#aiq-suivi") == "20", "limites par défaut : 10 questions et 3 photos (Coach IA), 20 (Suivi)")
+            ok(await co.locator("#pr-ia0").count() == 1 and await co.locator("#pr-auto0").count() == 1 and await co.locator("#pr-hybride0").count() == 0 and await co.locator("#pr-essentiel0").count() == 0, "grille des prix : Autonomie et Autonomie + coach IA présentes, Hybride et Essentiel retirées")
+            ok(await co.input_value("#pr-auto0") == "12.9" and await co.input_value("#pr-ia0") == "19" and await co.input_value("#pr-suivi20") == "89", "grille du 17 novembre : 12,90 € (Autonomie), 19 € (avec coach IA), 89 € (Suivi)")
+            ok(await co.input_value("#aiq-ia") == "10" and await co.input_value("#aiph-ia") == "3" and await co.input_value("#aiq-suivi2") == "20" and await co.locator("#aiq-auto").count() == 0, "limites par défaut : 10 questions et 3 photos (avec coach IA), 20 (Suivi) ; aucune pour l'Autonomie sans IA")
             await co.fill("#aiq-ia", "2"); await co.fill("#aiph-ia", "1")
             await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(600)
             st = await mdb(co, "settings/app") or {}
@@ -48,8 +48,8 @@ async def run():
             await co.locator("#aiq-ia").scroll_into_view_if_needed(); await shot(co, "reglages_limites")
             await btn(co, "Codes & essais", exact=True)
             seg = await co.locator(".card", has_text="Créer un code").locator("[role=radio]").all_inner_texts()
-            ok("Coach IA" in seg and "Hybride" not in seg, "codes : formule Coach IA proposée, Hybride absente", seg)
-            await co.get_by_role("radio", name="Offert").click(); await co.get_by_role("radio", name="Coach IA", exact=True).click(); await co.get_by_role("radio", name="1 mois").click()
+            ok("Autonomie + coach IA" in seg and "Hybride" not in seg and "Essentiel" not in seg, "codes : formules en vente proposées, Hybride et Essentiel absentes", seg)
+            await co.get_by_role("radio", name="Offert").click(); await co.get_by_role("radio", name="Autonomie + coach IA", exact=True).click(); await co.get_by_role("radio", name="1 mois").click()
             await co.fill("#cd-code", "COACHIA-23456"); await btn(co, "Créer le code"); await co.wait_for_timeout(300)
 
             # ---------- client Coach IA ----------
@@ -64,8 +64,8 @@ async def run():
             for i in range(await c.locator(".yn").count()):
                 await c.locator(".yn").nth(i).get_by_role("radio", name="Non").click()
             await btn(c, "Continuer"); await c.check("#ob-consent"); await btn(c, "Continuer vers mon accès"); await c.wait_for_timeout(700)
-            await c.get_by_role("radio", name="Coach IA", exact=True).first.click(); await c.wait_for_timeout(300)
-            ok(await has(c, "Coach IA : jusqu'à 2 questions et 1 photo par jour.") and await c.get_by_role("radio", name="Hybride").count() == 0, "commande : formule Coach IA avec ses limites du jour, plus de Hybride")
+            await c.get_by_role("radio", name="Autonomie + coach IA", exact=True).first.click(); await c.wait_for_timeout(300)
+            ok(await has(c, "Coach IA : jusqu'à 2 questions et 1 photo par jour.") and await c.get_by_role("radio", name="Hybride").count() == 0 and await c.get_by_role("radio", name="Essentiel").count() == 0, "commande : Autonomie + coach IA avec ses limites du jour, plus de Hybride ni d'Essentiel")
             await shot(c, "commande_coach_ia", full=True)
             await c.fill("#pu-code", "COACHIA-23456"); await btn(c, "Appliquer", exact=True); await c.wait_for_timeout(300)
             await c.fill("#pu-start", TODAY.isoformat()); await c.check("#pu-cgv"); await btn(c, "Envoyer mon code à Antoine"); await c.wait_for_timeout(500)
@@ -83,7 +83,7 @@ async def run():
             # ---------- coach IA : limites du jour ----------
             await c.bring_to_front()
             await c.get_by_role("button", name="Coach IA").first.click(); await c.wait_for_timeout(500)
-            ok(await has(c, "Questions au coach IA aujourd'hui : 0 sur 2 (formule Coach IA)."), "compteur visible : 0 sur 2")
+            ok(await has(c, "Questions au coach IA aujourd'hui : 0 sur 2 (formule Autonomie + coach IA)."), "compteur visible : 0 sur 2")
             for q in ["Que manger ce soir ?", "Et demain matin ?"]:
                 await c.fill("#chat-in", q); await c.keyboard.press("Enter"); await c.wait_for_timeout(900)
             use = await mdb(c, f"clients/u_f1/aiuse/{TODAY.isoformat()}") or {}
@@ -117,14 +117,14 @@ async def run():
             await c.evaluate(f"(() => {{ const db = JSON.parse(localStorage.getItem('__mockdb') || '{{}}'); const p = db['plans/u_f1']; p.start = '{(TODAY - datetime.timedelta(days=8)).isoformat()}'; localStorage.setItem('__mockdb', JSON.stringify(db)); }})()")
             await c.goto(URL + "?as=f1"); await c.wait_for_timeout(1000)
             await c.get_by_role("button", name="Bilan").first.click(); await c.wait_for_timeout(500)
-            ok(await has(c, "Deux minutes pour faire le point avec ton coach IA.") and await has(c, "Formule Coach IA : ton bilan est analysé par le coach IA"), "bilan : formule Coach IA expliquée (pas de réponse personnelle)")
+            ok(await has(c, "Deux minutes pour faire le point avec ton coach IA.") and await has(c, "Formule Autonomie + coach IA : ton bilan est analysé par le coach IA"), "bilan : formule avec coach IA expliquée (pas de réponse personnelle)")
             await shot(c, "bilan_ia", full=True)
 
             # ---------- messagerie fermée pour Coach IA ----------
             await c.goto(URL + "?as=f1"); await c.wait_for_timeout(1000)
             await c.get_by_role("button", name="Mon profil").click(); await c.wait_for_timeout(400)
             await c.get_by_role("button", name="Écrire à Antoine").first.click(); await c.wait_for_timeout(400)
-            ok(await has(c, "n'est pas incluse dans la formule Coach IA : pose tes questions au coach IA."), "Coach IA : messagerie fermée par défaut, le client est orienté vers le coach IA")
+            ok(await has(c, "n'est pas incluse dans ta formule : pose tes questions au coach IA."), "Autonomie + coach IA : messagerie fermée par défaut, le client est orienté vers le coach IA")
 
             # ---------- conditions de vente ----------
             await co.bring_to_front(); await btn(co, "Offres & réglages", exact=True); await co.wait_for_timeout(300)
@@ -134,7 +134,7 @@ async def run():
             link = co.get_by_role("button", name="Conditions de vente")
             if await link.count(): await link.first.click(); await co.wait_for_timeout(400)
             t = await co.inner_text("body")
-            ok("Coach IA (programme et nutrition conduits par une intelligence artificielle" in t and "Coach IA : 2 questions et 1 photo" in t and "Hybride" not in t, "CGV : formule Coach IA décrite avec ses limites, Hybride retirée", t[t.find("2. Services"):t.find("2. Services") + 300] if "2. Services" in t else t[:300])
+            ok("Autonomie + coach IA (Autonomie, plus le coach IA, une intelligence artificielle" in t and "Autonomie + coach IA : 2 questions et 1 photo" in t and "Autonomie : 0 question" not in t and "Hybride" not in t, "CGV : formules décrites avec leurs limites (pas de limite affichée pour l'Autonomie sans IA), Hybride retirée", t[t.find("2. Services"):t.find("2. Services") + 300] if "2. Services" in t else t[:300])
             await b.close()
     finally:
         srv.terminate()

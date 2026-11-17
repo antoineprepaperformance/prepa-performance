@@ -79,11 +79,11 @@ async def run():
         ok(await has(co, "Bonjour", 8000), "coach connecté")
         await btn(co, "Offres & réglages", exact=True)
         await co.get_by_role("radio", name="Automatique (relais installé)").click()
-        await co.fill("#pl-suivi4", "https://buy.stripe.com/test_suivi1")
-        await co.fill("#pl-essentiel4", "ftp://faux")
+        await co.fill("#pl-suivi24", "https://buy.stripe.com/test_suivi1")
+        await co.fill("#pl-auto4", "ftp://faux")
         await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(300)
         ok(await has(co, "Lien de paiement invalide"), "lien de paiement non https refusé")
-        await co.fill("#pl-essentiel4", "")
+        await co.fill("#pl-auto4", "")
         for k, v in [("siret", "123 456 789 00012"), ("adresse", "12 rue du Stade, 33270 Floirac"), ("email", "contact@antoine-prepa.fr"), ("telephone", "06 12 34 56 78"),
                      ("diplome", "Licence STAPS Entraînement sportif"), ("cartePro", "03312ED0123"), ("assurance", "Assureur Test, contrat 123, monde entier"), ("mediateur", "Médiateur Test, 1 rue de Paris")]:
             await co.fill("#lg-" + k, v)
@@ -91,7 +91,7 @@ async def run():
         await shot(co, "coach_reglages_paiement")
         await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(500)
         st = await db(co, "settings/app")
-        ok(st and st["pay"]["mode"] == "auto" and st["pay"]["links"] == {"suivi_4": "https://buy.stripe.com/test_suivi1"} and st["legal"]["cartePro"] == "03312ED0123", "réglages de paiement enregistrés", st and st.get("pay"))
+        ok(st and st["pay"]["mode"] == "auto" and st["pay"]["links"] == {"suivi2_4": "https://buy.stripe.com/test_suivi1"} and st["legal"]["cartePro"] == "03312ED0123", "réglages de paiement enregistrés", st and st.get("pay"))
         await btn(co, "Tableau de bord", exact=True)
         ok(not await has(co, "Informations légales à compléter", 800), "plus de rappel légal une fois complété")
         # codes : un offert avec programme imposé, un pour prolonger
@@ -115,7 +115,7 @@ async def run():
         cb = await A.new_page(); hook(cb, "B"); await cb.set_viewport_size({"width": 390, "height": 844})
         await signup(cb, "bastien@test.fr"); await onboard(cb, "Bastien Payeur", "Rugby", "Régional", "6 mois à 2 ans", "Prépa sports collectifs")
         uB = await uid_of(cb)
-        ok(await has(cb, "Commander avec obligation de paiement · 119 €"), "prix du lien : Suivi 1 mois 119 €")
+        ok(await has(cb, "Commander avec obligation de paiement · 89 €"), "prix du lien : Suivi 1 mois 89 €")
         await cb.fill("#pu-start", TODAY.isoformat())
         await cb.check("#pu-cgv")
         ok(await cb.get_by_role("button", name="Commander avec obligation de paiement").first.is_disabled(), "début immédiat : la demande expresse (art. L221-25) est obligatoire")
@@ -125,27 +125,27 @@ async def run():
             await cb.get_by_role("button", name="Commander avec obligation de paiement").first.click()
         q = urllib.parse.parse_qs(urllib.parse.urlparse(stripe_urls[-1]).query)
         ref = q.get("client_reference_id", [""])[0].split("__")
-        ok(ref[0] == uB and ref[1] == "suivi" and ref[2] == "4" and len(ref) == 4 and q.get("prefilled_email") == ["bastien@test.fr"], "redirection Stripe avec la référence de commande", ref)
+        ok(ref[0] == uB and ref[1] == "suivi2" and ref[2] == "4" and len(ref) == 4 and q.get("prefilled_email") == ["bastien@test.fr"], "redirection Stripe avec la référence de commande", ref)
         orderB = ref[3]
         od = await db(co, f"clients/{uB}/orders/{orderB}")
-        ok(od and od["status"] == "en_attente" and od["early"] is True and od["cgv"]["v"] and od["price"] == 119, "commande enregistrée avant paiement (CGV, demande expresse)", od)
+        ok(od and od["status"] == "en_attente" and od["early"] is True and od["cgv"]["v"] and od["price"] == 89, "commande enregistrée avant paiement (CGV, demande expresse)", od)
         # le relais (Cloudflare) écrit le paiement confirmé par Stripe
-        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B1', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: '{orderB}', amount: 11900, expected: 11900, currency: 'eur', email: 'bastien@test.fr', ok: true, used: false, at: new Date().toISOString(), session: 'cs_test_B1', live: false }})")
+        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B1', {{ uid: '{uB}', offer: 'suivi2', weeks: 4, orderId: '{orderB}', amount: 8900, expected: 8900, currency: 'eur', email: 'bastien@test.fr', ok: true, used: false, at: new Date().toISOString(), session: 'cs_test_B1', live: false }})")
         ok(r == "ok", "relais : paiement enregistré")
         await cb.goto(URL + "?paiement=ok&session_id=cs_test_B1")
         ok(await has(cb, "prochaine séance", 10000), "retour de Stripe : accès activé automatiquement")
         plan = await db(cb, f"plans/{uB}"); pay = await db(cb, "payments/cs_test_B1"); od = await db(cb, f"clients/{uB}/orders/{orderB}")
-        ok(plan and plan["source"] == {"kind": "paiement", "id": "cs_test_B1", "orderId": orderB} and plan["weeks"] == 4 and pay["used"] is True and od["status"] == "active" and od["paidAmount"] == 119, "paiement utilisé une fois, commande active", [plan and plan.get("source"), pay and pay.get("used"), od and od.get("status")])
+        ok(plan and plan["source"] == {"kind": "paiement", "id": "cs_test_B1", "orderId": orderB} and plan["weeks"] == 4 and pay["used"] is True and od["status"] == "active" and od["paidAmount"] == 89, "paiement utilisé une fois, commande active", [plan and plan.get("source"), pay and pay.get("used"), od and od.get("status")])
         fraud = await ev(cb, """(async () => { const db = firebase.firestore(); const me = firebase.auth().currentUser.uid; const r = {};
           const t = async (k, f) => { try { await f(); r[k] = 'ok'; } catch (e) { r[k] = e.code; } };
-          await t('reutiliser_paiement', async () => { const b = db.batch(); b.update(db.doc('payments/cs_test_B1'), { used: true, usedAt: 'x' }); b.set(db.doc('plans/' + me), { programId: 'force', offer: 'suivi', weeks: 4, start: '2026-12-01', equipment: 'salle', status: 'active', niveau: 'perf', cycle: 2, grantWeeks: 4, source: { kind: 'paiement', id: 'cs_test_B1', orderId: 'z' } }); await b.commit(); });
+          await t('reutiliser_paiement', async () => { const b = db.batch(); b.update(db.doc('payments/cs_test_B1'), { used: true, usedAt: 'x' }); b.set(db.doc('plans/' + me), { programId: 'force', offer: 'suivi2', weeks: 4, start: '2026-12-01', equipment: 'salle', status: 'active', niveau: 'perf', cycle: 2, grantWeeks: 4, source: { kind: 'paiement', id: 'cs_test_B1', orderId: 'z' } }); await b.commit(); });
           await t('allonger_sans_payer', () => db.doc('plans/' + me).update({ weeks: 12 }));
           await t('remettre_paiement_neuf', () => db.doc('payments/cs_test_B1').update({ used: false }));
           await t('lire_paiements_des_autres', () => db.collection('payments').get());
           return r; })()""")
         ok(fraud == {"reutiliser_paiement": "permission-denied", "allonger_sans_payer": "permission-denied", "remettre_paiement_neuf": "permission-denied", "lire_paiements_des_autres": "permission-denied"}, "règles : paiement non réutilisable, accès non modifiable", fraud)
         # montant insuffisant signalé par le relais : pas d'activation
-        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B2', {{ uid: '{uB}', offer: 'suivi', weeks: 4, orderId: 'oautre', amount: 4900, expected: 11900, currency: 'eur', ok: false, used: false, at: new Date().toISOString() }})")
+        r = await ev(co, f"window.__fakefs.relayCreate('payments/cs_test_B2', {{ uid: '{uB}', offer: 'suivi2', weeks: 4, orderId: 'oautre', amount: 4900, expected: 8900, currency: 'eur', ok: false, used: false, at: new Date().toISOString() }})")
         await cb.wait_for_timeout(1500)
         pay2 = await db(cb, "payments/cs_test_B2")
         ok(pay2 and pay2["used"] is False, "paiement au montant insuffisant : jamais activé")
@@ -175,7 +175,7 @@ async def run():
 
         # ---------- client C : commande sans paiement en ligne, confirmée par le coach ----------
         await btn(co, "Offres & réglages", exact=True)
-        await co.get_by_role("radio", name="Je confirme moi-même").click(); await co.fill("#pl-suivi4", "")
+        await co.get_by_role("radio", name="Je confirme moi-même").click(); await co.fill("#pl-suivi24", "")
         await co.fill("#pay-info", "Je t'envoie un lien de paiement par e-mail sous 24 h.")
         await co.get_by_role("button", name="Enregistrer", exact=True).first.click(); await co.wait_for_timeout(500)
         cc = await A.new_page(); hook(cc, "C"); await cc.set_viewport_size({"width": 390, "height": 844})
@@ -201,7 +201,7 @@ async def run():
         await cd.fill("#pu-start", TODAY.isoformat()); await cd.check("#pu-cgv")
         await btn(cd, "Activer mon accès offert"); await cd.wait_for_timeout(1200)
         plan = await db(cd, f"plans/{uD}")
-        ok(plan and plan["programId"] == "force" and plan["weeks"] == 4 and plan["offer"] == "suivi", "accès Force 1 mois activé", plan)
+        ok(plan and plan["programId"] == "force" and plan["weeks"] == 4 and plan["offer"] == "suivi2", "accès Force 1 mois activé", plan)
         # une séance du cycle 1
         await cd.locator("button.next").click(); await cd.wait_for_timeout(300)
         await cd.locator("#rpe button", has_text="6").first.click()

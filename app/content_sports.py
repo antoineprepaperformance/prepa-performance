@@ -43,6 +43,7 @@ REFS = {
     "ronnestad16": "Rønnestad BR, Hansen J. Optimizing interval training at power output associated with peak oxygen uptake in well-trained cyclists. J Strength Cond Res. 2016;30(4):999-1006.",
     "gabbett16": "Gabbett TJ. The training-injury prevention paradox: should athletes be training smarter and harder? Br J Sports Med. 2016;50(5):273-280.",
     "andersson17": "Andersson SH, Bahr R, Clarsen B, Myklebust G. Preventing overuse shoulder injuries among throwing athletes: a cluster-randomised controlled trial in 660 elite handball players. Br J Sports Med. 2017;51(14):1073-1080.",
+    "struzik14": "Struzik A, Pietraszewski B, Zawadzki J. Biomechanical analysis of the jump shot in basketball. J Hum Kinet. 2014;42:73-79.",
 }
 
 # ---------------------------------------------------------------------------------------------
@@ -426,6 +427,70 @@ D("b_box", "Défense en boîte (raquette)", ["basket"], "Agilité", "4 plots",
   ["stojanovic18", "pauole00"],
   sc={"f": "basket", "v": [-1.2, 3, 8.5, 12], "o": [[0, 5.05, "c", "Départ"], [0, 9.95, "c", ""], [5.8, 9.95, "c", ""], [5.8, 5.05, "c", ""]],
       "p": [{"k": "lat", "p": [[0.4, 5.05], [0.4, 9.95]], "l": "Glisse", "n": 1, "lo": 1}, {"k": "sprint", "p": [[0.4, 9.6], [5.8, 9.6]], "l": "Sprint", "n": 2, "lo": 1}, {"k": "lat", "p": [[5.4, 9.95], [5.4, 5.05]], "l": "Glisse", "n": 3, "lo": 1}, {"k": "back", "p": [[5.8, 5.4], [0, 5.4]], "l": "Course arrière", "n": 4}]}, z=5)
+
+D("sk_basket_tir", "Tir en suspension (élan et lâcher)", ["basket"], "Technique", "Ballons, un panier",
+  "Tirer juste après une passe, avec un petit saut d'arrêt et un lâcher qui part des jambes.",
+  ["Départ à 4-5 m du panier, ballon chez le passeur.",
+   "Passe reçue avec un petit saut d'arrêt : les deux pieds se posent presque ensemble, genoux fléchis, ballon déjà remonté vers le visage.",
+   "Extension des jambes puis du bras : coude sous le ballon, aligné avec le cercle ; le poignet retombe sur la balle au lâcher, doigts qui pointent vers le cercle.",
+   "Retombée équilibrée sur les mêmes appuis, prêt à repartir en rebond offensif."],
+  ["Les deux pieds se posent presque ensemble, pas une course qui continue", "Le coude est sous le ballon, jamais écarté sur le côté", "Le poignet retombe après le lâcher : les doigts pointent vers le cercle"],
+  {"reprise": I(2, 5, 6, 30, 120, "1 tir à 70 %, petit saut", "2 séries de 5 tirs à 70 %, petit saut"),
+   "sportif": I(3, 6, 6, 30, 120, "1 tir en suspension", "3 séries de 6 tirs, change de côté à chaque série"),
+   "perf": I(3, 8, 6, 25, 120, "1 tir en suspension, 2 touches au plus", "3 séries de 8 tirs, passe suivie du tir en 2 touches au plus"),
+   "elite": I(4, 8, 6, 25, 150, "1 tir en suspension sous pression", "4 séries de 8 tirs, un défenseur passif lève un bras au moment du tir")},
+  "Le tir en suspension part d'abord des membres inférieurs : l'extension des chevilles, des genoux et des hanches précède celle du bras, qui n'ajuste que la trajectoire (Struzik, Pietraszewski et Zawadzki, 2014).",
+  ["struzik14"],
+  sc={"f": "basket", "v": [-1.2, 3, 8.5, 12], "o": [[7.8, 5.3, "pb", "Partenaire"], [6.3, 7.5, "pa", "Toi"]],
+      "p": [{"k": "ball", "p": [[7.8, 5.6], [6.3, 7.3]], "l": "Passe", "lo": -1, "n": 1},
+            {"k": "jog", "p": [[6.3, 7.5], [5.8, 7.5]], "l": "Réception + petit saut", "lo": 1, "n": 2, "e": "jump", "w": 0.3},
+            {"k": "ball", "p": [[5.6, 7.4], [1.9, 7.5]], "l": "Tir", "lo": 1, "lp": 0.5, "n": 3}]},
+  obj={"ph": "Détente et coordination jambes-bras", "te": "Petit saut d'arrêt, montée du ballon, extension et lâcher, retombée équilibrée", "ma": "Tirer vite et juste après une passe, sans perdre l'équilibre"},
+  org="À 4-5 m du panier, face au cercle. Un passeur te fait la passe (ou un sac de ballons si tu es seul) ; change de côté à chaque série.",
+  var=["Tir après un dribble plutôt qu'une passe", "Tir sous la pression d'un défenseur passif qui lève un bras", "Tir à 3 points pour les joueurs confirmés"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_basket_closeout", "Fermer sur le tireur (close-out)", ["basket"], "Technique", "Aucun",
+  "Fermer vite sur un tireur sans lui laisser le temps ni l'espace de tirer, sans sauter dans ses jambes.",
+  ["Départ en position d'aide, près de la raquette, genoux fléchis, mains actives.",
+   "Sprinte vers le tireur sur les trois premiers quarts de la distance.",
+   "Ralentis en petits pas chassés sur le dernier mètre : jamais à pleine vitesse jusqu'au bout.",
+   "Arrivée en position basse : une main haute du côté du ballon, l'autre basse et active, pied extérieur légèrement avancé pour couper la ligne vers la ligne de fond."],
+  ["Ralentis avant d'arriver : à pleine vitesse jusqu'au bout, tu voles au-dessus du tireur ou tu glisses", "Une seule main levée, l'autre reste basse et active", "Pied extérieur avancé pour couper la ligne de dribble"],
+  {"reprise": I(2, 5, 8, 30, 90, "1 close-out, trot puis pas chassés", "2 séries de 5, départ au trot"),
+   "sportif": I(3, 6, 8, 25, 90, "1 close-out", "3 séries de 6, départ au sprint court"),
+   "perf": I(3, 8, 8, 20, 90, "1 close-out, côté annoncé tard", "3 séries de 8, côté du tireur annoncé au dernier moment"),
+   "elite": I(4, 8, 8, 20, 120, "Close-out + contre un premier dribble", "4 séries de 8, le tireur part en dribble une fois sur deux : contrôle sans faute")},
+  "Les déplacements défensifs — sprinter puis ralentir pour fermer sur un tireur — font partie des efforts les plus fréquents du basketteur, avec les sauts et les sprints (Stojanović, 2018).",
+  ["stojanovic18"],
+  sc={"f": "basket", "v": [1, 5, 8.5, 12], "o": [[3, 10, "start", "Départ (aide)"], [7.5, 7.5, "pa", "Tireur"]],
+      "p": [{"k": "sprint", "p": [[3, 10], [6.2, 8]], "l": "Sprint", "lo": -1, "n": 1},
+            {"k": "lat", "p": [[6.2, 8], [7.2, 7.6]], "l": "Petits pas, mains hautes", "lo": 1, "n": 2}]},
+  obj={"ph": "Vitesse de déplacement puis freinage contrôlé", "te": "Sprint, ralenti en pas chassés, position basse à l'arrivée", "ma": "Empêcher le tir sans se faire éliminer en sautant"},
+  org="Départ en aide près de la raquette, un partenaire fait office de tireur à 4-6 m ; on tourne après chaque série.",
+  var=["Distance de départ plus longue", "Le tireur peut partir en dribble à la réception", "Deux close-out d'affilée (aide puis rotation)"],
+  contact="aucun", pub="Tous", skill=True, z=4)
+
+D("sk_basket_crossover", "Changement de direction en dribble (crossover)", ["basket"], "Technique", "Un ballon",
+  "Changer de main et de direction assez vite pour éliminer un défenseur, ballon protégé.",
+  ["Dribble face à un défenseur, à 2-3 m, genoux fléchis, ballon dans la main extérieure.",
+   "Pousse un dribble fort et bas vers un côté pour faire avancer le défenseur de ce côté (feinte de départ).",
+   "Change de main devant toi, dribble bas et rapide de l'autre côté : le premier pas part EN MÊME TEMPS que le changement de main, pas après.",
+   "Accélère sur 2-3 appuis pour prendre l'avantage, ballon protégé par le corps."],
+  ["Dribble bas, sous le genou, pendant le changement : plus dur à intercepter", "Le premier pas part en même temps que le changement de main", "Épaule et pied avancent du même côté que la nouvelle direction"],
+  {"reprise": I(2, 6, 8, 25, 90, "1 crossover lent + accélération courte", "2 séries de 6, défenseur passif ou plot"),
+   "sportif": I(3, 6, 8, 20, 90, "1 crossover", "3 séries de 6, côtés alternés"),
+   "perf": I(3, 8, 6, 20, 90, "1 crossover rapide", "3 séries de 8, défenseur réagit au changement"),
+   "elite": I(4, 8, 6, 15, 120, "Crossover + finition au panier", "4 séries de 8, terminées par un tir ou un lay-up après l'élimination")},
+  "Changer de direction vite demande un appui extérieur puissant et un angle de course ajusté à la vitesse : plus l'angle est serré, plus il faut ralentir avant pour rester efficace (Dos'Santos, Thomas, Comfort et Jones, 2018).",
+  ["dossantos18"],
+  sc={"f": "basket", "v": [0.2, 4.5, 9.2, 11], "o": [[3.3, 6.3, "pb", "Défenseur"], [5.9, 9.3, "pa", "Toi"]],
+      "p": [{"k": "lat", "p": [[5.9, 9.3], [7.5, 8.9]], "l": "Feinte (dribble fort)", "lo": 1, "lp": 0.8, "n": 1},
+            {"k": "sprint", "p": [[7.2, 9.0], [4.3, 7.6], [1.9, 6.9]], "l": "Change de main, accélère", "lo": 1, "lp": 0.7, "n": 2}]},
+  obj={"ph": "Vitesse du premier pas et gainage", "te": "Feinte, changement de main bas, premier pas explosif", "ma": "Éliminer un défenseur en un dribble pour attaquer le panier"},
+  org="2-3 m face à un défenseur (ou un plot pour travailler seul) ; alterne les côtés à chaque série.",
+  var=["Crossover entre les jambes plutôt que devant", "Défenseur qui réagit vraiment (pas seulement passif)", "Crossover suivi d'un tir ou d'une passe"],
+  contact="aucun", pub="Tous", skill=True, z=4)
 
 # ---------- volley ----------
 D("v_att", "Attaques répétées", ["volley"], "Puissance", "Filet ou ligne au sol",
@@ -1238,7 +1303,7 @@ D("sk_passe", "Passe vissée des deux côtés", ["rugby", "rugby7"], "Technique"
    "elite": I(4, 20, 2, 3, 60, "Passes à 10-12 m", "4 séries de 20 passes, 10 à 12 m, ballon reçu en mouvement")},
   "Chez des joueurs de première division, les passes du côté non préféré partaient bien plus souvent en avant (57 % contre 15 %) et allaient moins loin : le côté faible doit être travaillé en priorité (Pavely, 2009).",
   ["pavely09"],
-  sc={"f": "rugby", "v": [16, 28, 36, 42], "o": [[20, 35, "pa", "Passeur"], [30, 35, "pb", "Cible"]],
+  sc={"f": "rugby", "v": [16, 28, 36, 42], "o": [[20, 35, "pa", "Toi"], [30, 35, "pb", "Cible"]],
       "p": [{"k": "ball", "p": [[20.8, 34.6], [29.2, 34.6]], "l": "5 à 10 m", "n": 3}],
       "t": [[25, 39.5, "Côté fort · côté faible × 2"]]},
   obj={"ph": "Rotation du tronc et des hanches", "te": "Passe vissée, précision des deux côtés", "ma": "Faire vivre le ballon vite et loin, sans en-avant"},
@@ -1403,7 +1468,7 @@ D("sk_foot_controle", "Contrôle orienté après prise d'information", ["foot"],
    "elite": I(4, 10, 5, 10, 90, "Contrôle orienté + porte, défenseur passif", "4 séries de 10, un défenseur passif ferme une des portes")},
   "Chez des footballeurs de haut niveau, regarder autour de soi plus souvent dans les secondes qui précèdent la réception est associé à des passes plus souvent vers l'avant et à des pertes de balle moins fréquentes (McGuckian, 2018).",
   ["mcguckian18"],
-  sc={"f": "foot", "v": [30, 18, 66, 50], "o": [[37, 34, "pb", "Passeur"], [49, 34, "pa", "Toi"], [57, 26, "c", ""], [57, 29, "c", "Porte"], [57, 39, "c", ""], [57, 42, "c", "Porte"], [62, 34, "pb", "Montre"]],
+  sc={"f": "foot", "v": [30, 18, 66, 50], "o": [[37, 34, "pb", "Partenaire"], [49, 34, "pa", "Toi"], [57, 26, "c", ""], [57, 29, "c", "Porte"], [57, 39, "c", ""], [57, 42, "c", "Porte"], [62, 34, "pb", "Montre"]],
       "p": [{"k": "ball", "p": [[37, 34], [48.5, 34]], "l": "Passe", "lo": -1, "n": 1},
             {"k": "jog", "p": [[49, 34], [52.5, 31], [59, 27.5]], "l": "Contrôle orienté", "lo": 1, "lp": 0.3, "n": 2}],
       "t": [[48, 21.5, "2 coups d'œil derrière avant de recevoir"]]},
@@ -1499,7 +1564,7 @@ D("sk_hand_reception", "Réceptions et feintes, genou dans l'axe", ["hand"], "Te
   var=["Réception sur une jambe dès le centre", "Côté annoncé au dernier moment", "Ballon reçu en l'air avant la réception"],
   contact="aucun", pub="Tous, et le retour après une entorse ou un ligament croisé (avec l'accord du kiné)", skill=True, z=3)
 
-for _sid in ("rugby", "rugby7", "foot", "hand"):
+for _sid in ("rugby", "rugby7", "foot", "hand", "basket"):
     _sp = next(x for x in SPORTS if x["id"] == _sid)
     _sp["skills"] = [d["id"] for d in DRILLS if d.get("skill") and _sid in d["sports"]]
 

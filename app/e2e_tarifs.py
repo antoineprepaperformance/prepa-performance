@@ -129,7 +129,7 @@ async def run():
         await vis.reload(); await vis.wait_for_timeout(1500)
         ok(await has(vis, "3 places seulement") and await has(vis, "soit 71 €/mois") and await has(vis, "Recommandé") and await has(vis, "Programme + nutrition") and await has(vis, "Avec le coach IA") and await has(vis, "12,90 €"), "accueil : places Sur mesure, prix mensuel des 12 mois, Autonomie en deux niveaux au centime")
         ok(not await has(vis, "Essayer 7 jours gratuitement", 1000), "accueil : pas de bouton d'essai tant que l'essai n'est pas en ligne")
-        await vis.locator(".l-offers").scroll_into_view_if_needed(); await shot(vis, "accueil_formules")
+        await vis.locator(".l-sec:not(#clubs) .l-offers").scroll_into_view_if_needed(); await shot(vis, "accueil_formules")
         await vis.goto(URL + "?v=2#cgv"); await vis.wait_for_timeout(1500)
         ok(await has(vis, "7 ter. Blessure ou contre-indication médicale") and await has(vis, "Sur mesure (Suivi, plus un programme construit pour le sport"), "CGV : clause blessure des 6 et 12 mois, contenu de chaque formule")
 

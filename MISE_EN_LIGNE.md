@@ -174,6 +174,18 @@ Espace coach › **Codes & essais** › carte **Lancement** : un clic met en lig
 
 Pour un code sur mesure : choisis le type (essai, offert, ou réduction en pourcentage sur une première commande payante), la formule, la durée (1 semaine à 3 mois), le programme (imposé ou au choix du client), le nombre d'utilisations (1 pour une personne, 30 pour un groupe ou un club) et une date limite. Partage le **lien** (le code est appliqué tout seul après l'inscription) ou le **code**. Un code ne sert qu'une fois par personne et ne se transforme jamais en paiement.
 
+### Offre club (vendue au club, sur devis)
+
+Les prix (saison, cycle, accès joueurs) se règlent dans **Offres & réglages › Offre club** ; les demandes de devis arrivent sur ton **tableau de bord**.
+
+1. Espace coach › **Équipe** › **Importer un classeur** : choisis ton classeur de saison (`.xlsx`, une feuille par séance, nommée comme « Jeudi 03 Juillet 2025 »). Il est lu dans ton navigateur ; seules les séances sont gardées, dans ta base, lues par toi seul. Il s'affiche découpé en cycles de 6 semaines : c'est ce que les clubs achètent.
+2. **Coche les prénoms de tes joueurs** parmi les mots proposés (ajoute ceux qui manquent dans « Autres prénoms ») : ils restent dans ton modèle mais n'apparaîtront chez aucun autre club. Les adversaires, dans le titre des séances, sont retirés d'office.
+3. Devis accepté : **Nouveau club**. Tu choisis ce qu'il achète (la saison complète, éventuellement à partir d'un cycle s'il démarre en cours de saison, ou un seul cycle), le nombre d'accès joueurs, ses jours d'entraînement, son heure, son jour de match et sa date de début. L'aperçu dit combien de séances il recevra. Les semaines achetées sont posées l'une après l'autre à partir de sa date de début, et chaque jour d'entraînement reçoit ta séance qui était à la même distance du match.
+4. Les codes sont créés : **entraîneur** (3 places) et **joueurs** (autant de places que d'accès achetés). Envoie-les au club avec le lien (« Copier le lien »). Chaque code ouvre l'Autonomie (sans coach IA) pour la durée achetée et rattache au club : le joueur voit sa séance d'équipe du jour et toute la saison de son club, l'entraîneur toute la saison avec le minuteur.
+5. Le club te paie par virement, pas par les liens Stripe des clients : facture-le comme tes autres prestations et note l'encaissement dans ton classeur de pilotage (mentions et facture électronique : CONFORMITE.md, point 15).
+
+Sans les règles Firestore du 17 novembre 2026 (étape 1), l'onglet Équipe ne peut rien enregistrer : recolle `firestore.rules` si ce n'est pas fait.
+
 ---
 
 ## Étape 8 · L'installer comme une application

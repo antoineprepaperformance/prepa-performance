@@ -1,18 +1,22 @@
-"""Saison d'equipe (content_equipe.py genere par tools/saison_equipe.py, src/38_equipe.js) :
-la programmation du club d'Antoine (CM Floirac Rugby, 102 seances) reprise telle qu'elle est ecrite,
-consultable et filtrable cote coach, derоulable au minuteur, et visible par un joueur qui est aussi client.
-Verifie surtout ce qui ne doit PAS arriver : la seance d'equipe n'entre pas dans la charge du joueur,
-et rien n'apparait pour un client qui n'est rattache a aucune equipe."""
+"""Version Claude : offre Club côté coach (src/38_equipe.js). Import d'un classeur de saison FICTIF
+(fixture_saison.py : le vrai classeur d'Antoine ne va jamais dans ce dépôt public) lu dans le navigateur,
+rangé dans la base (modeles/), prénoms cochés ; nouveau club recalé sur ses jours et son jour de match,
+à la même période de la saison ; codes joueurs et entraîneur ; rattachement d'un client depuis sa fiche.
+Vérifie surtout ce qui ne doit PAS arriver : plus aucune saison dans le code du site, pas de prénom ni
+d'adversaire chez un autre club, pas de séance inventée."""
 import pathlib
 HERE = str(pathlib.Path(__file__).resolve().parent)
 import asyncio, datetime, json, os, subprocess, sys, time
 from playwright.async_api import async_playwright
+sys.path.insert(0, HERE)
+import fixture_saison
 PORT = 8821
 URL = f"http://localhost:{PORT}/index.html"
 OUT = HERE + "/shots/equipe"; os.makedirs(OUT, exist_ok=True)
 for f in os.listdir(OUT): os.remove(os.path.join(OUT, f))
-errs = []
-res = {"ok": 0, "ko": 0}
+XLSX = OUT + "/saison_fictive.xlsx"
+NB = fixture_saison.ecrire(XLSX)
+errs, fails, oks = [], [], []
 TODAY = datetime.date.today()
 
 
@@ -21,19 +25,26 @@ def hook(page, tag):
     page.on("pageerror", lambda e: errs.append(f"[{tag}] pageerror: {e}"))
 
 
-def dans(aiguille, botte):
-    """Cherche sans tenir compte de la casse : .eyebrow et .btn sont mis en MAJUSCULES par la CSS,
-    et inner_text renvoie le texte rendu, pas le texte source."""
-    return aiguille.lower() in (botte or "").lower()
+def ok(c, label, info=None):
+    (oks if c else fails).append(label); print(("  OK  " if c else "  FAIL ") + label + ("" if c or info is None else "  " + json.dumps(info, ensure_ascii=False, default=str)[:500]))
 
 
-def ok(cond, msg, extra=""):
-    res["ok" if cond else "ko"] += 1
-    print(("  OK  " if cond else "  FAIL ") + msg + ("" if cond else "  " + json.dumps(extra, ensure_ascii=False, default=str)[:400]))
+async def btn(page, text, exact=False):
+    await page.get_by_role("button", name=text, exact=exact).first.click(); await page.wait_for_timeout(300)
 
 
+async def has(page, text, timeout=4000):
+    try: await page.get_by_text(text).first.wait_for(timeout=timeout); return True
+    except Exception: return False
+
+
+async def mdb(page, path): return await page.evaluate(f"JSON.parse(localStorage.getItem('__mockdb') || '{{}}')[{json.dumps(path)}]")
+async def mdb_prefix(page, prefix): return await page.evaluate(f"(() => {{ const d = JSON.parse(localStorage.getItem('__mockdb') || '{{}}'); return Object.keys(d).filter((k) => k.startsWith({json.dumps(prefix)})).map((k) => d[k]); }})()")
 async def mdb_set(page, path, patch):
     await page.evaluate("([p, x]) => { const db = JSON.parse(localStorage.getItem('__mockdb') || '{}'); db[p] = { ...(db[p] || {}), ...x }; localStorage.setItem('__mockdb', JSON.stringify(db)); }", [path, patch])
+
+
+def wd(iso): return datetime.date.fromisoformat(iso).weekday()
 
 
 async def run():
@@ -43,179 +54,139 @@ async def run():
             b = await p.chromium.launch()
             A = await b.new_context(viewport={"width": 1280, "height": 900}, color_scheme="dark")
             co = await A.new_page(); hook(co, "coach")
-            await co.goto(URL + "?as=owner"); await co.wait_for_timeout(1200)
+            await co.goto(URL + "?as=owner"); await co.evaluate("localStorage.removeItem('__mockdb')"); await co.reload(); await co.wait_for_timeout(900)
+            ok(await co.evaluate("typeof CONTENT.EQUIPES") == "undefined", "plus aucune saison d'équipe dans le code du site (dépôt public)")
 
-            # ---------- le contenu genere : la saison complete ----------
-            info = await co.evaluate("""() => {
-              const e = (CONTENT.EQUIPES || [])[0]; if (!e) return null;
-              const s = e.seances || [];
-              const themes = {}; s.forEach((x) => { themes[x.theme || "(sans)"] = (themes[x.theme || "(sans)"] || 0) + 1; });
-              const sansActs = s.filter((x) => !(x.acts || []).length).length;
-              const sansTitre = s.filter((x) => (x.acts || []).some((a) => !a.n)).length;
-              const durees = s.map((x) => x.min).filter(Boolean);
-              return { id: e.id, n: e.n, sport: e.sport, du: e.du, au: e.au, nb: s.length, themes, sansActs, sansTitre,
-                       dureeMin: Math.min(...durees), dureeMax: Math.max(...durees),
-                       debuts: [...new Set(s.map((x) => x.debut).filter(Boolean))].slice(0, 3),
-                       seqEx: eqSeq(s[0]).map((q) => [q.n, q.secs]) };
-            }""")
-            ok(info and info["nb"] == 99, "les 99 séances remplies de la saison sont dans le contenu", info and info["nb"])
-            ok(info["id"] == "cmfloirac" and info["sport"] == "rugby" and info["du"] == "2025-07-03" and info["au"] == "2026-06-05",
-               "saison identifiée : CM Floirac Rugby, du 3 juillet 2025 au 5 juin 2026", {k: info[k] for k in ("id", "sport", "du", "au")})
-            ok(info["sansActs"] == 0 and info["sansTitre"] == 0, "chaque séance a ses activités, chaque activité a son titre", {"sansActs": info["sansActs"], "sansTitre": info["sansTitre"]})
-            ok(info["themes"].get("modere") == 35 and info["themes"].get("intense") == 30 and info["themes"].get("vitesse") == 24 and info["themes"].get("volume") == 10,
-               "les quatre thèmes d'Antoine sont repris avec leurs comptes", info["themes"])
-            ok("(sans)" not in info["themes"], "toutes les séances importées ont un thème : les 3 onglets vides du classeur ne sont pas importés", info["themes"])
-            ok(info["debuts"] and "18h30" in info["debuts"], "l'horaire de début est repris", info["debuts"])
-            ok(20 <= info["dureeMin"] and info["dureeMax"] <= 150, "les durées sont plausibles", {"min": info["dureeMin"], "max": info["dureeMax"]})
-            ok(all(isinstance(x[1], int) and x[1] > 0 for x in info["seqEx"]), "le minuteur reçoit une étape par activité, en secondes", info["seqEx"])
+            # ---------- import du classeur ----------
+            await btn(co, "Équipe", exact=True)
+            ok(await has(co, "Importe d'abord ton classeur de saison."), "écran Équipe : invitation à importer le classeur")
+            await btn(co, "Importer un classeur")
+            await co.set_input_files("#eq-file", XLSX); await co.wait_for_timeout(1500)
+            ok(await has(co, f"{NB} séances lues du"), f"classeur lu dans le navigateur : {NB} séances", await co.inner_text("main"))
+            ok(await has(co, "1 onglet vide ignoré"), "onglet daté laissé vide : ignoré et signalé")
+            ok(await co.locator("label.chipbtn", has_text="Zébulon").count() == 1, "mots rares proposés comme prénoms possibles")
+            await co.locator("label.chipbtn", has_text="Zébulon").locator("input").check()
+            await co.fill("#eq-nom", "Club Modèle Test")
+            await co.screenshot(path=f"{OUT}/01_import.png", full_page=True)
+            await btn(co, "Enregistrer le modèle"); await co.wait_for_timeout(800)
+            ms = await mdb_prefix(co, "modeles/")
+            m = ms[0] if ms else {}
+            ok(len(ms) == 1 and len(m.get("seances", [])) == NB and m.get("noms") == ["Zébulon"] and m.get("du") == "2025-07-07" and m.get("vides") == ["Vendredi 03 Juillet 2026"],
+               "modèle rangé dans la base : séances, prénom coché, dates", {k: (v if k != "seances" else len(v)) for k, v in m.items()})
+            s0 = (m.get("seances") or [{}])[0]
+            ok(s0.get("theme") == "volume" and s0.get("debut") == "18h30" and s0.get("min") == 60 and [a["n"] for a in s0.get("acts", [])] == ["ECHAUFFEMENT", "Fitness Game", "Physique"],
+               "séance lue comme dans le classeur : thème, horaire, durée, blocs", s0)
+            ok(await has(co, "Ton modèle :") and await has(co, "Cycle 1") and await has(co, "c'est ce découpage qu'un club achète"), "le modèle s'ouvre par cycles (ce qu'un club achète)")
 
-            # ---------- aucun nom de joueur dans le contenu publie ----------
-            # Le classeur d'Antoine nomme des joueurs dans ses notes (« 80 m pour X, Y, Z »). Le depot et le
-            # site sont PUBLICS et ces joueurs n'ont rien signe : le convertisseur remplace les noms (liste
-            # tenue hors du depot, a cote du classeur). On verifie ici la trace du remplacement, et surtout
-            # l'absence de la FORME d'une liste de noms — sans ecrire aucun nom dans ce fichier, qui est public.
-            noms = await co.evaluate("""() => {
-              const e = (CONTENT.EQUIPES || [])[0] || {};
-              const txts = [];
-              (e.seances || []).forEach((s) => { txts.push(s.phase || "");
-                (s.acts || []).forEach((a) => { txts.push(a.n || ""); (a.l || []).forEach((l) => txts.push(l.d || "", l.note || "", l.x || "", l.t || "")); }); });
-              const blob = txts.join(" || ");
-              /* « pour Xxx, Yyy » ou « Xxx et Yyy » : la forme d'une enumeration de prenoms */
-              const listes = blob.match(/[A-ZÀ-Þ][a-zà-ÿ]{2,}\\s*(?:,|\\bet\\b)\\s*[A-ZÀ-Þ][a-zà-ÿ]{2,}/g) || [];
-              return { anonymises: (blob.match(/certains joueurs|un joueur/g) || []).length, listes: listes.slice(0, 5) };
-            }""")
-            ok(noms["anonymises"] >= 4, "les notes nominatives du classeur ont été remplacées par un libellé générique", noms["anonymises"])
-            ok(not noms["listes"], "aucune énumération de prénoms ne subsiste dans le contenu publié", noms["listes"])
+            # ---------- les cycles (offre club) : lus dans les phases du classeur ----------
+            cyc = await co.evaluate("""(m) => { const cs = eqCycles(m);
+              return { n: cs.length, total: cs.reduce((t, c) => t + c.seances.length, 0), ordre: cs.flatMap((c) => c.seances.map((s) => s.d)).join("|") === m.seances.map((s) => s.d).join("|"),
+                       maxSem: Math.max(...cs.map((c) => c.nSem)), melange: cs.filter((c) => new Set(c.seances.map((s) => eqSem(s).ph)).size > 1).length,
+                       t: cs.map((c) => [c.titre, c.sous, c.nSem, c.seances.length]) }; }""", m)
+            ok(cyc["total"] == NB and cyc["ordre"], "les cycles reprennent toutes les séances, dans l'ordre, sans perte ni doublon", cyc)
+            ok(cyc["maxSem"] <= 6 and cyc["melange"] == 0, "aucun cycle ne dépasse 6 semaines ni ne mélange présaison et saison", cyc["t"][:4])
+            ok(cyc["t"][0][:2] == ["Cycle 1", "Présaison · semaines 1 à 6"] and cyc["t"][1][:2] == ["Cycle 2", "Présaison · semaines 7 à 8"] and cyc["t"][3][:2] == ["Cycle 4", "Saison · semaines 15 à 20"],
+               "cycles nommés et situés : la présaison coupée à sa fin, puis la saison par 6 semaines", cyc["t"][:4])
 
-            # ---------- ecran coach : la saison, filtrable ----------
-            await co.locator(".side-nav button", has_text="Équipe").first.click(); await co.wait_for_timeout(800)
-            txt = await co.inner_text("body")
-            ok(dans("CM Floirac Rugby", txt) and dans("99 séances", txt), "écran Équipe : la saison et son nombre de séances", txt[:300])
-            # la vue par défaut est le découpage en cycles : c'est ce qu'un club achète
-            ok(dans("Cycle 1", txt) and dans("Présaison · semaine", txt) and dans("cycles de 6 semaines", txt),
-               "écran Équipe : la saison découpée en cycles, vue par défaut", txt[:600])
-            await co.get_by_role("radio", name="Par mois").click(); await co.wait_for_timeout(500)
-            txt = await co.inner_text("body")
-            ok(dans("Juillet 2025", txt) or dans("Novembre 2025", txt), "séances groupées par mois", txt[:400])
-            await co.get_by_role("radio", name="Présaison").click(); await co.wait_for_timeout(500)
-            t2 = await co.inner_text("body")
-            ok(dans("Juillet 2025", t2) and not dans("Mars 2026", t2), "filtre Présaison : ne garde que les mois de présaison", t2[:300])
-            await co.get_by_role("radio", name="Toute la saison").click(); await co.wait_for_timeout(400)
-            await co.get_by_role("radio", name="Intense").click(); await co.wait_for_timeout(500)
-            n_int = await co.evaluate("() => (document.body.innerText.match(/séances? dans ce filtre/) || []).length")
-            t3 = await co.inner_text("body")
-            ok(dans("30 séances dans ce filtre", t3), "filtre par thème : 30 séances Intense", t3[t3.find("séances"):t3.find("séances") + 80])
-            await co.screenshot(path=f"{OUT}/01_saison.png", full_page=True)
+            # ---------- nouveau club : un cycle, posé sur ses jours et son match, à sa date de début ----------
+            await btn(co, "Créer un club avec ce modèle")
+            await co.fill("#cl-nom", "Club Test")
+            await co.get_by_role("radio", name="Un cycle").click(); await co.select_option("#cl-cycle", "4")
+            await co.fill("#cl-places", "20")
+            for j in ["Mardi", "Jeudi", "Lundi", "Mercredi"]:
+                await co.get_by_role("button", name=j, exact=True).click(); await co.wait_for_timeout(100)
+            await co.fill("#cl-heure", "19h30"); await co.select_option("#cl-match", "5")
+            await co.fill("#cl-du", "2026-11-02"); await co.wait_for_timeout(300)
+            await co.fill("#cl-dem", "Équipe réserve, terrain synthétique le mercredi")
+            ok(await has(co, "12 séances sur 18 du modèle, en 6 semaines"), "aperçu : le cycle 4 (6 semaines × 3 séances) sur 2 jours par semaine = 12 séances", await co.inner_text("main"))
+            await co.screenshot(path=f"{OUT}/02_nouveau_club.png", full_page=True)
+            await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1000)
+            cs = await mdb_prefix(co, "clubs/")
+            c = cs[0] if cs else {}
+            S = c.get("seances", [])
+            ok(len(cs) == 1 and len(S) == 12 and all(wd(s["d"]) in (0, 2) for s in S) and S[0]["d"] == "2026-11-02" and S[-1]["d"] == "2026-12-09" and all(s["debut"] == "19h30" for s in S),
+               "club : 12 séances, seulement les lundis et mercredis, à 19h30, du 2 novembre au 9 décembre", [(s["d"], s.get("debut")) for s in S])
+            ok(all(s.get("cycle") == 4 for s in S) and all("2025-10-13" <= s.get("modele", "") <= "2025-11-23" for s in S),
+               "le club reçoit le cycle acheté, et rien d'autre", sorted({s.get("modele") for s in S})[:3])
+            mer = [s for s in S if wd(s["d"]) == 2]; lun = [s for s in S if wd(s["d"]) == 0]
+            ok(all(wd(s["modele"]) == 3 for s in mer) and all(wd(s["modele"]) == 1 for s in lun),
+               "match le samedi : le mercredi (J-3) reçoit la séance du jeudi (J-3 avant le match du dimanche), le lundi celle du mardi (J-5)", [(s["d"], s["modele"]) for s in S])
+            ok([s["modele"] for s in S] == sorted(s["modele"] for s in S), "les semaines du cycle restent dans leur ordre")
+            txt = json.dumps(S, ensure_ascii=False)
+            ok("Zébulon" not in txt and "un joueur" in txt and "Adversaire" not in txt and "Match" not in txt and S[0]["phase"] == "Saison - Semaine 15",
+               "autre club : prénom coché, journée et adversaire retirés", S[0]["phase"])
+            ok(len(S) == len({s["d"] for s in S}), "aucune séance en double, aucune inventée")
+            cj = await mdb(co, "codes/" + ((c.get("codes") or {}).get("joueurs") or "x")) or {}
+            ce = await mdb(co, "codes/" + ((c.get("codes") or {}).get("entraineur") or "x")) or {}
+            ok(cj.get("kind") == "offert" and cj.get("offer") == "auto" and cj.get("weeks") == 6 and cj.get("max") == 20 and cj.get("club") == c.get("id") and cj.get("role") == "joueur",
+               "code joueurs : Autonomie pour les 6 semaines du cycle, 20 places achetées, rattaché au club", cj)
+            ok(ce.get("max") == 3 and ce.get("role") == "entraineur" and ce.get("club") == c.get("id") and ce.get("weeks") == 6, "code entraîneur : 3 places", ce)
+            ok(c.get("offre") == "cycle" and c.get("cycle") == 4 and c.get("places") == 20 and c.get("demandes") == "Équipe réserve, terrain synthétique le mercredi" and c.get("match") == 5 and c.get("weeks") == 6,
+               "achat et demandes du club gardés dans sa fiche", {k: c.get(k) for k in ["offre", "cycle", "places", "demandes", "match", "weeks", "jours"]})
+            ok(await has(co, "Accès du club") and await has(co, cj.get("code", "???")) and await has(co, "Cycle 4 · 20 accès joueurs"), "fiche du club : ce qu'il a acheté et ses codes à partager")
+            cyc_club = await co.evaluate("(c) => eqCycles(c).map((x) => [x.titre, x.sous, x.seances.length])", c)
+            ok(cyc_club == [["Cycle 4", "Saison · semaines 15 à 20", 12]], "la saison du club garde le numéro du cycle acheté", cyc_club)
+            await co.screenshot(path=f"{OUT}/03_club.png", full_page=True)
 
-            # ---------- une seance : son deroule tel qu'ecrit ----------
-            await co.get_by_role("radio", name="Tous les thèmes").click(); await co.wait_for_timeout(400)
-            await co.get_by_role("button", name="3 juil.").first.click(); await co.wait_for_timeout(700)
-            d = await co.inner_text("body")
-            ok(dans("Présaison · S1", d) and dans("18h30", d), "séance ouverte : phase et horaire", d[:300])
-            ok(dans("ECHAUFFEMENT", d) and dans("Jeu PP", d), "activités et lignes de détail reprises du classeur", d[:600])
-            ok("Touché retour ligne" in d or "touché retour ligne" in d, "les notes d'Antoine sont conservées")
-            ok(dans("Lancer la séance au minuteur", d), "la séance peut être déroulée au minuteur")
-            await co.screenshot(path=f"{OUT}/02_seance.png", full_page=True)
+            # ---------- recalage : la saison à partir d'un cycle, et une date de début en milieu de semaine ----------
+            rr = await co.evaluate("""(m) => { const base = { jours: [0, 2], match: 5, heure: '19h30', anon: true };
+              const sai = eqRecaler(m, { ...base, du: '2026-11-02', offre: 'saison', cycle: 4 });
+              const mer = eqRecaler(m, { ...base, du: '2026-11-04', offre: 'cycle', cycle: 4 });
+              return { premier: sai.seances[0].modele, cyc: sai.seances[0].cycle, sems: sai.sems, n: sai.seances.length, mer: [mer.seances[0].d, mer.seances.length] }; }""", m)
+            ok(rr["cyc"] == 4 and "2025-10-13" <= rr["premier"] <= "2025-10-19", "saison complète à partir du cycle 4 : elle commence à la première semaine de ce cycle", rr)
+            ok(rr["mer"] == ["2026-11-09", 12], "début un mercredi : on part du lundi suivant, aucune séance du cycle perdue", rr["mer"])
 
-            # ---------- le minuteur enchaine les activites ----------
-            await co.get_by_role("button", name="Lancer la séance au minuteur").click(); await co.wait_for_timeout(900)
-            tm = await co.inner_text("body")
-            ok("Activité 1 sur" in tm or await co.locator(".tm-clock").count() == 1, "minuteur lancé sur la première activité", tm[:250])
-            await co.screenshot(path=f"{OUT}/03_minuteur.png", full_page=True)
+            # ---------- son propre club : la saison complète, rien n'est retiré, pas d'accès joueurs ----------
+            await btn(co, "‹ Retour"); await btn(co, "Nouveau club")
+            await co.fill("#cl-nom", "Mon club"); await co.uncheck("label.chk input"); await co.fill("#cl-places", "0"); await co.fill("#cl-du", "2026-07-06")
+            await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1000)
+            mien = [x for x in await mdb_prefix(co, "clubs/") if x.get("n") == "Mon club"]
+            mc = mien[0] if mien else {}
+            ok(mien and "Zébulon" in json.dumps(mc.get("seances"), ensure_ascii=False) and "Adversaire Imaginaire" in json.dumps(mc.get("seances"), ensure_ascii=False) and all(wd(s["d"]) in (1, 3) for s in mc["seances"]),
+               "son propre club : notes et titres intacts, jours par défaut (mardi, jeudi)")
+            ok(mc.get("offre") == "saison" and mc.get("weeks") == len({s["phase"].split(" - Match")[0] for s in m["seances"]}) and (mc.get("codes") or {}).get("joueurs") is None and (mc.get("codes") or {}).get("entraineur"),
+               "saison complète : toutes les semaines du modèle ; sans accès joueurs, seul le code entraîneur est créé", {k: mc.get(k) for k in ("offre", "weeks", "codes")})
+            ce2 = await mdb(co, "codes/" + ((mc.get("codes") or {}).get("entraineur") or "x")) or {}
+            ok(ce2.get("weeks") == 52, "saison complète : codes de 12 mois", ce2.get("weeks"))
 
-            # ---------- cote joueur : rien tant qu'il n'est rattache a aucune equipe ----------
-            cl = await A.new_page(); hook(cl, "joueur"); await cl.set_viewport_size({"width": 390, "height": 844})
-            await cl.goto(URL + "?as=eq1"); await cl.evaluate("localStorage.removeItem('__mockdb')")
-            start = (TODAY - datetime.timedelta(days=14)).isoformat()
-            await mdb_set(cl, "clients/u_eq1", {"name": "Jo Joueur", "sportId": "rugby", "poste": "trois-quarts", "sex": "H", "height": 182, "weight": 88, "birthYear": 2000})
-            await mdb_set(cl, "plans/u_eq1", {"programId": "vitesse", "offer": "suivi", "weeks": 12, "start": start, "equipment": "salle",
-                                               "status": "active", "niveau": "sportif", "extra": [], "message": "",
-                                               "validatedAt": "2026-10-01T00:00:00.000Z", "reviewedAt": "2026-10-01T00:00:00.000Z"})
-            await cl.reload(); await cl.wait_for_timeout(1400)
-            j0 = await cl.inner_text("body")
-            ok("séance d'équipe" not in j0.lower(), "client non rattaché : aucune séance d'équipe affichée", j0[:200])
-
-            # ---------- rattachement par le coach, depuis la fiche du client ----------
-            # C'est LE geste qui rend la fonction vivante pour un joueur : on le fait par l'interface, pas
-            # en écrivant dans la base, pour vérifier que le bouton d'Antoine enregistre vraiment.
-            await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1600)
-            await co.get_by_text("Jo Joueur").first.click(); await co.wait_for_timeout(900)
+            # ---------- rattachement d'un client depuis sa fiche ----------
+            await mdb_set(co, "clients/u_eq1", {"name": "Jo Joueur", "sportId": "rugby", "sex": "H", "height": 182, "weight": 88, "birthYear": 2000})
+            await mdb_set(co, "plans/u_eq1", {"programId": "vitesse", "offer": "auto", "weeks": 4, "start": TODAY.isoformat(), "equipment": "salle", "status": "active", "niveau": "sportif",
+                                               "extra": [], "message": "", "validatedAt": "2026-10-01T00:00:00.000Z", "reviewedAt": "2026-10-01T00:00:00.000Z"})
+            await co.reload(); await co.wait_for_timeout(1600)
+            await btn(co, "Clients", exact=True)
+            await co.locator("table.ctable tbody tr", has_text="Jo Joueur").click(); await co.wait_for_timeout(700)
             await co.get_by_role("radio", name="Sport & terrain").click(); await co.wait_for_timeout(600)
-            carte = co.locator(".card", has_text="Séances d'équipe")
-            ok(await carte.count() >= 1, "fiche du client : la carte « Séances d'équipe » est là", await co.inner_text("main"))
-            await carte.first.get_by_role("radio", name="CM Floirac Rugby").click(); await co.wait_for_timeout(900)
-            rat = await co.evaluate("() => (JSON.parse(localStorage.getItem('__mockdb') || '{}')['clients/u_eq1'] || {}).equipe")
-            ok(rat == "cmfloirac", "le rattachement enregistré par le bouton du coach, pas à la main", rat)
-            await co.screenshot(path=f"{OUT}/05_rattachement.png", full_page=True)
+            carte = co.locator(".card", has_text="Si ce client joue dans un club")
+            await carte.first.get_by_role("radio", name="Club Test").click(); await co.wait_for_timeout(900)
+            prof = await mdb(co, "clients/u_eq1") or {}
+            cl = [x for x in await mdb_prefix(co, "clubs/") if x.get("n") == "Club Test"][0]
+            ok(prof.get("club") == cl["id"] and prof.get("clubRole") == "joueur" and (cl.get("membres") or {}).get("u_eq1") == "joueur", "rattachement : profil et membres du club (règle de lecture)", [prof.get("club"), cl.get("membres")])
+            await carte.first.get_by_role("radio", name="Entraîneur").click(); await co.wait_for_timeout(800)
+            cl = [x for x in await mdb_prefix(co, "clubs/") if x.get("n") == "Club Test"][0]
+            ok((await mdb(co, "clients/u_eq1") or {}).get("clubRole") == "entraineur" and cl["membres"].get("u_eq1") == "entraineur", "rôle entraîneur enregistré")
+            await co.screenshot(path=f"{OUT}/04_rattachement.png", full_page=True)
 
-            # La saison du classeur (2025-2026) est TERMINÉE : elle s'est finie le 5 juin 2026. Un joueur
-            # rattaché ne doit donc rien voir aujourd'hui — et c'est le bon comportement, pas un bug. On
-            # vérifie les deux : la logique de date sur des dates explicites, et l'absence d'affichage.
-            await cl.bring_to_front()
-            await cl.reload(); await cl.wait_for_timeout(1400)
-            logique = await cl.evaluate("""() => {
-              const sai = eqSaison('cmfloirac');
-              const dedans = eqSeanceAt(sai, '2025-11-04');           // une date de la saison
-              const prochDedans = eqProchaine(sai, '2025-11-03');     // la suivante, vue depuis la veille
-              const apres = eqProchaine(sai, '2026-09-01');           // après la fin de saison
-              return { rattache: !!eqOf({ equipe: 'cmfloirac' }), sansEquipe: !!eqOf({}),
-                       dedans: dedans ? [dedans.d, dedans.theme] : null,
-                       prochDedans: prochDedans ? prochDedans.d : null, apres };
-            }""")
-            ok(logique["rattache"] and not logique["sansEquipe"], "un client n'est relié à une saison que si son profil le dit", logique)
-            ok(logique["dedans"] and logique["dedans"][0] == "2025-11-04", "séance retrouvée à une date de la saison", logique["dedans"])
-            ok(logique["prochDedans"] == "2025-11-04", "la prochaine séance est bien la suivante, pas une passée", logique["prochDedans"])
-            ok(logique["apres"] is None, "après la fin de saison : plus aucune séance à venir", logique["apres"])
-            j1 = await cl.inner_text("body")
-            ok(dans("Aucune séance d'équipe prévue aujourd'hui", j1) and not dans("ce soir", j1) and not dans("prochaine séance d'équipe", j1),
-               "saison terminée : aucune séance du jour annoncée, mais la programmation reste consultable", j1[:300])
-
-            # ---------- la saison par cycles, ce qu'un club achete ----------
-            cyc = await cl.evaluate("""() => {
-              const sai = eqSaison('cmfloirac'), cs = eqCycles(sai);
-              const seances = cs.reduce((n, c) => n + c.seances.length, 0);
-              const ids = cs.map((c) => c.seances.map((s) => s.d).join("|")).join("||");
-              const toutes = (sai.seances || []).map((s) => s.d).join("|");
-              return { n: cs.length, seances, ordre: ids.split("||").join("|") === toutes,
-                       phases: [...new Set(cs.map((c) => c.ph))], maxSem: Math.max(...cs.map((c) => c.nSem)),
-                       melange: cs.filter((c) => new Set(c.seances.map((s) => eqSem(s).ph)).size > 1).length,
-                       titres: cs.slice(0, 3).map((c) => [c.titre, c.sous, c.nSem, c.seances.length]) };
-            }""")
-            ok(cyc["seances"] == 99 and cyc["ordre"], "les cycles reprennent les 99 séances, dans l'ordre, sans perte ni doublon", cyc)
-            ok(4 <= cyc["n"] <= 12, "la saison tient en un nombre de cycles vendable", cyc["n"])
-            ok(cyc["maxSem"] <= 6 and cyc["melange"] == 0, "aucun cycle ne dépasse 6 semaines ni ne mélange présaison et saison", {k: cyc[k] for k in ("maxSem", "melange")})
-            ok(cyc["titres"] and cyc["titres"][0][0] == "Cycle 1" and "saison" in cyc["titres"][0][1].lower(), "chaque cycle est nommé et situé dans la saison", cyc["titres"])
-            await cl.get_by_role("button", name="La saison du club").click(); await cl.wait_for_timeout(700)
-            js = await cl.inner_text("body")
-            ok(dans("Cycle 1", js) and dans("séance 1", js) and not dans("3 juil.", js),
-               "le joueur voit la saison par cycles, en semaines et sans dates", js[:400])
-            await cl.get_by_role("button", name="S1 · séance 1").first.click(); await cl.wait_for_timeout(700)
-            jd = await cl.inner_text("body")
-            ok(dans("ECHAUFFEMENT", jd) and dans("Lancer la séance au minuteur", jd), "une séance de la saison s'ouvre, déroulable au minuteur", jd[:300])
-            await cl.screenshot(path=f"{OUT}/06_saison_joueur.png", full_page=True)
-            await cl.screenshot(path=f"{OUT}/04_joueur.png", full_page=True)
-
-            # ---------- ce que le joueur voit est traduit ----------
-            # Le contenu du classeur reste en francais (programmation d'un club francais), mais les libelles
-            # de SA carte doivent etre traduits : un client anglophone ne doit pas tomber sur un ecran a moitie
-            # francais. Verifie par la vraie fonction de traduction de l'application, sur la page construite.
-            for lang, attendu in (("en", {"Ta séance d'équipe, ce soir": "Your team session, tonight", "Voir le détail": "See the details", "55 minutes": "55 minutes"}),
-                                  ("es", {"Ta séance d'équipe, ce soir": "Tu sesión de equipo, esta noche", "Voir le détail": "Ver el detalle", "55 minutes": "55 minutos"})):
+            # ---------- libellés vus par les joueurs et l'entraîneur : traduits (le contenu du classeur reste en français) ----------
+            for lang, attendu in (("en", {"Ta séance d'équipe, ce soir": "Your team session, tonight", "Voir le détail": "See the details", "Ta saison d'équipe": "Your team season",
+                                          "Ouvrir la saison": "Open the season", "Lancer la séance au minuteur": "Start the session on the timer", "Match : Saturday": "Match: Saturday", "Présaison · W2": "Pre-season · W2"}),
+                                  ("es", {"Ta séance d'équipe, ce soir": "Tu sesión de equipo, esta noche", "Voir le détail": "Ver el detalle", "Ta saison d'équipe": "Tu temporada de equipo",
+                                          "Ouvrir la saison": "Abrir la temporada", "Lancer la séance au minuteur": "Iniciar la sesión con el temporizador", "Match : Sábado": "Partido: Sábado", "Présaison · S2": "Pretemporada · S2"})):
                 lp = await A.new_page(); hook(lp, "langue-" + lang)
-                await lp.goto(URL + f"?as=eq1&lang={lang}"); await lp.wait_for_timeout(1000)
+                await lp.goto(URL + f"?lang={lang}"); await lp.wait_for_timeout(1000)
                 got = await lp.evaluate("(ks) => { const o = {}; ks.forEach((k) => { o[k] = tr(k); }); return o; }", list(attendu))
-                ok(got == attendu, f"carte du joueur traduite en {lang}", got)
+                ok(got == attendu, f"libellés de l'équipe traduits en {lang}", got)
+                # jours et semaines déjà dans la langue de la personne, avant toute traduction
+                sub = await lp.evaluate("[eqClubSub({ jours: [0, 2], heure: '19h30', match: 5, du: '2026-11-02', au: '2026-11-25' }), eqPhaseCourte({ phase: 'Présaison - Semaine 2' })]")
+                ok(sub[0].startswith({"en": "Monday · Wednesday · 19h30 · Match : Saturday", "es": "Lunes · Miércoles · 19h30 · Match : Sábado"}[lang]) and sub[1] == {"en": "Présaison · W2", "es": "Présaison · S2"}[lang],
+                   f"jours de la semaine et lettre de semaine en {lang}", sub)
                 await lp.close()
-
-            # ---------- la charge du joueur n'a pas bouge ----------
-            charge = await cl.evaluate("""() => Object.keys(JSON.parse(localStorage.getItem('__mockdb') || '{}')).filter((k) => k.indexOf('clients/u_eq1/logs/') === 0).length""")
-            ok(charge == 0, "aucune séance n'a été créée automatiquement dans son historique", charge)
-
-            ok(not errs, "aucune erreur dans la console", errs)
-            print(f"\n{res['ok']} OK, {res['ko']} échecs")
+            await b.close()
     finally:
         srv.terminate()
 
 
-if __name__ == "__main__":
-    asyncio.run(run())
+asyncio.run(run())
+print(f"\n{len(oks)} OK, {len(fails)} échecs")
+for e in errs[:12]: print("  console:", e)
+sys.exit(1 if fails or any("pageerror" in e for e in errs) else 0)

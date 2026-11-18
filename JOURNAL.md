@@ -3,6 +3,50 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 17 novembre 2026 (nuit) · offre club, suite : le classeur en privé, la saison ou le cycle posé sur les jours de chaque club, les codes
+
+- **Contexte** : deux passages ont travaillé en parallèle sur l'offre club. Le premier (entrée du soir, ci-dessous, fusionné) a fait le produit : cycles, prix, devis, article 2 bis. Celui-ci réunit ce produit avec la demande d'Antoine « on récupère le dossier Excel que j'ai fait, qu'on adaptera en fonction des jours et de la demande des clubs, géré en autonomie ». Il traite les manques listés au soir : (1) rôle entraîneur, (2) recalage sur le calendrier du club, (4) accès joueurs un par un, (5) un club qui n'achète qu'un cycle voyait toute la saison. **La grille du soir (590 / 149 / 25 €) est gardée** : c'est la dernière décision d'Antoine. Elle remplace les 299 / 799 / 1 499 / 2 849 € par équipe validés plus tôt dans la journée, qui ne sont plus nulle part.
+- **Le classeur ne va plus dans le code public.** `content_equipe.py` et `tools/saison_equipe.py` sont retirés. Le classeur s'importe dans l'espace coach (**Équipe › Importer un classeur**). Il est lu **dans le navigateur** : un `.xlsx` est un ZIP de XML, lu avec `DecompressionStream` et `DOMParser`, sans aucune bibliothèque. Seules les séances sont gardées, dans Firestore `modeles/` (lu par Antoine seul). L'ancienne saison reste dans l'historique git, sans prénoms : la purger demanderait de réécrire l'historique, ce qui n'a pas été fait sans son accord. **Conséquence** : un client rattaché à l'ancienne saison publique (`profile.equipe`) ne voit plus de séance d'équipe ; il faut créer le club et le rattacher à nouveau depuis sa fiche.
+- **Prénoms** : à l'import, l'application propose les mots rares écrits avec une majuscule **au milieu d'une phrase**. Antoine coche ses joueurs, et peut en ajouter. Chez tout autre club, ils sont remplacés par « un joueur » ou « certains joueurs ». Le titre de séance devient « Saison - Semaine 14 », sans journée ni adversaire. Vérifié sur son vrai classeur, sans rien en copier : 99 séances, 3 onglets vides signalés, ses quatre prénoms proposés, les adversaires (seulement dans les titres) non proposés.
+- **Ce que le club achète** (écran Nouveau club) :
+  - la saison complète, à partir du cycle 1 ou d'un cycle choisi pour un club qui démarre en cours de saison, ou un seul cycle ;
+  - le nombre d'accès joueurs (0 = sans accès joueurs) ;
+  - ses jours d'entraînement, son heure, son jour de match et sa date de début.
+- **Recalage** (`eqRecaler`) :
+  - Les semaines achetées sont posées l'une après l'autre à partir de la date de début. Si un jour d'entraînement de la première semaine tombe avant cette date, on part de la semaine suivante, pour ne perdre aucune séance.
+  - Dans chaque semaine, chaque jour du club reçoit la séance du modèle qui était à la même distance du match (le modèle joue le dimanche). Avec un match le samedi, le mercredi (J-3) reçoit la séance du jeudi et le lundi (J-5) celle du mardi. À égalité, la séance la plus tôt dans la semaine va au jour le plus loin du match.
+  - **Aucune séance inventée.** Un club qui s'entraîne moins souvent que le modèle reçoit moins de séances, et l'aperçu le dit (« 12 séances sur 18 du modèle »).
+  - Chaque séance garde le numéro de son cycle : le club qui achète le cycle 4 voit « Cycle 4 ».
+- **Codes** :
+  - **Entraîneur** : 3 places. **Joueurs** : autant de places que d'accès achetés.
+  - Les deux ouvrent la formule Autonomie, sans coach IA. Durée : celle du cycle (6 semaines), ou 6 ou 12 mois pour une saison, car les règles des accès datés n'admettent que ces durées au-delà de 12 semaines.
+  - Ils expirent après la dernière séance et rattachent au club (`club`, `clubCode`, `clubRole`).
+  - Quand l'achat change, les mêmes codes gardent leurs nouvelles limites, et ceux qui ont déjà pris une place la gardent.
+- **Ce que voient les membres** :
+  - Le joueur voit sa séance d'équipe du jour et toute la saison de son club, par cycles et à ses dates. Il peut lancer n'importe quelle séance au minuteur (repris du soir).
+  - L'entraîneur voit toute la saison, par cycle ou par mois, et lance chaque séance au minuteur.
+  - Antoine peut aussi rattacher un client existant depuis sa fiche (Sport & terrain › Club).
+- **Règles Firestore** : `modeles/` est lisible et modifiable par le coach seul. `clubs/{id}` est lisible par le coach, par les membres qu'il a rattachés et par ceux qui ont **pris une place** sur un code de ce club. Écrire le code dans son propre profil ne suffit pas (testé). La copie fidèle de ces règles est dans `test/fakefs.js`.
+- **Textes** :
+  - Article 2 bis (offre) : « posée sur les jours d'entraînement, l'horaire et le jour de match du club à partir de la date de début convenue ».
+  - Article 6 : les codes de club.
+  - Politique de confidentialité : entrée « Club » (le club ne reçoit aucune donnée de ses joueurs).
+  - Section club de la page d'accueil : deux points (posée sur tes jours ; deux codes à distribuer).
+  - Le formulaire de devis n'a plus le nom d'un vrai club en exemple.
+- **CONFORMITE** : accès par code (articles 2 bis et 6), joueurs mineurs par le parcours habituel, protection dès la conception. Le point 15 couvre le devis qui tient lieu de contrat, la facture obligatoire avec ses pénalités et l'indemnité de 40 €, et la facture électronique à l'émission dès le 1er septembre 2027 pour un client assujetti (une association non assujettie est hors réforme).
+- **Traductions** :
+  - Tout ce que voient les clubs, les joueurs et l'entraîneur est traduit, y compris les textes du soir restés sans clé (récapitulatif du devis, phrases de la section club, paragraphe d'offre de l'article 2 bis).
+  - L'écran coach Équipe reste en français.
+  - Restent 378 textes sans traduction, tous d'avant cette mise à jour : lots basket, vivacité, cycle, autorégulation, énergie, nutrition adaptative.
+- **Tests** :
+  - `e2e_equipe.py` est réécrit sur un classeur **fictif** (`app/fixture_saison.py`), avec 34 vérifications : import, prénom, cycles, achat d'un cycle et recalage jour par jour, saison à partir d'un cycle, début en milieu de semaine, codes, rattachement et traductions.
+  - Nouveau `e2e_club_site.py`, avec 27 vérifications sur le site : joueur et entraîneur par leurs codes, saison du club, minuteur, règles contre un inconnu et contre un joueur.
+  - `e2e_club.py` passe à 32 vérifications : sa partie coach remet maintenant les comptes de l'émulateur à zéro et repasse en français, sans quoi elle ne pouvait pas tourner après un autre test.
+- **Sources** :
+  - [Légifiscal, facture électronique et associations](https://www.legifiscal.fr/creation-entreprise/facture-electronique-associations.html)
+  - [CCI Paris Île-de-France, mentions des factures](https://www.entreprises.cci-paris-idf.fr/fiches-pratiques/factures-quelles-sont-les-mentions-obligatoires)
+  - [Espace auto-entrepreneur, facturation au 1er septembre 2026](https://espace-autoentrepreneur.com/blog/facturation-auto-entrepreneur-ce-qui-change-au-1er-septembre-2026)
+
 ## 17 novembre 2026 (soir) · offre club : la saison découpée en cycles, et son prix
 
 - **Demande d'Antoine** : « le classeur que je t'ai donné, c'est pour donner un exemple de saison, les dates on s'en fiche un peu. C'est pour pouvoir donner du contenu à un club si celui-ci prend l'application. Donc crée un abonnement spécial club, pour la saison ou pour un cycle, découpe le tableau en cycles, analyse le marché, fais un prix, et incorpore-le au site avec un bouton. »

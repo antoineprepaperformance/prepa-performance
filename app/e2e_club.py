@@ -172,8 +172,10 @@ async def run():
                     passe(m)
             else:
                 import urllib.parse  # noqa: F401
+                # comptes de l'émulateur remis à zéro, comme dans les autres tests du site : un coach@test.fr laissé par un test précédent empêcherait l'inscription
+                urllib.request.urlopen(urllib.request.Request(EMU + "/emulator/v1/projects/demo-prepa/accounts", method="DELETE", headers={"Authorization": "Bearer owner"})).read()
                 co = await A.new_page(); hook(co, "coach")
-                await co.goto(URL); await co.wait_for_timeout(1500)
+                await co.goto(URL + "?lang=fr"); await co.wait_for_timeout(1500)   # la vérification des traductions a laissé la langue en espagnol
                 await co.get_by_role("button", name="Créer mon compte", exact=True).first.click(); await co.wait_for_timeout(400)
                 await co.fill("#au-e", "coach@test.fr"); await co.fill("#au-p", "motdepasse123")
                 await co.locator(".modal").get_by_role("button", name="Créer mon compte").click(); await co.wait_for_timeout(1500)

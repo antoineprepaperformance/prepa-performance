@@ -529,11 +529,12 @@ CLUB = {
     "desc": "La programmation physique de ton équipe dans l'application : chaque séance avec son thème, ses activités et ses durées, déroulable au minuteur sur le terrain, avec la bibliothèque d'exercices, les fiches terrain et les tests.",
     "quoi": [
         "La saison découpée en cycles : chaque cycle a ses semaines et ses séances, prêtes à mener.",
+        "Posée sur tes jours d'entraînement, ton horaire et ton jour de match, à partir de ta date de début : la séance de veille de match reste la veille du match.",
         "Chaque séance avec son thème (Modéré, Intense, Vitesse, Volume), ses activités et leurs durées.",
         "Le minuteur qui enchaîne les activités de la séance, sur le terrain, au téléphone.",
         "La bibliothèque : exercices animés, fiches terrain par sport et par poste, tests de référence.",
         "Avec l'accès joueurs : chaque joueur voit la séance d'équipe du jour et suit son programme individuel.",
-        "Les accès sont ouverts par Antoine : un pour l'entraîneur, et un par joueur si tu prends l'accès joueurs.",
+        "Deux codes à distribuer : un pour tes entraîneurs (3 places), un pour tes joueurs si tu prends l'accès joueurs (une place par joueur).",
     ],
     "nonInclus": "Le club reste responsable de l'encadrement de ses séances, de la santé de ses joueurs et du respect des consignes. L'offre club ne comprend pas de présence sur le terrain ni de suivi individuel des joueurs par Antoine : c'est l'accès joueurs et les formules individuelles qui ouvrent ce suivi.",
 }

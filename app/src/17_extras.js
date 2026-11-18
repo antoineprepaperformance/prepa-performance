@@ -102,7 +102,7 @@ function TimerPlayer({ title, seq, kind, onFinish, onClose }) {
   const breath = cur.breath ? (Math.floor((cur.secs - left) / cur.breath[0]) % 2 === 0 ? "Inspire" : "Expire") : null;
   return html`<div className="player timer">
     <header className="p-top"><button type="button" className="back" onClick=${onClose} aria-label="Quitter">‹</button>
-      <div><div className="eyebrow">${{ recup: "Récup et bien-être", terrain: "Séance terrain" }[kind] || "Séance flash"} · ${fmtClock(total - done)} restant</div><h2>${title}</h2></div></header>
+      <div><div className="eyebrow">${{ recup: "Récup et bien-être", terrain: "Séance terrain", equipe: "Séance d'équipe" }[kind] || "Séance flash"} · ${fmtClock(total - done)} restant</div><h2>${title}</h2></div></header>
     <div className="tm-bar"><span style=${{ width: Math.min(100, (100 * done) / total) + "%" }}></span></div>
     <section className=${"tm-main " + tone}>
       <div className="tm-k">${{ prep: "Prépare-toi", work: "Effort", rest: "Récupère", hold: "Tiens", switch: cur.label === "Change de côté" ? "Change de côté" : "Ensuite", emom: "Cette minute", amrap: "AMRAP" }[cur.kind]}${kind === "terrain" ? (cur.sets > 1 && cur.round ? " · série " + cur.round + "/" + cur.sets : "") : cur.round && FLASH.length ? " · tour " + cur.round : ""}</div>

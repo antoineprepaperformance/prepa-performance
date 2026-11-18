@@ -23,6 +23,8 @@ Préparation physique en ligne par Antoine Limousi : page d'accueil publique, co
 
 Les codes se créent dans l'espace coach, onglet **Codes** (durée, programme imposé ou libre, nombre d'utilisations, date limite).
 
+**Offre club** (vendue au club, sur devis, prix dans Offres & réglages) : dans l'espace coach, onglet **Équipe**, tu importes ton classeur de saison (`.xlsx`, une feuille par séance), découpé en cycles. Pour chaque club, tu choisis ce qu'il achète (la saison ou un cycle), ses accès joueurs, ses jours, son heure, son jour de match et sa date de début : l'application pose les séances sur ses jours et crée ses codes (entraîneur 3 places, joueurs autant que d'accès achetés). Classeur et saisons des clubs restent privés dans ta base Firestore (`modeles/`, `clubs/`), jamais dans ce dépôt public.
+
 ## Organisation
 
 ```
@@ -47,6 +49,7 @@ app/
     22_ciqual.js      table Ciqual de l'ANSES : recherche d'aliments, valeurs des repas estimés par l'IA
     23_profil.js      profil sportif : taille, poids, âge, records par discipline (charges, allures, tests)
     28_pdf.js         séances en PDF : dépôt par le coach, ouverture par le client (morceaux dans Firestore, gratuit)
+    38_equipe.js      offre club : lecture du classeur .xlsx dans le navigateur, modèles et clubs privés, découpage en cycles, recalage de la saison ou du cycle acheté sur les jours de chaque club, codes, carte du joueur et de l'entraîneur
   src/00_i18n.js      langues : choix FR / EN / ES, traduction de l'affichage au fil de l'eau
   src/site/           spécifique au site : Firebase, coach IA par le relais (01_ia.js), page d'accueil, connexion
   i18n/               _textes.json (textes extraits du code), en.json et es.json (traductions), _extra.json (textes composés), work/ (lots de traduction)
@@ -57,6 +60,7 @@ app/
   build.py            reconstruit la version Claude (avec coach IA)
   relay/              tests du relais
   test/, e2e_*.py     tests automatiques (navigateur, comptes simulés, base simulée)
+  fixture_saison.py   classeur de saison FICTIF pour les tests du Club (le vrai classeur ne va jamais dans le dépôt)
 firestore.rules       règles de sécurité Firestore
 ```
 
@@ -75,7 +79,7 @@ Tests :
 
 - `python3 unit_niveau.py` : profils, recommandations, dosages, accès (sans navigateur).
 - `node relay/test_worker.mjs` : signature Stripe, montants, écriture Firebase du relais ; `node relay/test_ia.mjs` : coach IA du relais (connexion, formule, quotas) ; `node relay/test_sante.mjs` : données des montres (lien personnel, Raccourci iPhone, Health Connect, effacement).
-- Site : lancer l'émulateur Auth (`firebase emulators:start --only auth --project demo-prepa`), servir `app/site_test` sur `127.0.0.1:8123`, puis `python3 e2e_site.py`, `e2e_site2.py`, `e2e_pay.py`, `e2e_lite.py`, `e2e_features_site.py`, `e2e_terrain_site.py`, `e2e_rules_site.py`, `e2e_messages_site.py`, `e2e_sante_site.py` et `e2e_pwa.py`.
+- Site : lancer l'émulateur Auth (`firebase emulators:start --only auth --project demo-prepa`), servir `app/site_test` sur `127.0.0.1:8123`, puis `python3 e2e_site.py`, `e2e_site2.py`, `e2e_pay.py`, `e2e_lite.py`, `e2e_features_site.py`, `e2e_terrain_site.py`, `e2e_club_site.py`, `e2e_rules_site.py`, `e2e_messages_site.py`, `e2e_sante_site.py` et `e2e_pwa.py`.
 - Version Claude : `python3 e2e.py`, `e2e_nutri.py`, `e2e_claude_acces.py`, `e2e_lite_claude.py`, `e2e_features.py`, `e2e_terrain.py`, `e2e_messages.py`, `e2e_profil.py`, `e2e_formules.py` (Coach IA, limites), `e2e_langues.py` (anglais, espagnol, textes restés en français), `vis.py`.
 - Traductions complètes : `node tools/i18n_extract.mjs --manque` (aucune ligne attendue).
 

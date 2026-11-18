@@ -14,11 +14,11 @@ from content_sports import SPORTS_CONTENT, EX_SPORT, TESTS_SPORT
 from content_materiel import MATERIEL_CONTENT
 from content_cartes import CARTES_CONTENT
 from content_articles import ARTICLES_CONTENT
-from content_equipe import EQUIPE_CONTENT   # saisons d'équipe (généré par tools/saison_equipe.py)
+# saisons d'équipe : plus dans le code public depuis le 17 novembre 2026 (importées dans l'espace coach, rangées dans la base)
 LIB = LIB + EX_SPORT
 TESTS = {**TESTS, **TESTS_SPORT}
 
-content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, "CLUB": CLUB, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT, **EQUIPE_CONTENT}
+content = {"version": 1, "T": T, "E": LIB, "P": PROGRAMS, "TESTS": TESTS, "CHECKIN": CHECKIN, "SCREENING": SCREENING, "OFFERS": OFFERS, "CLUB": CLUB, **NIVEAU_CONTENT, **EXTRAS_CONTENT, **RECETTES_CONTENT, **SPORTS_CONTENT, **NUTRI_CONTENT, **MATERIEL_CONTENT, **CARTES_CONTENT, **ARTICLES_CONTENT}
 cjson = json.dumps(content, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 ciqjson = json.dumps(CIQ, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
 (ROOT / "content.json").write_text(json.dumps(content, ensure_ascii=False, indent=1))

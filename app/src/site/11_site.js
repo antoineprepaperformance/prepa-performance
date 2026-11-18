@@ -164,7 +164,7 @@ function ClubDevis({ settings, onClose }) {
     <button type="button" className="linkbtn" onClick=${() => saveText("demande-devis-club.txt", recap(done))}>Télécharger le récapitulatif</button></div>`;
   return html`<div className="stack form">
     <p className="small">Dis-moi l'essentiel : je réponds avec un devis et, si tu veux, un cycle d'exemple à regarder avant de décider.</p>
-    <div className="row2"><${Field} label="Nom du club" id="cd-c"><input id="cd-c" value=${f.club} onChange=${(e) => setF({ ...f, club: e.target.value })} placeholder="CM Floirac Rugby" /></${Field}>
+    <div className="row2"><${Field} label="Nom du club" id="cd-c"><input id="cd-c" value=${f.club} onChange=${(e) => setF({ ...f, club: e.target.value })} placeholder="US Exemple Rugby" /></${Field}>
       <${Field} label="Sport et niveau" id="cd-s"><input id="cd-s" value=${f.sport} onChange=${(e) => setF({ ...f, sport: e.target.value })} placeholder="Rugby, Fédérale 3" /></${Field}></div>
     <div className="row2"><${Field} label="Nombre de joueurs" id="cd-j"><input id="cd-j" type="number" min="0" max="200" value=${f.joueurs} onChange=${(e) => setF({ ...f, joueurs: e.target.value })} /></${Field}>
       <${Field} label="Ce qui t'intéresse"><${Seg} id="cd-o" options=${CLUB_OFFRES} value=${f.offre} onChange=${(v) => setF({ ...f, offre: v })} /></${Field}></div>

@@ -80,6 +80,12 @@ async def run():
             ok(dans("TVA non applicable", t) and dans("devis, virement et facture", t) and dans("article 2 bis", t),
                "les conditions de la vente entre professionnels sont annoncées", t[t.find("Pour les clubs"):t.find("Pour les clubs") + 900])
             ok(dans("responsable de l'encadrement", t), "ce que le club garde à sa charge est écrit avant l'achat")
+            # l'offre « premier club » : visible, bornee, et coupable d'un bouton
+            ok(dans("Premier club de la saison", t) and dans("un retour écrit", t) and dans("Un seul club en profite", t),
+               "offre « premier club » : affichée, avec ce qu'elle demande en échange", t[t.find("Pour les clubs"):t.find("Pour les clubs") + 1200])
+            pio = await pub.evaluate("""() => ({ def: !!clubPionnier(null), retiree: !!clubPionnier({ club: { pionnier: false } }), prixIntact: clubPrice({ club: { pionnier: false } }, "cycle") })""")
+            ok(pio["def"] and not pio["retiree"] and pio["prixIntact"] == 149,
+               "elle se retire d'un réglage, sans toucher au prix du cycle", pio)
             await pub.evaluate("document.querySelector('#clubs').scrollIntoView()")
             await pub.screenshot(path=f"{OUT}/01_section_club.png", full_page=True)
 

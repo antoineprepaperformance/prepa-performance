@@ -536,5 +536,10 @@ CLUB = {
         "Avec l'accès joueurs : chaque joueur voit la séance d'équipe du jour et suit son programme individuel.",
         "Deux codes à distribuer : un pour tes entraîneurs (3 places), un pour tes joueurs si tu prends l'accès joueurs (une place par joueur).",
     ],
+    "pionnier": {
+        "on": True,
+        "titre": "Premier club de la saison : le cycle de découverte offert",
+        "texte": "Un seul club en profite, cette saison : le premier qui se lance avec moi reçoit son cycle de découverte (6 semaines) sans le payer, en échange d'un retour écrit que je pourrai citer, du droit de nommer le club, et d'un point de 30 minutes à la fin du cycle. Ensuite, c'est la grille ci-dessus, sans condition.",
+    },
     "nonInclus": "Le club reste responsable de l'encadrement de ses séances, de la santé de ses joueurs et du respect des consignes. L'offre club ne comprend pas de présence sur le terrain ni de suivi individuel des joueurs par Antoine : c'est l'accès joueurs et les formules individuelles qui ouvrent ce suivi.",
 }

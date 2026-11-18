@@ -195,6 +195,7 @@ function ClubSection({ settings, onDevis }) {
         <div className="l-prices"><div><b>${eur(clubPrice(settings, "joueur"))}</b><small>par joueur, la saison</small></div></div>
         <p className="muted small">${"À partir de " + plural(minJ, "joueur") + ", en plus de la saison ou d'un cycle."}</p></div>
     </div>
+    ${clubPionnier(settings) ? html`<div className="alert gold"><div><b>${clubPionnier(settings).titre}</b><p>${clubPionnier(settings).texte}</p></div></div>` : null}
     <ul className="rlist small">${(CLUB.quoi || []).map((t, i) => html`<li key=${i}><span>${t}</span></li>`)}</ul>
     <p className="muted small">${tvaLine(settings)}. ${CLUB.nonInclus} Vente entre professionnels : devis, virement et facture, sans abonnement ni reconduction (article 2 bis des conditions de vente).</p>
     <div className="btnrow center"><${Btn} onClick=${onDevis}>Demander un devis</${Btn}></div>

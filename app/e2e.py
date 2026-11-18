@@ -221,7 +221,7 @@ async def run():
             await coach.get_by_role("radio", name="Séances").click(); await coach.wait_for_timeout(200)
             await shot(coach, "coach_local_seances")
             await coach.get_by_role("radio", name="Notes").click(); await coach.wait_for_timeout(200)
-            await coach.fill("#del-c", "supprimer")
+            await coach.fill("input[id^='del-c-']", "supprimer")
             await shot(coach, "coach_delete")
             await btn(coach, "Supprimer définitivement"); await coach.wait_for_timeout(800)
             await btn(coach, "Tableau de bord", exact=True)

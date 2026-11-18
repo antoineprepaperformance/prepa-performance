@@ -56013,5 +56013,61 @@
   "kind": "string",
   "where": "src/site/11_site.js:275",
   "n": 2
+ },
+ {
+  "h": "06b7f84d72",
+  "k": "Toute la programmation de la saison, découpée en cycles de 6 semaines : l'entraîneur ouvre la séance du jour et la déroule au minuteur.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "078915f281",
+  "k": "Un bloc de 6 semaines pour essayer sur une période précise : reprise, trêve, fin de saison.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "7305828580",
+  "k": "À partir de 15 joueurs, en plus de la saison ou d'un cycle.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "fb47ab6696",
+  "k": "Les accès sont ouverts par Antoine : un pour l'entraîneur, et un par joueur si tu prends l'accès joueurs.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "3b54cb6f92",
+  "k": "Premier club de la saison : le cycle de découverte offert",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "f46075040c",
+  "k": "Un seul club en profite, cette saison : le premier qui se lance avec moi reçoit son cycle de découverte (6 semaines) sans le payer, en échange d'un retour écrit que je pourrai citer, du droit de nommer le club, et d'un point de 30 minutes à la fin du cycle. Ensuite, c'est la grille ci-dessus, sans condition.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "268e116693",
+  "k": "L'offre club est vendue à un club (association ou société) pour ses propres équipes, et non à un particulier. Elle donne accès dans l'application à la programmation physique d'une saison d'équipe — chaque séance avec son thème, ses activités et leurs durées, le minuteur de séance, la bibliothèque d'exercices, les fiches terrain et les tests — pour la saison complète ou pour un ou plusieurs cycles de 6 semaines. L'accès joueurs, s'il est pris, ouvre à chaque joueur désigné par le club un compte qui affiche la séance d'équipe du jour et son programme individuel.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
+ },
+ {
+  "h": "d61c70cac5",
+  "k": "Offre club (article 2 bis) : 590 € la saison complète, 149 € le cycle de 6 semaines, 25 € par joueur et par saison pour l'accès joueurs (à partir de 15 joueurs), sur devis et sans abonnement.",
+  "kind": "literal",
+  "where": "src/i18n-club",
+  "n": 1
  }
 ]

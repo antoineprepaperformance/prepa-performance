@@ -59,6 +59,12 @@ T = [
  ("Vente entre professionnels : devis, virement et facture, sans abonnement ni reconduction (article 2 bis des conditions de vente).",
   "Business-to-business sale: quotation, bank transfer and invoice, with no subscription and no automatic renewal (article 2 bis of the terms of sale).",
   "Venta entre profesionales: presupuesto, transferencia y factura, sin suscripción ni renovación automática (artículo 2 bis de las condiciones de venta)."),
+ ("Premier club de la saison : le cycle de découverte offert",
+  "First club of the season: the discovery cycle on the house",
+  "Primer club de la temporada: el ciclo de descubrimiento gratis"),
+ ("Un seul club en profite, cette saison : le premier qui se lance avec moi reçoit son cycle de découverte (6 semaines) sans le payer, en échange d'un retour écrit que je pourrai citer, du droit de nommer le club, et d'un point de 30 minutes à la fin du cycle. Ensuite, c'est la grille ci-dessus, sans condition.",
+  "Only one club gets this, this season: the first one to start with me receives its discovery cycle (6 weeks) free of charge, in exchange for a written review I may quote, the right to name the club, and a 30-minute debrief at the end of the cycle. After that, it is the grid above, with no conditions.",
+  "Solo un club lo consigue, esta temporada: el primero que empiece conmigo recibe su ciclo de descubrimiento (6 semanas) gratis, a cambio de una valoración escrita que yo pueda citar, del derecho a nombrar al club y de una reunión de 30 minutos al final del ciclo. Después, se aplica la tabla de arriba, sin condiciones."),
  # ---- la demande de devis ----
  ("Demander un devis", "Request a quotation", "Pedir un presupuesto"),
  ("Offre club : demander un devis", "Club offer: request a quotation", "Oferta club: pedir un presupuesto"),

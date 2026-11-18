@@ -97,6 +97,12 @@ function clubCgvTxt(settings) {
       + " semaines, " + eur(clubPrice(settings, "joueur")) + " par joueur et par saison pour l'accès joueurs (à partir de " + plural(clubMinJ(settings), "joueur") + "), sur devis et sans abonnement.",
   };
 }
+/* offre « premier club » : un geste de lancement, borné et daté, qu'Antoine peut couper d'un bouton */
+function clubPionnier(settings) {
+  const p = CLUB.pionnier || {};
+  const on = !(settings && settings.club && settings.club.pionnier === false) && p.on !== false;
+  return on && p.texte ? p : null;
+}
 function clubMinJ(settings) { const v = Number((settings && settings.club && settings.club.minJ) || CLUB.minJ || 15); return Number.isFinite(v) && v > 0 ? Math.round(v) : 15; }
 function liteLabel(x) { const l = (x && (x.lite || x)) || {}; if (l.mode === "code" || x.kind === "code") return "Lite offert" + (x.weeks ? " · " + durName(x.weeks) : ""); return "Lite " + (l.nutri ? "+ Nutrition " : "") + (l.period === "an" ? "annuel" : "mensuel") + (l.mode === "abo" ? " (abonnement)" : " (paiement d'avance)"); }
 function litePer(period) { return period === "an" ? "an" : "mois"; }

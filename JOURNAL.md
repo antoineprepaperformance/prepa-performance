@@ -3,6 +3,15 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 18 novembre 2026 (soir) · les deux décisions commerciales de l'offre club, tranchées
+
+- **Antoine** : « les décisions commerciales, fais au mieux. » Les deux questions étaient le prix de l'accès joueurs face aux formules individuelles, et le geste à faire au premier club.
+- **Décision 1 — l'accès joueurs reste à 25 € par joueur et par saison.** Un client qui prend l'Autonomie seul paie 109 € l'année : le joueur de club paie donc **4,4 fois moins**. C'est assumé et ça se défend : le club paie en une facture, pour un effectif entier, sans aucun suivi individuel ni coach IA, et c'est exactement le niveau du marché par athlète (≈ 28 €/an chez Volt Athletics). Ce qui se vend à un club, ce n'est pas le même produit : c'est un volume sans service individuel. À revoir à la saison prochaine, quand il y aura des références — pas avant.
+- **Décision 2 — le premier club de la saison reçoit son cycle de découverte offert**, contre trois choses : un **retour écrit** qu'Antoine pourra citer, le **droit de nommer le club**, et un **point de 30 minutes** à la fin du cycle. Un seul club, cette saison.
+- **Pourquoi offert et pas à moitié prix** : l'obstacle d'un club de bénévoles n'est pas 75 € contre 149 €, c'est l'inconnu. Et ce cycle ne coûte presque rien à produire — la programmation existe déjà, l'import prend cinq minutes — alors qu'il achète la seule chose qui ne s'achète pas : une référence nommable. Un prix cassé, lui, s'installe ; un geste **borné et daté** ne s'installe pas.
+- **Ce qui empêche le geste de devenir le prix** : l'encart dit « un seul club en profite, cette saison », il annonce la suite (« ensuite, c'est la grille ci-dessus, sans condition »), et il se **retire d'un bouton** dans Offres & réglages (« Affichée / Retirée ») dès que le premier club est signé. Le prix du cycle, lui, ne bouge pas : c'est testé.
+- Tests : `e2e_club.py` passe à **31 vérifications** (l'encart affiché avec ce qu'il demande en échange, son retrait par le réglage, et le prix du cycle intact quand il est retiré). Les deux textes sont traduits en anglais et en espagnol comme le reste de l'offre.
+
 ## 18 novembre 2026 · gestion : supprimer un client depuis la liste, et un écran Clubs à deux onglets
 
 - **Demande d'Antoine** : « dans la gestion des clients, j'aimerais pouvoir les supprimer ou ajouter des clients. Et pareil, est-ce qu'on pourrait créer un onglet à part pour les clubs, pour que la gestion soit plus facile. »

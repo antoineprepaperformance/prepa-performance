@@ -1,7 +1,7 @@
 /* ===== Espace coach ===== */
 const COACH_NAV = [
   { id: "dash", n: "Tableau de bord" }, { id: "clients", n: "Clients" }, { id: "messages", n: "Messages" }, { id: "programmes", n: "Programmes" },
-  { id: "equipe", n: "Équipe" }, { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "finances", n: "Finances" }, { id: "reglages", n: "Offres & réglages" },
+  { id: "equipe", n: "Clubs" }, { id: "exos", n: "Exercices" }, { id: "codes", n: "Codes & essais" }, { id: "finances", n: "Finances" }, { id: "reglages", n: "Offres & réglages" },
 ];
 
 function rowInfo(row, lib, today, settings) {
@@ -134,8 +134,8 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "messages" ? html`<${CoachInbox} rows=${rows} seen=${msgSeen} openClient=${openClient} />` : null}
       ${view === "dash" ? html`<${Dashboard} rows=${rows} demoOn=${demoOn} realCount=${realIds.length} setShowDemo=${setShowDemo} openClient=${openClient}
           onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
-      ${view === "equipe" ? html`<${EquipeScreen} db=${db} />` : null}
-      ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} />` : null}
+      ${view === "equipe" ? html`<${EquipeScreen} db=${db} rows=${rows} openClient=${openClient} />` : null}
+      ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} db=${db} settings=${settings} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
           settings=${settings} note=${notes.items[selRow.cid]} msgSeen=${msgSeen[selRow.cid]} tab0=${sel.tab} onBack=${() => go(sel.tab === "messages" ? "messages" : "clients")}
           edit=${(d) => { setEditDoc(d); setView("edit"); }} />` : null}
@@ -282,26 +282,31 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
       </ol></${Card}>` : null}
   </div>`;
 }
-function ClientTable({ rows, openClient }) {
+function ClientTable({ rows, openClient, gestion, clubs, onSupprimer }) {
   if (!rows.length) return html`<p className="muted small">Aucun client pour l'instant.</p>`;
   const sorted = rows.slice().sort((a, b) => (b.info.alerts.length - a.info.alerts.length) || String(a.profile.name).localeCompare(String(b.profile.name)));
+  const clubName = (r) => { const c = r.profile && r.profile.club && clubs && clubs[r.profile.club]; return c ? c.n + (r.profile.clubRole === "entraineur" ? " · entraîneur" : "") : null; };
   return html`<div className="tscroll"><table className="ctable">
-    <thead><tr><th>Client</th><th>Programme</th><th>Avancement</th><th>Régularité</th><th>Dernière séance</th><th>Statut</th></tr></thead>
+    <thead><tr><th>Client</th><th>Programme</th><th>Avancement</th><th>Régularité</th><th>Dernière séance</th><th>Statut</th>${gestion ? html`<th>Gérer</th>` : null}</tr></thead>
     <tbody>${sorted.map((r) => {
       const i = r.info;
       return html`<tr key=${r.cid} onClick=${() => openClient(r.cid)} tabIndex="0" onKeyDown=${(e) => e.key === "Enter" && openClient(r.cid)}>
-        <th><span className="who"><${Avatar} profile=${r.profile} size=${30} /><span><b>${r.profile.name || "Client"}</b><span className="chips">${r.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}${r.profile.local ? html`<${Pill}>sans compte</${Pill}>` : null}</span><small>${sportLabel(r.profile) || r.profile.sport || ""}</small></span></span></th>
+        <th><span className="who"><${Avatar} profile=${r.profile} size=${30} /><span><b>${r.profile.name || "Client"}</b><span className="chips">${clubName(r) ? html`<${Pill} tone="gold">${clubName(r)}</${Pill}>` : null}${r.demo ? html`<${Pill}>EXEMPLE</${Pill}>` : null}${r.profile.local ? html`<${Pill}>sans compte</${Pill}>` : null}</span><small>${sportLabel(r.profile) || r.profile.sport || ""}</small></span></span></th>
         <td>${i.prog ? i.prog.n : "—"}<small>${i.plan ? offerName(i.plan.offer) + " · " + planDur(i.plan) : (i.p.request ? "demandé : " + (i.p.request.offer === "lite" ? "Lite" : durName(i.p.request.weeks)) : "")}</small></td>
         <td>${i.ps && i.ps.phase === "en_cours" ? html`<div className="mini"><${Bar} value=${i.ps.week / i.ps.weeks} /><small>S${i.ps.week}/${i.ps.weeks} · ${i.weekDone}/${i.weekPlanned} cette semaine</small></div>` : "—"}</td>
         <td>${i.adherence === null ? "—" : html`<span className=${i.adherence >= 0.8 ? "ok-t" : i.adherence >= 0.6 ? "warn-t" : "bad-t"}>${Math.round(i.adherence * 100)} %</span>`}</td>
         <td>${i.sum.lastLogAt ? fmtD(i.sum.lastLogAt) : "—"}</td>
         <td><${Pill} tone=${i.status.tone}>${i.status.n}</${Pill}>${i.alerts.filter((a) => a.tone === "bad" || a.tone === "warn").length ? html` <${Pill} tone="bad">${i.alerts.filter((a) => a.tone === "bad" || a.tone === "warn").length} alerte${i.alerts.filter((a) => a.tone === "bad" || a.tone === "warn").length > 1 ? "s" : ""}</${Pill}>` : null}</td>
+      ${gestion ? html`<td>${r.demo ? html`<span className="muted small">exemple</span>` : html`<button type="button" className="linkbtn bad-t" onClick=${(e) => { e.stopPropagation(); onSupprimer(r); }}>Supprimer</button>`}</td>` : null}
       </tr>`;
     })}</tbody></table></div>`;
 }
-function ClientsList({ rows, openClient, onAdd, onImport }) {
+function ClientsList({ rows, openClient, onAdd, onImport, db, settings }) {
   const [f, setF] = useState("tous");
   const [q, setQ] = useState("");
+  const [gestion, setGestion] = useState(false);
+  const [sup, setSup] = useState(null);          /* client en cours de suppression */
+  const clubs = useCol(db, "clubs");
   const filt = rows.filter((r) => {
     const i = r.info;
     if (q && !String(r.profile.name || "").toLowerCase().includes(q.toLowerCase())) return false;
@@ -311,10 +316,14 @@ function ClientsList({ rows, openClient, onAdd, onImport }) {
     return true;
   });
   return html`<div className="stack">
-    <header className="page-h"><div><h1>Clients</h1></div><div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}</div></header>
+    <header className="page-h"><div><h1>Clients</h1><p className="muted small">${plural(rows.filter((r) => !r.demo).length, "client")}${rows.some((r) => r.demo) ? " · " + plural(rows.filter((r) => r.demo).length, "exemple affiché", "exemples affichés") : ""}${gestion ? " · mode Gérer : la colonne de droite permet de supprimer un client" : ""}</p></div>
+      <div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}
+        <${Btn} kind=${gestion ? undefined : "quiet"} onClick=${() => setGestion(!gestion)}>${gestion ? "Terminer" : "Gérer"}</${Btn}></div></header>
     <div className="filters"><${Seg} options=${[{ v: "tous", n: "Tous" }, { v: "actifs", n: "Actifs" }, { v: "attente", n: "À valider" }, { v: "termines", n: "Terminés" }]} value=${f} onChange=${setF} />
       <input id="q-clients" className="search" placeholder="Rechercher un client" value=${q} onChange=${(e) => setQ(e.target.value)} /></div>
-    <${Card}><${ClientTable} rows=${filt} openClient=${openClient} /></${Card}>
+    <${Card}><${ClientTable} rows=${filt} openClient=${openClient} gestion=${gestion} clubs=${clubs.items} onSupprimer=${(r) => setSup(r)} /></${Card}>
+    <${Modal} open=${!!sup} title=${"Supprimer " + ((sup && sup.profile && sup.profile.name) || "ce client")} onClose=${() => setSup(null)}>
+      ${sup ? html`<${ClientSupprimer} db=${db} cid=${sup.cid} name=${(sup.profile || {}).name} demo=${sup.demo} relay=${relayOf(settings)} onDone=${() => setSup(null)} />` : null}</${Modal}>
   </div>`;
 }
 
@@ -478,9 +487,12 @@ function CoachTests({ data, src, plan, prog }) {
     <${Modal} open=${open} title="Saisir des tests" onClose=${() => setOpen(false)}>${open ? html`<${TestsForm} prog=${prog} plan=${plan || { weeks: 12 }} data=${data} src=${src} point=${0} onDone=${() => setOpen(false)} />` : null}</${Modal}>
   </div>`;
 }
-function CoachNotes({ db, cid, note, demo, name, onDeleted, relay }) {
+/* Suppression d'un client : un seul chemin d'effacement, utilisé par la fiche du client (onglet Notes) et
+   par la liste des clients (mode « Gérer »). Le mot à taper évite le clic malheureux, et le compte de
+   connexion lui-même n'est pas supprimable depuis ici : seule la personne ou la console Firebase peut le
+   faire (dit à l'écran, plutôt que laissé à la surprise). */
+function ClientSupprimer({ db, cid, name, demo, relay, onDone }) {
   const toast = useToast();
-  const [t, setT] = useState(note ? note.text : "");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const erase = async () => {
@@ -489,18 +501,27 @@ function CoachNotes({ db, cid, note, demo, name, onDeleted, relay }) {
     try {
       /* valeurs de sa montre encore en attente au relais : effacées aussi */
       if (window.IS_SITE && relay) { try { await relayCall(relay, "/sante/effacer", "POST", { uid: cid }); } catch (e) {} }
-      await deleteClient(db, cid); toast("Données du client supprimées.", "ok"); onDeleted && onDeleted();
+      await deleteClient(db, cid); toast("Données du client supprimées.", "ok"); onDone && onDone();
     }
     catch (e) { toast("Suppression incomplète : réessaie.", "bad"); } finally { setBusy(false); }
   };
+  return html`<div className="stack-s">
+    <p className="small">Seront effacés : profil, séances, bilans, tests, repas, santé, plan, commandes, réponses et notes privées${name ? " de " + String(name).replace(/\.$/, "") : ""}. <b>Action définitive.</b></p>
+    <p className="muted small">Son compte de connexion (e-mail et mot de passe) n'est pas supprimé d'ici : il ne donne plus accès à rien, et se supprime dans Firebase › Authentication si tu le souhaites.</p>
+    <${Field} label="Pour confirmer, tape SUPPRIMER" id=${"del-c-" + cid}><input id=${"del-c-" + cid} value=${confirm} onChange=${(e) => setConfirm(e.target.value)} autoComplete="off" /></${Field}>
+    <div className="actions"><${Btn} kind="danger" onClick=${erase} disabled=${busy || confirm.trim().toUpperCase() !== "SUPPRIMER"}>${busy ? "Suppression…" : "Supprimer définitivement" + (name ? " " + name : "")}</${Btn}></div>
+  </div>`;
+}
+function CoachNotes({ db, cid, note, demo, name, onDeleted, relay }) {
+  const toast = useToast();
+  const [t, setT] = useState(note ? note.text : "");
   useEffect(() => { setT(note ? note.text : ""); }, [note && note.text]);
   const save = async () => { if (demo || !db) { toast("Les exemples ne sont pas enregistrés.", "warn"); return; } try { await dbSet(db, "coachnotes/" + cid, { text: t, at: nowISO() }); toast("Notes enregistrées.", "ok"); } catch (e) { toast("Enregistrement impossible" + errWhy(e, true), "bad"); } };
   return html`<${Card} title="Notes privées" sub="Visibles uniquement par toi">
     <textarea id="notes" rows="10" value=${t} onChange=${(e) => setT(e.target.value)} placeholder="Antécédents, objectifs, réglages de charges, paiements…"></textarea>
     <div className="actions"><${Btn} onClick=${save}>Enregistrer</${Btn}>${note ? html`<span className="muted small">Modifié le ${fmtD(note.at)}</span>` : null}</div></${Card}>
-    <${Card} title="Supprimer ce client" sub="Droit à l'effacement : profil, séances, bilans, tests, plan, réponses et notes. Action définitive.">
-      <${Field} label=${"Pour confirmer, tape SUPPRIMER"} id="del-c"><input id="del-c" value=${confirm} onChange=${(e) => setConfirm(e.target.value)} autoComplete="off" /></${Field}>
-      <div className="actions"><${Btn} kind="danger" onClick=${erase} disabled=${busy || confirm.trim().toUpperCase() !== "SUPPRIMER"}>Supprimer définitivement${name ? " " + name : ""}</${Btn}></div></${Card}>`;
+    <${Card} title="Supprimer ce client" sub="Droit à l'effacement (RGPD, article 17). Tu peux aussi le faire depuis la liste des clients, bouton « Gérer ».">
+      <${ClientSupprimer} db=${db} cid=${cid} name=${name} demo=${demo} relay=${relay} onDone=${onDeleted} /></${Card}>`;
 }
 
 /* ---------- Plan d'un client ---------- */

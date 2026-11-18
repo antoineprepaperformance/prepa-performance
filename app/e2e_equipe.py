@@ -58,8 +58,9 @@ async def run():
             ok(await co.evaluate("typeof CONTENT.EQUIPES") == "undefined", "plus aucune saison d'équipe dans le code du site (dépôt public)")
 
             # ---------- import du classeur ----------
-            await btn(co, "Équipe", exact=True)
-            ok(await has(co, "Importe d'abord ton classeur de saison."), "écran Équipe : invitation à importer le classeur")
+            await btn(co, "Clubs", exact=True)
+            ok(await has(co, "Importe d'abord ton classeur de saison"), "écran Clubs, onglet Clubs : invitation à importer le classeur")
+            await co.get_by_role("radio", name="Modèles de saison").click(); await co.wait_for_timeout(300)
             await btn(co, "Importer un classeur")
             await co.set_input_files("#eq-file", XLSX); await co.wait_for_timeout(1500)
             ok(await has(co, f"{NB} séances lues du"), f"classeur lu dans le navigateur : {NB} séances", await co.inner_text("main"))
@@ -137,7 +138,9 @@ async def run():
             ok(rr["mer"] == ["2026-11-09", 12], "début un mercredi : on part du lundi suivant, aucune séance du cycle perdue", rr["mer"])
 
             # ---------- son propre club : la saison complète, rien n'est retiré, pas d'accès joueurs ----------
-            await btn(co, "‹ Retour"); await btn(co, "Nouveau club")
+            await btn(co, "‹ Retour")
+            if await co.get_by_role("radio", name="Clubs").count(): await co.get_by_role("radio", name="Clubs").first.click(); await co.wait_for_timeout(300)
+            await btn(co, "Nouveau club")
             await co.fill("#cl-nom", "Mon club"); await co.uncheck("label.chk input"); await co.fill("#cl-places", "0"); await co.fill("#cl-du", "2026-07-06")
             await btn(co, "Créer le club et ses codes"); await co.wait_for_timeout(1000)
             mien = [x for x in await mdb_prefix(co, "clubs/") if x.get("n") == "Mon club"]

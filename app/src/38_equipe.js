@@ -408,12 +408,13 @@ function eqJourNom(j) { const n = JOURS[(Number(j) + 1) % 7] || ""; return n.cha
 function eqClubSub(c) {
   return [...(c.jours || []).map(eqJourNom), c.heure || null, "Match : " + eqJourNom(c.match ?? 6), "du " + fmtD(c.du) + " au " + fmtD(c.au)].filter(Boolean).join(" · ");
 }
-function EquipeScreen({ db }) {
+function EquipeScreen({ db, rows, openClient }) {
   const toast = useToast();
   const modeles = useCol(db, "modeles");
   const clubs = useCol(db, "clubs");
   const codes = useCol(db, "codes");
   const [vue, setVue] = useState(null);       // { kind: "modele" | "club", id } | { kind: "import" } | { kind: "nouveau" }
+  const [onglet, setOnglet] = useState("clubs");
   const [busy, setBusy] = useState(false);
   if (!db) return html`<${Empty} title="Saisons d'équipe" text="Les saisons d'équipe et les clubs sont rangés dans ta base : ouvre ton espace coach sur le site." />`;
   const M = modeles.items, C = clubs.items;
@@ -429,6 +430,7 @@ function EquipeScreen({ db }) {
   if (vue && vue.kind === "club" && C[vue.id]) {
     const c = C[vue.id];
     const cj = (c.codes && c.codes.joueurs && codes.items[c.codes.joueurs]) || null, ce = (c.codes && codes.items[c.codes.entraineur]) || null;
+    const mbr = (rows || []).filter((r) => !r.demo && r.profile && r.profile.club === c.id).sort((x, y) => String(x.profile.name || "").localeCompare(String(y.profile.name || ""), "fr"));
     const copier = async (t) => { try { await navigator.clipboard.writeText(t); toast("Copié.", "ok"); } catch (e) { toast(t, "ok"); } };
     const supprimer = async () => {
       if (!confirm("Supprimer le club « " + c.n + " » ? Ses joueurs gardent leur accès jusqu'à son terme, mais ne verront plus les séances d'équipe.")) return;
@@ -446,23 +448,34 @@ function EquipeScreen({ db }) {
         <p className="muted small">Les joueurs voient leur séance d'équipe du jour ; l'entraîneur voit toute la saison et lance chaque séance au minuteur. Tout se passe par écrit, dans l'application.</p>
         ${c.demandes ? html`<p className="small"><b>Demandes du club :</b> ${c.demandes}</p>` : null}
         <div className="btnrow"><${Btn} small kind="ghost" onClick=${() => setVue({ kind: "nouveau", id: c.id })} disabled=${busy}>Changer l'achat, les jours ou les dates</${Btn}><${Btn} small kind="quiet" onClick=${supprimer} disabled=${busy}>Supprimer le club</${Btn}></div>
-      </${Card}>`} />`;
+      </${Card}>
+      <${Card} title="Ses clients" sub=${mbr.length ? plural(mbr.length, "client rattaché", "clients rattachés") + " à ce club" : "Personne pour l'instant : un joueur est rattaché quand il entre le code du club, ou depuis sa fiche (Sport & terrain)."}>
+        ${mbr.length ? html`<ul className="rlist">${mbr.map((r) => html`<li key=${r.cid}><button type="button" className="linkbtn" onClick=${() => openClient && openClient(r.cid)}><b>${r.profile.name || "Client"}</b></button>
+          <span className="muted small">${r.profile.clubRole === "entraineur" ? "Entraîneur" : "Joueur"}${r.info && r.info.plan ? " · " + offerName(r.info.plan.offer) : ""}${r.info && r.info.sum && r.info.sum.lastLogAt ? " · dernière séance le " + fmtD(r.info.sum.lastLogAt) : ""}</span></li>`)}</ul>`
+          : null}
+        <p className="muted small">Le club ne reçoit aucune donnée de ses joueurs : ni profil, ni santé, ni séances. Il sait seulement combien de places de son code sont prises.</p></${Card}>`} />`;
   }
   const lm = Object.values(M).sort((a, b) => String(b.importedAt || "").localeCompare(String(a.importedAt || "")));
   const lc = Object.values(C).sort((a, b) => String(a.n).localeCompare(String(b.n), "fr"));
+  /* les clients rattachés à un club : c'est ce qui manquait pour gérer un club sans fouiller les fiches */
+  const membres = (c) => (rows || []).filter((r) => !r.demo && r.profile && r.profile.club === c.id);
   return html`<div className="stack">
-    <header className="page-h"><div><div className="eyebrow">Équipe et clubs</div><h1>Saisons d'équipe</h1>
-      <p className="muted small">Importe ton classeur de saison : il devient ton modèle, découpé en cycles. Pour chaque club, la saison complète ou le cycle qu'il achète est posé sur ses jours d'entraînement et son jour de match, à partir de sa date de début, et ses codes d'accès sont créés. Tout est privé : rien n'est publié dans le code du site.</p></div></header>
-    <${Card} title="Clubs" sub=${lc.length ? plural(lc.length, "club") : "Aucun club pour l'instant"} action=${lm.length ? html`<${Btn} small onClick=${() => setVue({ kind: "nouveau" })}>Nouveau club</${Btn}>` : null}>
-      ${lc.length ? html`<ul className="rlist">${lc.map((c) => html`<li key=${c.id}><button type="button" className="linkbtn" onClick=${() => setVue({ kind: "club", id: c.id })}><b>${c.n}</b></button>
-        <span className="muted small">${eqAchatTxt(c)} · ${eqClubSub(c)} · ${plural((c.seances || []).length, "séance")}</span></li>`)}</ul>`
-        : html`<p className="muted small">${lm.length ? "Crée ton premier club : ce qu'il achète (la saison ou un cycle), ses jours d'entraînement, son heure, son jour de match et sa date de début." : "Importe d'abord ton classeur de saison."}</p>`}
-    </${Card}>
-    <${Card} title="Tes modèles de saison" sub=${lm.length ? plural(lm.length, "modèle") : "Aucun modèle"} action=${html`<${Btn} small kind=${lm.length ? "ghost" : undefined} onClick=${() => setVue({ kind: "import" })}>Importer un classeur</${Btn}>`}>
+    <header className="page-h"><div><div className="eyebrow">Clubs et saisons d'équipe</div><h1>Clubs</h1>
+      <p className="muted small">Un club achète la saison complète ou un cycle : sa programmation est posée sur ses jours d'entraînement et son jour de match, à partir de sa date de début, et ses codes d'accès sont créés. Tes modèles de saison restent privés : rien n'est publié dans le code du site.</p></div></header>
+    <div className="tabs-scroll"><${Seg} options=${[{ v: "clubs", n: "Clubs" + (lc.length ? " (" + lc.length + ")" : "") }, { v: "modeles", n: "Modèles de saison" + (lm.length ? " (" + lm.length + ")" : "") }]} value=${onglet} onChange=${setOnglet} /></div>
+    ${onglet === "clubs" ? html`<${Card} title="Clubs" sub=${lc.length ? plural(lc.length, "club") : "Aucun club pour l'instant"} action=${lm.length ? html`<${Btn} small onClick=${() => setVue({ kind: "nouveau" })}>Nouveau club</${Btn}>` : null}>
+      ${lc.length ? html`<ul className="rlist">${lc.map((c) => { const mb = membres(c); const cj = c.codes && c.codes.joueurs && codes.items[c.codes.joueurs]; return html`<li key=${c.id}>
+        <span><button type="button" className="linkbtn" onClick=${() => setVue({ kind: "club", id: c.id })}><b>${c.n}</b></button>
+          <span className="muted small">${eqAchatTxt(c)} · ${eqClubSub(c)} · ${plural((c.seances || []).length, "séance")}</span>
+          <span className="muted small">${cj ? plural(Number(cj.uses) || 0, "place prise", "places prises") + " sur " + (Number(cj.max) || c.places || EQ_MAX_JOUEURS) : "Aucun code joueurs"}${mb.length ? " · " + plural(mb.length, "client rattaché", "clients rattachés") : ""}</span></span>
+        <span className="chips">${mb.slice(0, 6).map((r) => html`<button key=${r.cid} type="button" className="linkbtn small" onClick=${() => openClient && openClient(r.cid)}>${(r.profile.name || "Client").split(" ")[0]}</button>`)}${mb.length > 6 ? html`<span className="muted small">+${mb.length - 6}</span>` : null}</span></li>`; })}</ul>`
+        : html`<p className="muted small">${lm.length ? "Crée ton premier club : ce qu'il achète (la saison ou un cycle), ses jours d'entraînement, son heure, son jour de match et sa date de début." : "Importe d'abord ton classeur de saison, dans l'onglet « Modèles de saison »."}</p>`}
+    </${Card}>`
+    : html`<${Card} title="Tes modèles de saison" sub=${lm.length ? plural(lm.length, "modèle") : "Aucun modèle"} action=${html`<${Btn} small kind=${lm.length ? "ghost" : undefined} onClick=${() => setVue({ kind: "import" })}>Importer un classeur</${Btn}>`}>
       ${lm.length ? html`<ul className="rlist">${lm.map((m) => html`<li key=${m.id}><button type="button" className="linkbtn" onClick=${() => setVue({ kind: "modele", id: m.id })}><b>${m.n}</b></button>
-        <span className="muted small">${plural((m.seances || []).length, "séance")} du ${fmtD(m.du)} au ${fmtD(m.au)}</span></li>`)}</ul>`
+        <span className="muted small">${plural((m.seances || []).length, "séance")} du ${fmtD(m.du)} au ${fmtD(m.au)} · ${plural(eqCycles(m).length, "cycle")}</span></li>`)}</ul>`
         : html`<p className="muted small">Ton classeur Excel, une feuille par séance (nommée comme « Jeudi 03 Juillet 2025 »), tel que tu l'utilises avec ton club.</p>`}
-    </${Card}>
+    </${Card}>`}
   </div>`;
 }
 

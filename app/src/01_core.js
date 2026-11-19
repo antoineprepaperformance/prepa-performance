@@ -84,11 +84,26 @@ function weekSessions(prog, plan, w, lib) {
   const pinned = b.sessions.some((s) => s.wib);
   const pool = pinned ? b.sessions.filter((s) => s.wib === wib) : b.sessions;
   const base = pool.length;
-  const n = base > 0 && !pinned && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
   const out = [];
-  for (let i = 0; i < n; i++) {
-    const s = pool[i % base], rep = Math.floor(i / base);
-    out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1 });
+  /* grille de semaine du client (prog.semaine, via persoProg) : chaque jour choisi reçoit la séance qu'il a
+     placée là. Les clefs ne changent pas (w3-A, puis w3-Ar1 pour la deuxième fois dans la semaine) : les
+     séances déjà cochées restent reconnues. Un programme aux séances calées (PDF importé) garde ses jours. */
+  const grille = !pinned && base > 0 && prog && Array.isArray(prog.semaine) ? prog.semaine : null;
+  if (grille) {
+    const vus = {};
+    grille.forEach((sid, j) => {
+      if (!sid) return;
+      const s = pool.find((x) => x.id === sid) || pool[0];
+      const rep = vus[s.id] = (vus[s.id] || 0);
+      vus[s.id] = rep + 1;
+      out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1, jour: j + 1 });
+    });
+  } else {
+    const n = base > 0 && !pinned && prog && prog.rythme > base ? Math.min(7, prog.rythme) : base;
+    for (let i = 0; i < n; i++) {
+      const s = pool[i % base], rep = Math.floor(i / base);
+      out.push({ key: "w" + w + "-" + s.id + (rep ? "r" + rep : ""), w, sid: s.id, s, extra: false, rep: rep + 1 });
+    }
   }
   (plan && plan.extra || []).filter((x) => Number(x.w) === w).forEach((x, i) => {
     const s = lib && lib[x.sid];

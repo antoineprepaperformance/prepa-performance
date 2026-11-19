@@ -260,7 +260,32 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   }
   const w = ps.week;
   const sessions = weekSessions(prog, plan, w, lib);
-  const next = sessions.find((e) => !e.opt && !data.logs[e.key]) || sessions.find((e) => e.opt && !data.logs[e.key]);
+  /* répartition choisie par le client (profil › Ma répartition dans la semaine) : la séance proposée est celle
+     du jour de la semaine, pas « la suivante non cochée ». Une séance d'un jour déjà passé reste à rattraper :
+     on ne perd rien, on dit seulement ce qui était prévu aujourd'hui. */
+  const jourAuj = ((new Date().getDay() + 6) % 7) + 1;
+  const grille = sessions.some((e) => e.jour);
+  const pasFait = (e) => !data.logs[e.key];
+  const duJour = grille ? sessions.find((e) => e.jour === jourAuj && !e.opt && pasFait(e)) : null;
+  const retard = grille ? sessions.filter((e) => e.jour && e.jour < jourAuj && !e.opt && pasFait(e)) : [];
+  const aVenir = grille ? sessions.find((e) => e.jour && e.jour > jourAuj && !e.opt && pasFait(e)) : null;
+  const reposAuj = grille && !duJour && !sessions.some((e) => e.jour === jourAuj);
+  const next = grille
+    ? (duJour || retard[0] || aVenir || sessions.find((e) => e.opt && pasFait(e)))
+    : (sessions.find((e) => !e.opt && !data.logs[e.key]) || sessions.find((e) => e.opt && !data.logs[e.key]));
+  /* ce que dit l'en-tête quand le client a choisi sa répartition. Un jour de repos reste un jour de repos
+     même s'il reste des séances à rattraper : on l'annonce, et on dit combien il en reste. */
+  const titreGrille = !grille ? null
+    : reposAuj ? "repos aujourd'hui"
+    : duJour ? "aujourd'hui : " + duJour.s.t.toLowerCase()
+    : retard.length ? "à rattraper : " + retard[0].s.t.toLowerCase()
+    : null;
+  /* la précision va sur sa propre ligne : une en-tête courte se lit mieux, et chaque morceau (un jour, un
+     nombre de séances) reste un texte à lui, donc traduisible */
+  const precision = !grille ? null
+    : retard.length ? html`<p className="muted small">${plural(retard.length, "séance à rattraper", "séances à rattraper") + "."} ${reposAuj ? "Rien n'est perdu : tu les retrouves dans ta semaine." : ""}</p>`
+    : reposAuj && aVenir ? html`<p className="muted small">Prochaine séance : ${SEM_JOURS[aVenir.jour - 1]}.</p>`
+    : null;
   const block = blockOf(prog, w);
   const left = diffDays(todayISO(), ps.end);
   const ck = data.checkins["w" + w];
@@ -278,9 +303,11 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
       <p className="muted small">Tu as choisi la nutrition seule : tes repères, tes repas et tes bilans sont ici. Tu peux ajouter la musculation ou le cardio dans ton profil.</p>
     </div>` : html`<div className="hero">
       <div className="eyebrow">Semaine ${w} sur ${ps.weeks} · Bloc ${ps.block} — ${block.n}</div>
-      <h1>${next ? (name ? name + ", " : "") + "prochaine séance : " + next.s.t.toLowerCase() : sessions.length ? "Toutes les séances de la semaine sont faites." : "Pas de séance prévue cette semaine avec ton suivi."}</h1>
+      <h1>${titreGrille ? (name ? name + ", " : "") + titreGrille
+        : next ? (name ? name + ", " : "") + "prochaine séance : " + next.s.t.toLowerCase() : sessions.length ? "Toutes les séances de la semaine sont faites." : "Pas de séance prévue cette semaine avec ton suivi."}</h1>
       <${Bar} value=${(w - 1 + ps.day / 7) / ps.weeks} />
       <p className="muted small">${ps.wib === 4 ? "Semaine d'allègement : charges plus légères, puis tests." : block.focus}</p>
+      ${precision}
       ${isLite ? html`<p className="muted small">Formule Lite · accès jusqu'au ${fmtD(liteEnd(plan))}</p>` : dated ? html`<p className="muted small">Formule ${offerName(plan.offer)} · accès jusqu'au ${fmtD(liteEnd(plan))}</p>` : null}
     </div>`;
   const ring = html`<div className="today-grid">
@@ -327,7 +354,9 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const habits = prog.habits && prog.habits.length ? html`<${Habits} prog=${prog} data=${data} src=${src} block=${ps.block} />` : null;
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
-  const week = html`<${Card} title=${"Semaine " + w}>${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} onOpen=${() => openSession(e)} />`)}</${Card}>`;
+  const semGrille = grille ? sessions.reduce((o, e) => { if (e.jour) o[e.jour - 1] = e.sid; return o; }, [null, null, null, null, null, null, null]) : null;
+  const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : null}>
+    ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} jour=${e.jour ? SEM_JOURS[e.jour - 1] : null} tard=${!!(e.jour && e.jour < jourAuj && pasFait(e))} onOpen=${() => openSession(e)} />`)}</${Card}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
   const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
   const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
@@ -345,10 +374,10 @@ function Prereq({ prog }) {
     <p className="muted small">Règle de la douleur : au plus 3/10 pendant l'effort, et retour à la normale le lendemain. Sinon, reviens à l'étape précédente et préviens ton coach.</p>
   </${Card}>`;
 }
-function SessionRow({ e, log, onOpen, locked }) {
+function SessionRow({ e, log, onOpen, locked, jour, tard }) {
   return html`<button type="button" className=${"srow" + (log ? " done" : "") + (locked && !log ? " lock" : "")} onClick=${onOpen}>
     <span className="srow-id">${e.extra ? "+" : e.sid}${e.rep > 1 ? e.rep : ""}</span>
-    <span className="srow-t"><b>${e.s.t}${e.opt ? html` <${Pill}>optionnelle</${Pill}>` : null}</b><span className="muted small">${log ? "Faite le " + fmtD(log.date) + (log.rpe !== undefined && log.rpe !== null ? " · effort " + log.rpe + "/10" : "") : (e.s.focus || "") + (e.s.lieu ? " · " + e.s.lieu : "")}</span></span>
+    <span className="srow-t"><b>${e.s.t}${e.opt ? html` <${Pill}>optionnelle</${Pill}>` : null}${jour && !log ? html` <${Pill} tone=${tard ? "warn" : "muted"}>${jour}${tard ? html` · <span>à rattraper</span>` : null}</${Pill}>` : null}</b><span className="muted small">${log ? "Faite le " + fmtD(log.date) + (log.rpe !== undefined && log.rpe !== null ? " · effort " + log.rpe + "/10" : "") : (e.s.focus || "") + (e.s.lieu ? " · " + e.s.lieu : "")}</span></span>
     <span className=${"srow-s" + (log ? " ok" : "")}>${log ? "✓" : locked ? "🔒" : "›"}</span>
   </button>`;
 }

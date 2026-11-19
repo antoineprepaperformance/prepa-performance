@@ -56069,5 +56069,166 @@
   "kind": "literal",
   "where": "src/i18n-club",
   "n": 1
+ },
+ {
+  "h": "ffe12860d0",
+  "k": "Ma répartition dans la semaine",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "b5fc12b39e",
+  "k": "Tu places chaque séance sur le jour qui t'arrange. Ta page du jour suit cette répartition ; une séance non faite reste à rattraper, rien n'est perdu.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "e66611e373",
+  "k": "Répartir automatiquement",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "9379f10d35",
+  "k": "Répartition",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "84f30f778f",
+  "k": "{#} jours d'entraînement par semaine.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "48503bcf20",
+  "k": "{#} jour d'entraînement par semaine.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "3f84ef83bb",
+  "k": "Une séance revient {#} fois dans la semaine.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "1b2db0b481",
+  "k": "Tu ne peux pas descendre en dessous de {#} jours : en dessous, une de tes séances ne passerait pas.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "d257826eb8",
+  "k": "Lundi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "1e9d6d0bbf",
+  "k": "Mardi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "382dd2f47e",
+  "k": "Mercredi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "e9ddb155ec",
+  "k": "Jeudi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "cb289d871c",
+  "k": "Vendredi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "a9b2783269",
+  "k": "Samedi",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "501763275c",
+  "k": "Dimanche",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "2dfcbe63a4",
+  "k": "{}repos aujourd'hui",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "377caea6d9",
+  "k": "{}aujourd'hui : {}",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "c0e2b07a0b",
+  "k": "{}à rattraper : {}",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "2ae84cab8b",
+  "k": "{#} séances à rattraper.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "ac86e9a58f",
+  "k": "{#} séance à rattraper.",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "2aee7a9f6f",
+  "k": "Rien n'est perdu : tu les retrouves dans ta semaine.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "eb5cfe4f9f",
+  "k": "Prochaine séance :",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "d97b0d6e74",
+  "k": "à rattraper",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
  }
 ]

@@ -3,6 +3,27 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 19 novembre 2026 · le client choisit ses jours : combien de séances, et laquelle quel jour
+
+- **Demande d'Antoine** : « j'aimerais qu'on puisse changer le nombre d'entraînements à la semaine, et choisir la répartition. Par exemple lundi muscu, mardi muscu, mercredi course. »
+- **Audit d'abord** : le **nombre** de jours existait déjà (profil › Mon suivi sur mesure › « Jours d'entraînement par semaine », de 1 à 7, au-delà du rythme du programme les séances reviennent en boucle). Ce qui manquait, c'est **quel jour porte quelle séance** : pour un programme standard, la semaine n'était qu'une liste (A, B, C) sans jours, et la page du jour proposait « la suivante non cochée ».
+- **Ce qui est ajouté** : une grille de 7 jours dans son profil (`profile.semaine`). Pour chaque jour, le client choisit une de ses séances ou « Repos ». Sa page du jour suit cette grille.
+- **Une seule source de vérité** : le nombre de jours d'entraînement **est** le nombre de cases remplies. Changer le nombre répartit à nouveau (lundi/mercredi/vendredi pour 3, lundi/mardi/mercredi/vendredi/samedi pour 5 — espacé, jamais trois jours d'affilée en fin de semaine) ; éditer la grille met le nombre à jour. Deux réglages qui peuvent se contredire, c'est un bug qui attend.
+- **Les clefs de séance ne changent pas** (`w3-A`, puis `w3-Ar1` pour la deuxième fois dans la semaine) : **une séance déjà cochée reste cochée** quand la répartition change. C'était la contrainte la plus importante du chantier — et elle est testée.
+- **Ce que la page du jour dit maintenant** : « aujourd'hui : bas du corps + poussée » un jour d'entraînement, « repos aujourd'hui » un jour de repos (avec la prochaine séance annoncée), « à rattraper : … » quand une séance d'un jour passé n'a pas été faite. Un jour de repos **reste un jour de repos** même s'il reste des séances en retard : l'application le dit, et indique combien il en reste, au lieu de pousser une séance comme si rien n'était prévu.
+- **Rien n'est perdu** : une séance non faite reste dans la semaine, marquée « à rattraper » sur sa ligne. La régularité continue de se calculer sur les séances prévues, comme avant.
+- **Ce qui est volontairement protégé** : un **programme importé d'un PDF**, dont les séances sont calées par Antoine semaine par semaine (et parfois matin/soir), **garde ses jours** — la grille du client ne l'écrase pas. Testé explicitement.
+- **Le coach et le coach IA le savent** : la carte « Suivi choisi par le client » affiche la répartition (Lundi A · Mercredi B · Vendredi C), et le contexte du coach IA la reçoit avec une consigne claire — les autres jours sont des jours de repos, on ne déplace pas une séance sans raison.
+- **Trois pièges d'écriture rencontrés, et ce qu'ils apprennent** :
+  - un **motif de traduction ne franchit pas un « · »** (`00_i18n.js`) : le résumé « Lundi A · Mercredi B » ne pouvait donc pas se traduire d'un bloc. Il est désormais rendu **jour par jour**, chaque jour étant un texte à lui ;
+  - les **jours abrégés sont un piège de traduction** : « Mar » existait déjà dans le dictionnaire (mars), le traduire en « Tue » aurait changé une date ailleurs. Les jours s'affichent donc en entier ;
+  - une **phrase composée à l'exécution** doit être rendue d'un seul tenant pour être traduisible : les précisions de l'en-tête ont été sorties sur leur propre ligne plutôt que concaténées dans le titre.
+- **i18n : 23 textes** en anglais et en espagnol (`tools/i18n_semaine.py`), dont **7 motifs** — et le mécanisme traduit aussi les morceaux capturés : « Léa, aujourd'hui : bas du corps + poussée » devient « Léa, today: lower body + push ». Vérifié à l'exécution, dans les deux langues.
+- **Deux correctifs trouvés en chemin, sans rapport avec la demande** :
+  - le **dépôt était séparé de ses fichiers** : un déplacement dans le Finder avait laissé `.git`, `.github` et `.gitignore` un niveau au-dessus du code, si bien que Git voyait 204 fichiers supprimés. Les trois sont remis en place, l'arbre est propre, rien n'était perdu ;
+  - **le navigateur de Playwright manquait** (mise à jour de la bibliothèque) : la construction du site s'arrêtait net. Elle **conserve maintenant les icônes existantes** quand le navigateur est indisponible (le logo ne change pas) et dit quoi lancer pour le réinstaller.
+- Tests ajoutés : `e2e_semaine.py`, **23 vérifications** — la logique (grilles par défaut, rythme déduit, grille mal formée ignorée, clefs inchangées, programme importé protégé), l'écran (le nombre et la grille, la répartition enregistrée, la page du jour selon le jour réel, les jours sur chaque ligne de séance) et les traductions dans les deux langues.
+
 ## 18 novembre 2026 (soir) · les deux décisions commerciales de l'offre club, tranchées
 
 - **Antoine** : « les décisions commerciales, fais au mieux. » Les deux questions étaient le prix de l'accès joueurs face aux formules individuelles, et le geste à faire au premier club.

@@ -89,19 +89,26 @@ def icon_svg(scale, radius):
 (OUT / "icons" / "favicon.svg").write_text(icon_svg(0.8, 10))
 def render_pngs():
     targets = [("icon-192.png", 192, 0.72, 0), ("icon-512.png", 512, 0.72, 0), ("icon-maskable-512.png", 512, 0.56, 0), ("apple-touch-icon.png", 180, 0.68, 0)]
+    deja = all((OUT / "icons" / t[0]).exists() for t in targets)
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        assert all((OUT / "icons" / t[0]).exists() for t in targets), "icônes absentes et Playwright indisponible"
+        assert deja, "icônes absentes et Playwright indisponible"
         return
-    with sync_playwright() as p:
-        b = p.chromium.launch()
-        for name, size, scale, rad in targets:
-            pg = b.new_page(viewport={"width": size, "height": size})
-            pg.set_content('<html><body style="margin:0;background:#0d0d0c">' + icon_svg(scale, rad).replace("<svg ", '<svg width="%d" height="%d" ' % (size, size)) + "</body></html>")
-            pg.screenshot(path=str(OUT / "icons" / name), omit_background=False)
-            pg.close()
-        b.close()
+    try:
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            for name, size, scale, rad in targets:
+                pg = b.new_page(viewport={"width": size, "height": size})
+                pg.set_content('<html><body style="margin:0;background:#0d0d0c">' + icon_svg(scale, rad).replace("<svg ", '<svg width="%d" height="%d" ' % (size, size)) + "</body></html>")
+                pg.screenshot(path=str(OUT / "icons" / name), omit_background=False)
+                pg.close()
+            b.close()
+    except Exception as e:
+        # le navigateur de Playwright peut manquer (mise à jour, machine neuve) : les icônes déjà présentes
+        # restent valables — le logo ne change pas — et la construction du site ne doit pas s'arrêter pour ça.
+        assert deja, "icônes absentes et navigateur indisponible : lance « python3 -m playwright install chromium »"
+        print("icônes conservées (navigateur indisponible :", str(e).splitlines()[0][:80] + ")")
 render_pngs()
 
 # ---------- configuration (jamais écrasée si elle existe déjà) ----------

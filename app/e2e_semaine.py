@@ -170,6 +170,20 @@ async def run():
                "la semaine affiche la nouvelle répartition, et le bouton devient « Mes jours »", ap[:300])
             await cl.screenshot(path=f"{OUT}/03_mes_jours.png", full_page=True)
 
+            # ---------- la version large de la page du jour ----------
+            # Lecon du 19 novembre : la page a deux rendus (telephone et large). Une « const » declaree
+            # apres le retour de la version large n'existe pas encore quand il s'execute (zone morte) :
+            # le reglage marchait au telephone et cassait l'apercu du coach. On verifie donc les deux.
+            large = await A.new_page(); hook(large, "large")
+            await large.set_viewport_size({"width": 1280, "height": 900})
+            await large.goto(URL + "?as=p1"); await large.wait_for_timeout(1600)
+            lt = await large.inner_text("body")
+            ok("problème d'affichage" not in lt.lower(), "page du jour en version large : elle s'affiche", lt[:200])
+            ok(await large.get_by_role("button", name="Mes jours", exact=True).count() >= 1, "le bouton « Mes jours » est là aussi en version large")
+            await large.get_by_role("button", name="Mes jours", exact=True).first.click(); await large.wait_for_timeout(700)
+            ok(await large.locator(".modal").count() == 1, "la fenêtre s'ouvre en version large")
+            await large.close()
+
             # ---------- les textes de la repartition, traduits ----------
             for lang, att in (("en", {"Ma répartition dans la semaine": "My week layout", "Lundi": "Monday", "Répartir automatiquement": "Spread automatically",
                                       "5 jours d'entraînement par semaine.": "5 training days per week.", "Léa, repos aujourd'hui": "Léa, rest day today",

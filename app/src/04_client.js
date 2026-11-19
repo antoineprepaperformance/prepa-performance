@@ -362,14 +362,16 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : "Choisis tes jours : tu places chaque séance sur le jour qui t'arrange."}
     action=${src && src.setProfile && !pinnedProg ? html`<${Btn} small kind="ghost" onClick=${() => setJours(true)}>${semGrille ? "Mes jours" : "Choisir mes jours"}</${Btn}>` : null}>
     ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} jour=${e.jour ? SEM_JOURS[e.jour - 1] : null} tard=${!!(e.jour && e.jour < jourAuj && pasFait(e))} onOpen=${() => openSession(e)} />`)}</${Card}>`;
+  /* fenêtre « Mes jours » : déclarée AVANT les deux retours (large et téléphone), sinon la version
+     large lit une const encore en zone morte */
+  const fenJours = html`<${Modal} open=${jours} title="Mes jours d'entraînement" onClose=${() => setJours(false)}>
+    ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
   const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
   const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
   if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
-  const fenJours = html`<${Modal} open=${jours} title="Mes jours d'entraînement" onClose=${() => setJours(false)}>
-    ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
   return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${fenJours}</div>`;
 }
 function CoachMsg({ text, coach, title }) {

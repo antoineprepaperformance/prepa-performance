@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="c2bea2dbcb">
+<meta name="app-build" content="f8898d4d9a">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3001,6 +3001,7 @@ function useWide() {
   return w;
 }
 function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
+  const [jours, setJours] = useState(false);     /* fenêtre « Mes jours » : répartition de la semaine */
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
@@ -3144,15 +3145,21 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
   const semGrille = grille ? sessions.reduce((o, e) => { if (e.jour) o[e.jour - 1] = e.sid; return o; }, [null, null, null, null, null, null, null]) : null;
-  const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : null}>
+  /* un programme aux séances calées par le coach (PDF importé) garde ses jours : pas de bouton qui
+     promettrait de les changer */
+  const pinnedProg = (blockOf(prog, w) || { sessions: [] }).sessions.some((x) => x.wib);
+  const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : "Choisis tes jours : tu places chaque séance sur le jour qui t'arrange."}
+    action=${src && src.setProfile && !pinnedProg ? html`<${Btn} small kind="ghost" onClick=${() => setJours(true)}>${semGrille ? "Mes jours" : "Choisir mes jours"}</${Btn}>` : null}>
     ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} jour=${e.jour ? SEM_JOURS[e.jour - 1] : null} tard=${!!(e.jour && e.jour < jourAuj && pasFait(e))} onOpen=${() => openSession(e)} />`)}</${Card}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
   const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
   const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
-  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
-  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}</div>`;
+  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
+  const fenJours = html`<${Modal} open=${jours} title="Mes jours d'entraînement" onClose=${() => setJours(false)}>
+    ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
+  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${fenJours}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
   return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p data-notr="1">${text}</p></div></div>`;
@@ -12473,6 +12480,32 @@ function PersoEditor({ data, src, plan, onDone, lib }) {
         <span className="field-h">Tu places chaque séance sur le jour qui t'arrange. Ta page du jour suit cette répartition ; une séance non faite reste à rattraper, rien n'est perdu.</span></div>` : null}
     ${empty ? html`<p className="small warn-t">Choisis au moins la musculation ou le cardio : la nutrition n'est pas incluse dans ta formule actuelle.</p>` : html`<${FitChecks} checks=${checks} />`}
     <div className="actions"><${Btn} block onClick=${save} disabled=${busy || blocked}>Enregistrer</${Btn}></div></div>`;
+}
+/* Mes jours : le réglage de la semaine, seul, ouvert d'un bouton depuis la page du jour. L'éditeur complet
+   du profil (matériel, modules, répartition) reste là où il est ; mais quand on cherche à déplacer une
+   séance, on le cherche là où on la voit — sur sa semaine. */
+function SemaineEditeur({ data, src, plan, lib, onDone }) {
+  const toast = useToast();
+  const p = data.profile || {};
+  const pid = plan ? plan.programId : p.request && p.request.programId;
+  const prog = persoProg(progOf(pid, lib || {}), p);
+  const natural = Math.max(1, natFreq(prog) || 1);
+  const [sem, setSem] = useState(() => semaineOf(p) || semaineDefaut(prog, rythmeOf(p) || natural));
+  const [busy, setBusy] = useState(false);
+  const n = semaineCount(sem);
+  const save = async () => {
+    setBusy(true);
+    try { await src.setProfile({ ...p, semaine: sem, rythme: n > natural ? n : null, persoAt: nowISO() }); toast("Tes jours sont enregistrés.", "ok"); onDone && onDone(); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<div className="form">
+    <div className="field"><span className="field-l">Combien de séances par semaine</span>
+      <${RythmePicker} value=${n} min=${natural} onChange=${(x) => setSem(semaineDefaut(prog, x))} idp="sj-ry" /></div>
+    <div className="field"><span className="field-l">Quel jour, quelle séance</span>
+      <${SemainePicker} prog=${prog} value=${sem} min=${natural} onChange=${setSem} idp="sj-sem" />
+      <span className="field-h">Ta page du jour suit ces jours. Une séance non faite reste à rattraper, rien n'est perdu.</span></div>
+    <div className="actions"><${Btn} block onClick=${save} disabled=${busy}>Enregistrer mes jours</${Btn}></div>
+  </div>`;
 }
 /* résumé sur le profil du client et dans l'espace coach */
 function PersoCard({ data, src, plan, lib, coachView }) {

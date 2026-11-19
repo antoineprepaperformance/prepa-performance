@@ -273,6 +273,32 @@ function PersoEditor({ data, src, plan, onDone, lib }) {
     ${empty ? html`<p className="small warn-t">Choisis au moins la musculation ou le cardio : la nutrition n'est pas incluse dans ta formule actuelle.</p>` : html`<${FitChecks} checks=${checks} />`}
     <div className="actions"><${Btn} block onClick=${save} disabled=${busy || blocked}>Enregistrer</${Btn}></div></div>`;
 }
+/* Mes jours : le réglage de la semaine, seul, ouvert d'un bouton depuis la page du jour. L'éditeur complet
+   du profil (matériel, modules, répartition) reste là où il est ; mais quand on cherche à déplacer une
+   séance, on le cherche là où on la voit — sur sa semaine. */
+function SemaineEditeur({ data, src, plan, lib, onDone }) {
+  const toast = useToast();
+  const p = data.profile || {};
+  const pid = plan ? plan.programId : p.request && p.request.programId;
+  const prog = persoProg(progOf(pid, lib || {}), p);
+  const natural = Math.max(1, natFreq(prog) || 1);
+  const [sem, setSem] = useState(() => semaineOf(p) || semaineDefaut(prog, rythmeOf(p) || natural));
+  const [busy, setBusy] = useState(false);
+  const n = semaineCount(sem);
+  const save = async () => {
+    setBusy(true);
+    try { await src.setProfile({ ...p, semaine: sem, rythme: n > natural ? n : null, persoAt: nowISO() }); toast("Tes jours sont enregistrés.", "ok"); onDone && onDone(); }
+    catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<div className="form">
+    <div className="field"><span className="field-l">Combien de séances par semaine</span>
+      <${RythmePicker} value=${n} min=${natural} onChange=${(x) => setSem(semaineDefaut(prog, x))} idp="sj-ry" /></div>
+    <div className="field"><span className="field-l">Quel jour, quelle séance</span>
+      <${SemainePicker} prog=${prog} value=${sem} min=${natural} onChange=${setSem} idp="sj-sem" />
+      <span className="field-h">Ta page du jour suit ces jours. Une séance non faite reste à rattraper, rien n'est perdu.</span></div>
+    <div className="actions"><${Btn} block onClick=${save} disabled=${busy}>Enregistrer mes jours</${Btn}></div>
+  </div>`;
+}
 /* résumé sur le profil du client et dans l'espace coach */
 function PersoCard({ data, src, plan, lib, coachView }) {
   const [edit, setEdit] = useState(false);

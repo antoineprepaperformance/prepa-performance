@@ -144,6 +144,32 @@ async def run():
             }""")
             ok(faite["faite"], "après un changement de répartition, la séance déjà faite est toujours reconnue", faite)
 
+            # ---------- le chemin court : « Mes jours » depuis la page du jour ----------
+            # Antoine n'a pas trouve le reglage dans son profil : il doit s'ouvrir la ou on voit sa semaine.
+            await cl.evaluate("localStorage.removeItem('__mockdb')")
+            await mdb_set(cl, "clients/u_p1", {"name": "Léa Semaine", "sportId": "rugby", "sex": "F", "height": 170, "weight": 65, "birthYear": 1998})
+            await mdb_set(cl, "plans/u_p1", {"programId": "masse", "offer": "suivi2", "weeks": 12, "start": lundi, "equipment": "salle", "status": "active",
+                                              "niveau": "sportif", "extra": [], "message": "", "cycle": 1,
+                                              "validatedAt": "2026-11-01T00:00:00.000Z", "reviewedAt": "2026-11-01T00:00:00.000Z"})
+            await cl.reload(); await cl.wait_for_timeout(1600)
+            inv = await cl.inner_text("body")
+            ok(dans("Choisis tes jours", inv) and await cl.get_by_role("button", name="Choisir mes jours").count() == 1,
+               "sans répartition : la carte de la semaine invite à choisir ses jours, avec le bouton", inv[:200])
+            await cl.get_by_role("button", name="Choisir mes jours").first.click(); await cl.wait_for_timeout(700)
+            f = await cl.locator(".modal").inner_text()
+            ok(dans("Mes jours d'entraînement", f) and dans("Combien de séances par semaine", f) and dans("Quel jour, quelle séance", f),
+               "la fenêtre ne demande que ça : combien de séances, et quel jour", f[:220])
+            await cl.locator("#sj-ry-4").click(); await cl.wait_for_timeout(300)
+            await cl.select_option("#sj-sem-5", "C"); await cl.wait_for_timeout(300)
+            await cl.locator(".modal").get_by_role("button", name="Enregistrer mes jours").click(); await cl.wait_for_timeout(1200)
+            pr = await cl.evaluate("() => JSON.parse(localStorage.getItem('__mockdb') || '{}')['clients/u_p1']")
+            ok(pr.get("semaine") == ["A", "B", None, "C", "A", "C", None] and pr.get("rythme") == 5,
+               "deux gestes suffisent : 4 séances réparties, plus une le samedi", {k: pr.get(k) for k in ("semaine", "rythme")})
+            ap = await cl.inner_text("body")
+            ok(dans("Lundi A · Mardi B · Jeudi C · Vendredi A · Samedi C", ap) and await cl.get_by_role("button", name="Mes jours", exact=True).count() == 1,
+               "la semaine affiche la nouvelle répartition, et le bouton devient « Mes jours »", ap[:300])
+            await cl.screenshot(path=f"{OUT}/03_mes_jours.png", full_page=True)
+
             # ---------- les textes de la repartition, traduits ----------
             for lang, att in (("en", {"Ma répartition dans la semaine": "My week layout", "Lundi": "Monday", "Répartir automatiquement": "Spread automatically",
                                       "5 jours d'entraînement par semaine.": "5 training days per week.", "Léa, repos aujourd'hui": "Léa, rest day today",

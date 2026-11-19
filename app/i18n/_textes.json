@@ -56230,5 +56230,68 @@
   "kind": "string",
   "where": "src/i18n-semaine",
   "n": 1
+ },
+ {
+  "h": "8c7466215a",
+  "k": "Mes jours",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "f088ddbfc1",
+  "k": "Choisir mes jours",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "cf9f0df7f8",
+  "k": "Mes jours d'entraînement",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "f36240dfd0",
+  "k": "Combien de séances par semaine",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "cae1e043d2",
+  "k": "Quel jour, quelle séance",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "7091c2fd01",
+  "k": "Enregistrer mes jours",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "757065f7c6",
+  "k": "Tes jours sont enregistrés.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "18a83c6c06",
+  "k": "Choisis tes jours : tu places chaque séance sur le jour qui t'arrange.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "6a1e7fd773",
+  "k": "Ta page du jour suit ces jours. Une séance non faite reste à rattraper, rien n'est perdu.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
  }
 ]

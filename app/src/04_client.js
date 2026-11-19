@@ -212,6 +212,7 @@ function useWide() {
   return w;
 }
 function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
+  const [jours, setJours] = useState(false);     /* fenêtre « Mes jours » : répartition de la semaine */
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
@@ -355,15 +356,21 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const msgs = html`${plan.message ? html`<${CoachMsg} text=${plan.message} coach=${coach} />` : null}
     ${lastReply ? html`<${CoachMsg} text=${lastReply.text} coach=${coach} title=${"Réponse à ton bilan de la semaine " + lastReply.w} />` : null}`;
   const semGrille = grille ? sessions.reduce((o, e) => { if (e.jour) o[e.jour - 1] = e.sid; return o; }, [null, null, null, null, null, null, null]) : null;
-  const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : null}>
+  /* un programme aux séances calées par le coach (PDF importé) garde ses jours : pas de bouton qui
+     promettrait de les changer */
+  const pinnedProg = (blockOf(prog, w) || { sessions: [] }).sessions.some((x) => x.wib);
+  const week = html`<${Card} title=${"Semaine " + w} sub=${semGrille ? html`<${SemaineResume} w=${semGrille} />` : "Choisis tes jours : tu places chaque séance sur le jour qui t'arrange."}
+    action=${src && src.setProfile && !pinnedProg ? html`<${Btn} small kind="ghost" onClick=${() => setJours(true)}>${semGrille ? "Mes jours" : "Choisir mes jours"}</${Btn}>` : null}>
     ${sessions.map((e) => html`<${SessionRow} key=${e.key} e=${e} log=${data.logs[e.key]} jour=${e.jour ? SEM_JOURS[e.jour - 1] : null} tard=${!!(e.jour && e.jour < jourAuj && pasFait(e))} onOpen=${() => openSession(e)} />`)}</${Card}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
   const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
   const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
-  if (wide) return html`<div className="stack">${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
-  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}</div>`;
+  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
+  const fenJours = html`<${Modal} open=${jours} title="Mes jours d'entraînement" onClose=${() => setJours(false)}>
+    ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
+  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${fenJours}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
   return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p data-notr="1">${text}</p></div></div>`;

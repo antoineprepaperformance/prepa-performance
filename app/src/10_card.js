@@ -128,6 +128,28 @@ function scoreFromAnchors(dir, val, a) {
   if (x < a2) return 90 + 9 * (x - a1) / (a2 - a1);
   return 99;
 }
+/* Échelle d'un test : les barreaux réellement connus, de soi jusqu'au record du monde, avec l'écart qui
+   reste jusqu'au suivant. Aucun barreau n'est inventé : « haut niveau au poste » n'apparaît que si une étude
+   donne la valeur pour ce sport ET ce poste (CARD_REF[tid].sport), et le record du monde garde sa source
+   nommée. On ne met pas de nom d'athlète sur un barreau qui n'en a pas : un niveau, c'est déjà parlant. */
+function cardEchelle(tid, val, sex, bw, sportId, poste) {
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
+  if (!r || !a || !(val > 0)) return null;
+  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
+  const mieux = (x, y) => (r.dir === "low" ? x < y : x > y);     /* x est-il meilleur que y ? */
+  const barreaux = [
+    { k: "bon", n: "Bon niveau", v: a[1] },
+    ...(sp ? [{ k: "poste", n: "Haut niveau" + (poste ? " · " + poste : ""), v: sp[0], src: sp[1] }] : []),
+    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex] },
+  ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
+  const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
+  const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
+  const monde = barreaux[barreaux.length - 1];
+  return { tid, val, barreaux, suivant, atteints,
+    ecart: suivant ? Math.abs(suivant.v - val) : 0,
+    pct: Math.round((r.dir === "low" ? monde.v / val : val / monde.v) * 100),
+    pctSuivant: suivant ? Math.round((r.dir === "low" ? suivant.v / val : val / suivant.v) * 100) : 100 };
+}
 function refScore(tid, val, sex, bw, sportId, poste) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
@@ -384,7 +406,19 @@ function CardRecords({ abs, data, plan, prog }) {
   /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
      replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
   const deb = cardDebutant(plan, data && data.profile);
-  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+/* l'échelle d'un test, à l'écran : chaque barreau atteint ou non, et ce qu'il reste pour le suivant */
+function EchelleTest({ e, tid, fmt }) {
+  if (!e) return null;
+  return html`<div className="echelle">
+    <ul className="ech-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""} title=${b.src || ""}>
+      <span className="ech-n">${b.n}</span><span className="ech-v">${fmt(tid, b.v)}</span></li>`)}</ul>
+    ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
+      : html`<p className="small ok-t">Tous les paliers connus sont atteints.</p>`}
+  </div>`;
+}
+  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null);
+  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span>
+    <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
   if (deb && abs.scores.length) {
     const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
     const bougé = prg.filter((x) => x.p);

@@ -56328,5 +56328,40 @@
   "kind": "string",
   "where": "src/i18n-semaine",
   "n": 1
+ },
+ {
+  "h": "2072344165",
+  "k": "Bon niveau",
+  "kind": "string",
+  "where": "src/i18n-echelle",
+  "n": 1
+ },
+ {
+  "h": "2444b6a381",
+  "k": "Record du monde",
+  "kind": "string",
+  "where": "src/i18n-echelle",
+  "n": 1
+ },
+ {
+  "h": "7aeaa6cbfa",
+  "k": "Tous les paliers connus sont atteints.",
+  "kind": "string",
+  "where": "src/i18n-echelle",
+  "n": 1
+ },
+ {
+  "h": "58383800a8",
+  "k": "Prochain palier : bon niveau — il te reste {} (tu en es à {#} %).",
+  "kind": "pattern",
+  "where": "src/i18n-echelle",
+  "n": 1
+ },
+ {
+  "h": "ade59ed45f",
+  "k": "Prochain palier : record du monde — il te reste {} (tu en es à {#} %).",
+  "kind": "pattern",
+  "where": "src/i18n-echelle",
+  "n": 1
  }
 ]

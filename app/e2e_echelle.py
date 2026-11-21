@@ -105,6 +105,7 @@ async def run():
             tv = await vide.inner_text("body")
             ok(dans("Pas encore de test", tv) and dans("à viser dans ton sport", tv),
                "sans aucun test : la carte dit ce qu'il y a à viser au lieu de rester vide", tv[:200])
+            ok(dans("Usain Bolt", tv), "le palier du record porte le nom de son détenteur, pris dans la source déjà vérifiée", tv[tv.find("Record du monde"):][:120])
             ok(dans("pas encore mesuré", tv) and dans("Haut niveau", tv) and dans("1,77 s", tv),
                "les paliers du poste sont montrés avant le premier test", tv[tv.find("Pas encore de test"):][:260])
             ok(await vide.locator(".jg-moi").count() == 0,

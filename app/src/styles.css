@@ -1083,3 +1083,6 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 /* sommaire des réglages du client : un nom, une explication en dessous, toute la ligne cliquable */
 .rg-l .linkbtn { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; width: 100%; }
 .rg-l .linkbtn b { font-size: 15px; }
+
+/* nom du détenteur du record, sous la valeur du palier */
+.jg-q { font-size: 11px; color: var(--muted); }

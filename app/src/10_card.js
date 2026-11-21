@@ -140,7 +140,8 @@ function cardEchelle(tid, val, sex, bw, sportId, poste) {
   const barreaux = [
     { k: "bon", n: "Bon niveau", v: a[1] },
     ...(sp ? [{ k: "poste", n: "Haut niveau" + (poste ? " · " + poste : ""), v: sp[0], src: sp[1] }] : []),
-    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex] },
+    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex],
+      qui: (r.nom && r.nom[sex] && r.nom[sex][0]) || "", quoi: (r.nom && r.nom[sex] && r.nom[sex][1]) || "" },
   ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
   const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
   const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
@@ -427,7 +428,7 @@ function EchelleVide({ tid, sex, bw, sportId, poste, fmt, onTests }) {
   return html`<li>
     <span><b>${(TESTS[tid] || {}).n || tid}</b> <span className="muted small">pas encore mesuré</span>
       <div className="jauge"><ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} title=${b.src || ""}>
-        <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span></li>`)}</ul></div></span>
+        <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}</li>`)}</ul></div></span>
   </li>`;
 }
 function EchelleTest({ e, tid, fmt, profile, photo }) {
@@ -440,7 +441,7 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
       <span className="jg-moi" style=${{ left: e.moi + "%" }}><${Avatar} profile=${profile} photo=${photo} size=${26} /></span>
     </div>
     <ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""}>
-      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span></li>`)}</ul>
+      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}</li>`)}</ul>
     ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
       : html`<p className="small ok-t">${"Tous les paliers connus sont atteints : tu es au-delà de " + fin.n.toLowerCase() + "."}</p>`}
   </div>`;

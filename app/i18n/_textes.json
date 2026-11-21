@@ -56503,5 +56503,19 @@
   "kind": "string",
   "where": "src/i18n-simple",
   "n": 1
+ },
+ {
+  "h": "7e4fe93ea8",
+  "k": "pas encore mesuré",
+  "kind": "string",
+  "where": "src/i18n-echelle",
+  "n": 1
+ },
+ {
+  "h": "ae301fa5e1",
+  "k": "Pas encore de test : voilà ce qu'il y a à viser dans ton sport, et à ton poste. Fais-en un et tu te situeras tout de suite.",
+  "kind": "string",
+  "where": "src/i18n-echelle",
+  "n": 1
  }
 ]

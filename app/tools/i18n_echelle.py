@@ -46,3 +46,24 @@ for fr, t_en, t_es, motif in T:
 for f, d in (("en.json", en), ("es.json", es)):
     (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
 print(f"{len(T)} textes traites | {add} ajoutes | {upd} ecrits" + (f" | {souci} a revoir" if souci else ""))
+
+# ---- avant le premier test (21 novembre, soir) ----
+T2 = [
+ ("pas encore mesuré", "not measured yet", "aún sin medir", False),
+ ("Pas encore de test : voilà ce qu'il y a à viser dans ton sport, et à ton poste. Fais-en un et tu te situeras tout de suite.",
+  "No test yet: here is what there is to aim for in your sport, and in your position. Do one and you will know where you stand right away.",
+  "Aún sin test: esto es lo que hay que buscar en tu deporte y en tu puesto. Haz uno y sabrás dónde estás al momento.", False),
+]
+add2, upd2 = 0, 0
+for fr, t_en, t_es, motif in T2:
+    k = norm(fr); hh = h(k)
+    if k not in known:
+        textes.append({"h": hh, "k": k, "kind": "pattern" if motif else "string", "where": "src/i18n-echelle", "n": 1}); add2 += 1
+    else:
+        hh = known[k]["h"]
+    if en.get(hh) != t_en or es.get(hh) != t_es: upd2 += 1
+    en[hh] = t_en; es[hh] = t_es
+(I18N / "_textes.json").write_text(json.dumps(textes, ensure_ascii=False, indent=1), encoding="utf-8")
+for f, d in (("en.json", en), ("es.json", es)):
+    (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
+print(f"second lot : {len(T2)} textes | {add2} ajoutes | {upd2} ecrits")

@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="cbcdea7a20">
+<meta name="app-build" content="5d608b2df8">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3575,7 +3575,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
       <dt>Ce que je travaille</dt><dd>${modsLabel(modsOf(p))}</dd>
       ${trainOn(modsOf(p)) ? html`<dt>Matériel</dt><dd>${matOf(p) ? matLabel(matOf(p)) : plan && plan.equipment === "maison" ? "Maison" : "Salle de sport"}</dd>` : null}
-      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance")} par semaine, à placer sur les jours que tu veux`}</dd>` : null}
+      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance") + " par semaine, à placer sur les jours que tu veux"}`}</dd>` : null}
       </dl>
       ${src && src.setProfile ? html`<p className="muted small">« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.</p>` : null}
     </${Card}>

@@ -786,7 +786,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
       <dt>Ce que je travaille</dt><dd>${modsLabel(modsOf(p))}</dd>
       ${trainOn(modsOf(p)) ? html`<dt>Matériel</dt><dd>${matOf(p) ? matLabel(matOf(p)) : plan && plan.equipment === "maison" ? "Maison" : "Salle de sport"}</dd>` : null}
-      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance")} par semaine, à placer sur les jours que tu veux`}</dd>` : null}
+      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance") + " par semaine, à placer sur les jours que tu veux"}`}</dd>` : null}
       </dl>
       ${src && src.setProfile ? html`<p className="muted small">« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.</p>` : null}
     </${Card}>

@@ -3,6 +3,16 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 21 novembre 2026 (nuit) · la comparaison devient une règle, avec la photo du client dessus
+
+- **Retour d'Antoine** : « j'aimerais que ce soit beaucoup plus lisible, on a du mal à faire la comparaison. Tu peux même mettre une photo d'un sportif qui nous représente. »
+- **Le défaut était réel** : l'échelle du soir affichait trois boîtes côte à côte (bon niveau 1,82 s · haut niveau 1,77 s · record 1,74 s) et un pourcentage. Pour savoir où on est, il fallait comparer des chiffres de tête. Une liste de valeurs n'est pas une comparaison.
+- **Ce qui remplace** : une **règle** qui va du niveau débutant au record du monde, la position du client **marquée par sa propre photo** (ou son avatar), les paliers posés dessus en repères, et la barre remplie jusqu'à lui. On voit en une seconde où on en est, ce qui est derrière, ce qui reste devant.
+- **La photo d'un sportif connu : non, et ce n'est pas un détail.** Les performances d'un athlète nommé ne sont pas publiées — on l'a déjà vu pour les chiffres — et **son image ne nous appartient pas** : l'utiliser pour vendre une application serait une atteinte au droit à l'image, pas une inspiration. La seule photo sur la règle est donc celle du client : c'est lui qu'on suit, et c'est lui qui avance. Le palier porte un niveau (« haut niveau · trois-quarts », avec son étude), pas un visage.
+- **Ce que la règle dit en plus** : quand tous les paliers connus sont dépassés, elle le dit en clair (« tu es au-delà du record du monde ») au lieu de laisser un pourcentage au-dessus de 100 sans explication.
+- **Un oubli de ma part, attrapé par le test** : en remplaçant le composant, j'ai effacé la ligne qui calcule l'échelle de chaque test (`ech`). L'écran de la carte plantait (« ech is not defined ») — visible immédiatement dans la console du test, corrigé dans la minute. C'est la deuxième fois cette semaine qu'un remplacement de bloc emporte une ligne voisine : relire le bloc remplacé, pas seulement le bloc écrit.
+- Tests : `e2e_echelle.py` passe à **16 vérifications** — dont trois nouvelles sur la règle elle-même (la position du client identique à la barre remplie, chaque palier placé entre 0 et 100 %, et **la photo du client sur la règle, pas celle d'un athlète connu**).
+
 ## 21 novembre 2026 (soir) · se comparer aux meilleurs : l'échelle des paliers, et ce qu'on ne peut pas inventer
 
 - **Demande d'Antoine** : qu'un joueur de National 2 puisse se comparer au meilleur à son poste — « un demi de mêlée à Antoine Dupont » — et, en athlétisme, aux meilleurs Français et aux meilleurs du monde. Avec une progression à valider, et « que ça attire du monde ».

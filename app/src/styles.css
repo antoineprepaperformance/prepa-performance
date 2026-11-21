@@ -1065,11 +1065,17 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 .rlist li > span:first-child { flex: 1 1 160px; min-width: 0; }
 .rlist li > :last-child { flex: none; }
 
-/* échelle d'un test : les paliers connus, du plus accessible au record du monde */
-.echelle { margin: 6px 0 0; }
-.ech-l { list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.ech-l li { display: flex; flex-direction: column; gap: 1px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2, transparent); }
-.ech-l li.on { border-color: var(--gold, #d4ad3f); }
-.ech-n { font-size: 11px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
-.ech-l li.on .ech-n { color: var(--gold, #d4ad3f); }
-.ech-v { font-weight: 700; font-size: 13px; }
+/* échelle d'un test : une règle du niveau débutant au record du monde, la photo du client dessus */
+.jauge { margin: 8px 0 0; }
+.jg-bar { position: relative; height: 30px; margin: 0 13px 6px; }
+.jg-bar::before { content: ""; position: absolute; left: -13px; right: -13px; top: 13px; height: 4px; border-radius: 2px; background: var(--line); }
+.jg-fill { position: absolute; left: -13px; top: 13px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--gold-2, #8a6f1f), var(--gold, #d4ad3f)); }
+.jg-t { position: absolute; top: 7px; width: 2px; height: 16px; margin-left: -1px; border-radius: 1px; background: var(--muted); opacity: .6; }
+.jg-t.on { background: var(--gold, #d4ad3f); opacity: 1; }
+.jg-moi { position: absolute; top: 2px; margin-left: -13px; border-radius: 50%; box-shadow: 0 0 0 2px var(--gold, #d4ad3f), 0 2px 6px rgba(0, 0, 0, .35); line-height: 0; }
+.jg-l { list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.jg-l li { display: flex; flex-direction: column; gap: 1px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 8px; }
+.jg-l li.on { border-color: var(--gold, #d4ad3f); }
+.jg-n { font-size: 11px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
+.jg-l li.on .jg-n { color: var(--gold, #d4ad3f); }
+.jg-v { font-weight: 700; font-size: 13px; }

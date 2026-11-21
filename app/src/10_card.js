@@ -145,7 +145,13 @@ function cardEchelle(tid, val, sex, bw, sportId, poste) {
   const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
   const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
   const monde = barreaux[barreaux.length - 1];
-  return { tid, val, barreaux, suivant, atteints,
+  /* place chacun sur une règle commune, de l'ancrage débutant (0 %) au record du monde (100 %) : c'est ce
+     qui rend la comparaison lisible d'un coup d'œil, au lieu d'une liste de chiffres à comparer de tête */
+  const sg = r.dir === "low" ? -1 : 1;
+  const x0 = sg * a[0], x1 = sg * a[2], etendue = x1 - x0 || 1;
+  const place = (v) => Math.max(0, Math.min(100, Math.round(((sg * v - x0) / etendue) * 100)));
+  return { tid, val, barreaux: barreaux.map((bq) => ({ ...bq, p: place(bq.v) })), suivant, atteints,
+    moi: place(val), debut: a[0],
     ecart: suivant ? Math.abs(suivant.v - val) : 0,
     pct: Math.round((r.dir === "low" ? monde.v / val : val / monde.v) * 100),
     pctSuivant: suivant ? Math.round((r.dir === "low" ? suivant.v / val : val / suivant.v) * 100) : 100 };
@@ -406,19 +412,28 @@ function CardRecords({ abs, data, plan, prog }) {
   /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
      replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
   const deb = cardDebutant(plan, data && data.profile);
-/* l'échelle d'un test, à l'écran : chaque barreau atteint ou non, et ce qu'il reste pour le suivant */
-function EchelleTest({ e, tid, fmt }) {
+/* L'échelle d'un test, à l'écran : une règle du niveau débutant au record du monde, la photo du client
+   placée dessus, et les paliers marqués. Une règle se lit d'un coup d'œil ; une liste de chiffres, non.
+   Aucune photo d'athlète connu : ses performances ne sont pas publiées, son image ne nous appartient pas,
+   et un palier porte un niveau, pas un visage. La seule photo sur la règle est celle du client. */
+function EchelleTest({ e, tid, fmt, profile, photo }) {
   if (!e) return null;
-  return html`<div className="echelle">
-    <ul className="ech-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""} title=${b.src || ""}>
-      <span className="ech-n">${b.n}</span><span className="ech-v">${fmt(tid, b.v)}</span></li>`)}</ul>
+  const fin = e.barreaux[e.barreaux.length - 1];
+  return html`<div className="jauge">
+    <div className="jg-bar">
+      <span className="jg-fill" style=${{ width: e.moi + "%" }}></span>
+      ${e.barreaux.map((b) => html`<span key=${b.k} className=${"jg-t" + (e.atteints.includes(b.k) ? " on" : "")} style=${{ left: b.p + "%" }} title=${(b.src || b.n) + " · " + fmt(tid, b.v)}></span>`)}
+      <span className="jg-moi" style=${{ left: e.moi + "%" }}><${Avatar} profile=${profile} photo=${photo} size=${26} /></span>
+    </div>
+    <ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""}>
+      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span></li>`)}</ul>
     ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
-      : html`<p className="small ok-t">Tous les paliers connus sont atteints.</p>`}
+      : html`<p className="small ok-t">${"Tous les paliers connus sont atteints : tu es au-delà de " + fin.n.toLowerCase() + "."}</p>`}
   </div>`;
 }
   const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null);
   const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span>
-    <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+    <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} profile=${data && data.profile} photo=${data && data.media && data.media.photo && data.media.photo.data} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
   if (deb && abs.scores.length) {
     const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
     const bougé = prg.filter((x) => x.p);

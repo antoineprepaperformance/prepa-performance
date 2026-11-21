@@ -27,6 +27,8 @@ if ! up http://127.0.0.1:8123/index.html; then
 fi
 FAIL=0
 # traductions : chaque texte visible doit exister en anglais et en espagnol (voir CLAUDE.md, « Langues »)
+# les trois cibles doivent porter le code actuel : une correction non reconstruite est deja arrivee deux fois
+if python3 tools/verif_cibles.py > "$LOG/cibles.txt" 2>&1; then echo "ok    cibles construites a jour"; else FAIL=1; echo "ÉCHEC cibles en retard :"; cat "$LOG/cibles.txt"; fi
 [ -d tools/node_modules/acorn ] || npm install --prefix tools --silent > "$LOG/npm.txt" 2>&1
 if node tools/i18n_extract.mjs --manque > "$LOG/i18n.txt" 2>&1; then echo "ok    traductions (anglais, espagnol) complètes"; else FAIL=1; echo "ÉCHEC traductions manquantes :"; head -20 "$LOG/i18n.txt"; fi
 for t in unit_niveau.py unit_instagram.py smoke.py e2e.py e2e_claude_acces.py e2e_nutri.py e2e_features.py e2e_lite_claude.py e2e_terrain.py e2e_messages.py e2e_profil.py e2e_formules.py e2e_grille.py e2e_langues.py e2e_hydra.py e2e_plats.py e2e_perso.py e2e_contenu.py e2e_materiel.py e2e_pdf_carte.py e2e_vivacite.py \

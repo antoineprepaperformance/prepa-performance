@@ -759,6 +759,7 @@ function Progress({ data, plan, prog, stats, openTests, src, coach, openSante })
 
 /* ---------- Profil ---------- */
 function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }) {
+  const [suivi, setSuivi] = useState(false);     /* fenêtre « Mon programme » : modules, matériel, jours */
   const [edit, setEdit] = useState(false);
   const [legal, setLegal] = useState(null);
   const toast = useToast();
@@ -774,16 +775,22 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
     <div className="cols2 prof"><${Card} title="Ma carte athlète" sub="Elle évolue avec tes séances, tes bilans et tes tests"><${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>
       <${Badges} data=${data} plan=${plan} prog=${prog} lib=${lib} /></div>
     <${Modal} open=${edit} title="Ma photo et mon avatar" onClose=${() => setEdit(false)}>${edit ? html`<${AvatarPicker} data=${data} src=${src} onDone=${() => setEdit(false)} />` : null}</${Modal}>
-    <${Card} title="Mon programme"><dl className="dl">
+    <${Modal} open=${suivi} title="Mon programme" onClose=${() => setSuivi(false)}>${suivi ? html`<${PersoEditor} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setSuivi(false)} />` : null}</${Modal}>
+    <${Card} title="Mon programme" sub="Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici."
+      action=${src && src.setProfile ? html`<${Btn} small onClick=${() => setSuivi(true)}>Modifier</${Btn}>` : null}><dl className="dl">
       <dt>Début</dt><dd>${fmtDY(plan && plan.start)}</dd><dt>Fin</dt><dd>${plan ? fmtDY(addDays(plan.start, plan.weeks * 7 - 1)) : "—"}</dd>
       ${plan && plan.offer !== "lite" && plan.untilMs ? html`<dt>Accès</dt><dd>${"jusqu'au " + fmtDY(liteEnd(plan))}</dd>` : null}
       ${plan && plan.offer === "lite" ? html`<dt>Accès Lite</dt><dd>${plan.lite && plan.lite.mode === "abo" && !liteCancelOf(data, plan) ? "abonnement " + (plan.lite.period === "an" ? "annuel" : "mensuel") + ", prochain prélèvement le " + fmtD(isoOf(new Date(plan.untilMs))) : "jusqu'au " + fmtDY(liteEnd(plan))}</dd>` : null}
       ${matOf(p) ? null : html`<dt>Lieu</dt><dd>${plan && plan.equipment === "maison" ? "À la maison" : "En salle / sur terrain"}</dd>`}
       <dt>Profil</dt><dd>${nivName(effNiveau(plan, p))}${plan && plan.medicalHold ? " (Reprise en attendant l'avis médical)" : ""}</dd>
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
-      </dl></${Card}>
+      <dt>Ce que je travaille</dt><dd>${modsLabel(modsOf(p))}</dd>
+      ${trainOn(modsOf(p)) ? html`<dt>Matériel</dt><dd>${matOf(p) ? matLabel(matOf(p)) : plan && plan.equipment === "maison" ? "Maison" : "Salle de sport"}</dd>` : null}
+      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance")} par semaine, à placer sur les jours que tu veux`}</dd>` : null}
+      </dl>
+      ${src && src.setProfile ? html`<p className="muted small">« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.</p>` : null}
+    </${Card}>
     ${plan ? html`<${ObjectifsCard} data=${data} src=${src} plan=${plan} />` : null}
-    <${PersoCard} data=${data} src=${src} plan=${plan} lib=${lib} />
     <${SportCard} data=${data} src=${src} plan=${plan} />
     <${BodyRecordsCard} data=${data} src=${src} />
     <${Card} title="Langue · Language · Idioma"><${LangPicker} id="lang-profil" onSaved=${src && src.setProfile ? (l) => src.setProfile({ ...(data.profile || {}), lang: l }) : null} /></${Card}>

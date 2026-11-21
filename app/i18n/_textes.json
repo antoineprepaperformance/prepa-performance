@@ -56363,5 +56363,145 @@
   "kind": "pattern",
   "where": "src/i18n-echelle",
   "n": 1
+ },
+ {
+  "h": "3b30d83c38",
+  "k": "Afficher tout ce que l'application sait faire",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "b845bda6bc",
+  "k": "Revenir à l'affichage simple",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "6a16b5722e",
+  "k": "Affichage simplifié : l'essentiel d'abord. Tout le reste est là, en un bouton.",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "7f3a327fa7",
+  "k": "Ce que je veux voir sur ma page du jour",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "b2de2082c0",
+  "k": "L'essentiel",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "920d621e5f",
+  "k": "« L'essentiel » garde ta séance du jour, ta semaine, les messages de ton coach et la nutrition. « Tout » ajoute ta régularité, ta carte, tes habitudes, la séance terrain, les séances en plus et l'article.",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "425d8c0f3e",
+  "k": "Choisir bloc par bloc",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "8b89c17530",
+  "k": "Mes réglages",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "836e82d9e1",
+  "k": "Tout ce que tu peux changer, au même endroit. Touche une ligne pour y aller.",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "75e470ff9f",
+  "k": "Mes jours d'entraînement, ce que je travaille, mon matériel",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "6c7af801f6",
+  "k": "Ce que je cherche à obtenir",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "10c0fd0655",
+  "k": "Mon sport et mon poste",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "0230d22e0a",
+  "k": "Pour adapter les séances terrain et les repères",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "ea2c891cb1",
+  "k": "Mes mesures",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "dde3b30225",
+  "k": "Taille, poids, tours : pour calculer mes charges et ma progression",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "d09195d233",
+  "k": "La langue",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "dd8610e5e6",
+  "k": "Français, anglais, espagnol",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "c82e28ad12",
+  "k": "L'affichage",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "37d5cc3efc",
+  "k": "L'essentiel ou tout, le thème, la taille du texte",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "8c9452b5dc",
+  "k": "Ma formule, mes factures, la résiliation",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
  }
 ]

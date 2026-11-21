@@ -3,6 +3,19 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 21 novembre 2026 (nuit) · plus simple pour quelqu'un qui n'y connaît rien : l'essentiel d'abord, et un sommaire des réglages
+
+- **Antoine, en client sur son téléphone** : « je veux que ce soit intuitif pour une personne qui n'y connaît rien. L'appli est trop complexe. Si il faut rajouter des boutons ou enlever des infos, tu le fais. » Deux points précis, demandés par lui : **trouver les réglages**, et **trop d'informations par écran**.
+- **J'ai d'abord vérifié l'inscription** avant de toucher à quoi que ce soit : les six étapes sont bien ordonnées, les questions obligatoires d'abord, les records « facultatif · remplis seulement ce que tu connais » en dernier. Le problème n'était pas là, donc je n'y ai rien changé.
+- **Trop d'informations : l'essentiel d'abord.** La page du jour d'un client qui débute (moins de 4 séances enregistrées, et qui n'a jamais touché à l'affichage) ne montre plus que **sa séance du jour, sa semaine, les messages de son coach et la nutrition**. Le reste — régularité, carte athlète, habitudes, séance terrain, séances en plus, article — attend derrière un bouton : « Afficher tout ce que l'application sait faire ».
+- **Rien n'est perdu et rien n'est imposé** : le bouton ramène tout d'un coup, le choix reste sur l'appareil, et au-delà de 4 séances la page complète revient d'elle-même, sans bandeau. Surtout, un client **qui a déjà réglé son affichage garde son réglage**, même débutant : on ne décide pas à sa place. Les trois cas sont testés.
+- **Ce qui n'est jamais masqué** : le **message du coach** (c'est la raison d'être du suivi) et la **nutrition** (c'est la moitié du travail). Simplifier ne veut pas dire amputer.
+- **Le choix est aussi dans les réglages** : « Ce que je veux voir sur ma page du jour » → **L'essentiel** ou **Tout**, en un geste, avec le détail bloc par bloc replié pour qui veut régler finement.
+- **Trouver les réglages : un sommaire.** Le profil commence maintenant par une carte **« Mes réglages »** — tout ce qui se change, en sept lignes nommées en français courant (mon programme, mes objectifs, mon sport et mon poste, mes mesures, la langue, l'affichage, mes commandes), chacune avec son explication d'une ligne. Toucher une ligne amène sur la bonne carte. Fini de scroller en cherchant le bon titre.
+- **Ce que ça change pour un débutant** : une page du jour courte, une seule action évidente, et une porte d'entrée unique pour tout régler. Ce que ça ne change pas : aucune fonction retirée.
+- i18n : 23 textes en anglais et en espagnol.
+- Tests ajoutés : `e2e_simple.py`, **14 vérifications** — dont ce qui ne doit **pas** arriver : un bloc perdu, le message du coach masqué, un réglage déjà choisi écrasé, ou un affichage simplifié qui persiste alors que le client s'entraîne depuis un moment.
+
 ## 21 novembre 2026 (nuit) · la comparaison devient une règle, avec la photo du client dessus
 
 - **Retour d'Antoine** : « j'aimerais que ce soit beaucoup plus lisible, on a du mal à faire la comparaison. Tu peux même mettre une photo d'un sportif qui nous représente. »

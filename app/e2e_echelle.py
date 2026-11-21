@@ -15,6 +15,7 @@ for f in os.listdir(OUT): os.remove(os.path.join(OUT, f))
 errs = []
 res = {"ok": 0, "ko": 0}
 TODAY = datetime.date.today()
+LUNDI = (TODAY - datetime.timedelta(days=TODAY.weekday())).isoformat()
 
 
 def hook(page, tag):
@@ -89,6 +90,28 @@ async def run():
                "chaque palier est placé sur la règle, entre 0 et 100 %", jg and jg["ticks"])
             ok(jg and jg["photo"], "la photo (ou l'avatar) du client est posée sur la règle, pas celle d'un athlète connu", jg)
             await cl.screenshot(path=f"{OUT}/01_echelle.png", full_page=True)
+
+            # ---------- avant le premier test : les paliers visibles quand meme ----------
+            # Antoine : « je ne vois pas de changement sur mon profil » — sans aucun test, il n'y avait
+            # rien a comparer, donc rien a voir. Il y a maintenant ce qu'il y a a viser.
+            vide = await A.new_page(); hook(vide, "sans-test")
+            await vide.goto(URL + "?as=p1"); await vide.evaluate("localStorage.clear()")
+            await vide.evaluate("""([l]) => { const db = {};
+              db['clients/u_p1'] = { name: 'Antoine', sportId: 'rugby', poste: 'trois-quarts', sex: 'H', height: 180, weight: 80, birthYear: 1995 };
+              db['plans/u_p1'] = { programId: 'vitesse', offer: 'suivi2', weeks: 12, start: l, equipment: 'salle', status: 'active', niveau: 'perf', extra: [], message: '', cycle: 1, validatedAt: '2026-11-01T00:00:00.000Z', reviewedAt: '2026-11-01T00:00:00.000Z' };
+              localStorage.setItem('__mockdb', JSON.stringify(db)); }""", [LUNDI])
+            await vide.reload(); await vide.wait_for_timeout(1500)
+            await vide.locator('button[aria-label="Mon profil"]').first.click(); await vide.wait_for_timeout(1400)
+            tv = await vide.inner_text("body")
+            ok(dans("Pas encore de test", tv) and dans("à viser dans ton sport", tv),
+               "sans aucun test : la carte dit ce qu'il y a à viser au lieu de rester vide", tv[:200])
+            ok(dans("Usain Bolt", tv), "le palier du record porte le nom de son détenteur, pris dans la source déjà vérifiée", tv[tv.find("Record du monde"):][:120])
+            ok(dans("pas encore mesuré", tv) and dans("Haut niveau", tv) and dans("1,77 s", tv),
+               "les paliers du poste sont montrés avant le premier test", tv[tv.find("Pas encore de test"):][:260])
+            ok(await vide.locator(".jg-moi").count() == 0,
+               "aucun marqueur « toi » tant qu'il n'y a pas de mesure : on ne prête aucune valeur au client")
+            await vide.screenshot(path=f"{OUT}/02_avant_test.png", full_page=True)
+            await vide.close()
 
             # ---------- les traductions ----------
             for lang, att in (("en", {"Bon niveau": "Good level", "Record du monde": "World record"}),

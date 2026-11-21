@@ -18,11 +18,17 @@ function App() {
   return html`<${Shared} boot=${boot} />`;
 }
 function Shared({ boot }) {
+  /* un seul compte pour les deux cotes : Antoine passe dans son espace athlete et revient, au lieu de se
+     créer un deuxième compte. Son dossier d'athlète vit à son propre identifiant, et il est écarté de sa
+     liste de clients (voir CoachApp) pour ne pas se compter lui-même. Choix gardé sur l'appareil. */
+  const [athlete, setAthlete] = useState(() => { try { return localStorage.getItem("coach_athlete") === "1"; } catch (e) { return false; } });
+  const versAthlete = (v) => { setAthlete(v); try { localStorage.setItem("coach_athlete", v ? "1" : "0"); } catch (e) {} };
   const lib = useCol(boot.db, "library");
   const ex = useCol(boot.db, "exercises");
   const settings = useDocData(boot.db, "settings/app");
   const libItems = useMemo(() => Object.fromEntries(Object.entries(lib.items).map(([id, d]) => [id, { ...d, id }])), [lib.items]);
-  if (boot.isOwner) return html`<${CoachApp} db=${boot.db} settings=${settings.data} lib=${libItems} exo=${ex.items} dl=${boot.dl} />`;
+  if (boot.isOwner && athlete) return html`<${ClientRoot} db=${boot.db} uid=${boot.uid} settings=${settings.data} lib=${libItems} exo=${ex.items} retourCoach=${() => versAthlete(false)} />`;
+  if (boot.isOwner) return html`<${CoachApp} db=${boot.db} settings=${settings.data} lib=${libItems} exo=${ex.items} dl=${boot.dl} versAthlete=${() => versAthlete(true)} monUid=${boot.uid} />`;
   return html`<${ClientRoot} db=${boot.db} uid=${boot.uid} settings=${settings.data} lib=${libItems} exo=${ex.items} />`;
 }
 class Boundary extends React.Component {

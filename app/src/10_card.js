@@ -140,7 +140,8 @@ function cardEchelle(tid, val, sex, bw, sportId, poste) {
   const barreaux = [
     { k: "bon", n: "Bon niveau", v: a[1] },
     ...(sp ? [{ k: "poste", n: "Haut niveau" + (poste ? " · " + poste : ""), v: sp[0], src: sp[1] }] : []),
-    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex] },
+    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex],
+      qui: (r.nom && r.nom[sex] && r.nom[sex][0]) || "", quoi: (r.nom && r.nom[sex] && r.nom[sex][1]) || "" },
   ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
   const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
   const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
@@ -416,6 +417,20 @@ function CardRecords({ abs, data, plan, prog }) {
    placée dessus, et les paliers marqués. Une règle se lit d'un coup d'œil ; une liste de chiffres, non.
    Aucune photo d'athlète connu : ses performances ne sont pas publiées, son image ne nous appartient pas,
    et un palier porte un niveau, pas un visage. La seule photo sur la règle est celle du client. */
+/* Avant le premier test, il n'y a rien à comparer — mais il y a déjà quelque chose à viser. On montre les
+   paliers de son sport et de son poste, sans marqueur « toi », avec le test qui les mesure. C'est ce qui
+   donne envie de faire le test, et c'est honnête : aucune valeur n'est prêtée au client. */
+function EchelleVide({ tid, sex, bw, sportId, poste, fmt, onTests }) {
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
+  if (!r || !a) return null;
+  const e = cardEchelle(tid, r.dir === "low" ? a[0] * 2 : a[0] / 2, sex, bw, sportId, poste);  /* loin derrière : aucun palier atteint */
+  if (!e) return null;
+  return html`<li>
+    <span><b>${(TESTS[tid] || {}).n || tid}</b> <span className="muted small">pas encore mesuré</span>
+      <div className="jauge"><ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} title=${b.src || ""}>
+        <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}</li>`)}</ul></div></span>
+  </li>`;
+}
 function EchelleTest({ e, tid, fmt, profile, photo }) {
   if (!e) return null;
   const fin = e.barreaux[e.barreaux.length - 1];
@@ -426,7 +441,7 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
       <span className="jg-moi" style=${{ left: e.moi + "%" }}><${Avatar} profile=${profile} photo=${photo} size=${26} /></span>
     </div>
     <ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""}>
-      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span></li>`)}</ul>
+      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}</li>`)}</ul>
     ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
       : html`<p className="small ok-t">${"Tous les paliers connus sont atteints : tu es au-delà de " + fin.n.toLowerCase() + "."}</p>`}
   </div>`;
@@ -453,8 +468,10 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
   }
   return html`<div className="stack-s">
     <div className="eyebrow">Mes tests face aux records du monde</div>
-    ${abs.scores.length ? recordsList
-      : html`<p className="small muted">Fais un test (sprint, saut, force, demi-Cooper ou 5 km) : ta note se calculera face au record du monde.</p>`}
+    ${abs.scores.length ? recordsList : html`<div className="stack-s">
+      <p className="small muted">Pas encore de test : voilà ce qu'il y a à viser dans ton sport, et à ton poste. Fais-en un et tu te situeras tout de suite.</p>
+      <ul className="rlist">${((prog && prog.tests) || []).filter((tid) => CARD_REF[tid]).slice(0, 3).map((tid) => html`<${EchelleVide} key=${tid} tid=${tid} sex=${abs.sex} bw=${abs.bw}
+        sportId=${(data && data.profile && data.profile.sportId) || null} poste=${(data && data.profile && data.profile.poste) || null} fmt=${fmt} />`)}</ul></div>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
     ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>

@@ -1064,3 +1064,12 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 .rlist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
 .rlist li > span:first-child { flex: 1 1 160px; min-width: 0; }
 .rlist li > :last-child { flex: none; }
+
+/* échelle d'un test : les paliers connus, du plus accessible au record du monde */
+.echelle { margin: 6px 0 0; }
+.ech-l { list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ech-l li { display: flex; flex-direction: column; gap: 1px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2, transparent); }
+.ech-l li.on { border-color: var(--gold, #d4ad3f); }
+.ech-n { font-size: 11px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
+.ech-l li.on .ech-n { color: var(--gold, #d4ad3f); }
+.ech-v { font-weight: 700; font-size: 13px; }

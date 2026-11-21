@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="cbcdea7a20">
+<meta name="app-build" content="cfac37c17e">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -1095,6 +1095,15 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 .rlist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
 .rlist li > span:first-child { flex: 1 1 160px; min-width: 0; }
 .rlist li > :last-child { flex: none; }
+
+/* échelle d'un test : les paliers connus, du plus accessible au record du monde */
+.echelle { margin: 6px 0 0; }
+.ech-l { list-style: none; margin: 0 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ech-l li { display: flex; flex-direction: column; gap: 1px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2, transparent); }
+.ech-l li.on { border-color: var(--gold, #d4ad3f); }
+.ech-n { font-size: 11px; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
+.ech-l li.on .ech-n { color: var(--gold, #d4ad3f); }
+.ech-v { font-weight: 700; font-size: 13px; }
 
 </style>
 </head>
@@ -3575,7 +3584,7 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       ${plan && plan.compDate ? html`<dt>Compétition</dt><dd>${fmtDY(plan.compDate)}</dd>` : null}
       <dt>Ce que je travaille</dt><dd>${modsLabel(modsOf(p))}</dd>
       ${trainOn(modsOf(p)) ? html`<dt>Matériel</dt><dd>${matOf(p) ? matLabel(matOf(p)) : plan && plan.equipment === "maison" ? "Maison" : "Salle de sport"}</dd>` : null}
-      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance")} par semaine, à placer sur les jours que tu veux`}</dd>` : null}
+      ${trainOn(modsOf(p)) ? html`<dt>Mes jours</dt><dd>${semaineOf(p) ? html`<${SemaineResume} w=${semaineOf(p)} />` : html`${plural(rythmeOf(p) || natFreq(persoProg(progOf(plan ? plan.programId : null, lib || {}), p)) || 3, "séance") + " par semaine, à placer sur les jours que tu veux"}`}</dd>` : null}
       </dl>
       ${src && src.setProfile ? html`<p className="muted small">« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.</p>` : null}
     </${Card}>
@@ -6854,6 +6863,28 @@ function scoreFromAnchors(dir, val, a) {
   if (x < a2) return 90 + 9 * (x - a1) / (a2 - a1);
   return 99;
 }
+/* Échelle d'un test : les barreaux réellement connus, de soi jusqu'au record du monde, avec l'écart qui
+   reste jusqu'au suivant. Aucun barreau n'est inventé : « haut niveau au poste » n'apparaît que si une étude
+   donne la valeur pour ce sport ET ce poste (CARD_REF[tid].sport), et le record du monde garde sa source
+   nommée. On ne met pas de nom d'athlète sur un barreau qui n'en a pas : un niveau, c'est déjà parlant. */
+function cardEchelle(tid, val, sex, bw, sportId, poste) {
+  const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
+  if (!r || !a || !(val > 0)) return null;
+  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
+  const mieux = (x, y) => (r.dir === "low" ? x < y : x > y);     /* x est-il meilleur que y ? */
+  const barreaux = [
+    { k: "bon", n: "Bon niveau", v: a[1] },
+    ...(sp ? [{ k: "poste", n: "Haut niveau" + (poste ? " · " + poste : ""), v: sp[0], src: sp[1] }] : []),
+    { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex] },
+  ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
+  const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
+  const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
+  const monde = barreaux[barreaux.length - 1];
+  return { tid, val, barreaux, suivant, atteints,
+    ecart: suivant ? Math.abs(suivant.v - val) : 0,
+    pct: Math.round((r.dir === "low" ? monde.v / val : val / monde.v) * 100),
+    pctSuivant: suivant ? Math.round((r.dir === "low" ? suivant.v / val : val / suivant.v) * 100) : 100 };
+}
 function refScore(tid, val, sex, bw, sportId, poste) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
@@ -7110,7 +7141,19 @@ function CardRecords({ abs, data, plan, prog }) {
   /* qui débute lit d'abord ses propres progrès ; le pourcentage d'un record du monde passe dans un volet
      replié, car « 15 % du record » au premier test ne lui apprend rien et le décourage (35_demarrage.js) */
   const deb = cardDebutant(plan, data && data.profile);
-  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
+/* l'échelle d'un test, à l'écran : chaque barreau atteint ou non, et ce qu'il reste pour le suivant */
+function EchelleTest({ e, tid, fmt }) {
+  if (!e) return null;
+  return html`<div className="echelle">
+    <ul className="ech-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""} title=${b.src || ""}>
+      <span className="ech-n">${b.n}</span><span className="ech-v">${fmt(tid, b.v)}</span></li>`)}</ul>
+    ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
+      : html`<p className="small ok-t">Tous les paliers connus sont atteints.</p>`}
+  </div>`;
+}
+  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null);
+  const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span>
+    <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
   if (deb && abs.scores.length) {
     const prg = abs.scores.map((x) => ({ ...x, p: persoProgres(data, x.tid, prog) }));
     const bougé = prg.filter((x) => x.p);

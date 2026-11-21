@@ -170,6 +170,41 @@ async def run():
                "la semaine affiche la nouvelle répartition, et le bouton devient « Mes jours »", ap[:300])
             await cl.screenshot(path=f"{OUT}/03_mes_jours.png", full_page=True)
 
+            # ---------- le profil : une seule carte « Mon programme » ----------
+            # Antoine cherchait a changer ses jours et a ne garder que la nutrition depuis son profil : il
+            # tombait sur « Mon programme », une carte en lecture seule, et le reglage etait plus bas sous
+            # « Mon suivi sur mesure ». Les deux cartes n'en font plus qu'une.
+            await cl.locator('button[aria-label="Mon profil"]').first.click(); await cl.wait_for_timeout(1200)
+            pr0 = await cl.inner_text("body")
+            ok(dans("Mon programme", pr0) and not dans("Mon suivi sur mesure", pr0),
+               "profil : une seule carte, « Mon programme » (l'ancienne carte séparée a disparu)", pr0[:200])
+            carte = cl.locator("section.card", has_text="Mon programme").first
+            ct = await carte.inner_text()
+            ok(dans("tout se change ici", ct) and dans("Ce que je travaille", ct) and dans("Mes jours", ct),
+               "la carte dit ce qui est modifiable : ce que je travaille, mon matériel, mes jours", ct[:300])
+            ok(await carte.get_by_role("button", name="Modifier").count() == 1, "un seul bouton « Modifier », sur cette carte")
+            await carte.get_by_role("button", name="Modifier").first.click(); await cl.wait_for_timeout(700)
+            fm = await cl.locator(".modal").inner_text()
+            ok(dans("Ce que tu veux dans ton suivi", fm) and dans("Jours d'entraînement par semaine", fm) and dans("Ma répartition dans la semaine", fm),
+               "la fenêtre réunit les trois réglages : suivi, matériel, jours", fm[:260])
+            # ne garder que la nutrition
+            for mod in ("muscu", "cardio"):
+                if await cl.locator(f"#pe-mod-{mod}").count(): await cl.locator(f"#pe-mod-{mod}").click(); await cl.wait_for_timeout(250)
+            bsave = cl.locator(".modal").get_by_role("button", name="Enregistrer")
+            ok(not await bsave.first.is_disabled(), "nutrition seule : le client peut l'enregistrer")
+            await bsave.first.click(); await cl.wait_for_timeout(1200)
+            pm = await cl.evaluate("() => JSON.parse(localStorage.getItem('__mockdb') || '{}')['clients/u_p1'].modules")
+            ok(pm == {"muscu": False, "cardio": False, "nutrition": True}, "nutrition seule enregistrée dans son profil", pm)
+            pr1 = await cl.inner_text("body")
+            ok(dans("Nutrition seulement", pr1) and not dans("Mes jours", pr1),
+               "la carte suit : « Nutrition seulement », et les jours disparaissent (il n'y a plus de séance)", pr1[:300])
+            await cl.screenshot(path=f"{OUT}/04_mon_programme.png", full_page=True)
+            # on remet l'entrainement pour la suite
+            await carte.get_by_role("button", name="Modifier").first.click(); await cl.wait_for_timeout(600)
+            for mod in ("muscu", "cardio"):
+                if await cl.locator(f"#pe-mod-{mod}").count(): await cl.locator(f"#pe-mod-{mod}").click(); await cl.wait_for_timeout(250)
+            await cl.locator(".modal").get_by_role("button", name="Enregistrer").first.click(); await cl.wait_for_timeout(1000)
+
             # ---------- la version large de la page du jour ----------
             # Lecon du 19 novembre : la page a deux rendus (telephone et large). Une « const » declaree
             # apres le retour de la version large n'existe pas encore quand il s'execute (zone morte) :
@@ -179,8 +214,10 @@ async def run():
             await large.goto(URL + "?as=p1"); await large.wait_for_timeout(1600)
             lt = await large.inner_text("body")
             ok("problème d'affichage" not in lt.lower(), "page du jour en version large : elle s'affiche", lt[:200])
-            ok(await large.get_by_role("button", name="Mes jours", exact=True).count() >= 1, "le bouton « Mes jours » est là aussi en version large")
-            await large.get_by_role("button", name="Mes jours", exact=True).first.click(); await large.wait_for_timeout(700)
+            bj = large.get_by_role("button", name="Mes jours", exact=True)
+            if not await bj.count(): bj = large.get_by_role("button", name="Choisir mes jours")
+            ok(await bj.count() >= 1, "le bouton des jours est là aussi en version large", await large.inner_text("body"))
+            await bj.first.click(); await large.wait_for_timeout(700)
             ok(await large.locator(".modal").count() == 1, "la fenêtre s'ouvre en version large")
             await large.close()
 

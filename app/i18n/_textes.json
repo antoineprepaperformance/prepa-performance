@@ -56293,5 +56293,40 @@
   "kind": "string",
   "where": "src/i18n-semaine",
   "n": 1
+ },
+ {
+  "h": "a572f72a0a",
+  "k": "Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "ede80fe543",
+  "k": "Ce que je travaille",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "af08def2b1",
+  "k": "{#} séances par semaine, à placer sur les jours que tu veux",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "f6c800454f",
+  "k": "{#} séance par semaine, à placer sur les jours que tu veux",
+  "kind": "pattern",
+  "where": "src/i18n-semaine",
+  "n": 1
+ },
+ {
+  "h": "8cd85c6d6e",
+  "k": "« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.",
+  "kind": "string",
+  "where": "src/i18n-semaine",
+  "n": 1
  }
 ]

@@ -106,3 +106,30 @@ for fr, t_en, t_es, motif in T2:
 for f, d in (("en.json", en), ("es.json", es)):
     (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
 print(f"second lot : {len(T2)} textes | {add2} ajoutes | {upd2} ecrits")
+
+# ---- troisieme lot (21 novembre : « je n'arrive pas a changer mon programme depuis mon profil ») ----
+T3 = [
+ ("Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici.",
+  "What you train, your equipment and your training days: everything is changed here.",
+  "Lo que trabajas, tu material y tus días de entrenamiento: todo se cambia aquí.", False),
+ ("Ce que je travaille", "What I train", "Lo que trabajo", False),
+ ("Mes jours", "My days", "Mis días", False),
+ ("{#} séances par semaine, à placer sur les jours que tu veux", "{#} sessions per week, to put on the days you want", "{#} sesiones por semana, para colocar en los días que quieras", True),
+ ("{#} séance par semaine, à placer sur les jours que tu veux", "{#} session per week, to put on the days you want", "{#} sesión por semana, para colocar en los días que quieras", True),
+ ("« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.",
+  "« Modifier » opens all three: strength, cardio and nutrition (you may keep only one), your equipment, and the day of each session.",
+  "« Modificar » abre las tres: musculación, cardio y nutrición (puedes quedarte con una sola), tu material y el día de cada sesión.", False),
+]
+add3, upd3 = 0, 0
+for fr, t_en, t_es, motif in T3:
+    k = norm(fr); hh = h(k)
+    if k not in known:
+        textes.append({"h": hh, "k": k, "kind": "pattern" if motif else "string", "where": "src/i18n-semaine", "n": 1}); add3 += 1
+    else:
+        hh = known[k]["h"]
+    if en.get(hh) != t_en or es.get(hh) != t_es: upd3 += 1
+    en[hh] = t_en; es[hh] = t_es
+(I18N / "_textes.json").write_text(json.dumps(textes, ensure_ascii=False, indent=1), encoding="utf-8")
+for f, d in (("en.json", en), ("es.json", es)):
+    (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
+print(f"troisieme lot : {len(T3)} textes | {add3} ajoutes | {upd3} ecrits")

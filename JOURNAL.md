@@ -3,6 +3,18 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 21 novembre 2026 · « je n'arrive pas à changer mon programme » : une seule carte, un seul bouton
+
+- **Retour d'Antoine, en client dans l'application** : « sur mon profil, je n'arrive pas à changer mon programme — par exemple m'entraîner lundi, mardi, mercredi, ou ne faire que la nutrition. »
+- **Ce qui se passait, et c'est de l'ergonomie, pas une fonction manquante** : son profil avait **deux cartes**. En haut, « **Mon programme** » — en lecture seule (dates, profil). Plus bas, « **Mon suivi sur mesure** », sous-titrée « ton matériel et ce que tu veux travailler », qui contenait tout ce qu'il cherchait : les modules (musculation, cardio, nutrition), le matériel, le nombre de jours et la répartition. Il cliquait sur la première, qui porte le nom de ce qu'il voulait changer, et n'y trouvait rien.
+- **Les deux cartes n'en font plus qu'une.** « Mon programme » réunit maintenant les faits (début, fin, accès, profil) **et** ses choix — « Ce que je travaille », « Matériel », « Mes jours » — avec **un seul bouton « Modifier »** et un sous-titre qui le dit : « Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici. »
+- **La ligne « Mes jours » existe même quand rien n'est choisi** : elle affiche « 3 séances par semaine, à placer sur les jours que tu veux ». Un réglage qu'on ne voit pas est un réglage qui n'existe pas.
+- **« Ne faire que la nutrition » fonctionnait déjà** — et fonctionne toujours : décocher musculation et cardio enregistre « Nutrition seulement », les jours disparaissent (il n'y a plus de séance à placer) et la page du jour passe en suivi nutrition. C'était trouvable en trois niveaux ; c'est maintenant dans la carte qui porte le bon nom.
+- **Ce que ça retire** : la carte « Mon suivi sur mesure » disparaît du profil client (son composant reste pour l'espace coach, où il a toujours sa place). Une seule porte, pas deux.
+- **Leçon tenue deux fois en deux jours** : la fonction existait, la trouver était le travail. D'abord « Mes jours » sur la page du jour (19 novembre), maintenant la carte du profil. Quand Antoine dit « je ne trouve pas », la réponse n'est pas de lui montrer le chemin, c'est de raccourcir le chemin.
+- i18n : 6 textes de plus en anglais et en espagnol (dont deux motifs à nombre).
+- Tests : `e2e_semaine.py` passe à **37 vérifications** — la carte unique et son sous-titre, les trois lignes modifiables, le bouton unique, la fenêtre qui réunit les trois réglages, le passage en nutrition seule enregistré, et la carte qui suit. `e2e_perso` reste à 44.
+
 ## 19 novembre 2026 · le client choisit ses jours : combien de séances, et laquelle quel jour
 
 - **Demande d'Antoine** : « j'aimerais qu'on puisse changer le nombre d'entraînements à la semaine, et choisir la répartition. Par exemple lundi muscu, mardi muscu, mercredi course. »

@@ -12,6 +12,18 @@ const TODAY_BLOCKS = [
   { id: "article", n: "Article de la semaine" },
   { id: "nutri", n: "Nutrition et santé" }, { id: "habits", n: "Mes habitudes" }, { id: "terrain", n: "Séance terrain de la semaine" },
   { id: "extras", n: "Séances en plus" }, { id: "carte", n: "Ma carte athlète" }, { id: "week", n: "Les séances de la semaine" }];
+/* Affichage simple : ce qu'un débutant a besoin de voir, et rien d'autre. Les blocs écartés ne sont pas
+   perdus — un bouton les ramène tous. Choix d'Antoine (21 novembre) : « l'appli est trop complexe, ça doit
+   être plus simple ; si il faut enlever des infos, tu le fais. » Les messages du coach et la nutrition
+   restent : l'un est la raison d'être du suivi, l'autre est la moitié du travail. */
+const SIMPLE_ON = ["todo", "week", "coach", "nutri"];
+const SIMPLE_SEANCES = 4;      /* au-delà, le client n'est plus un débutant : on n'impose plus rien */
+function blocksSimple() { return { off: TODAY_BLOCKS.map((x) => x.id).filter((id) => !SIMPLE_ON.includes(id)) }; }
+/* vrai si le client n'a jamais touché à l'affichage et vient de commencer : on simplifie par défaut */
+function simpleAuto(profile, nLogs) {
+  const p = prefsOf(profile);
+  return !(p.blocks && (p.blocks.off || p.blocks.order)) && (Number(nLogs) || 0) < SIMPLE_SEANCES;
+}
 const PREFS_LS = "ui_prefs_v1";
 
 function prefsOf(profile) { return { theme: "auto", accent: "or", fs: 0, lang: "auto", saison: true, ...((profile && profile.prefs) || {}) }; }
@@ -21,8 +33,8 @@ function langMode(plan, profile) {
   if (p.lang === "simple" || p.lang === "expert") return p.lang;
   return nivRank(effNiveau(plan, profile)) >= 2 ? "expert" : "simple";
 }
-function blocksOf(prefs) {
-  const b = (prefs && prefs.blocks) || {};
+function blocksOf(prefs, simple) {
+  const b = simple ? blocksSimple() : (prefs && prefs.blocks) || {};
   const ids = TODAY_BLOCKS.map((x) => x.id);
   const order = [...(b.order || []).filter((id) => ids.includes(id)), ...ids.filter((id) => !(b.order || []).includes(id))];
   const off = new Set(b.off || []);
@@ -75,6 +87,12 @@ function AppearanceCard({ data, src, plan }) {
       <${Field} label="Taille du texte"><${Seg} id="ap-fs" options=${FONT_SIZES.map((f) => ({ v: String(f.v), n: f.n }))} value=${String(p.fs || 0)} onChange=${(v) => save({ fs: Number(v) })} /></${Field}>
       <${Field} label="Consignes des séances" hint=${resolved === "simple" ? "Consignes en mots simples : séries, repos, effort à garder en réserve." : "Vocabulaire du préparateur : RIR, tempo, % du maximum, échauffement RAMP."}>
         <${Seg} id="ap-lang" options=${LANG_MODES.map((l) => ({ v: l.v, n: l.n }))} value=${p.lang} onChange=${(v) => save({ lang: v })} /></${Field}>
+      <div className="field"><span className="field-l">Ce que je veux voir sur ma page du jour</span>
+        <${Seg} id="ap-simple" options=${[{ v: "simple", n: "L'essentiel" }, { v: "tout", n: "Tout" }]}
+          value=${blocks.filter((x) => !x.on).length >= TODAY_BLOCKS.length - SIMPLE_ON.length ? "simple" : "tout"}
+          onChange=${(v) => save({ blocks: v === "simple" ? blocksSimple() : { order: blocks.map((x) => x.id), off: [] } })} />
+        <span className="field-h">« L'essentiel » garde ta séance du jour, ta semaine, les messages de ton coach et la nutrition. « Tout » ajoute ta régularité, ta carte, tes habitudes, la séance terrain, les séances en plus et l'article.</span></div>
+      <details><summary className="small">Choisir bloc par bloc</summary>
       <div className="field"><span className="field-l">Ma page du jour</span><span className="field-h">La séance du jour reste toujours en haut. Affiche, masque ou déplace le reste.</span>
         <ul className="blocks-l">${blocks.map((b, i) => {
           const def = TODAY_BLOCKS.find((x) => x.id === b.id);
@@ -82,7 +100,7 @@ function AppearanceCard({ data, src, plan }) {
             <span className="bl-n">${def.n}</span>
             <span className="bl-mv"><button type="button" className="x sm" aria-label=${"Monter : " + def.n} disabled=${i === 0} onClick=${() => move(i, -1)}>↑</button><button type="button" className="x sm" aria-label=${"Descendre : " + def.n} disabled=${i === blocks.length - 1} onClick=${() => move(i, 1)}>↓</button></span>
             <button type="button" role="switch" aria-checked=${b.on} aria-label=${"Afficher : " + def.n} className=${"tgl" + (b.on ? " on" : "")} onClick=${() => toggle(b.id)}><span></span></button></li>`;
-        })}</ul></div>
+        })}</ul></div></details>
       <div className="field"><div className="tgl-row"><span><span className="field-l">Thèmes et défis de saison</span><span className="field-h">Noël, Pâques, grandes compétitions : couleurs de l'événement et un défi à relever.</span></span>
         <button type="button" role="switch" aria-checked=${p.saison !== false} aria-label="Thèmes et défis de saison" className=${"tgl" + (p.saison !== false ? " on" : "")} onClick=${() => save({ saison: p.saison === false })}><span></span></button></div></div>
     </div>

@@ -368,11 +368,21 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
     ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
   const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
-  const order = blocksOf(prefsOf(profile)).filter((b) => b.on).map((b) => b.id);
+  /* affichage simple par défaut pour un client qui débute et n'a rien réglé : une page courte, et un bouton
+     qui ramène tout. « tout voir » reste sur l'appareil, pour ne pas écraser ses réglages de profil. */
+  const nLogs = Object.keys(data.logs || {}).length;
+  const simpleParDefaut = simpleAuto(profile, nLogs);
+  const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
+  const simple = simpleParDefaut && !toutVoir;
+  const basculer = () => { const v = !toutVoir; setToutVoir(v); try { localStorage.setItem("today_tout", v ? "1" : "0"); } catch (e) {} };
+  const order = blocksOf(prefsOf(profile), simple).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
-  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
-  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${fenJours}</div>`;
+  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}${bascule}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
+  const bascule = simpleParDefaut ? html`<div className="center">
+    <button type="button" className="linkbtn" onClick=${basculer}>${simple ? "Afficher tout ce que l'application sait faire" : "Revenir à l'affichage simple"}</button>
+    ${simple ? html`<p className="muted small">Affichage simplifié : l'essentiel d'abord. Tout le reste est là, en un bouton.</p>` : null}</div>` : null;
+  return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${bascule}${fenJours}</div>`;
 }
 function CoachMsg({ text, coach, title }) {
   return html`<div className="coachmsg"><${Logo} size=${26} /><div><div className="eyebrow">${title || "Message de " + (coach && coach.name || COACH_NAME_DEFAULT)}</div><p data-notr="1">${text}</p></div></div>`;
@@ -774,9 +784,21 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       <button type="button" className="linkbtn" onClick=${() => setEdit(true)}>Changer ma photo ou mon avatar</button></div></div>
     <div className="cols2 prof"><${Card} title="Ma carte athlète" sub="Elle évolue avec tes séances, tes bilans et tes tests"><${CardPanel} data=${data} plan=${plan} prog=${prog} lib=${lib} /></${Card}>
       <${Badges} data=${data} plan=${plan} prog=${prog} lib=${lib} /></div>
+    <${Card} title="Mes réglages" sub="Tout ce que tu peux changer, au même endroit. Touche une ligne pour y aller.">
+      <ul className="rlist rg-l">${[
+        ["rg-programme", "Mon programme", "Mes jours d'entraînement, ce que je travaille, mon matériel"],
+        ["rg-objectifs", "Mes objectifs", "Ce que je cherche à obtenir"],
+        ["rg-sport", "Mon sport et mon poste", "Pour adapter les séances terrain et les repères"],
+        ["rg-mesures", "Mes mesures", "Taille, poids, tours : pour calculer mes charges et ma progression"],
+        ["rg-langue", "La langue", "Français, anglais, espagnol"],
+        ["rg-affichage", "L'affichage", "L'essentiel ou tout, le thème, la taille du texte"],
+        ["rg-commandes", "Mes commandes", "Ma formule, mes factures, la résiliation"],
+      ].map(([id, n, d]) => html`<li key=${id}><button type="button" className="linkbtn" onClick=${() => { try { const e = document.getElementById(id); if (e) e.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (x) {} }}>
+        <b>${n}</b><span className="muted small">${d}</span></button><span aria-hidden="true">›</span></li>`)}</ul>
+    </${Card}>
     <${Modal} open=${edit} title="Ma photo et mon avatar" onClose=${() => setEdit(false)}>${edit ? html`<${AvatarPicker} data=${data} src=${src} onDone=${() => setEdit(false)} />` : null}</${Modal}>
     <${Modal} open=${suivi} title="Mon programme" onClose=${() => setSuivi(false)}>${suivi ? html`<${PersoEditor} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setSuivi(false)} />` : null}</${Modal}>
-    <${Card} title="Mon programme" sub="Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici."
+    <div id="rg-programme"><${Card} title="Mon programme" sub="Ce que tu travailles, ton matériel et tes jours d'entraînement : tout se change ici."
       action=${src && src.setProfile ? html`<${Btn} small onClick=${() => setSuivi(true)}>Modifier</${Btn}>` : null}><dl className="dl">
       <dt>Début</dt><dd>${fmtDY(plan && plan.start)}</dd><dt>Fin</dt><dd>${plan ? fmtDY(addDays(plan.start, plan.weeks * 7 - 1)) : "—"}</dd>
       ${plan && plan.offer !== "lite" && plan.untilMs ? html`<dt>Accès</dt><dd>${"jusqu'au " + fmtDY(liteEnd(plan))}</dd>` : null}
@@ -790,12 +812,13 @@ function ClientProfile({ data, plan, prog, src, settings, coach, lib, openMsgs }
       </dl>
       ${src && src.setProfile ? html`<p className="muted small">« Modifier » ouvre les trois : musculation, cardio et nutrition (tu peux n'en garder qu'une), ton matériel, et le jour de chaque séance.</p>` : null}
     </${Card}>
-    ${plan ? html`<${ObjectifsCard} data=${data} src=${src} plan=${plan} />` : null}
-    <${SportCard} data=${data} src=${src} plan=${plan} />
-    <${BodyRecordsCard} data=${data} src=${src} />
-    <${Card} title="Langue · Language · Idioma"><${LangPicker} id="lang-profil" onSaved=${src && src.setProfile ? (l) => src.setProfile({ ...(data.profile || {}), lang: l }) : null} /></${Card}>
-    <${AppearanceCard} data=${data} src=${src} plan=${plan} />
-    <${OrdersCard} data=${data} src=${src} settings=${settings} />
+    </div>
+    ${plan ? html`<div id="rg-objectifs"><${ObjectifsCard} data=${data} src=${src} plan=${plan} /></div>` : null}
+    <div id="rg-sport"><${SportCard} data=${data} src=${src} plan=${plan} /></div>
+    <div id="rg-mesures"><${BodyRecordsCard} data=${data} src=${src} /></div>
+    <div id="rg-langue"><${Card} title="Langue · Language · Idioma"><${LangPicker} id="lang-profil" onSaved=${src && src.setProfile ? (l) => src.setProfile({ ...(data.profile || {}), lang: l }) : null} /></${Card}></div>
+    <div id="rg-affichage"><${AppearanceCard} data=${data} src=${src} plan=${plan} /></div>
+    <div id="rg-commandes"><${OrdersCard} data=${data} src=${src} settings=${settings} /></div>
     ${openMsgs ? html`<${Card} title=${"Contacter " + ((coach && coach.name) || COACH_NAME_DEFAULT)}><p className="small muted">Écris-moi dans la messagerie de l'application : je te réponds dès que possible.</p>
       <div className="btnrow"><${Btn} small onClick=${openMsgs}>Écrire à ${(coach && coach.name) || COACH_NAME_DEFAULT}</${Btn}></div></${Card}>` : null}
     ${window.IS_SITE ? html`<${Card} title="Mon compte"><${SignOutLink} /></${Card}>` : null}

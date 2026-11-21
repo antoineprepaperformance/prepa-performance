@@ -128,6 +128,7 @@ async def run():
             ok(await has(c, "a corrigé ta vidéo"), "client : correction d'Antoine reçue")
 
             # ---------- séances flash et récup ----------
+            await c.evaluate("localStorage.setItem('today_tout', '1')"); await c.reload(); await c.wait_for_timeout(1200)
             await btn(c, "Flash", exact=True); await c.wait_for_timeout(400)
             ok(await c.locator(".xcard").count() >= 6 and await has(c, "Adaptées à ton profil"), "séances flash : catalogue adapté au profil")
             await c.get_by_role("radio", name="Sans matériel").click(); await c.wait_for_timeout(200)

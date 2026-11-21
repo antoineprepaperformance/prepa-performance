@@ -178,7 +178,7 @@ async def run():
             pr0 = await cl.inner_text("body")
             ok(dans("Mon programme", pr0) and not dans("Mon suivi sur mesure", pr0),
                "profil : une seule carte, « Mon programme » (l'ancienne carte séparée a disparu)", pr0[:200])
-            carte = cl.locator("section.card", has_text="Mon programme").first
+            carte = cl.locator("section.card", has_text="tout se change ici").first
             ct = await carte.inner_text()
             ok(dans("tout se change ici", ct) and dans("Ce que je travaille", ct) and dans("Mes jours", ct),
                "la carte dit ce qui est modifiable : ce que je travaille, mon matériel, mes jours", ct[:300])
@@ -195,7 +195,7 @@ async def run():
             await bsave.first.click(); await cl.wait_for_timeout(1200)
             pm = await cl.evaluate("() => JSON.parse(localStorage.getItem('__mockdb') || '{}')['clients/u_p1'].modules")
             ok(pm == {"muscu": False, "cardio": False, "nutrition": True}, "nutrition seule enregistrée dans son profil", pm)
-            pr1 = await cl.inner_text("body")
+            pr1 = await cl.locator("section.card", has_text="tout se change ici").first.inner_text()
             ok(dans("Nutrition seulement", pr1) and not dans("Mes jours", pr1),
                "la carte suit : « Nutrition seulement », et les jours disparaissent (il n'y a plus de séance)", pr1[:300])
             await cl.screenshot(path=f"{OUT}/04_mon_programme.png", full_page=True)

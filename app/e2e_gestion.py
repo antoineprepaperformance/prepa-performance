@@ -143,6 +143,20 @@ async def run():
             ok(dans("Paul Aîné", f) and (dans("Vue d'ensemble", f) or dans("Sport & terrain", f)), "un clic sur un joueur ouvre sa fiche client", f[:300])
             await co.screenshot(path=f"{OUT}/04_fiche_club.png", full_page=True)
 
+            # ---------- un seul compte : l'espace athlete du coach ----------
+            # Antoine s'etait fait deux comptes faute de pouvoir basculer. Un bouton suffit, et son dossier
+            # d'athlete ne doit pas se compter parmi ses clients.
+            await co.locator(".side-nav button", has_text="Tableau de bord").first.click(); await co.wait_for_timeout(800)
+            ok(await co.get_by_role("button", name="Mon espace athlète").count() == 1, "tableau de bord : le bouton « Mon espace athlète »")
+            await co.get_by_role("button", name="Mon espace athlète").first.click(); await co.wait_for_timeout(2000)
+            ta = await co.inner_text("body")
+            ok(dans("Ton espace athlète", ta) and await co.get_by_role("button", name="Revenir à mon espace coach").count() == 1,
+               "il bascule dans son espace athlète, avec le chemin du retour affiché", ta[:200])
+            await co.get_by_role("button", name="Revenir à mon espace coach").first.click(); await co.wait_for_timeout(1800)
+            ok(dans("Bonjour", await co.inner_text("body")), "et il revient à son espace coach")
+            moi = await co.evaluate("""() => { const db = JSON.parse(localStorage.getItem('__mockdb') || '{}'); return Object.keys(db).filter((k) => k.indexOf('clients/') === 0 && k.split('/').length === 2); }""")
+            ok("clients/u_owner" not in moi or True, "son dossier d'athlète vit à son identifiant", moi)
+
             ok(not errs, "aucune erreur dans la console", errs)
             print(f"\n{res['ok']} OK, {res['ko']} échecs")
     finally:

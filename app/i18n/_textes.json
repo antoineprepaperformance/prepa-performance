@@ -56517,5 +56517,26 @@
   "kind": "string",
   "where": "src/i18n-echelle",
   "n": 1
+ },
+ {
+  "h": "eb20faeb64",
+  "k": "Mon espace athlète",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "fe3788c135",
+  "k": "Ton espace athlète",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
+ },
+ {
+  "h": "1580c06bde",
+  "k": "Revenir à mon espace coach",
+  "kind": "string",
+  "where": "src/i18n-simple",
+  "n": 1
  }
 ]

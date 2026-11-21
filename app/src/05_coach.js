@@ -81,7 +81,7 @@ function rowInfo(row, lib, today, settings) {
   return { p, plan, prog, ps, sum, alerts, status, adherence, weekDone, weekPlanned, price, mrr, lite, liteOk, dated, datedOk };
 }
 
-function CoachApp({ db, settings, lib, exo, dl }) {
+function CoachApp({ db, settings, lib, exo, dl, versAthlete, monUid }) {
   const [view, setView] = useState("dash");
   const [sel, setSel] = useState(null);
   const [progSel, setProgSel] = useState(null);
@@ -96,7 +96,8 @@ function CoachApp({ db, settings, lib, exo, dl }) {
   const notes = useCol(db, "coachnotes", rev);
   const codes = useCol(db, "codes", rev);
   const today = todayISO();
-  const realIds = Object.keys(clients.items);
+  /* son propre dossier d'athlète n'est pas un client : il ne compte ni dans la liste ni dans les chiffres */
+  const realIds = Object.keys(clients.items).filter((cid) => !monUid || cid !== monUid);
   const [showDemo, setShowDemo] = useState(null);
   const demo = useMemo(() => demoWorld(), []);
   const demoOn = showDemo === null ? realIds.length === 0 : showDemo;
@@ -133,7 +134,7 @@ function CoachApp({ db, settings, lib, exo, dl }) {
       ${view === "dash" && msgUnread.length ? html`<div className="alert gold msg-alert"><div><b>${plural(msgUnread.length, "message non lu", "messages non lus")}</b><p>${msgUnread.slice(0, 4).map((r) => r.profile.name || "Client").join(", ")}${msgUnread.length > 4 ? "…" : ""}</p></div><${Btn} small onClick=${() => go("messages")}>Lire</${Btn}></div>` : null}
       ${view === "messages" ? html`<${CoachInbox} rows=${rows} seen=${msgSeen} openClient=${openClient} />` : null}
       ${view === "dash" ? html`<${Dashboard} rows=${rows} demoOn=${demoOn} realCount=${realIds.length} setShowDemo=${setShowDemo} openClient=${openClient}
-          onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} />` : null}
+          onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} onPreview=${() => setPreview(true)} settings=${settings} db=${db} versAthlete=${versAthlete} />` : null}
       ${view === "equipe" ? html`<${EquipeScreen} db=${db} rows=${rows} openClient=${openClient} />` : null}
       ${view === "clients" ? html`<${ClientsList} rows=${rows} openClient=${openClient} onAdd=${() => setAddOpen(true)} onImport=${() => setImportOpen(true)} db=${db} settings=${settings} />` : null}
       ${view === "client" && selRow ? html`<${ClientDetail} key=${selRow.cid} row=${selRow} demoData=${selRow.demo ? demo[selRow.cid] : null} db=${db} lib=${lib} exo=${exo}
@@ -245,7 +246,7 @@ function ClubDemandes({ db, settings }) {
     <p className="small">À faire : envoyer le devis, puis à l'accord ouvrir la saison ou le cycle au club et créer les accès joueurs.</p></div></div>`;
 }
 /* ---------- Tableau de bord ---------- */
-function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings, db }) {
+function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, onImport, onPreview, settings, db, versAthlete }) {
   const active = rows.filter((r) => r.info.plan && r.info.plan.status === "active" && (r.info.lite ? r.info.liteOk : r.info.dated ? r.info.datedOk : r.info.ps && r.info.ps.phase !== "fini"));
   const alerts = rows.flatMap((r) => r.info.alerts.map((a) => ({ ...a, r })));
   const order = { bad: 0, warn: 1, gold: 2, muted: 3 };
@@ -256,7 +257,8 @@ function Dashboard({ rows, demoOn, realCount, setShowDemo, openClient, onAdd, on
   const name = (settings && settings.coach && settings.coach.name) || COACH_NAME_DEFAULT;
   return html`<div className="stack">
     <header className="page-h"><div><div className="eyebrow">${JOURS[now.getDay()]} ${fmtD(todayISO())}</div><h1>Bonjour ${name}</h1></div>
-      <div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}</div></header>
+      <div className="btnrow"><${Btn} onClick=${onAdd}>Ajouter un client</${Btn}>${window.IS_SITE ? null : html`<${Btn} kind="ghost" onClick=${onImport}>Importer un envoi</${Btn}>`}
+        ${versAthlete ? html`<${Btn} kind="quiet" onClick=${versAthlete}>Mon espace athlète</${Btn}>` : null}</div></header>
     ${window.IS_SITE && db ? html`<${PublicCancels} db=${db} rows=${rows} openClient=${openClient} /><${ClubDemandes} db=${db} settings=${settings} />` : null}
     ${legalMissing(settings).length ? html`<div className="alert warn"><div><b>Informations légales à compléter</b><p>${legalMissing(settings).join(", ")} : elles s'affichent dans tes conditions de vente et tes mentions légales.</p></div></div>` : null}
     ${demoOn ? html`<div className="alert gold"><div><b>${realCount ? "Exemples affichés" : "Exemples affichés en attendant tes premiers clients"}</b><p>Les clients marqués EXEMPLE ne sont pas enregistrés : ils montrent ce que tu verras.</p></div><${Btn} small kind="ghost" onClick=${() => setShowDemo(false)}>Masquer</${Btn}></div>`

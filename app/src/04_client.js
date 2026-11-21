@@ -38,7 +38,7 @@ function offerPrice(settings, offer, weeks) {
 }
 
 /* ---------- racine client : choisit la source ---------- */
-function ClientRoot({ db, uid, settings, lib, exo }) {
+function ClientRoot({ db, uid, settings, lib, exo, retourCoach }) {
   const [st, setSt] = useState({ phase: "detect" });
   const toast = useToast();
   useEffect(() => {
@@ -87,15 +87,18 @@ function ClientRoot({ db, uid, settings, lib, exo }) {
     setSt({ phase: "app", src: ls });
   }
   if (st.phase === "detect") return html`<${Splash} text="Chargement de ton espace…" />`;
-  if (st.phase === "error") return html`<div className="splash"><${Logo} size=${56} /><p>${st.msg}</p><div className="btnrow"><${Btn} onClick=${() => location.reload()}>Réessayer</${Btn}><${SignOutLink} /></div></div>`;
-  if (st.phase === "onboard") return html`<${Onboarding} settings=${settings} onSubmit=${submit} onCode=${applyAccessCode} />`;
-  return html`<${ClientApp} src=${st.src} settings=${settings} lib=${lib} exo=${exo} db=${db} uid=${uid} />`;
+  if (st.phase === "error") return html`<div>${retour}<div className="splash"><${Logo} size=${56} /><p>${st.msg}</p><div className="btnrow"><${Btn} onClick=${() => location.reload()}>Réessayer</${Btn}><${SignOutLink} /></div></div></div>`;
+  /* le retour vers l'espace coach doit exister AVANT d'avoir un dossier d'athlète : sinon Antoine, qui
+     n'a pas encore rempli son inscription, se retrouve coincé dans l'écran d'accueil */
+  const retour = retourCoach ? html`<div className="demo-bar"><span>Ton espace athlète</span><span className="btnrow"><button type="button" className="linkbtn" onClick=${retourCoach}>Revenir à mon espace coach</button></span></div>` : null;
+  if (st.phase === "onboard") return html`<div>${retour}<${Onboarding} settings=${settings} onSubmit=${submit} onCode=${applyAccessCode} /></div>`;
+  return html`<${ClientApp} src=${st.src} settings=${settings} lib=${lib} exo=${exo} db=${db} uid=${uid} retourCoach=${retourCoach} />`;
 }
 
 function Splash({ text }) { return html`<div className="splash"><${Logo} size=${64} /><p>${text}</p></div>`; }
 
 /* ---------- application client ---------- */
-function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid }) {
+function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid, retourCoach }) {
   const data = useSource(src);
   const ai = useAI();
   const [renew, setRenew] = useState(false);
@@ -139,34 +142,36 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid })
   useEffect(() => { if (tab !== "profil" && !tabs.some((t) => t.id === tab)) setTab("today"); }, [tab, tabs.length]);
 
   if (!data.ready) return html`<${Splash} text="Synchronisation…" />`;
+  /* Antoine dans son propre espace athlète : un bandeau et un retour, pour qu'un seul compte suffise */
+  const banner0 = retourCoach ? html`<div className="demo-bar"><span>Ton espace athlète</span><span className="btnrow"><button type="button" className="linkbtn" onClick=${retourCoach}>Revenir à mon espace coach</button></span></div>` : null;
   const banner = demo ? html`<div className="demo-bar"><span>Aperçu de l'espace client avec un exemple</span><span className="btnrow">${onSwitch ? html`<button type="button" className="linkbtn" onClick=${onSwitch}>Autre exemple</button>` : null}${onExit ? html`<button type="button" className="linkbtn" onClick=${onExit}>Revenir à l'espace coach</button>` : null}</span></div>` : null;
 
   const access = demo ? "actif" : accessOf(data);
-  if (msgs && canMsg) return html`<div className="client">${banner}<${MessagesScreen} data=${data} src=${src} settings=${settings} plan=${plan} coach=${coach} demo=${demo} onClose=${() => setMsgs(false)} /></div>`;
+  if (msgs && canMsg) return html`<div className="client">${banner0}${banner}<${MessagesScreen} data=${data} src=${src} settings=${settings} plan=${plan} coach=${coach} demo=${demo} onClose=${() => setMsgs(false)} /></div>`;
   if (src.mode === "local" && (!plan || !prog || ["archived"].includes(plan.status))) {
-    return html`<div className="client">${banner}<${Waiting} data=${data} src=${src} settings=${settings} lib=${libAll} coach=${coach} /></div>`;
+    return html`<div className="client">${banner0}${banner}<${Waiting} data=${data} src=${src} settings=${settings} lib=${libAll} coach=${coach} /></div>`;
   }
   if (!plan || !prog || access === "aucun" || access === "retracte" || plan.status === "archived") {
-    return html`<div className="client">${banner}<${AccessScreen} data=${data} src=${src} settings=${settings} db=${db} uid=${uid} lib=${libAll} coach=${coach} state=${access} onMessages=${canMsg ? () => setMsgs(true) : null} unread=${msgN} /></div>`;
+    return html`<div className="client">${banner0}${banner}<${AccessScreen} data=${data} src=${src} settings=${settings} db=${db} uid=${uid} lib=${libAll} coach=${coach} state=${access} onMessages=${canMsg ? () => setMsgs(true) : null} unread=${msgN} /></div>`;
   }
   const locked = access !== "actif";
   const openSession = (e) => { if (locked) { setRenew(true); return; } setOpen({ key: e.key, w: e.w }); };
   const renewModal = html`<${Modal} open=${renew} wide title=${access === "pause" ? "Suivi en pause" : "Prolonger ou changer de programme"} onClose=${() => setRenew(false)}>
     ${renew ? (access === "pause" ? html`<p className="small">Ton suivi est en pause : contacte ${coach && coach.name || COACH_NAME_DEFAULT} pour le reprendre.</p>` : html`<${Purchase} data=${data} src=${src} settings=${settings} db=${db} uid=${uid} lib=${libAll} mode="renew" onDone=${() => setRenew(false)} />`) : null}</${Modal}>`;
-  if (sante) return html`<div className="client">${banner}<${SanteScreen} data=${data} src=${src} plan=${plan} relay=${relayOf(settings)} raccourci=${santeRacc(settings)} onClose=${() => setSante(false)} /></div>`;
-  if (terrain) return html`<div className="client">${banner}<${TerrainScreen} data=${data} plan=${plan} src=${src} open0=${typeof terrain === "string" ? terrain : null} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setTerrain(null)} />${renewModal}</div>`;
-  if (extra) return html`<div className="client">${banner}<${ExtrasScreen} data=${data} plan=${plan} src=${src} tab0=${extra} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setExtra(null)} />${renewModal}</div>`;
-  if (chat) return html`<div className="client">${banner}<${CoachChat} data=${data} src=${src} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} settings=${settings} aiq=${demo ? null : aiq} onClose=${() => setChat(false)} /></div>`;
+  if (sante) return html`<div className="client">${banner0}${banner}<${SanteScreen} data=${data} src=${src} plan=${plan} relay=${relayOf(settings)} raccourci=${santeRacc(settings)} onClose=${() => setSante(false)} /></div>`;
+  if (terrain) return html`<div className="client">${banner0}${banner}<${TerrainScreen} data=${data} plan=${plan} src=${src} open0=${typeof terrain === "string" ? terrain : null} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setTerrain(null)} />${renewModal}</div>`;
+  if (extra) return html`<div className="client">${banner0}${banner}<${ExtrasScreen} data=${data} plan=${plan} src=${src} tab0=${extra} locked=${locked} onLocked=${() => setRenew(true)} onClose=${() => setExtra(null)} />${renewModal}</div>`;
+  if (chat) return html`<div className="client">${banner0}${banner}<${CoachChat} data=${data} src=${src} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} settings=${settings} aiq=${demo ? null : aiq} onClose=${() => setChat(false)} /></div>`;
   if (open) {
     const ps = stats.ps;
     const w = open.w;
     const entry0 = weekSessions(prog, plan, w, libAll).find((x) => x.key === open.key);
     const entry = entry0 ? { ...entry0, s: { ...entry0.s, items: adjItems(entry0, data, prog) } } : null;
-    if (entry) return html`<div className="client">${banner}<${SessionPlayer} entry=${entry} prog=${prog} plan=${plan} exo=${exoAll} data=${data} src=${src} settings=${settings} ai=${conf.on && !noAI(plan) ? ai : null}
+    if (entry) return html`<div className="client">${banner0}${banner}<${SessionPlayer} entry=${entry} prog=${prog} plan=${plan} exo=${exoAll} data=${data} src=${src} settings=${settings} ai=${conf.on && !noAI(plan) ? ai : null}
       onClose=${() => setOpen(null)} isCurrent=${ps && ps.week === w} /></div>`;
   }
   return html`<div className=${"client has-nav" + (wide ? " wide" : "")}>
-    ${banner}
+    ${banner0}${banner}
     ${tab === "today" ? html`<${SaisonDeco} ed=${saison} />` : null}
     <header className="c-top"><${Brand} sub=${prog.n} /><div className="btnrow">${data.saveFailed ? html`<${Pill} tone="bad">Non sauvegardé</${Pill}>` : null}
       ${canMsg ? html`<${MsgButton} n=${msgN} onClick=${() => setMsgs(true)} />` : null}

@@ -59,3 +59,23 @@ for fr, t_en, t_es in T:
 for f, d in (("en.json", en), ("es.json", es)):
     (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
 print(f"{len(T)} textes traites | {add} ajoutes | {upd} ecrits")
+
+# ---- un seul compte : l'espace athlete du coach (21 novembre, nuit) ----
+T2 = [
+ ("Mon espace athlète", "My athlete space", "Mi espacio de atleta"),
+ ("Ton espace athlète", "Your athlete space", "Tu espacio de atleta"),
+ ("Revenir à mon espace coach", "Back to my coach space", "Volver a mi espacio de entrenador"),
+]
+add2, upd2 = 0, 0
+for fr, t_en, t_es in T2:
+    k = norm(fr); hh = h(k)
+    if k not in known:
+        textes.append({"h": hh, "k": k, "kind": "string", "where": "src/i18n-simple", "n": 1}); add2 += 1
+    else:
+        hh = known[k]["h"]
+    if en.get(hh) != t_en or es.get(hh) != t_es: upd2 += 1
+    en[hh] = t_en; es[hh] = t_es
+(I18N / "_textes.json").write_text(json.dumps(textes, ensure_ascii=False, indent=1), encoding="utf-8")
+for f, d in (("en.json", en), ("es.json", es)):
+    (I18N / f).write_text(json.dumps(d, ensure_ascii=False, sort_keys=True, indent=0), encoding="utf-8")
+print(f"second lot : {len(T2)} textes | {add2} ajoutes | {upd2} ecrits")

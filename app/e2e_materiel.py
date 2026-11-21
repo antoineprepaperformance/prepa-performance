@@ -123,7 +123,7 @@ async def run():
 
             # ---------- profil : nutrition seule, puis sans nutrition ----------
             await c.get_by_role("button", name="Mon profil").first.click(); await c.wait_for_timeout(400)
-            card = c.locator("section.card", has_text="Mon programme").first
+            card = c.locator("section.card", has_text="tout se change ici").first
             ok(await card.count() == 1 and "Cardio et nutrition" in await card.inner_text() and "Maison, sans matériel" in await card.inner_text(), "profil : la carte « Mon programme » porte le suivi choisi", await card.inner_text() if await card.count() else "")
             await card.get_by_role("button", name="Modifier").click(); await c.wait_for_timeout(300)
             await c.locator("#pe-mod-cardio").click(); await c.wait_for_timeout(150)
@@ -135,7 +135,7 @@ async def run():
             ok("suivi nutrition" in h1.lower() and await c.locator("button.next").count() == 0 and await c.locator(".today [data-block=stats] .ring, .today .ring").count() == 0, "nutrition seule : page du jour sans séance ni anneau", h1)
             await c.screenshot(path=f"{OUT}/02_nutrition_seule.png", full_page=True)
             await c.get_by_role("button", name="Mon profil").first.click(); await c.wait_for_timeout(400)
-            await c.locator("section.card", has_text="Mon programme").first.get_by_role("button", name="Modifier").click(); await c.wait_for_timeout(300)
+            await c.locator("section.card", has_text="tout se change ici").first.get_by_role("button", name="Modifier").click(); await c.wait_for_timeout(300)
             await c.locator("#pe-mod-muscu").click(); await c.locator("#pe-mod-cardio").click(); await c.locator("#pe-mod-nutrition").click(); await c.wait_for_timeout(150)
             await c.locator("#pe-mat-halteres").click(); await c.locator("#pe-mat-elastique").click(); await c.wait_for_timeout(150)
             await btn(c, "Enregistrer"); await c.wait_for_timeout(600)
@@ -177,7 +177,7 @@ async def run():
             # ---------- rythme : s'entraîner plus de jours (séances reprises en boucle) + planning visuel ----------
             await c2.reload(); await c2.wait_for_timeout(1200)
             await c2.get_by_role("button", name="Mon profil").first.click(); await c2.wait_for_timeout(400)
-            await c2.locator("section.card", has_text="Mon programme").first.get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
+            await c2.locator("section.card", has_text="tout se change ici").first.get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
             ok(await c2.locator('.seg[aria-label="Jours d\'entraînement par semaine"] button').count() == 5, "rythme : de 3 (naturel) à 7 jours proposés")
             await c2.locator("#pe-ry-7").click(); await c2.wait_for_timeout(150)
             await btn(c2, "Enregistrer"); await c2.wait_for_timeout(600)
@@ -191,7 +191,7 @@ async def run():
 
             # ---------- rythme ramené au naturel : rien n'est forcé en dessous du minimum du programme ----------
             await c2.get_by_role("button", name="Mon profil").first.click(); await c2.wait_for_timeout(400)
-            await c2.locator("section.card", has_text="Mon programme").first.get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
+            await c2.locator("section.card", has_text="tout se change ici").first.get_by_role("button", name="Modifier").click(); await c2.wait_for_timeout(300)
             await c2.locator("#pe-ry-3").click(); await c2.wait_for_timeout(150)
             await btn(c2, "Enregistrer"); await c2.wait_for_timeout(600)
             ok((await mdb(c2, "clients/u_p2") or {}).get("rythme") is None, "rythme égal au naturel : rien n'est enregistré (comportement par défaut)")

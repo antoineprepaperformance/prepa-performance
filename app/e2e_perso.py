@@ -119,7 +119,8 @@ async def run():
             await c.fill("#pu-code", "PERSO-TEST234"); await btn(c, "Appliquer", exact=True)
             await c.fill("#pu-start", TODAY.isoformat()); await c.check("#pu-cgv"); await btn(c, "Envoyer mon code à Antoine"); await c.wait_for_timeout(500)
             await co.bring_to_front(); await co.reload(); await co.wait_for_timeout(1200)
-            await c.bring_to_front(); await c.goto(URL + "?as=p1&saison=2026-10-25"); await c.wait_for_timeout(1300)
+            await c.bring_to_front(); await c.goto(URL + "?as=p1&saison=2026-10-25"); await c.wait_for_timeout(600)
+            await c.evaluate("localStorage.setItem('today_tout', '1')"); await c.reload(); await c.wait_for_timeout(1300)
             ok(await c.locator("button.next").count() >= 1, "client : programme actif")
             lm = await c.evaluate("langMode(null, JSON.parse(localStorage.getItem('__mockdb'))['clients/u_p1'])")
             ok(lm == "simple", "débutante en remise en forme : consignes simples par défaut", lm)
@@ -157,6 +158,8 @@ async def run():
             # ---------- apparence ----------
             await c.get_by_role("button", name="Mon profil").click(); await c.wait_for_timeout(500)
             ap = c.locator(".card", has_text="Apparence et affichage")
+            if await ap.locator("summary", has_text="Choisir bloc par bloc").count():
+                await ap.locator("summary", has_text="Choisir bloc par bloc").first.click(); await c.wait_for_timeout(300)
             ok(await ap.count() == 1, "profil : carte « Apparence et affichage »")
             await ap.locator("#ap-theme").get_by_role("radio", name="Clair").click(); await c.wait_for_timeout(250)
             await ap.get_by_role("radio", name="Vert", exact=True).click(); await c.wait_for_timeout(250)

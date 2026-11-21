@@ -75,8 +75,19 @@ async def run():
             ok(dans("Bon niveau", t) and dans("Haut niveau", t) and dans("Record du monde", t),
                "la carte montre les paliers nommés", t[t.find("Sprint 10 m"):t.find("Sprint 10 m") + 300])
             ok(dans("Prochain palier", t) and dans("il te reste", t), "elle dit ce qu'il reste pour le palier suivant", t[t.find("Prochain palier"):t.find("Prochain palier") + 160])
-            ok(await cl.locator(".echelle").count() >= 2 and await cl.locator(".ech-l li").count() >= 4,
-               "une échelle par test, avec ses paliers", {"echelles": await cl.locator(".echelle").count(), "paliers": await cl.locator(".ech-l li").count()})
+            ok(await cl.locator(".jauge").count() >= 2 and await cl.locator(".jg-l li").count() >= 4,
+               "une échelle par test, avec ses paliers", {"echelles": await cl.locator(".jauge").count(), "paliers": await cl.locator(".jg-l li").count()})
+            # la regle elle-meme : la position du client, les reperes, et sa photo dessus
+            jg = await cl.evaluate("""() => {
+              const b = document.querySelector(".jg-bar"); if (!b) return null;
+              const moi = b.querySelector(".jg-moi"), fill = b.querySelector(".jg-fill"), ticks = [...b.querySelectorAll(".jg-t")];
+              return { moi: moi && moi.style.left, fill: fill && fill.style.width, ticks: ticks.map((t) => t.style.left),
+                       atteints: ticks.filter((t) => t.classList.contains("on")).length, photo: !!(moi && moi.querySelector(".avatar")) };
+            }""")
+            ok(jg and jg["moi"] and jg["moi"] == jg["fill"], "la règle place le client au même endroit que la barre remplie", jg)
+            ok(jg and len(jg["ticks"]) >= 2 and all(0 <= float(t.replace("%", "")) <= 100 for t in jg["ticks"]),
+               "chaque palier est placé sur la règle, entre 0 et 100 %", jg and jg["ticks"])
+            ok(jg and jg["photo"], "la photo (ou l'avatar) du client est posée sur la règle, pas celle d'un athlète connu", jg)
             await cl.screenshot(path=f"{OUT}/01_echelle.png", full_page=True)
 
             # ---------- les traductions ----------

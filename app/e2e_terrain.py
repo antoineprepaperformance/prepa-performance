@@ -104,7 +104,9 @@ async def run():
 
             # ---------- écran Séances terrain ----------
             await c.locator("nav.tabbar button", has_text="Aujourd").click(); await c.wait_for_timeout(400)
-            await c.locator(".xteaser").get_by_role("button", name="Terrain", exact=True).click(); await c.wait_for_timeout(500)
+            # la porte vers l'ecran terrain, pour un client qui debute, est sa carte « seance terrain de la
+            # semaine » : le bloc « seances en plus » (.xteaser) n'est pas dans l'affichage essentiel.
+            await c.locator(".tweek").get_by_role("button", name="Toutes les séances", exact=True).click(); await c.wait_for_timeout(500)
             ok(await has(c, "Séances terrain") and await c.locator(".tcard").count() >= 10, "écran terrain : séances du rugby (" + str(await c.locator(".tcard").count()) + ")")
             await shot(c, "ecran_terrain")
             await c.locator(".tcard", has_text="Malcolms").click(); await c.wait_for_timeout(600)

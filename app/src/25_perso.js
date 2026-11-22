@@ -18,7 +18,14 @@ const TODAY_BLOCKS = [
    restent : l'un est la raison d'être du suivi, l'autre est la moitié du travail. */
 const SIMPLE_ON = ["todo", "week", "coach", "nutri"];
 const SIMPLE_SEANCES = 4;      /* au-delà, le client n'est plus un débutant : on n'impose plus rien */
-function blocksSimple() { return { off: TODAY_BLOCKS.map((x) => x.id).filter((id) => !SIMPLE_ON.includes(id)) }; }
+/* l'essentiel : une page courte. Un client qui a choisi un sport garde en plus sa séance terrain —
+   c'est la séance la plus spécifique de son programme, et c'est aussi la seule porte vers l'écran terrain
+   depuis la page du jour : la masquer rendait les séances de son sport inatteignables tant qu'il n'avait
+   pas trouvé le bouton « afficher tout ». */
+function blocksSimple(profile) {
+  const garde = SIMPLE_ON.concat(profile && profile.sportId && profile.sportAdapt !== false ? ["terrain"] : []);
+  return { off: TODAY_BLOCKS.map((x) => x.id).filter((id) => !garde.includes(id)) };
+}
 /* vrai si le client n'a jamais touché à l'affichage et vient de commencer : on simplifie par défaut */
 function simpleAuto(profile, nLogs) {
   const p = prefsOf(profile);
@@ -33,8 +40,8 @@ function langMode(plan, profile) {
   if (p.lang === "simple" || p.lang === "expert") return p.lang;
   return nivRank(effNiveau(plan, profile)) >= 2 ? "expert" : "simple";
 }
-function blocksOf(prefs, simple) {
-  const b = simple ? blocksSimple() : (prefs && prefs.blocks) || {};
+function blocksOf(prefs, simple, profile) {
+  const b = simple ? blocksSimple(profile) : (prefs && prefs.blocks) || {};
   const ids = TODAY_BLOCKS.map((x) => x.id);
   const order = [...(b.order || []).filter((id) => ids.includes(id)), ...ids.filter((id) => !(b.order || []).includes(id))];
   const off = new Set(b.off || []);
@@ -89,9 +96,9 @@ function AppearanceCard({ data, src, plan }) {
         <${Seg} id="ap-lang" options=${LANG_MODES.map((l) => ({ v: l.v, n: l.n }))} value=${p.lang} onChange=${(v) => save({ lang: v })} /></${Field}>
       <div className="field"><span className="field-l">Ce que je veux voir sur ma page du jour</span>
         <${Seg} id="ap-simple" options=${[{ v: "simple", n: "L'essentiel" }, { v: "tout", n: "Tout" }]}
-          value=${blocks.filter((x) => !x.on).length >= TODAY_BLOCKS.length - SIMPLE_ON.length ? "simple" : "tout"}
-          onChange=${(v) => save({ blocks: v === "simple" ? blocksSimple() : { order: blocks.map((x) => x.id), off: [] } })} />
-        <span className="field-h">« L'essentiel » garde ta séance du jour, ta semaine, les messages de ton coach et la nutrition. « Tout » ajoute ta régularité, ta carte, tes habitudes, la séance terrain, les séances en plus et l'article.</span></div>
+          value=${blocks.filter((x) => !x.on).length >= blocksSimple(profile).off.length ? "simple" : "tout"}
+          onChange=${(v) => save({ blocks: v === "simple" ? blocksSimple(profile) : { order: blocks.map((x) => x.id), off: [] } })} />
+        <span className="field-h">« L'essentiel » garde ta séance du jour, ta semaine, les messages de ton coach, la nutrition, et ta séance terrain si tu as choisi un sport. « Tout » ajoute ta régularité, ta carte, tes habitudes, les séances en plus et l'article.</span></div>
       <details><summary className="small">Choisir bloc par bloc</summary>
       <div className="field"><span className="field-l">Ma page du jour</span><span className="field-h">La séance du jour reste toujours en haut. Affiche, masque ou déplace le reste.</span>
         <ul className="blocks-l">${blocks.map((b, i) => {

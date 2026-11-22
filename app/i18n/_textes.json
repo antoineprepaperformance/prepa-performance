@@ -56538,5 +56538,54 @@
   "kind": "string",
   "where": "src/i18n-simple",
   "n": 1
+ },
+ {
+  "h": "17421a9a51",
+  "k": "Moyenne des internationaux",
+  "kind": "string",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "b0ec5026a7",
+  "k": "Moyenne des internationaux · {}",
+  "kind": "pattern",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "fb5680e1f1",
+  "k": "Sur certains tests, un palier est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.",
+  "kind": "string",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "76edab2608",
+  "k": "Prochain palier : moyenne des internationaux — il te reste {} (tu en es à {#} %).",
+  "kind": "pattern",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "b766fdf73b",
+  "k": "Prochain palier : moyenne des internationaux · {} — il te reste {} (tu en es à {#} %).",
+  "kind": "pattern",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "0f65998c44",
+  "k": "Comparer une charge entre athlètes de poids différents se fait avec une échelle allométrique (force proportionnelle au poids de corps à la puissance 0,67 ; Jaric, 2002). Records : World Athletics (100 m, 3 000 m, 5 000 m), Helene et Yamashita (temps de passage du 9 s 58), IPF (championnats du monde classique 2025). Un repère par poste n'est affiché que si l'étude le mesure comme le test de l'appli : c'est le cas des charges (3 à 5 répétitions, maximum estimé), pas des sprints au portique.",
+  "kind": "string",
+  "where": "src/i18n-poste",
+  "n": 1
+ },
+ {
+  "h": "d84e50ddb6",
+  "k": "« L'essentiel » garde ta séance du jour, ta semaine, les messages de ton coach, la nutrition, et ta séance terrain si tu as choisi un sport. « Tout » ajoute ta régularité, ta carte, tes habitudes, les séances en plus et l'article.",
+  "kind": "string",
+  "where": "src/i18n-terrain-essentiel",
+  "n": 1
  }
 ]

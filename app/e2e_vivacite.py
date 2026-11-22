@@ -79,7 +79,9 @@ async def run():
                "freinage : le volume monte de Reprise à Haut niveau", [(d["s"], d["r"], d["t"]) for d in doses])
 
             # ---------- ecran terrain d'un client rugby : une fiche vivacité visible et son schéma rendu ----------
-            await c.locator(".xteaser").get_by_role("button", name="Terrain", exact=True).click(); await c.wait_for_timeout(600)
+            # la porte vers l'ecran terrain, pour un client qui debute, est sa carte « seance terrain de la
+            # semaine » (le bloc « seances en plus » n'est pas dans l'affichage essentiel).
+            await c.locator(".tweek").get_by_role("button", name="Toutes les séances", exact=True).click(); await c.wait_for_timeout(600)
             carte = c.locator(".tcard", has_text="Freiner avant de tourner")
             ok(await carte.count() == 1, "écran terrain : « Freiner avant de tourner » proposé à un rugbyman", await c.locator(".tcard").count())
             await carte.first.click(); await c.wait_for_timeout(600)

@@ -380,7 +380,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
   const simple = simpleParDefaut && !toutVoir;
   const basculer = () => { const v = !toutVoir; setToutVoir(v); try { localStorage.setItem("today_tout", v ? "1" : "0"); } catch (e) {} };
-  const order = blocksOf(prefsOf(profile), simple).filter((b) => b.on).map((b) => b.id);
+  const order = blocksOf(prefsOf(profile), simple, profile).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
   const bascule = simpleParDefaut ? html`<div className="center">

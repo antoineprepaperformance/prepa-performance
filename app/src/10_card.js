@@ -121,6 +121,24 @@ function refAnchors(tid, sex, bw) {
   if (r.lift) { const [kg, cls] = r.lift[sex]; if (!bw) return null; const ref = kg * Math.pow(bw / cls, 0.67); return r.frac.map((f) => f * ref); }
   return r[sex];
 }
+/* repère d'un sport : à son poste quand une étude le donne, sinon pour tout le sport (clé « * »).
+   Pour un test de charge, la valeur de l'étude est [barre, poids de corps moyen de l'étude] : on la ramène
+   au poids du client par la même échelle allométrique que les autres repères (Jaric 2002), sinon un repère
+   pris sur des avants de 100 kg n'aurait aucun sens pour un client de 70 kg. Le nom du palier vient de
+   l'étude (« Moyenne des internationaux »…) : il dit ce que le chiffre est vraiment. */
+function refSport(r, sex, bw, sportId, poste) {
+  const t = r.sport && sportId && r.sport[sportId]; if (!t) return null;
+  const parPoste = poste && t[poste] && t[poste][sex], e = parPoste || (t["*"] && t["*"][sex]);
+  if (!e) return null;
+  const v = r.lift ? (bw ? e[0][0] * Math.pow(bw / e[0][1], 0.67) : 0) : e[0];
+  if (!(v > 0)) return null;
+  const pn = parPoste ? (posteLabel(sportId, poste) || poste) : "";
+  return { v, src: e[1], n: (e[2] || "Haut niveau") + (pn ? " · " + pn : "") };
+}
+/* nom lisible du poste (« Trois-quarts »), jamais son identifiant (« trois-quarts ») */
+function posteLabel(sportId, poste) {
+  try { return posteName(sportOf({ sportId }), poste); } catch (e) { return ""; }
+}
 function scoreFromAnchors(dir, val, a) {
   const sg = dir === "low" ? -1 : 1, x = sg * val, [a0, a1, a2] = a.map((y) => sg * y);
   if (x <= a0) return Math.max(25, 40 - 20 * (a0 - x) / (a1 - a0));
@@ -135,11 +153,11 @@ function scoreFromAnchors(dir, val, a) {
 function cardEchelle(tid, val, sex, bw, sportId, poste) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || !(val > 0)) return null;
-  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
+  const sp = refSport(r, sex, bw, sportId, poste);
   const mieux = (x, y) => (r.dir === "low" ? x < y : x > y);     /* x est-il meilleur que y ? */
   const barreaux = [
     { k: "bon", n: "Bon niveau", v: a[1] },
-    ...(sp ? [{ k: "poste", n: "Haut niveau" + (poste ? " · " + poste : ""), v: sp[0], src: sp[1] }] : []),
+    ...(sp ? [{ k: "poste", n: sp.n, v: sp.v, src: sp.src }] : []),
     { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex],
       qui: (r.nom && r.nom[sex] && r.nom[sex][0]) || "", quoi: (r.nom && r.nom[sex] && r.nom[sex][1]) || "" },
   ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
@@ -161,10 +179,10 @@ function refScore(tid, val, sex, bw, sportId, poste) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
   let v = scoreFromAnchors(r.dir, val, a);
-  const sp = r.sport && sportId && poste && r.sport[sportId] && r.sport[sportId][poste] && r.sport[sportId][poste][sex];
-  if (sp) { const aSp = a.slice(); aSp[1] = sp[0]; v = Math.max(v, scoreFromAnchors(r.dir, val, aSp)); }
+  const sp = refSport(r, sex, bw, sportId, poste);
+  if (sp) { const aSp = a.slice(); aSp[1] = sp.v; v = Math.max(v, scoreFromAnchors(r.dir, val, aSp)); }
   const wr = a[2];
-  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sp ? sp[1] : null };
+  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sp ? sp.src : null };
 }
 /* dernier résultat de chaque test (jusqu'à la date « cut »), noté face au record du monde */
 function cardAbs(data, cut) {
@@ -461,7 +479,7 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
       <details><summary>Voir aussi la comparaison avec les records du monde</summary>
         ${recordsList}
         <p className="muted small">Ces pourcentages servent de repère aux athlètes confirmés. Au début ils sont forcément bas pour tout le monde : ce n'est pas une note sur toi.</p>
-        <ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
+        <ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · repère de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
         <p className="small muted">${CARD_REF_SCI.text}</p></details>
       ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     </div>`;
@@ -473,8 +491,8 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
       <ul className="rlist">${((prog && prog.tests) || []).filter((tid) => CARD_REF[tid]).slice(0, 3).map((tid) => html`<${EchelleVide} key=${tid} tid=${tid} sex=${abs.sex} bw=${abs.bw}
         sportId=${(data && data.profile && data.profile.sportId) || null} poste=${(data && data.profile && data.profile.poste) || null} fmt=${fmt} />`)}</ul></div>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
-    ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Le repère « haut niveau » de certains tests est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
-    ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · haut niveau de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
+    ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Sur certains tests, un palier est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
+    ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · repère de ton poste : " + x.spSrc : ""}.</li>`)}</ul>
       <p className="small muted">${CARD_REF_SCI.text}</p></details>` : null}
   </div>`;
 }

@@ -35,6 +35,12 @@ if ! up http://127.0.0.1:9099/; then
       echo "saut  suites du site : émulateur d'authentification injoignable"; }
   fi
 fi
+# Un emulateur deja lance garde les comptes des executions precedentes : les suites qui s'inscrivent
+# avec une adresse fixe echouent alors en « adresse deja utilisee », et une partie des suites du site
+# tombe sans aucun rapport avec le code. Ca a coute deux batteries entieres a diagnostiquer.
+if [ "$SITE" = 1 ] && up http://127.0.0.1:9099/; then
+  curl -s -o /dev/null -X DELETE "http://127.0.0.1:9099/emulator/v1/projects/demo-prepa/accounts" || true
+fi
 if [ "$SITE" = 1 ] && ! up http://127.0.0.1:8123/index.html; then
   python3 -m http.server 8123 --bind 127.0.0.1 --directory site_test > /dev/null 2>&1 &
   SRV_PID=$!

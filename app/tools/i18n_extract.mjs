@@ -206,7 +206,8 @@ if (process.argv.includes("--manque")) {
     const miss = out.filter((e) => !(e.h in d));
     total += miss.length;
     console.log(L + " : " + miss.length + " texte(s) sans traduction sur " + out.length);
-    miss.slice(0, 40).forEach((e) => console.log("   " + JSON.stringify(e.k) + "   (" + e.where + ")"));
+    const tout = process.argv.includes("--tout");   /* --tout : tout lister, pour traiter l'arriere */
+    miss.slice(0, tout ? miss.length : 40).forEach((e) => console.log("   " + JSON.stringify(e.k) + "   (" + e.where + ")" + (e.kind === "pattern" ? "   [motif]" : "")));
   }
   process.exit(total ? 1 : 0);
 } else {

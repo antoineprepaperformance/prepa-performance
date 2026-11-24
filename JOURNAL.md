@@ -3,6 +3,19 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 24 novembre 2026 (nuit) · l'arriéré de traductions soldé : 419 textes en anglais et en espagnol
+
+- **Antoine : « corrige tout et traduis ».** Les **419 textes** que le contrôle signalait sont traduits : `en : 0 texte(s) sans traduction sur 7916`, idem en espagnol. C'étaient des fonctions livrées sans leurs langues — un client anglophone ou hispanophone voyait du français sur ces écrans.
+- **Ce que ça couvrait** : 115 textes de contenu (98 pour les séances terrain : noms, consignes, étapes, doses ; les repères de la carte ; un article) et 304 dans les modules récents — cycle menstruel, niveaux, énergie et REDs, autorégulation, démarrage, objectifs, nutrition adaptative, import de PDF, planning, échelle de la carte.
+- **Trois décisions assumées, visibles dans les fichiers plutôt que cachées dans l'outil** :
+  - **les noms d'athlètes ne se traduisent pas** (Usain Bolt reste Usain Bolt) : traduction identique, explicite ;
+  - **les consignes envoyées à l'IA non plus** (le prompt de lecture des PDF) : elles sont écrites en français pour l'IA et ne passent jamais par l'affichage ; les traduire aurait changé le prompt selon la langue du client ;
+  - **les réserves des textes sensibles sont tenues mot pour mot** — cycle menstruel et REDs gardent « ce n'est pas un diagnostic », « repère de vigilance, pas une prescription », « ce n'est pas une accusation ».
+- **Vocabulaire sportif tenu** : appui → *step* / *apoyo*, plot → *cone* / *cono*, élan → *run-up* / *carrera*, coupe à 45° → *45° cut* / *corte a 45°*, avant-dernier appui → *second-to-last step*.
+- **Rangement** : les lots sont dans `i18n/work/arriere_01..08.json` (fr, en, es), appliqués par `tools/i18n_arriere.py`, qui refuse un lot dont les trous `{}` ou `{#}` ne correspondent pas d'une langue à l'autre et signale les doublons. Relisible et corrigeable texte par texte.
+- **Au passage** : `tools/i18n_extract.mjs --manque` tronquait sa liste à 40 lignes par langue — impossible de traiter un arriéré qu'on ne peut pas lire en entier. L'option `--tout` le déplie, et marque les motifs.
+- **Fausse piste, à retenir** : après la traduction, neuf suites du site ont échoué. Ce n'était pas la traduction — `docs/index.html` n'avait pas bougé d'un octet, seuls les deux fichiers de langue avaient changé, et ils ne sont chargés qu'en anglais ou en espagnol. La cause : **l'émulateur d'authentification démarré à la main tournait encore, rempli des comptes des exécutions précédentes**, et `tests.sh` le réutilise au lieu d'en démarrer un propre. Les inscriptions à adresse fixe échouaient donc. Réflexe à garder : tuer l'émulateur avant une batterie complète.
+
 ## 24 novembre 2026 (soir) · node installé : trois plantages trouvés, dont un sur un écran de client payant
 
 - **Antoine : « installe node dans le dossier qu'il faut ».** Installé **sans mot de passe et hors du système** : `~/.local/node` (lien vers `node-v22.23.5-darwin-x64`), `~/.local/node/bin` ajouté au PATH dans `.zprofile`, `.zshrc`, `.bash_profile` et `.bashrc` — aucun n'existait. **Node 22 LTS et pas 24** : la 24 exige macOS 13.5, ce Mac est en 12.7.6. Archive officielle de nodejs.org, empreinte SHA-256 vérifiée avant ouverture. Pour désinstaller : supprimer `~/.local/node*` et la ligne ajoutée.

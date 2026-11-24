@@ -1,0 +1,262 @@
+[
+ {
+  "fr": "Fenêtre ovulatoire",
+  "en": "Ovulatory window",
+  "es": "Ventana ovulatoria"
+ },
+ {
+  "fr": "Ovulation",
+  "en": "Ovulation",
+  "es": "Ovulación"
+ },
+ {
+  "fr": "Certaines études (preuves faibles) associent cette période à une laxité ligamentaire un peu plus grande et à un risque un peu plus élevé de blessure au ligament croisé antérieur. Pas de quoi s'arrêter : plutôt un repère pour soigner la technique en réception et en changement d'appui cette semaine.",
+  "en": "Some studies (weak evidence) link this period to slightly greater ligament laxity and a slightly higher risk of anterior cruciate ligament injury. No reason to stop: rather a reminder to take care with landing and change-of-direction technique this week.",
+  "es": "Algunos estudios (evidencia débil) asocian este periodo con una laxitud ligamentosa algo mayor y un riesgo algo más alto de lesión del ligamento cruzado anterior. No es motivo para parar: más bien una señal para cuidar la técnica en la recepción y en los cambios de apoyo esta semana."
+ },
+ {
+  "fr": "Phase lutéale",
+  "en": "Luteal phase",
+  "es": "Fase lútea"
+ },
+ {
+  "fr": "Lutéale",
+  "en": "Luteal",
+  "es": "Lútea"
+ },
+ {
+  "fr": "Après l'ovulation, jusqu'aux prochaines règles. Phase la moins associée au risque de ligament croisé dans plusieurs études, sans certitude non plus.",
+  "en": "After ovulation, up to your next period. The phase least associated with cruciate ligament risk in several studies, though without certainty either.",
+  "es": "Después de la ovulación, hasta la siguiente regla. La fase menos asociada al riesgo de ligamento cruzado en varios estudios, aunque tampoco con certeza."
+ },
+ {
+  "fr": "Son cycle",
+  "en": "Her cycle",
+  "es": "Su ciclo"
+ },
+ {
+  "fr": "Partagé avec toi par la cliente",
+  "en": "Shared with you by the client",
+  "es": "Compartido contigo por la clienta"
+ },
+ {
+  "fr": "· jour",
+  "en": "· day",
+  "es": "· día"
+ },
+ {
+  "fr": "Retard sur la durée habituelle (",
+  "en": "Later than the usual length (",
+  "es": "Retraso sobre la duración habitual ("
+ },
+ {
+  "fr": " j) : phase non estimée.",
+  "en": " d): phase not estimated.",
+  "es": " d): fase no estimada."
+ },
+ {
+  "fr": "Pas encore de début de règles noté.",
+  "en": "No period start noted yet.",
+  "es": "Todavía sin inicio de regla anotado."
+ },
+ {
+  "fr": "Tes dates ont été effacées.",
+  "en": "Your dates have been erased.",
+  "es": "Tus fechas han sido borradas."
+ },
+ {
+  "fr": "Effacement impossible.",
+  "en": "Could not erase.",
+  "es": "No se ha podido borrar."
+ },
+ {
+  "fr": "Suivi du cycle",
+  "en": "Cycle tracking",
+  "es": "Seguimiento del ciclo"
+ },
+ {
+  "fr": "Facultatif",
+  "en": "Optional",
+  "es": "Opcional"
+ },
+ {
+  "fr": "Sais où tu en es dans ton cycle (règles, ovulation…), et un repère de vigilance pendant la fenêtre ovulatoire — voir plus bas, sources à l'appui. Un seul geste au quotidien : indiquer le jour où tes règles commencent.",
+  "en": "Know where you are in your cycle (period, ovulation…), plus a vigilance marker during the ovulatory window — see below, with sources. Just one thing to do day to day: note the day your period starts.",
+  "es": "Saber en qué punto estás de tu ciclo (regla, ovulación…), y una señal de vigilancia durante la ventana ovulatoria — ver más abajo, con fuentes. Un solo gesto a diario: indicar el día en que empieza tu regla."
+ },
+ {
+  "fr": "Activer le suivi",
+  "en": "Turn tracking on",
+  "es": "Activar el seguimiento"
+ },
+ {
+  "fr": "Noté.",
+  "en": "Noted.",
+  "es": "Anotado."
+ },
+ {
+  "fr": "{} · jour {} sur {} environ",
+  "en": "{} · day {} of about {}",
+  "es": "{} · día {} de unos {}"
+ },
+ {
+  "fr": "Retard sur ta durée habituelle (",
+  "en": "Later than your usual length (",
+  "es": "Retraso sobre tu duración habitual ("
+ },
+ {
+  "fr": " j) : phase non estimée",
+  "en": " d): phase not estimated",
+  "es": " d): fase no estimada"
+ },
+ {
+  "fr": "Retard sur ta durée habituelle ({} j) : phase non estimée",
+  "en": "Later than your usual length ({} d): phase not estimated",
+  "es": "Retraso sobre tu duración habitual ({} d): fase no estimada"
+ },
+ {
+  "fr": "Indique le jour où tes dernières règles ont commencé",
+  "en": "Note the day your last period started",
+  "es": "Indica el día en que empezó tu última regla"
+ },
+ {
+  "fr": "Mon cycle",
+  "en": "My cycle",
+  "es": "Mi ciclo"
+ },
+ {
+  "fr": "Les sources, et pourquoi pas de règle automatique de charge",
+  "en": "The sources, and why there is no automatic load rule",
+  "es": "Las fuentes, y por qué no hay una regla automática de carga"
+ },
+ {
+  "fr": "Partager la phase du jour avec",
+  "en": "Share today's phase with",
+  "es": "Compartir la fase del día con"
+ },
+ {
+  "fr": "Désactivé par défaut : plus sensible que le reste de tes données santé.",
+  "en": "Off by default: more sensitive than the rest of your health data.",
+  "es": "Desactivado por defecto: más sensible que el resto de tus datos de salud."
+ },
+ {
+  "fr": "ne verra jamais tes dates de règles, seulement la phase estimée du jour si tu partages.",
+  "en": "will never see your period dates, only today's estimated phase if you share it.",
+  "es": "nunca verá las fechas de tu regla, solo la fase estimada del día si la compartes."
+ },
+ {
+  "fr": "Désactiver le suivi",
+  "en": "Turn tracking off",
+  "es": "Desactivar el seguimiento"
+ },
+ {
+  "fr": "Durée de cycle par défaut (28 j) tant qu'un deuxième début de règles n'est pas noté.",
+  "en": "Default cycle length (28 d) until a second period start is noted.",
+  "es": "Duración de ciclo por defecto (28 d) mientras no se anote un segundo inicio de regla."
+ },
+ {
+  "fr": "Durée moyenne sur tes derniers cycles :",
+  "en": "Average length over your last cycles:",
+  "es": "Duración media de tus últimos ciclos:"
+ },
+ {
+  "fr": "Durée moyenne sur tes derniers cycles : {} j.",
+  "en": "Average length over your last cycles: {} d.",
+  "es": "Duración media de tus últimos ciclos: {} d."
+ },
+ {
+  "fr": "Prochaines règles estimées vers le",
+  "en": "Next period estimated around",
+  "es": "Próxima regla estimada hacia el"
+ },
+ {
+  "fr": "Déjà noté aujourd'hui",
+  "en": "Already noted today",
+  "es": "Ya anotado hoy"
+ },
+ {
+  "fr": "Mes règles ont commencé aujourd'hui",
+  "en": "My period started today",
+  "es": "Mi regla empezó hoy"
+ },
+ {
+  "fr": "Effacer mes dates notées",
+  "en": "Erase the dates I noted",
+  "es": "Borrar mis fechas anotadas"
+ },
+ {
+  "fr": "date notée",
+  "en": "date noted",
+  "es": "fecha anotada"
+ },
+ {
+  "fr": "dates notées",
+  "en": "dates noted",
+  "es": "fechas anotadas"
+ },
+ {
+  "fr": "Les jours où tu as indiqué le début de tes règles seront supprimés de ta santé du jour. L'estimation de ton cycle repartira de zéro. C'est définitif.",
+  "en": "The days where you noted the start of your period will be removed from your daily health. The estimate of your cycle will start again from scratch. This cannot be undone.",
+  "es": "Los días en los que indicaste el inicio de tu regla se eliminarán de tu salud diaria. La estimación de tu ciclo volverá a empezar de cero. Es definitivo."
+ },
+ {
+  "fr": "Effacer définitivement",
+  "en": "Erase permanently",
+  "es": "Borrar definitivamente"
+ },
+ {
+  "fr": "perdre du gras",
+  "en": "lose fat",
+  "es": "perder grasa"
+ },
+ {
+  "fr": "garder son poids",
+  "en": "keep your weight",
+  "es": "mantener el peso"
+ },
+ {
+  "fr": "prendre du muscle",
+  "en": "build muscle",
+  "es": "ganar músculo"
+ },
+ {
+  "fr": "entraînement «",
+  "en": "training «",
+  "es": "entrenamiento «"
+ },
+ {
+  "fr": "entraînement « {} »",
+  "en": "training « {} »",
+  "es": "entrenamiento « {} »"
+ },
+ {
+  "fr": "entraînement non choisi",
+  "en": "training not chosen",
+  "es": "entrenamiento sin elegir"
+ },
+ {
+  "fr": "· composition corporelle :",
+  "en": "· body composition:",
+  "es": "· composición corporal:"
+ },
+ {
+  "fr": "{} · composition corporelle : {}",
+  "en": "{} · body composition: {}",
+  "es": "{} · composición corporal: {}"
+ },
+ {
+  "fr": "· recomposition visée (fenêtre estimée",
+  "en": "· recomposition targeted (estimated window",
+  "es": "· recomposición buscada (ventana estimada"
+ },
+ {
+  "fr": ", protéines visées",
+  "en": ", protein target",
+  "es": ", proteínas objetivo"
+ },
+ {
+  "fr": "· recomposition visée (fenêtre estimée {}, protéines visées {} g/kg/j)",
+  "en": "· recomposition targeted (estimated window {}, protein target {} g/kg/day)",
+  "es": "· recomposición buscada (ventana estimada {}, proteínas objetivo {} g/kg/día)"
+ }
+]

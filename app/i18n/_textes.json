@@ -56594,5 +56594,348 @@
   "kind": "pattern",
   "where": "src/i18n-franchi",
   "n": 1
+ },
+ {
+  "h": "837f7c983c",
+  "k": "Usain Bolt",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "45ae2699ef",
+  "k": "Florence Griffith-Joyner",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "ba842c7d42",
+  "k": "Byron Jones",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "7934616874",
+  "k": "estimé, aucun record officiel",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "86b65e8cda",
+  "k": "Jakob Ingebrigtsen",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "42109fbcec",
+  "k": "allure de son record du 3 000 m",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "7394bc7454",
+  "k": "Wang Junxia",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "a61735b5e2",
+  "k": "Joshua Cheptegei",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "426961240c",
+  "k": "Beatrice Chebet",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "28dea547b7",
+  "k": "Joseph Borenstein",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "7d7f5f2ff3",
+  "k": "Alba Boström",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "009c055ecf",
+  "k": "233 kg pour 101 kg de poids de corps : moyenne des avants de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "e8d8ab26ba",
+  "k": "202 kg pour 88 kg de poids de corps : moyenne des trois-quarts de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "292d9b887f",
+  "k": "109 kg pour 101 kg de poids de corps : moyenne des avants de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test et ramenée à ton poids",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "a84d4c8d5a",
+  "k": "98 kg pour 88 kg de poids de corps : moyenne des trois-quarts de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test et ramenée à ton poids",
+  "kind": "string",
+  "where": "i18n/work/arriere_01.json",
+  "n": 1
+ },
+ {
+  "h": "696595f14b",
+  "k": "repos aujourd'hui",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "3885ff937a",
+  "k": "aujourd'hui :",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "a95214bb67",
+  "k": "aujourd'hui : {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "dd0318604d",
+  "k": "à rattraper :",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "14232e32ce",
+  "k": "à rattraper : {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "e61b446b2d",
+  "k": "séance à rattraper",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "80342815ea",
+  "k": "séances à rattraper",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "138e3ccd2b",
+  "k": "par semaine, à placer sur les jours que tu veux",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "094b24104a",
+  "k": "{} par semaine, à placer sur les jours que tu veux",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "cd8e718b60",
+  "k": "franchi le",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "3e433be1ad",
+  "k": "Prochain palier :",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "f6627ddf23",
+  "k": "— il te reste",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "9f87fa9dc9",
+  "k": "(tu en es à",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "39356cf25a",
+  "k": "Prochain palier : {} — il te reste {} (tu en es à {} %).",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "f8b473d387",
+  "k": "Tous les paliers connus sont atteints : tu es au-delà de",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "9ff7167447",
+  "k": "Tous les paliers connus sont atteints : tu es au-delà de {}.",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "41f02fe475",
+  "k": "· repère de ton poste :",
+  "kind": "string",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "a8aca8ca08",
+  "k": "· repère de ton poste : {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_03.json",
+  "n": 1
+ },
+ {
+  "h": "a42c066ba1",
+  "k": "Lun",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "5157aef621",
+  "k": "Mer",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "1fc920a7ec",
+  "k": "Jeu",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "f72f53c185",
+  "k": "Ven",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "04d6677c31",
+  "k": "Dim",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "620b52843e",
+  "k": "Séance {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "27529e2bea",
+  "k": "jour d'entraînement",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "39db7cccf4",
+  "k": "jours d'entraînement",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "94b1c92200",
+  "k": "par semaine.",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "c4dfa5b59d",
+  "k": "{} par semaine.",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "160da5e6d7",
+  "k": "Une séance revient",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "83a6e18aaf",
+  "k": "dans la semaine.",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "1244a9196b",
+  "k": "Une séance revient {} dans la semaine.",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "3fe28e53e2",
+  "k": "Tu ne peux pas descendre en dessous de",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "fd5cb8e048",
+  "k": ": en dessous, une de tes séances ne passerait pas.",
+  "kind": "string",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
+ },
+ {
+  "h": "90d35d5a99",
+  "k": "Tu ne peux pas descendre en dessous de {} : en dessous, une de tes séances ne passerait pas.",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_04.json",
+  "n": 1
  }
 ]

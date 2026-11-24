@@ -1,0 +1,262 @@
+[
+ {
+  "fr": "Regarde le partenaire, pas tes pieds",
+  "en": "Watch your partner, not your feet",
+  "es": "Mira al compañero, no a tus pies"
+ },
+ {
+  "fr": "Première foulée vers la porte, pas un pas sur place",
+  "en": "First stride towards the gate, not a step on the spot",
+  "es": "Primera zancada hacia la puerta, no un paso en el sitio"
+ },
+ {
+  "fr": "Le partenaire garde un signal net : un geste franc, pas un indice ambigu",
+  "en": "Your partner keeps the signal clear: a definite gesture, not an ambiguous hint",
+  "es": "El compañero mantiene una señal clara: un gesto franco, no una pista ambigua"
+ },
+ {
+  "fr": "2 séries de 4 réactions, signal donné tôt",
+  "en": "2 sets of 4 reactions, signal given early",
+  "es": "2 series de 4 reacciones, señal dada pronto"
+ },
+ {
+  "fr": "Signal donné tôt, porte à 8 m",
+  "en": "Signal given early, gate at 8 m",
+  "es": "Señal dada pronto, puerta a 8 m"
+ },
+ {
+  "fr": "3 séries de 5 réactions, signal à 2 m des portes",
+  "en": "3 sets of 5 reactions, signal 2 m from the gates",
+  "es": "3 series de 5 reacciones, señal a 2 m de las puertas"
+ },
+ {
+  "fr": "Signal à 2 m des portes",
+  "en": "Signal 2 m from the gates",
+  "es": "Señal a 2 m de las puertas"
+ },
+ {
+  "fr": "3 séries de 6 réactions, signal tardif, avec feintes",
+  "en": "3 sets of 6 reactions, late signal, with fakes",
+  "es": "3 series de 6 reacciones, señal tardía, con fintas"
+ },
+ {
+  "fr": "Signal tardif, une feinte sur trois",
+  "en": "Late signal, one fake in three",
+  "es": "Señal tardía, una finta de cada tres"
+ },
+ {
+  "fr": "4 séries de 6 réactions, portes à 10 m, signal tardif avec feintes",
+  "en": "4 sets of 6 reactions, gates at 10 m, late signal with fakes",
+  "es": "4 series de 6 reacciones, puertas a 10 m, señal tardía con fintas"
+ },
+ {
+  "fr": "Signal tardif, portes à 10 m, feintes",
+  "en": "Late signal, gates at 10 m, fakes",
+  "es": "Señal tardía, puertas a 10 m, fintas"
+ },
+ {
+  "fr": "Porte G",
+  "en": "Gate L",
+  "es": "Puerta I"
+ },
+ {
+  "fr": "Porte D",
+  "en": "Gate R",
+  "es": "Puerta D"
+ },
+ {
+  "fr": "Trottine vers le signal",
+  "en": "Jog towards the signal",
+  "es": "Trota hacia la señal"
+ },
+ {
+  "fr": "Signal gauche",
+  "en": "Signal left",
+  "es": "Señal izquierda"
+ },
+ {
+  "fr": "Signal droite",
+  "en": "Signal right",
+  "es": "Señal derecha"
+ },
+ {
+  "fr": "Le partenaire pointe la porte à 2 m de la ligne",
+  "en": "Your partner points to the gate 2 m from the line",
+  "es": "El compañero señala la puerta a 2 m de la línea"
+ },
+ {
+  "fr": "repos aujourd'hui",
+  "en": "rest today",
+  "es": "descanso hoy"
+ },
+ {
+  "fr": "aujourd'hui :",
+  "en": "today:",
+  "es": "hoy:"
+ },
+ {
+  "fr": "aujourd'hui : {}",
+  "en": "today: {}",
+  "es": "hoy: {}"
+ },
+ {
+  "fr": "à rattraper :",
+  "en": "to catch up:",
+  "es": "por recuperar:"
+ },
+ {
+  "fr": "à rattraper : {}",
+  "en": "to catch up: {}",
+  "es": "por recuperar: {}"
+ },
+ {
+  "fr": "séance à rattraper",
+  "en": "session to catch up",
+  "es": "sesión por recuperar"
+ },
+ {
+  "fr": "séances à rattraper",
+  "en": "sessions to catch up",
+  "es": "sesiones por recuperar"
+ },
+ {
+  "fr": "par semaine, à placer sur les jours que tu veux",
+  "en": "per week, to place on the days you want",
+  "es": "por semana, para colocar en los días que quieras"
+ },
+ {
+  "fr": "{} par semaine, à placer sur les jours que tu veux",
+  "en": "{} per week, to place on the days you want",
+  "es": "{} por semana, para colocar en los días que quieras"
+ },
+ {
+  "fr": "Ton entraînement, c'est «",
+  "en": "Your training is «",
+  "es": "Tu entrenamiento es «"
+ },
+ {
+  "fr": "» : c'est un axe à part, il ne change pas ici",
+  "en": "» : that is a separate axis, it does not change here",
+  "es": "» : es un eje aparte, no cambia aquí"
+ },
+ {
+  "fr": "Dans ton profil, ta composition corporelle est réglée sur «",
+  "en": "In your profile, your body composition is set to «",
+  "es": "En tu perfil, tu composición corporal está ajustada a «"
+ },
+ {
+  "fr": "». En validant ici, c'est ce choix-ci qui fera référence pour ta nutrition : pense à aligner les deux dans Mon profil › Mes objectifs.",
+  "en": "». By confirming here, this is the choice that will be used for your nutrition: remember to line the two up in My profile › My goals.",
+  "es": "». Al validar aquí, esta es la elección que servirá de referencia para tu nutrición: recuerda alinear las dos en Mi perfil › Mis objetivos."
+ },
+ {
+  "fr": "franchi le",
+  "en": "cleared on",
+  "es": "superado el"
+ },
+ {
+  "fr": "Prochain palier :",
+  "en": "Next step:",
+  "es": "Siguiente nivel:"
+ },
+ {
+  "fr": "— il te reste",
+  "en": "— you still need",
+  "es": "— te faltan"
+ },
+ {
+  "fr": "(tu en es à",
+  "en": "(you are at",
+  "es": "(estás al"
+ },
+ {
+  "fr": "Prochain palier : {} — il te reste {} (tu en es à {} %).",
+  "en": "Next step: {} — {} to go (you are at {} %).",
+  "es": "Siguiente nivel: {} — te faltan {} (estás al {} %)."
+ },
+ {
+  "fr": "Tous les paliers connus sont atteints : tu es au-delà de",
+  "en": "Every known step is reached: you are beyond",
+  "es": "Todos los niveles conocidos están alcanzados: estás más allá de"
+ },
+ {
+  "fr": "Tous les paliers connus sont atteints : tu es au-delà de {}.",
+  "en": "Every known step is reached: you are beyond {}.",
+  "es": "Todos los niveles conocidos están alcanzados: estás más allá de {}."
+ },
+ {
+  "fr": "· depuis ton premier test :",
+  "en": "· since your first test:",
+  "es": "· desde tu primer test:"
+ },
+ {
+  "fr": "de mieux",
+  "en": "better",
+  "es": "mejor"
+ },
+ {
+  "fr": "· depuis ton premier test : {} %{}",
+  "en": "· since your first test: {} %{}",
+  "es": "· desde tu primer test: {} %{}"
+ },
+ {
+  "fr": "· premier résultat, c'est ton point de départ",
+  "en": "· first result, this is your starting point",
+  "es": "· primer resultado, es tu punto de partida"
+ },
+ {
+  "fr": "· repère de ton poste :",
+  "en": "· benchmark for your position:",
+  "es": "· referencia de tu puesto:"
+ },
+ {
+  "fr": "· repère de ton poste : {}",
+  "en": "· benchmark for your position: {}",
+  "es": "· referencia de tu puesto: {}"
+ },
+ {
+  "fr": "Ajustement du jour : monte d'un cran par rapport à ta dernière séance de ce type (une charge un peu plus lourde, ou une version un peu plus difficile).",
+  "en": "Today's adjustment: step it up from your last session of this kind (a slightly heavier load, or a slightly harder version).",
+  "es": "Ajuste del día: sube un escalón respecto a tu última sesión de este tipo (una carga algo más pesada o una versión algo más difícil)."
+ },
+ {
+  "fr": "Ajustement du jour : reprends une charge plus légère que la dernière fois",
+  "en": "Today's adjustment: go back to a lighter load than last time",
+  "es": "Ajuste del día: vuelve a una carga más ligera que la última vez"
+ },
+ {
+  "fr": ", avec une série de moins sur cet exercice",
+  "en": ", with one set fewer on this exercise",
+  "es": ", con una serie menos en este ejercicio"
+ },
+ {
+  "fr": ". L'objectif est de finir toutes tes répétitions proprement.",
+  "en": ". The goal is to finish every rep cleanly.",
+  "es": ". El objetivo es terminar todas las repeticiones limpiamente."
+ },
+ {
+  "fr": "Ajustement du jour : reprends une charge plus légère que la dernière fois{}. L'objectif est de finir toutes tes répétitions proprement.",
+  "en": "Today's adjustment: go back to a lighter load than last time{}. The goal is to finish every rep cleanly.",
+  "es": "Ajuste del día: vuelve a una carga más ligera que la última vez{}. El objetivo es terminar todas las repeticiones limpiamente."
+ },
+ {
+  "fr": "Charge montée de",
+  "en": "Load raised by",
+  "es": "Carga subida un"
+ },
+ {
+  "fr": "% aujourd'hui",
+  "en": "% today",
+  "es": "% hoy"
+ },
+ {
+  "fr": "Charge montée de {} % aujourd'hui",
+  "en": "Load raised by {} % today",
+  "es": "Carga subida un {} % hoy"
+ },
+ {
+  "fr": "Charge allégée de",
+  "en": "Load eased by",
+  "es": "Carga aligerada un"
+ }
+]

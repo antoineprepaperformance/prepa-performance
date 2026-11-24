@@ -99,7 +99,9 @@ async def run():
         await btn(co, "J'ai confirmé mon adresse"); await co.wait_for_timeout(800)
 
         # ---------- coach : import du classeur et nouveau club ----------
-        await btn(co, "Équipe", exact=True)
+        await btn(co, "Clubs", exact=True)
+        # l'import est passe dans l'onglet « Modeles de saison » de l'ecran Clubs
+        await co.get_by_role("radio", name="Modèles de saison").click(); await co.wait_for_timeout(300)
         await btn(co, "Importer un classeur")
         await co.set_input_files("#eq-file", XLSX); await co.wait_for_timeout(1500)
         ok(await has(co, f"{NB} séances lues du"), f"site coach : classeur lu ({NB} séances)")

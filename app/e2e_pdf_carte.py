@@ -42,13 +42,13 @@ async def run():
                 squat83: refScore("e1rm_squat", 302.5, "H", 83).v, squat100: [refScore("e1rm_squat", 200, "H", 100).v, refScore("e1rm_squat", 200, "H", 70).v],
                 nobw: refScore("e1rm_squat", 150, "H", null), t5: refScore("t5km", 12.589, "H").v, cmj: refScore("cmj", 50, "H"),
                 abs: cardAbs({ profile: { weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.4, e1rm_squat: { kg: 140, reps: 3 } } }, b: { at: "2026-10-29", values: { sprint30: 4.2 } } } }),
-                avantGen: refScore("sprint10", 1.85, "H").v, avantSp: refScore("sprint10", 1.85, "H", null, "rugby", "avant").v,
-                tqGen: refScore("sprint10", 1.77, "H").v, tqSp: refScore("sprint10", 1.77, "H", null, "rugby", "trois-quarts").v,
-                rugby7Sp: refScore("sprint10", 1.85, "H", null, "rugby7", "avant").v,
-                bobGen: refScore("sprint30", 4.0, "H").v, bobSp: refScore("sprint30", 4.0, "H", null, "bob", "pousseur").v,
-                midGen: refScore("sprint30", 3.90, "H").v, midSp: refScore("sprint30", 3.90, "H", null, "bob", "pousseur").v,
-                noPoste: refScore("sprint10", 1.85, "H", null, "rugby", null).v, autreSport: refScore("sprint10", 1.85, "H", null, "foot", "attaquant").v,
-                pousseurCarte: cardAbs({ profile: { sportId: "bob", poste: "pousseur", weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.0 } } } }),
+                squatGen: refScore("e1rm_squat", 200, "H", 80).v, squatSp: refScore("e1rm_squat", 200, "H", 80, "rugby", "avant").v,
+                dcGen: refScore("e1rm_dc", 100, "H", 80).v, dcSp: refScore("e1rm_dc", 100, "H", 80, "rugby", "avant").v,
+                dcTqSp: refScore("e1rm_dc", 100, "H", 80, "rugby", "trois-quarts").v,
+                sprintGen: refScore("sprint10", 1.85, "H").v, sprintSp: refScore("sprint10", 1.85, "H", null, "rugby", "avant").v,
+                noPoste: refScore("e1rm_squat", 200, "H", 80, "rugby", null).v, autreSport: refScore("e1rm_squat", 200, "H", 80, "foot", "attaquant").v,
+                nobwSp: refScore("e1rm_squat", 200, "H", null, "rugby", "avant"),
+                rugbyCarte: cardAbs({ profile: { sportId: "rugby", poste: "avant", weight: 80 }, tests: { a: { at: "2026-10-01", values: { e1rm_dc: { kg: 90, reps: 3 } } } } }),
               };
               // note générale : un test déjà noté face au record du monde ne doit pas être plombé par régularité/engagement
               // sans historique (profil tout juste inscrit, plan pas encore commencé : pl = 0, aucun bilan).
@@ -70,19 +70,19 @@ async def run():
             sc = {x["tid"]: x for x in r["abs"]["scores"]}
             ok(sc.get("sprint30", {}).get("val") == 4.2 and "e1rm_squat" in sc and r["abs"]["byAttr"].get("vit") and r["abs"]["sex"] == "H" and not r["abs"]["sexKnown"],
                "dernier résultat de chaque test, attributs vitesse et force", r["abs"])
-            ok(r["avantSp"] == 90 and r["avantSp"] > r["avantGen"], "rugby avant : 1,85 s au 10 m vaut 90 (haut niveau du poste), plus que le repère générique", r)
-            ok(r["tqSp"] == r["tqGen"], "rugby trois-quarts : repère du poste plus exigeant que le générique ici, donc sans effet — jamais de note plus basse qu'avec le repère générique", r)
-            ok(r["rugby7Sp"] == r["avantSp"], "rugby à 7 : même repère que le rugby à XV pour les avants", r)
-            ok(r["bobSp"] == r["bobGen"], "bobsleigh pousseur : repère déjà proche du générique (légèrement plus exigeant ici) : pas de note plus basse qu'avec le repère générique", r)
-            ok(r["noPoste"] == r["avantGen"] and r["autreSport"] == r["avantGen"], "sans poste connu, ou sport sans repère dédié : repère générique", r)
-            ok(r["midSp"] >= r["midGen"], "garde-fou : un repère sport plus exigeant ne fait jamais baisser la note sous le repère générique", r)
+            ok(r["dcSp"] == 90 and r["dcSp"] > r["dcGen"], "développé couché : atteindre la moyenne des internationaux à son poste (94 kg pour 80 kg) vaut 90", r)
+            ok(r["dcTqSp"] >= r["dcSp"], "trois-quarts : repère un peu plus accessible que celui des avants, donc note au moins égale à charge égale", r)
+            ok(r["squatSp"] == r["squatGen"], "squat : repère du poste plus exigeant que le repère générique ici, donc sans effet — jamais de note plus basse", r)
+            ok(r["sprintSp"] == r["sprintGen"], "sprint : plus aucun repère de poste (les études chronomètrent au portique, pas comme le test du client)", r)
+            ok(r["noPoste"] == r["squatGen"] and r["autreSport"] == r["squatGen"], "sans poste connu, ou sport sans repère dédié : repère générique", r)
+            ok(r["nobwSp"] is None, "sans poids de corps, une charge n'est pas notée, même avec un repère de poste", r)
             ok("noteErr" not in r, "note générale : cardStats s'exécute sans erreur avec un plan pas encore commencé", r.get("noteErr"))
             ok(r.get("regEngSansDonnee") == 0, "avant le début du plan, régularité et engagement n'ont encore aucune donnée", r)
             ok(r.get("noteSansRien") == 65 and r.get("tierSansRien") == "argent", "sans aucune donnée, note neutre (profil Confirmé) et palier Argent", r)
             ok(r.get("noteAvecVitElite") == 78 and r.get("tierAvecVitElite") == "or",
                "un seul test déjà au niveau du record du monde (65 → 78) fait passer directement au palier Or, sans attendre un historique de régularité/engagement", r)
-            ok(r["pousseurCarte"]["scores"][0]["spSrc"] is not None and "Bobsleigh UK" in r["pousseurCarte"]["scores"][0]["spSrc"],
-               "carte d'un pousseur : la source du repère spécifique est bien remontée", r["pousseurCarte"])
+            ok(r["rugbyCarte"]["scores"][0]["spSrc"] is not None and "Vaz" in r["rugbyCarte"]["scores"][0]["spSrc"],
+               "carte d'un avant de rugby : la source du repère de son poste est bien remontée", r["rugbyCarte"])
 
             # ---------- client Sur mesure ----------
             await btn(co, "Codes & essais", exact=True)

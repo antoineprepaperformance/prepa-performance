@@ -218,6 +218,12 @@ function useWide() {
 }
 function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
   const [jours, setJours] = useState(false);     /* fenêtre « Mes jours » : répartition de la semaine */
+  /* TOUS les hooks sont déclarés ici, AVANT les trois retours anticipés plus bas (avant le début du
+     programme, programme terminé, accès verrouillé). Un useState placé après l'un d'eux ne s'exécute pas
+     sur ces branches : React compte alors moins de hooks qu'au rendu précédent et toute l'application
+     tombe sur « Un problème d'affichage est survenu » (erreur React #300). C'est arrivé au moment précis
+     où l'accès d'un client se terminait pendant qu'il avait sa page ouverte. */
+  const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
@@ -377,10 +383,9 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
      qui ramène tout. « tout voir » reste sur l'appareil, pour ne pas écraser ses réglages de profil. */
   const nLogs = Object.keys(data.logs || {}).length;
   const simpleParDefaut = simpleAuto(profile, nLogs);
-  const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
   const simple = simpleParDefaut && !toutVoir;
   const basculer = () => { const v = !toutVoir; setToutVoir(v); try { localStorage.setItem("today_tout", v ? "1" : "0"); } catch (e) {} };
-  const order = blocksOf(prefsOf(profile), simple).filter((b) => b.on).map((b) => b.id);
+  const order = blocksOf(prefsOf(profile), simple, profile).filter((b) => b.on).map((b) => b.id);
   const pick = (ids) => order.filter((id) => ids.includes(id)).map((id) => html`<div key=${id} className="tb" data-block=${id}>${B[id]}</div>`);
   const ban = saison ? html`<${SaisonBanner} ed=${saison} data=${data} src=${src} demo=${demo} />` : null;
   const bascule = simpleParDefaut ? html`<div className="center">

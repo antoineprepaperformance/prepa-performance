@@ -1061,9 +1061,12 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 
 /* listes simples : séances en PDF, tests face aux records */
 .rlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.rlist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-.rlist li > span:first-child { flex: 1 1 160px; min-width: 0; }
-.rlist li > :last-child { flex: none; }
+/* « > » obligatoire : la jauge d'un test contient elle-même des <li> (ses paliers). Sans l'enfant direct,
+   ces règles les atteignaient aussi — un palier héritait de flex: 1 1 160px et devenait une case de
+   190 px de haut, presque vide, avec sa valeur rejetée en bas : la règle en devenait illisible. */
+.rlist > li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.rlist > li > span:first-child { flex: 1 1 160px; min-width: 0; }
+.rlist > li > :last-child { flex: none; }
 
 /* échelle d'un test : une règle du niveau débutant au record du monde, la photo du client dessus */
 .jauge { margin: 8px 0 0; }
@@ -1086,3 +1089,5 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 
 /* nom du détenteur du record, sous la valeur du palier */
 .jg-q { font-size: 11px; color: var(--muted); }
+/* date du test qui a fait franchir le palier : la progression se lit sur la règle elle-même */
+.jg-d { font-size: 10px; color: var(--gold, #d4ad3f); letter-spacing: .02em; }

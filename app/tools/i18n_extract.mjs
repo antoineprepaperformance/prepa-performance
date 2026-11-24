@@ -6,10 +6,14 @@
 import fs from "fs";
 import crypto from "crypto";
 import path from "path";
+import { fileURLToPath } from "url";
 import * as acorn from "acorn";
 import * as walk from "acorn-walk";
 
-const APP = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+/* fileURLToPath et non .pathname : le chemin du projet contient des espaces et un accent
+   (« App Prépa Performance »), que .pathname rend encodés (App%20Pr%C3%A9pa) — le dossier est
+   alors introuvable. Le bug ne se voyait pas : node n'etait pas installe sur ce Mac. */
+const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(APP, "src");
 /* 05_coach.js et 06_library.js : espace coach uniquement (en français) */
 const COACH_FILES = new Set(["05_coach.js", "06_library.js", "24_finances.js"]);
@@ -202,7 +206,8 @@ if (process.argv.includes("--manque")) {
     const miss = out.filter((e) => !(e.h in d));
     total += miss.length;
     console.log(L + " : " + miss.length + " texte(s) sans traduction sur " + out.length);
-    miss.slice(0, 40).forEach((e) => console.log("   " + JSON.stringify(e.k) + "   (" + e.where + ")"));
+    const tout = process.argv.includes("--tout");   /* --tout : tout lister, pour traiter l'arriere */
+    miss.slice(0, tout ? miss.length : 40).forEach((e) => console.log("   " + JSON.stringify(e.k) + "   (" + e.where + ")" + (e.kind === "pattern" ? "   [motif]" : "")));
   }
   process.exit(total ? 1 : 0);
 } else {

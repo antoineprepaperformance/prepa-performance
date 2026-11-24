@@ -31,18 +31,18 @@ def ok(cond, msg, extra=""):
     print(("  OK  " if cond else "  FAIL ") + msg + ("" if cond else "  " + json.dumps(extra, ensure_ascii=False, default=str)[:400]))
 
 
-BASE = """([l, logs, prefs]) => {
+BASE = """([l, logs, prefs, sport]) => {
   const db = {};
-  db['clients/u_p1'] = { name: 'Nouveau', sportId: 'rugby', sex: 'H', height: 180, weight: 80, birthYear: 1995, ...(prefs ? { prefs } : {}) };
+  db['clients/u_p1'] = { name: 'Nouveau', sex: 'H', height: 180, weight: 80, birthYear: 1995, ...(sport ? { sportId: sport, sportAdapt: true } : {}), ...(prefs ? { prefs } : {}) };
   db['plans/u_p1'] = { programId: 'masse', offer: 'suivi2', weeks: 12, start: l, equipment: 'salle', status: 'active', niveau: 'reprise', extra: [], message: 'Bienvenue, on commence doucement.', cycle: 1, validatedAt: '2026-11-01T00:00:00.000Z', reviewedAt: '2026-11-01T00:00:00.000Z' };
   for (let i = 0; i < logs; i++) db['clients/u_p1/logs/w1-s' + i] = { date: l, done: ['sq'], at: l + 'T18:00:00.000Z' };
   localStorage.setItem('__mockdb', JSON.stringify(db));
 }"""
 
 
-async def charge(pg, logs=0, prefs=None, tout=False):
+async def charge(pg, logs=0, prefs=None, tout=False, sport="rugby"):
     await pg.evaluate("localStorage.clear()")
-    await pg.evaluate(BASE, [LUNDI, logs, prefs])
+    await pg.evaluate(BASE, [LUNDI, logs, prefs, sport])
     if tout: await pg.evaluate("localStorage.setItem('today_tout', '1')")
     await pg.reload(); await pg.wait_for_timeout(1600)
 
@@ -63,6 +63,12 @@ async def run():
             ok(dans("Bienvenue, on commence doucement", t), "le message du coach n'est jamais masqué", t[:300])
             ok(not dans("Ma carte athlète", t) and not dans("Article", t) and not dans("Séances en plus", t),
                "les blocs qui peuvent attendre ne sont pas affichés d'emblée", [x for x in ("Ma carte athlète", "Article", "Séances en plus") if dans(x, t)])
+            ok(await cl.locator(".tweek").count() == 1,
+               "mais sa séance terrain reste : c'est la seule porte vers l'écran terrain, la masquer rendait son sport inatteignable")
+            await charge(cl, logs=0, sport=None)
+            ok(await cl.locator(".tweek").count() == 0 and dans("Affichage simplifié", await cl.inner_text("body")),
+               "sans sport choisi, pas de séance terrain : la page reste courte")
+            await charge(cl, logs=0)
             ok(dans("Affichage simplifié", t) and await cl.get_by_role("button", name="Afficher tout ce que l'application sait faire").count() == 1,
                "l'écran dit qu'il est simplifié et comment tout voir")
             await cl.screenshot(path=f"{OUT}/01_debutant.png", full_page=True)

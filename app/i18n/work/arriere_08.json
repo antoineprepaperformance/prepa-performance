@@ -1,0 +1,287 @@
+[
+ {
+  "fr": "L'écart est trop petit pour être autre chose que du bruit : on ne change rien.",
+  "en": "The gap is too small to be anything but noise: nothing changes.",
+  "es": "La diferencia es demasiado pequeña para ser otra cosa que ruido: no cambiamos nada."
+ },
+ {
+  "fr": "Ce sens-là est fiable : comme on note toujours un peu moins que ce qu'on mange réellement, une dépense mesurée plus haute que prévu est un signal solide. On applique l'écart en entier.",
+  "en": "That direction is reliable: since people always record a little less than they really eat, a measured expenditure higher than expected is a solid signal. The full gap is applied.",
+  "es": "Ese sentido es fiable: como siempre se anota algo menos de lo que realmente se come, un gasto medido más alto de lo previsto es una señal sólida. Se aplica la diferencia entera."
+ },
+ {
+  "fr": "Prudence sur ce sens-là : l'explication la plus fréquente d'une dépense mesurée plus basse n'est pas un métabolisme lent, c'est que des aliments ne sont pas notés (huile de cuisson, boissons, grignotages). On n'applique donc que la moitié de l'écart.",
+  "en": "Caution in that direction: the most common explanation for a lower measured expenditure is not a slow metabolism, it is food that goes unrecorded (cooking oil, drinks, snacks). So only half the gap is applied.",
+  "es": "Prudencia en ese sentido: la explicación más frecuente de un gasto medido más bajo no es un metabolismo lento, sino alimentos que no se anotan (aceite de cocina, bebidas, picoteos). Por eso solo se aplica la mitad de la diferencia."
+ },
+ {
+  "fr": "L'écart brut dépassait",
+  "en": "The raw gap went beyond",
+  "es": "La diferencia bruta superaba"
+ },
+ {
+  "fr": "% : il a été ramené à cette limite, parce qu'un écart aussi grand vient presque toujours du journal, pas du métabolisme.",
+  "en": "%: it has been capped at that limit, because a gap that large almost always comes from the food journal, not the metabolism.",
+  "es": "%: se ha limitado a ese tope, porque una diferencia tan grande casi siempre viene del diario, no del metabolismo."
+ },
+ {
+  "fr": "L'écart brut dépassait {} % : il a été ramené à cette limite, parce qu'un écart aussi grand vient presque toujours du journal, pas du métabolisme.",
+  "en": "The raw gap went beyond {} %: it has been capped at that limit, because a gap that large almost always comes from the food journal, not the metabolism.",
+  "es": "La diferencia bruta superaba el {} %: se ha limitado a ese tope, porque una diferencia tan grande casi siempre viene del diario, no del metabolismo."
+ },
+ {
+  "fr": "Ta dépense réelle est",
+  "en": "Your real expenditure is",
+  "es": "Tu gasto real es"
+ },
+ {
+  "fr": "que tes repères actuels",
+  "en": "than your current targets",
+  "es": "que tus referencias actuales"
+ },
+ {
+  "fr": "Ta dépense réelle est {} que tes repères actuels",
+  "en": "Your real expenditure is {} than your current targets",
+  "es": "Tu gasto real es {} que tus referencias actuales"
+ },
+ {
+  "fr": "Tes repères sont à jour.",
+  "en": "Your targets are up to date.",
+  "es": "Tus referencias están al día."
+ },
+ {
+  "fr": "Dépense réelle du client",
+  "en": "The client's real expenditure",
+  "es": "Gasto real del cliente"
+ },
+ {
+  "fr": "Ta dépense réelle",
+  "en": "Your real expenditure",
+  "es": "Tu gasto real"
+ },
+ {
+  "fr": "Calculée depuis tes repas notés et l'évolution de ton poids, pas depuis une formule",
+  "en": "Worked out from the meals you recorded and how your weight moved, not from a formula",
+  "es": "Calculado a partir de tus comidas anotadas y la evolución de tu peso, no de una fórmula"
+ },
+ {
+  "fr": "Comment c'est calculé, et ses limites",
+  "en": "How it is calculated, and its limits",
+  "es": "Cómo se calcula, y sus límites"
+ },
+ {
+  "fr": "Dépense = apports notés − (variation de poids × 7700 / nombre de jours). C'est de la comptabilité d'énergie, pas une estimation de ton métabolisme : la qualité du résultat dépend entièrement de la régularité avec laquelle tu notes tes repas.",
+  "en": "Expenditure = recorded intake − (weight change × 7700 / number of days). This is energy accounting, not an estimate of your metabolism: the quality of the result depends entirely on how consistently you record your meals.",
+  "es": "Gasto = ingesta anotada − (variación de peso × 7700 / número de días). Es contabilidad de energía, no una estimación de tu metabolismo: la calidad del resultado depende por completo de la constancia con la que anotes tus comidas."
+ },
+ {
+  "fr": "Cible actuelle",
+  "en": "Current target",
+  "es": "Objetivo actual"
+ },
+ {
+  "fr": "Cible recalculée",
+  "en": "Recalculated target",
+  "es": "Objetivo recalculado"
+ },
+ {
+  "fr": "Mettre à jour mes repères",
+  "en": "Update my targets",
+  "es": "Actualizar mis referencias"
+ },
+ {
+  "fr": "Rien n'est changé avant que tu cliques : ce sont tes calories, c'est à toi de décider. Ton objectif et ta vitesse ne changent pas, seule la dépense de référence est corrigée.",
+  "en": "Nothing changes until you click: these are your calories, it is your call. Your goal and your pace do not change, only the reference expenditure is corrected.",
+  "es": "No cambia nada hasta que hagas clic: son tus calorías, tú decides. Tu objetivo y tu ritmo no cambian, solo se corrige el gasto de referencia."
+ },
+ {
+  "fr": "Dernier recalibrage le",
+  "en": "Last recalibration on",
+  "es": "Última recalibración el"
+ },
+ {
+  "fr": " : dépense de référence",
+  "en": ": reference expenditure",
+  "es": ": gasto de referencia"
+ },
+ {
+  "fr": "kcal (estimation de départ :",
+  "en": "kcal (starting estimate:",
+  "es": "kcal (estimación inicial:"
+ },
+ {
+  "fr": "ton poids descend de plus de 1 % par semaine, c'est plus rapide que ce que ton plan prévoit",
+  "en": "your weight is dropping by more than 1 % a week, faster than your plan allows for",
+  "es": "tu peso baja más de un 1 % por semana, más rápido de lo que prevé tu plan"
+ },
+ {
+  "fr": "tes mesures du matin sont sous ta moyenne (",
+  "en": "your morning readings are below your average (",
+  "es": "tus medidas de la mañana están por debajo de tu media ("
+ },
+ {
+  "fr": "tes mesures du matin sont sous ta moyenne ({})",
+  "en": "your morning readings are below your average ({})",
+  "es": "tus medidas de la mañana están por debajo de tu media ({})"
+ },
+ {
+  "fr": "tu as noté une énergie basse à ton dernier bilan",
+  "en": "you recorded low energy in your last check-in",
+  "es": "anotaste energía baja en tu último balance"
+ },
+ {
+  "fr": "tes règles ont beaucoup de retard, ou sont absentes",
+  "en": "your period is well overdue, or absent",
+  "es": "tu regla lleva mucho retraso, o está ausente"
+ },
+ {
+  "fr": "règles",
+  "en": "period",
+  "es": "regla"
+ },
+ {
+  "fr": "% sous",
+  "en": "% below",
+  "es": "% por debajo de"
+ },
+ {
+  "fr": "dépense de référence (",
+  "en": "reference expenditure (",
+  "es": "gasto de referencia ("
+ },
+ {
+  "fr": "kcal), avec",
+  "en": "kcal), with",
+  "es": "kcal), con"
+ },
+ {
+  "fr": "UA d'entraînement par semaine",
+  "en": "AU of training per week",
+  "es": "UA de entrenamiento por semana"
+ },
+ {
+  "fr": "L'application ne calcule pas de disponibilité énergétique : la vraie mesure demande la masse maigre, qu'elle ne mesure pas. Elle compare seulement",
+  "en": "The app does not calculate energy availability: the real measure requires lean mass, which it does not measure. It only compares",
+  "es": "La aplicación no calcula la disponibilidad energética: la medida real requiere la masa magra, que no mide. Solo compara"
+ },
+ {
+  "fr": "apports notés à",
+  "en": "recorded intake with",
+  "es": "ingesta anotada con"
+ },
+ {
+  "fr": "dépense de référence,",
+  "en": "reference expenditure,",
+  "es": "gasto de referencia,"
+ },
+ {
+  "fr": "charge et",
+  "en": "load and",
+  "es": "carga y"
+ },
+ {
+  "fr": "autres signaux. Un signalement absent ne veut donc pas dire que tout va bien.",
+  "en": "other signals. So the absence of a warning does not mean everything is fine.",
+  "es": "otras señales. Por tanto, la ausencia de aviso no significa que todo vaya bien."
+ },
+ {
+  "fr": "Apports bas pour la charge : à aborder avec le client",
+  "en": "Intake low for the load: to raise with the client",
+  "es": "Ingesta baja para la carga: a tratar con el cliente"
+ },
+ {
+  "fr": "Tu manges peu pour ce que tu t'entraînes",
+  "en": "You are eating little for the amount you train",
+  "es": "Comes poco para lo que entrenas"
+ },
+ {
+  "fr": "Sur les 3 dernières semaines",
+  "en": "Over the last 3 weeks",
+  "es": "En las últimas 3 semanas"
+ },
+ {
+  "fr": "Sur tes 3 dernières semaines",
+  "en": "Over your last 3 weeks",
+  "es": "En tus últimas 3 semanas"
+ },
+ {
+  "fr": ", et sous le plancher de sécurité de",
+  "en": ", and below the safety floor of",
+  "es": ", y por debajo del mínimo de seguridad de"
+ },
+ {
+  "fr": ", et sous le plancher de sécurité de {} kcal",
+  "en": ", and below the safety floor of {} kcal",
+  "es": ", y por debajo del mínimo de seguridad de {} kcal"
+ },
+ {
+  "fr": "Et en même temps :",
+  "en": "And at the same time:",
+  "es": "Y al mismo tiempo:"
+ },
+ {
+  "fr": "Ce n'est pas un diagnostic : c'est un schéma d'apports durablement insuffisants pour la charge, celui que le consensus du CIO sur les REDs associe à une baisse de performance, à des troubles du cycle, à une santé osseuse dégradée et à des blessures à répétition. La priorité est de remonter les apports avant de toucher au programme.",
+  "en": "This is not a diagnosis: it is a pattern of intake persistently too low for the load, the one the IOC consensus on REDs links to a drop in performance, cycle disturbances, poorer bone health and repeated injuries. The priority is to bring intake back up before touching the programme.",
+  "es": "No es un diagnóstico: es un patrón de ingesta sostenidamente insuficiente para la carga, el que el consenso del COI sobre los REDs asocia a una caída del rendimiento, a alteraciones del ciclo, a una peor salud ósea y a lesiones repetidas. La prioridad es subir la ingesta antes de tocar el programa."
+ },
+ {
+  "fr": "Ce n'est pas un diagnostic, et ce n'est pas une accusation : c'est un schéma que les préparateurs connaissent bien. Manger durablement trop peu pour sa charge d'entraînement fait baisser les performances au lieu de les améliorer, fatigue les os, dérègle les hormones et augmente les blessures. La bonne nouvelle, c'est que ça se corrige en remontant les apports, pas en s'entraînant plus.",
+  "en": "This is not a diagnosis, and it is not an accusation: it is a pattern strength coaches know well. Eating too little for your training load over time lowers performance instead of improving it, tires the bones, disrupts hormones and increases injuries. The good news is that it is fixed by eating more, not by training more.",
+  "es": "No es un diagnóstico, y no es una acusación: es un patrón que los preparadores conocen bien. Comer de forma sostenida demasiado poco para la carga de entrenamiento baja el rendimiento en lugar de mejorarlo, fatiga los huesos, desajusta las hormonas y aumenta las lesiones. La buena noticia es que se corrige subiendo la ingesta, no entrenando más."
+ },
+ {
+  "fr": "À faire :",
+  "en": "To do:",
+  "es": "Qué hacer:"
+ },
+ {
+  "fr": "Ce qu'il faut faire :",
+  "en": "What to do:",
+  "es": "Lo que hay que hacer:"
+ },
+ {
+  "fr": "remonter les apports vers la dépense de référence, alléger la charge le temps que ça remonte, et orienter vers un médecin ou un diététicien si les signaux persistent.",
+  "en": "bring intake back up towards the reference expenditure, ease the load while it recovers, and refer to a doctor or a dietitian if the signals persist.",
+  "es": "subir la ingesta hacia el gasto de referencia, aligerar la carga mientras se recupera, y derivar a un médico o a un dietista si las señales persisten."
+ },
+ {
+  "fr": "remonte tes apports vers ta dépense de référence et parles-en à Antoine avant de continuer sur ce rythme. Il ajustera la charge.",
+  "en": "bring your intake back up towards your reference expenditure and talk to Antoine before carrying on at this pace. He will adjust the load.",
+  "es": "sube tu ingesta hacia tu gasto de referencia y háblalo con Antoine antes de seguir a este ritmo. Él ajustará la carga."
+ },
+ {
+  "fr": "Avis médical à conseiller",
+  "en": "Medical advice to recommend",
+  "es": "Conviene recomendar consejo médico"
+ },
+ {
+  "fr": "Et vois un médecin",
+  "en": "And see a doctor",
+  "es": "Y ve a un médico"
+ },
+ {
+  "fr": "les signaux réunis ci-dessus justifient un avis médical, pas seulement un ajustement de plan.",
+  "en": "the signals gathered above warrant medical advice, not just an adjustment to the plan.",
+  "es": "las señales reunidas arriba justifican una consulta médica, no solo un ajuste del plan."
+ },
+ {
+  "fr": "des règles absentes, une fatigue qui ne passe pas ou des blessures qui reviennent méritent un avis médical. Ce n'est pas grave en soi, mais ça ne se règle pas uniquement avec l'application.",
+  "en": "an absent period, fatigue that will not lift or injuries that keep coming back deserve medical advice. It is not serious in itself, but it cannot be sorted out with the app alone.",
+  "es": "una regla ausente, un cansancio que no se va o lesiones que vuelven merecen una consulta médica. No es grave en sí, pero no se arregla solo con la aplicación."
+ },
+ {
+  "fr": "Apports bas pour la charge (",
+  "en": "Intake low for the load (",
+  "es": "Ingesta baja para la carga ("
+ },
+ {
+  "fr": "% sous la référence)",
+  "en": "% below the reference)",
+  "es": "% por debajo de la referencia)"
+ },
+ {
+  "fr": "Apports bas pour la charge ({} % sous la référence)",
+  "en": "Intake low for the load ({} % below the reference)",
+  "es": "Ingesta baja para la carga ({} % por debajo de la referencia)"
+ }
+]

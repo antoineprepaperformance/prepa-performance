@@ -1,0 +1,272 @@
+[
+ {
+  "fr": "Condition présente dans toutes les études : des protéines élevées (",
+  "en": "A condition found in every study: high protein (",
+  "es": "Condición presente en todos los estudios: proteínas altas ("
+ },
+ {
+  "fr": " g par kg de poids et par jour) et un déficit modéré, pas extrême.",
+  "en": " g per kg of body weight per day) and a moderate deficit, not an extreme one.",
+  "es": " g por kg de peso y día) y un déficit moderado, no extremo."
+ },
+ {
+  "fr": "Condition présente dans toutes les études : des protéines élevées ({} à {} g par kg de poids et par jour) et un déficit modéré, pas extrême.",
+  "en": "A condition found in every study: high protein ({} to {} g per kg of body weight per day) and a moderate deficit, not an extreme one.",
+  "es": "Condición presente en todos los estudios: proteínas altas ({} a {} g por kg de peso y día) y un déficit moderado, no extremo."
+ },
+ {
+  "fr": "Le poids est affiché pour information : en recomposition il bouge peu, ce n'est pas un échec.",
+  "en": "Weight is shown for information: during recomposition it moves little, and that is not a failure.",
+  "es": "El peso se muestra a título informativo: en recomposición se mueve poco, y eso no es un fracaso."
+ },
+ {
+  "fr": "Mesures prises depuis les tests du client et ses charges notées.",
+  "en": "Measurements taken from the client's tests and the loads they recorded.",
+  "es": "Medidas tomadas de los test del cliente y de las cargas que ha anotado."
+ },
+ {
+  "fr": "pas encore de programme",
+  "en": "no programme yet",
+  "es": "todavía sin programa"
+ },
+ {
+  "fr": "form dim",
+  "en": "form dim",
+  "es": "form dim"
+ },
+ {
+  "fr": "À l'inverse — Autoregulation does not provide additional benefits to a mixed session periodized resistance training program in trained men. 2024. — un essai contrôlé ne trouve aucun bénéfice supplémentaire : la littérature est orientée, pas unanime. C'est pourquoi rien ici ne promet de meilleurs résultats.",
+  "en": "Conversely — Autoregulation does not provide additional benefits to a mixed session periodized resistance training program in trained men. 2024. — a controlled trial finds no additional benefit: the literature leans one way, it is not unanimous. That is why nothing here promises better results.",
+  "es": "Por el contrario — Autoregulation does not provide additional benefits to a mixed session periodized resistance training program in trained men. 2024. — un ensayo controlado no encuentra ningún beneficio adicional: la literatura se inclina, pero no es unánime. Por eso aquí nada promete mejores resultados."
+ },
+ {
+  "fr": "douleur {}/10 notée la dernière fois",
+  "en": "pain {}/10 noted last time",
+  "es": "dolor {}/10 anotado la última vez"
+ },
+ {
+  "fr": "Première séance de ce type : charge du programme, sans ajustement. L'ajustement commence dès que tu en auras fait une.",
+  "en": "First session of this kind: programme load, no adjustment. Adjustment starts as soon as you have done one.",
+  "es": "Primera sesión de este tipo: carga del programa, sin ajuste. El ajuste empieza en cuanto hayas hecho una."
+ },
+ {
+  "fr": "Effort ressenti non noté la dernière fois : pas d'ajustement possible, charge du programme.",
+  "en": "Perceived effort not recorded last time: no adjustment possible, programme load.",
+  "es": "Esfuerzo percibido no anotado la última vez: sin ajuste posible, carga del programa."
+ },
+ {
+  "fr": "Dernière séance de ce type notée",
+  "en": "Last session of this kind rated",
+  "es": "Última sesión de este tipo valorada"
+ },
+ {
+  "fr": "Dernière séance de ce type notée {}/10 et terminée en entier : il te restait de la marge.",
+  "en": "Last session of this kind rated {}/10 and finished in full: you had room to spare.",
+  "es": "Última sesión de este tipo valorada {}/10 y terminada por completo: te quedaba margen."
+ },
+ {
+  "fr": "Dernière séance de ce type notée {}/10 : au-delà de la cible, on redescend.",
+  "en": "Last session of this kind rated {}/10: above the target, so we come back down.",
+  "es": "Última sesión de este tipo valorada {}/10: por encima del objetivo, bajamos."
+ },
+ {
+  "fr": "Dernière séance de ce type non terminée en entier : on redescend pour la finir.",
+  "en": "Last session of this kind not finished in full: we come back down so you can finish it.",
+  "es": "Última sesión de este tipo sin terminar por completo: bajamos para que la termines."
+ },
+ {
+  "fr": "Dernière séance de ce type notée {}/10 : pile dans la cible, on garde la charge du programme.",
+  "en": "Last session of this kind rated {}/10: right on target, so we keep the programme load.",
+  "es": "Última sesión de este tipo valorada {}/10: justo en el objetivo, mantenemos la carga del programa."
+ },
+ {
+  "fr": "Pas encore assez de répétitions notées sur ce type de séance : charge du programme.",
+  "en": "Not enough reps recorded yet on this kind of session: programme load.",
+  "es": "Aún no hay suficientes repeticiones anotadas en este tipo de sesión: carga del programa."
+ },
+ {
+  "fr": "La dernière fois tu as fait toutes tes répétitions (",
+  "en": "Last time you did all your reps (",
+  "es": "La última vez hiciste todas tus repeticiones ("
+ },
+ {
+  "fr": " prévues)",
+  "en": " planned)",
+  "es": " previstas)"
+ },
+ {
+  "fr": ", et tes",
+  "en": ", and your",
+  "es": ", y tus"
+ },
+ {
+  "fr": "de la semaine",
+  "en": "for the week",
+  "es": "de la semana"
+ },
+ {
+  "fr": ", et tes {} de la semaine",
+  "en": ", and your {} for the week",
+  "es": ", y tus {} de la semana"
+ },
+ {
+  "fr": " : c'est le moment de charger un peu.",
+  "en": ": this is the moment to add a little load.",
+  "es": ": es el momento de cargar un poco."
+ },
+ {
+  "fr": "La dernière fois tu as fait toutes tes répétitions ({} sur {} prévues){} : c'est le moment de charger un peu.",
+  "en": "Last time you did all your reps ({} of {} planned){}: this is the moment to add a little load.",
+  "es": "La última vez hiciste todas tus repeticiones ({} de {} previstas){}: es el momento de cargar un poco."
+ },
+ {
+  "fr": "La dernière fois tu as fait",
+  "en": "Last time you did",
+  "es": "La última vez hiciste"
+ },
+ {
+  "fr": "répétitions sur",
+  "en": "reps out of",
+  "es": "repeticiones de"
+ },
+ {
+  "fr": "prévues : la charge était trop lourde, on redescend.",
+  "en": "planned: the load was too heavy, so we come back down.",
+  "es": "previstas: la carga era demasiado pesada, bajamos."
+ },
+ {
+  "fr": "La dernière fois tu as fait {} répétitions sur {} prévues : la charge était trop lourde, on redescend.",
+  "en": "Last time you did {} reps out of {} planned: the load was too heavy, so we come back down.",
+  "es": "La última vez hiciste {} repeticiones de {} previstas: la carga era demasiado pesada, bajamos."
+ },
+ {
+  "fr": "Courbatures fortes notées à ton dernier bilan : on allège le temps que ça passe.",
+  "en": "Heavy soreness recorded in your last check-in: we ease off until it passes.",
+  "es": "Agujetas fuertes anotadas en tu último balance: aligeramos hasta que pase."
+ },
+ {
+  "fr": "cette semaine : on garde la charge du programme le temps de rattraper le rythme, sans charger davantage.",
+  "en": "this week: we keep the programme load until you are back on rhythm, without adding more.",
+  "es": "esta semana: mantenemos la carga del programa hasta recuperar el ritmo, sin cargar más."
+ },
+ {
+  "fr": "{} sur {} cette semaine : on garde la charge du programme le temps de rattraper le rythme, sans charger davantage.",
+  "en": "{} of {} this week: we keep the programme load until you are back on rhythm, without adding more.",
+  "es": "{} de {} esta semana: mantenemos la carga del programa hasta recuperar el ritmo, sin cargar más."
+ },
+ {
+  "fr": "Tes répétitions sont presque toutes faites : on garde la charge du programme encore une séance.",
+  "en": "Almost all your reps are done: we keep the programme load for one more session.",
+  "es": "Casi todas tus repeticiones están hechas: mantenemos la carga del programa una sesión más."
+ },
+ {
+  "fr": "Tes mesures du matin sont nettement sous ta moyenne (",
+  "en": "Your morning readings are clearly below your average (",
+  "es": "Tus medidas de la mañana están claramente por debajo de tu media ("
+ },
+ {
+  "fr": ") : on allège aujourd'hui.",
+  "en": "): we ease off today.",
+  "es": "): aligeramos hoy."
+ },
+ {
+  "fr": "Tes mesures du matin sont nettement sous ta moyenne ({}) : on allège aujourd'hui.",
+  "en": "Your morning readings are clearly below your average ({}): we ease off today.",
+  "es": "Tus medidas de la mañana están claramente por debajo de tu media ({}): aligeramos hoy."
+ },
+ {
+  "fr": "Tes mesures du matin sont un peu sous ta moyenne (",
+  "en": "Your morning readings are a little below your average (",
+  "es": "Tus medidas de la mañana están algo por debajo de tu media ("
+ },
+ {
+  "fr": ") : on ne charge pas aujourd'hui, on garde la charge du programme.",
+  "en": "): we do not add load today, we keep the programme load.",
+  "es": "): hoy no cargamos, mantenemos la carga del programa."
+ },
+ {
+  "fr": "Tes mesures du matin sont un peu sous ta moyenne ({}) : on ne charge pas aujourd'hui, on garde la charge du programme.",
+  "en": "Your morning readings are a little below your average ({}): we do not add load today, we keep the programme load.",
+  "es": "Tus medidas de la mañana están algo por debajo de tu media ({}): hoy no cargamos, mantenemos la carga del programa."
+ },
+ {
+  "fr": "Charge du programme, inchangée aujourd'hui",
+  "en": "Programme load, unchanged today",
+  "es": "Carga del programa, sin cambios hoy"
+ },
+ {
+  "fr": "Jour complémentaire : cette séance revient une",
+  "en": "Extra day: this session comes round a",
+  "es": "Día complementario: esta sesión vuelve una"
+ },
+ {
+  "fr": "deuxième",
+  "en": "second",
+  "es": "segunda"
+ },
+ {
+  "fr": "troisième",
+  "en": "third",
+  "es": "tercera"
+ },
+ {
+  "fr": "fois cette semaine parce que tu t'entraînes plus de jours que le programme n'a de séances. Elle est volontairement plus légère (−",
+  "en": "time this week because you train on more days than the programme has sessions. It is deliberately lighter (−",
+  "es": "vez esta semana porque entrenas más días de los que el programa tiene sesiones. Es deliberadamente más ligera (−"
+ },
+ {
+  "fr": "% de charge, une série de moins sur la force) : enchaîner deux fois la même séance dure dans la semaine fatigue sans faire progresser davantage.",
+  "en": "% load, one set fewer on strength): doing the same hard session twice in a week tires you without adding progress.",
+  "es": "% de carga, una serie menos en fuerza): encadenar dos veces la misma sesión dura en la semana cansa sin hacer progresar más."
+ },
+ {
+  "fr": "Jour complémentaire : cette séance revient une {} fois cette semaine parce que tu t'entraînes plus de jours que le programme n'a de séances. Elle est volontairement plus légère (−{} % de charge, une série de moins sur la force) : enchaîner deux fois la même séance dure dans la semaine fatigue sans faire progresser davantage.",
+  "en": "Extra day: this session comes round a {} time this week because you train on more days than the programme has sessions. It is deliberately lighter (−{} % load, one set fewer on strength): doing the same hard session twice in a week tires you without adding progress.",
+  "es": "Día complementario: esta sesión vuelve una {} vez esta semana porque entrenas más días de los que el programa tiene sesiones. Es deliberadamente más ligera (−{} % de carga, una serie menos en fuerza): encadenar dos veces la misma sesión dura en la semana cansa sin hacer progresar más."
+ },
+ {
+  "fr": "Ajustement automatique, dans les limites réglées par Antoine (+",
+  "en": "Automatic adjustment, within the limits set by Antoine (+",
+  "es": "Ajuste automático, dentro de los límites fijados por Antoine (+"
+ },
+ {
+  "fr": "% au maximum). Il ne remplace pas ton programme : il ajuste la charge du jour.",
+  "en": "% at most). It does not replace your programme: it adjusts today's load.",
+  "es": "% como máximo). No sustituye a tu programa: ajusta la carga del día."
+ },
+ {
+  "fr": "Séance allégée (jour en plus)",
+  "en": "Lighter session (extra day)",
+  "es": "Sesión aligerada (día de más)"
+ },
+ {
+  "fr": "Autorégulation enregistrée.",
+  "en": "Autoregulation saved.",
+  "es": "Autorregulación guardada."
+ },
+ {
+  "fr": "Autorégulation de la charge",
+  "en": "Load autoregulation",
+  "es": "Autorregulación de la carga"
+ },
+ {
+  "fr": "La charge du jour s'ajuste seule, selon une règle écrite, dans les limites que tu fixes",
+  "en": "Today's load adjusts on its own, following a written rule, within the limits you set",
+  "es": "La carga del día se ajusta sola, según una regla escrita, dentro de los límites que fijes"
+ },
+ {
+  "fr": "Ajuster automatiquement la charge de ce client",
+  "en": "Automatically adjust this client's load",
+  "es": "Ajustar automáticamente la carga de este cliente"
+ },
+ {
+  "fr": "Signaux utilisés selon le profil : effort ressenti de fin de séance et séance terminée ou non (Performance, Haut niveau) ; répétitions faites contre prescrites, séances de la semaine et courbatures (Reprise, Sportif), parce qu'un débutant ne sait pas coter un effort. Les signaux de montre (FC au repos, VFC, nuit courte) ne peuvent que faire baisser la charge, jamais la monter.",
+  "en": "Signals used depending on the profile: perceived effort at the end of the session and whether the session was finished (Performance, Elite); reps done against reps prescribed, sessions in the week and soreness (Return, Sporty), because a beginner cannot rate an effort. Watch signals (resting HR, HRV, short night) can only lower the load, never raise it.",
+  "es": "Señales usadas según el perfil: esfuerzo percibido al final de la sesión y sesión terminada o no (Rendimiento, Alto nivel); repeticiones hechas frente a prescritas, sesiones de la semana y agujetas (Retomar, Deportista), porque un principiante no sabe puntuar un esfuerzo. Las señales del reloj (FC en reposo, VFC, noche corta) solo pueden bajar la carga, nunca subirla."
+ },
+ {
+  "fr": "Ce que ça apporte : le client peut s'entraîner tous les jours sans que la charge soit plate ni imprudente, sans que tu touches au programme. Ce n'est pas une promesse de meilleurs résultats : aucune étude ne montre l'autorégulation battre décisivement une périodisation fixe bien conçue, et tes programmes en sont une.",
+  "en": "What it brings: the client can train every day without the load being flat or reckless, and without you touching the programme. It is not a promise of better results: no study shows autoregulation decisively beating a well-designed fixed periodisation, and your programmes are one.",
+  "es": "Lo que aporta: el cliente puede entrenar todos los días sin que la carga sea plana ni imprudente, y sin que toques el programa. No es una promesa de mejores resultados: ningún estudio muestra que la autorregulación supere de forma decisiva a una periodización fija bien diseñada, y tus programas lo son."
+ }
+]

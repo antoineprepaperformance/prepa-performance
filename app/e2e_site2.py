@@ -125,7 +125,7 @@ async def run():
         await btn(co, "Clients", exact=True)
         await co.locator("table.ctable tbody tr", has_text="Tom Deux").click(); await co.wait_for_timeout(400)
         await co.get_by_role("radio", name="Notes").click(); await co.wait_for_timeout(200)
-        await co.fill("#del-c", "supprimer")
+        await co.fill("input[id^='del-c-']", "supprimer")
         await btn(co, "Supprimer définitivement"); await co.wait_for_timeout(1200)
         uid2 = await c2.evaluate("firebase.auth().currentUser.uid")
         left = await co.evaluate(f"Object.keys(window.__fakefs.load()).filter(k => k.includes('{uid2}'))")

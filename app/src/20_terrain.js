@@ -301,14 +301,22 @@ function TerrainSchema({ sc, title, compact, autoplay, legend }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [tl, play, vis, slow]);
-  if (!sc || !tl) return null;
-  const [x0, y0, x1, y1] = sc.v;
-  const W = x1 - x0, H = y1 - y0;
-  const u = W / 300;
-  const fs = clamp(Math.max(W, H * 0.8) * 0.032, 0.18, 5);
-  const tall = H > W * 0.72;
+  /* geometrie et hooks AVANT le retour anticipe : un schema qui apparait ou disparait (sc/tl) changeait
+     sinon le nombre de hooks entre deux rendus, et l'application entiere tombait (erreur React #300). */
   const cid = useMemo(() => "tsc" + Math.random().toString(36).slice(2, 8), []);
-  const numAt = useMemo(() => { const seen = []; return (sc.p || []).map((p) => { if (!p.n) return null; const q = p.p[0]; const near = seen.some((z) => Math.hypot(z[0] - q[0], z[1] - q[1]) < fs * 1.3); seen.push(q); return near ? tsAt(p.p, tsLen(p.p) * 0.38) : q; }); }, [sc, fs]);
+  const geo = useMemo(() => {
+    if (!sc) return null;
+    const [x0, y0, x1, y1] = sc.v;
+    const W = x1 - x0, H = y1 - y0;
+    return { x0, y0, x1, y1, W, H, u: W / 300, fs: clamp(Math.max(W, H * 0.8) * 0.032, 0.18, 5), tall: H > W * 0.72 };
+  }, [sc]);
+  const numAt = useMemo(() => {
+    if (!sc || !geo) return [];
+    const seen = [], fs = geo.fs;
+    return (sc.p || []).map((p) => { if (!p.n) return null; const q = p.p[0]; const near = seen.some((z) => Math.hypot(z[0] - q[0], z[1] - q[1]) < fs * 1.3); seen.push(q); return near ? tsAt(p.p, tsLen(p.p) * 0.38) : q; });
+  }, [sc, geo]);
+  if (!sc || !tl || !geo) return null;
+  const { x0, y0, x1, y1, W, H, u, fs, tall } = geo;
   const run = tl.runners.map((ru) => ({ ru, at: tsRunnerAt(ru, play || time > 0 ? time : tl.T) }));
   const active = new Set(run.map((r) => (r.at ? r.at.seg : -1)));
   const doneUpTo = (i, r) => { const ru = tl.runners.find((q) => q.r === r); const s = ru && ru.segs.find((q) => q.i === i); return !(play || time > 0) || (s && time >= s.t0); };

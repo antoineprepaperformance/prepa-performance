@@ -1,0 +1,262 @@
+[
+ {
+  "fr": "Charge allégée de {} % aujourd'hui",
+  "en": "Load eased by {} % today",
+  "es": "Carga aligerada un {} % hoy"
+ },
+ {
+  "fr": "Jour en plus, et ajustement du jour.",
+  "en": "Extra day, plus today's adjustment.",
+  "es": "Día de más, y ajuste del día."
+ },
+ {
+  "fr": "Jour en plus : séance volontairement plus légère.",
+  "en": "Extra day: session deliberately lighter.",
+  "es": "Día de más: sesión deliberadamente más ligera."
+ },
+ {
+  "fr": "Ajustement automatique, dans les limites réglées par Antoine.",
+  "en": "Automatic adjustment, within the limits set by Antoine.",
+  "es": "Ajuste automático, dentro de los límites fijados por Antoine."
+ },
+ {
+  "fr": "{} : {} kg. {}",
+  "en": "{}: {} kg. {}",
+  "es": "{}: {} kg. {}"
+ },
+ {
+  "fr": "Mes règles ont commencé ce jour-là",
+  "en": "My period started that day",
+  "es": "Mi regla empezó ese día"
+ },
+ {
+  "fr": "Lun",
+  "en": "Mon",
+  "es": "Lun"
+ },
+ {
+  "fr": "Mer",
+  "en": "Wed",
+  "es": "Mié"
+ },
+ {
+  "fr": "Jeu",
+  "en": "Thu",
+  "es": "Jue"
+ },
+ {
+  "fr": "Ven",
+  "en": "Fri",
+  "es": "Vie"
+ },
+ {
+  "fr": "Dim",
+  "en": "Sun",
+  "es": "Dom"
+ },
+ {
+  "fr": "Séance {}",
+  "en": "Session {}",
+  "es": "Sesión {}"
+ },
+ {
+  "fr": "jour d'entraînement",
+  "en": "training day",
+  "es": "día de entrenamiento"
+ },
+ {
+  "fr": "jours d'entraînement",
+  "en": "training days",
+  "es": "días de entrenamiento"
+ },
+ {
+  "fr": "par semaine.",
+  "en": "per week.",
+  "es": "por semana."
+ },
+ {
+  "fr": "{} par semaine.",
+  "en": "{} per week.",
+  "es": "{} por semana."
+ },
+ {
+  "fr": "Une séance revient",
+  "en": "One session comes round",
+  "es": "Una sesión se repite"
+ },
+ {
+  "fr": "dans la semaine.",
+  "en": "during the week.",
+  "es": "en la semana."
+ },
+ {
+  "fr": "Une séance revient {} dans la semaine.",
+  "en": "One session comes round {} during the week.",
+  "es": "Una sesión se repite {} en la semana."
+ },
+ {
+  "fr": "Tu ne peux pas descendre en dessous de",
+  "en": "You cannot go below",
+  "es": "No puedes bajar de"
+ },
+ {
+  "fr": " : en dessous, une de tes séances ne passerait pas.",
+  "en": ": below that, one of your sessions would not fit.",
+  "es": ": por debajo, una de tus sesiones no cabría."
+ },
+ {
+  "fr": "Tu ne peux pas descendre en dessous de {} : en dessous, une de tes séances ne passerait pas.",
+  "en": "You cannot go below {}: below that, one of your sessions would not fit.",
+  "es": "No puedes bajar de {}: por debajo, una de tus sesiones no cabría."
+ },
+ {
+  "fr": "Au-delà de",
+  "en": "Beyond",
+  "es": "Más allá de"
+ },
+ {
+  "fr": ", les jours en plus reprennent tes séances habituelles en boucle.",
+  "en": ", the extra days loop through your usual sessions again.",
+  "es": ", los días de más repiten tus sesiones habituales en bucle."
+ },
+ {
+  "fr": "Au-delà de {}, les jours en plus reprennent tes séances habituelles en boucle.",
+  "en": "Beyond {}, the extra days loop through your usual sessions again.",
+  "es": "Más allá de {}, los días de más repiten tus sesiones habituales en bucle."
+ },
+ {
+  "fr": "(matin)",
+  "en": "(morning)",
+  "es": "(mañana)"
+ },
+ {
+  "fr": "(soir)",
+  "en": "(evening)",
+  "es": "(tarde)"
+ },
+ {
+  "fr": "Source",
+  "en": "Source",
+  "es": "Fuente"
+ },
+ {
+  "fr": "[page",
+  "en": "[page",
+  "es": "[page"
+ },
+ {
+  "fr": "[page {}] {}",
+  "en": "[page {}] {}",
+  "es": "[page {}] {}"
+ },
+ {
+  "fr": "La lecture de PDF n'a pas pu se charger (vérifie ta connexion) : réessaie dans un instant.",
+  "en": "The PDF reader could not load (check your connection): try again in a moment.",
+  "es": "El lector de PDF no se pudo cargar (comprueba tu conexión): inténtalo de nuevo en un momento."
+ },
+ {
+  "fr": "Ce PDF ne contient pas de texte lisible (probablement des pages scannées en image) : transformation impossible, saisis le programme à la main.",
+  "en": "This PDF has no readable text (most likely pages scanned as images): it cannot be converted, enter the programme by hand.",
+  "es": "Este PDF no contiene texto legible (probablemente páginas escaneadas como imagen): no se puede convertir, introduce el programa a mano."
+ },
+ {
+  "fr": "Transformation impossible :",
+  "en": "Conversion failed:",
+  "es": "Conversión imposible:"
+ },
+ {
+  "fr": "Ce que l'IA a répondu (à copier si le souci se reproduit) :",
+  "en": "What the AI replied (copy this if the problem comes back):",
+  "es": "Lo que respondió la IA (cópialo si el problema se repite):"
+ },
+ {
+  "fr": "Transformation impossible : {} Ce que l'IA a répondu (à copier si le souci se reproduit) : {}",
+  "en": "Conversion failed: {} What the AI replied (copy this if the problem comes back): {}",
+  "es": "Conversión imposible: {} Lo que respondió la IA (cópialo si el problema se repite): {}"
+ },
+ {
+  "fr": "Transformation impossible : {}",
+  "en": "Conversion failed: {}",
+  "es": "Conversión imposible: {}"
+ },
+ {
+  "fr": "Pour la dose de chaque exercice, choisis l'une de ces deux formes selon ce que dit le document (jamais les deux, jamais de gabarit interne) : - \"free\" : texte EXACT de la prescription telle qu'écrite (ex. \"3 x 2 reps · 80 % RM squat · récup 20''\") — la forme la plus courante pour une séance qui ne se répète pas. - \"w\" : tableau de textes, un par occurrence fournie ci-dessous, dans le même ordre (ex. \"4 x 5 · 75 %\" puis \"5 x 4 · 80 %\"…) — pour une dose qui progresse d'une occurrence à l'autre. Pour \"e\", choisis l'identifiant le plus proche dans la liste [id, nom, catégorie] fournie si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice.",
+  "en": "Pour la dose de chaque exercice, choisis l'une de ces deux formes selon ce que dit le document (jamais les deux, jamais de gabarit interne) : - \"free\" : texte EXACT de la prescription telle qu'écrite (ex. \"3 x 2 reps · 80 % RM squat · récup 20''\") — la forme la plus courante pour une séance qui ne se répète pas. - \"w\" : tableau de textes, un par occurrence fournie ci-dessous, dans le même ordre (ex. \"4 x 5 · 75 %\" puis \"5 x 4 · 80 %\"…) — pour une dose qui progresse d'une occurrence à l'autre. Pour \"e\", choisis l'identifiant le plus proche dans la liste [id, nom, catégorie] fournie si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice.",
+  "es": "Pour la dose de chaque exercice, choisis l'une de ces deux formes selon ce que dit le document (jamais les deux, jamais de gabarit interne) : - \"free\" : texte EXACT de la prescription telle qu'écrite (ex. \"3 x 2 reps · 80 % RM squat · récup 20''\") — la forme la plus courante pour une séance qui ne se répète pas. - \"w\" : tableau de textes, un par occurrence fournie ci-dessous, dans le même ordre (ex. \"4 x 5 · 75 %\" puis \"5 x 4 · 80 %\"…) — pour une dose qui progresse d'une occurrence à l'autre. Pour \"e\", choisis l'identifiant le plus proche dans la liste [id, nom, catégorie] fournie si un exercice correspond vraiment à ce que fait l'athlète ; sinon invente un identifiant court en minuscules avec des underscores, proche du nom français de l'exercice."
+ },
+ {
+  "fr": "Séance-type :",
+  "en": "Séance-type :",
+  "es": "Séance-type :"
+ },
+ {
+  "fr": "Liste d'exercices existants [id, nom, catégorie] :",
+  "en": "Liste d'exercices existants [id, nom, catégorie] :",
+  "es": "Liste d'exercices existants [id, nom, catégorie] :"
+ },
+ {
+  "fr": "Occurrences, dans l'ordre des semaines :",
+  "en": "Occurrences, dans l'ordre des semaines :",
+  "es": "Occurrences, dans l'ordre des semaines :"
+ },
+ {
+  "fr": "Nom de cette semaine :",
+  "en": "Nom de cette semaine :",
+  "es": "Nom de cette semaine :"
+ },
+ {
+  "fr": "Texte :",
+  "en": "Texte :",
+  "es": "Texte :"
+ },
+ {
+  "fr": "Bloc {}",
+  "en": "Block {}",
+  "es": "Bloque {}"
+ },
+ {
+  "fr": "Programme importé",
+  "en": "Imported programme",
+  "es": "Programa importado"
+ },
+ {
+  "fr": "Bloc 1",
+  "en": "Block 1",
+  "es": "Bloque 1"
+ },
+ {
+  "fr": "Semaine 1",
+  "en": "Week 1",
+  "es": "Semana 1"
+ },
+ {
+  "fr": "Les études sur le lien entre cycle menstruel et performance ou blessure restent peu nombreuses, de qualité souvent faible, et montrent une grande variation d'une femme à l'autre. Aucune ne permet de recommander une règle d'entraînement (plus de force ici, décharge là) selon la phase : c'est un repère de vigilance, pas une prescription.",
+  "en": "Studies on the link between the menstrual cycle and performance or injury are still few, often of low quality, and show wide variation from one woman to the next. None of them supports a training rule by phase (more strength here, a deload there): this is a prompt for vigilance, not a prescription.",
+  "es": "Los estudios sobre la relación entre el ciclo menstrual y el rendimiento o las lesiones siguen siendo escasos, a menudo de baja calidad, y muestran una gran variación de una mujer a otra. Ninguno permite recomendar una regla de entrenamiento según la fase (más fuerza aquí, descarga allá): es una señal de vigilancia, no una prescripción."
+ },
+ {
+  "fr": "Règles",
+  "en": "Period",
+  "es": "Regla"
+ },
+ {
+  "fr": "Écoute ton niveau d'énergie : certaines femmes se sentent très bien, d'autres moins. Adapte au ressenti du jour, comme toujours.",
+  "en": "Listen to your energy level: some women feel very good, others less so. Adapt to how you feel today, as always.",
+  "es": "Escucha tu nivel de energía: algunas mujeres se sienten muy bien y otras menos. Adáptate a cómo te sientes hoy, como siempre."
+ },
+ {
+  "fr": "Phase folliculaire",
+  "en": "Follicular phase",
+  "es": "Fase folicular"
+ },
+ {
+  "fr": "Folliculaire",
+  "en": "Follicular",
+  "es": "Folicular"
+ },
+ {
+  "fr": "Entre les règles et l'ovulation. Aucune étude solide ne justifie de pousser plus fort ici qu'à un autre moment du cycle.",
+  "en": "Between your period and ovulation. No solid study justifies pushing harder here than at any other point in the cycle.",
+  "es": "Entre la regla y la ovulación. Ningún estudio sólido justifica apretar más aquí que en otro momento del ciclo."
+ }
+]

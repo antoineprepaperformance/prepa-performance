@@ -1,0 +1,272 @@
+[
+ {
+  "fr": "Hausse maximale (%)",
+  "en": "Maximum increase (%)",
+  "es": "Subida máxima (%)"
+ },
+ {
+  "fr": "Quand la dernière séance du même type a laissé de la marge",
+  "en": "When the last session of the same kind left room to spare",
+  "es": "Cuando la última sesión del mismo tipo dejó margen"
+ },
+ {
+  "fr": "Baisse maximale (%)",
+  "en": "Maximum decrease (%)",
+  "es": "Bajada máxima (%)"
+ },
+ {
+  "fr": "Quand la séance était trop dure, mal terminée, ou que les signaux du matin sont bas",
+  "en": "When the session was too hard, poorly finished, or the morning signals are low",
+  "es": "Cuando la sesión fue demasiado dura, mal terminada, o las señales de la mañana están bajas"
+ },
+ {
+  "fr": "Freeletics, étude de cas publiée par l'éditeur (via The Audiencers) : les utilisateurs qui terminent deux séances pendant leur première semaine restent nettement plus longtemps. Étude de cas commerciale, pas un essai contrôlé : c'est le seul repère comportemental chiffré trouvé dans le secteur, et il est cité comme tel.",
+  "en": "Freeletics, a case study published by the company (via The Audiencers): users who complete two sessions during their first week stay noticeably longer. A commercial case study, not a controlled trial: it is the only quantified behavioural benchmark found in the sector, and it is cited as such.",
+  "es": "Freeletics, caso de estudio publicado por la empresa (vía The Audiencers): los usuarios que completan dos sesiones durante su primera semana se quedan bastante más tiempo. Caso de estudio comercial, no un ensayo controlado: es la única referencia de comportamiento con cifras encontrada en el sector, y se cita como tal."
+ },
+ {
+  "fr": "Fitness Refined, rapport 2026 sur les raisons d'abandon des applications de sport (communiqué via Barchart) : la perte de motivation ou l'abandon de l'objectif représente 38 % des résiliations déclarées, loin devant le prix. Seul le communiqué a pu être lu, pas la méthodologie.",
+  "en": "Fitness Refined, 2026 report on why people drop fitness apps (press release via Barchart): losing motivation or giving up on the goal accounts for 38 % of reported cancellations, well ahead of price. Only the press release could be read, not the methodology.",
+  "es": "Fitness Refined, informe 2026 sobre los motivos de abandono de las aplicaciones de deporte (nota de prensa vía Barchart): la pérdida de motivación o el abandono del objetivo representa el 38 % de las bajas declaradas, muy por delante del precio. Solo se pudo leer la nota de prensa, no la metodología."
+ },
+ {
+  "fr": "première séance",
+  "en": "first session",
+  "es": "primera sesión"
+ },
+ {
+  "fr": "deux premières séances",
+  "en": "first two sessions",
+  "es": "dos primeras sesiones"
+ },
+ {
+  "fr": "sont faites",
+  "en": "are done",
+  "es": "están hechas"
+ },
+ {
+  "fr": "est faite",
+  "en": "is done",
+  "es": "está hecha"
+ },
+ {
+  "fr": "Tes",
+  "en": "Your",
+  "es": "Tus"
+ },
+ {
+  "fr": "C'est le passage qui compte le plus : les gens qui font leurs deux premières séances dans la première semaine sont ceux qui tiennent sur la durée. La suite est plus facile.",
+  "en": "This is the step that matters most: the people who do their first two sessions in the first week are the ones who stick with it. The rest is easier.",
+  "es": "Es el paso que más cuenta: quienes hacen sus dos primeras sesiones en la primera semana son los que aguantan a largo plazo. El resto es más fácil."
+ },
+ {
+  "fr": "L'objectif de cette première semaine est simple :",
+  "en": "The goal for this first week is simple:",
+  "es": "El objetivo de esta primera semana es simple:"
+ },
+ {
+  "fr": ". Pas plus. C'est le seul cap qui compte pour l'instant, le reste suivra tout seul.",
+  "en": ". Nothing more. It is the only target that matters for now, the rest will follow on its own.",
+  "es": ". Nada más. Es la única meta que cuenta por ahora, el resto vendrá solo."
+ },
+ {
+  "fr": "cette semaine et ton démarrage est réussi.",
+  "en": "this week and your start is a success.",
+  "es": "esta semana y tu arranque será un éxito."
+ },
+ {
+  "fr": "Il te reste",
+  "en": "You have left",
+  "es": "Te quedan"
+ },
+ {
+  "fr": "Dernier jour de ta première semaine.",
+  "en": "Last day of your first week.",
+  "es": "Último día de tu primera semana."
+ },
+ {
+  "fr": "Jamais démarré (",
+  "en": "Never started (",
+  "es": "Nunca empezó ("
+ },
+ {
+  "fr": ") : relancer",
+  "en": "): send a reminder",
+  "es": "): reactivar"
+ },
+ {
+  "fr": "Jamais démarré ({}) : relancer",
+  "en": "Never started ({}): send a reminder",
+  "es": "Nunca empezó ({}): reactivar"
+ },
+ {
+  "fr": "au moins",
+  "en": "at least",
+  "es": "al menos"
+ },
+ {
+  "fr": "pesées sur les 3 dernières semaines (tu en as",
+  "en": "weigh-ins over the last 3 weeks (you have",
+  "es": "pesajes en las últimas 3 semanas (tienes"
+ },
+ {
+  "fr": "au moins {} pesées sur les 3 dernières semaines (tu en as {})",
+  "en": "at least {} weigh-ins over the last 3 weeks (you have {})",
+  "es": "al menos {} pesajes en las últimas 3 semanas (tienes {})"
+ },
+ {
+  "fr": "des pesées espacées d'au moins",
+  "en": "weigh-ins at least",
+  "es": "pesajes separados al menos"
+ },
+ {
+  "fr": "jours (les tiennes couvrent",
+  "en": "days apart (yours span",
+  "es": "días (los tuyos cubren"
+ },
+ {
+  "fr": "des pesées espacées d'au moins {} jours (les tiennes couvrent {})",
+  "en": "weigh-ins at least {} days apart (yours span {})",
+  "es": "pesajes separados al menos {} días (los tuyos cubren {})"
+ },
+ {
+  "fr": "journées de repas notées (tu en as",
+  "en": "days of meals recorded (you have",
+  "es": "días de comidas anotados (tienes"
+ },
+ {
+  "fr": "au moins {} journées de repas notées (tu en as {})",
+  "en": "at least {} days of meals recorded (you have {})",
+  "es": "al menos {} días de comidas anotados (tienes {})"
+ },
+ {
+  "fr": "des repas notés plus régulièrement :",
+  "en": "meals recorded more regularly:",
+  "es": "comidas anotadas con más regularidad:"
+ },
+ {
+  "fr": "jours sur",
+  "en": "days out of",
+  "es": "días de"
+ },
+ {
+  "fr": ", ce qui ne suffit pas pour une moyenne fiable",
+  "en": ", which is not enough for a reliable average",
+  "es": ", lo que no basta para una media fiable"
+ },
+ {
+  "fr": "des repas notés plus régulièrement : {} jours sur {}, ce qui ne suffit pas pour une moyenne fiable",
+  "en": "meals recorded more regularly: {} days out of {}, which is not enough for a reliable average",
+  "es": "comidas anotadas con más regularidad: {} días de {}, lo que no basta para una media fiable"
+ },
+ {
+  "fr": "des pesées à des dates différentes",
+  "en": "weigh-ins on different dates",
+  "es": "pesajes en fechas distintas"
+ },
+ {
+  "fr": "Pas encore de quoi recalculer ta dépense",
+  "en": "Not enough yet to recalculate your expenditure",
+  "es": "Todavía no hay con qué recalcular tu gasto"
+ },
+ {
+  "fr": "Pour comparer ta dépense réelle à l'estimation de départ, il manque",
+  "en": "To compare your real expenditure with the starting estimate, what is missing is",
+  "es": "Para comparar tu gasto real con la estimación inicial, falta"
+ },
+ {
+  "fr": ", et",
+  "en": ", and",
+  "es": ", y"
+ },
+ {
+  "fr": "Pour comparer ta dépense réelle à l'estimation de départ, il manque {}.",
+  "en": "To compare your real expenditure with the starting estimate, what is missing is {}.",
+  "es": "Para comparar tu gasto real con la estimación inicial, falta {}."
+ },
+ {
+  "fr": "plus haute",
+  "en": "higher",
+  "es": "más alto"
+ },
+ {
+  "fr": "plus basse",
+  "en": "lower",
+  "es": "más bajo"
+ },
+ {
+  "fr": "Sur les 3 dernières semaines :",
+  "en": "Over the last 3 weeks:",
+  "es": "En las últimas 3 semanas:"
+ },
+ {
+  "fr": "kcal par jour en moyenne sur",
+  "en": "kcal per day on average over",
+  "es": "kcal al día de media en"
+ },
+ {
+  "fr": "journée notée",
+  "en": "day recorded",
+  "es": "día anotado"
+ },
+ {
+  "fr": "journées notées",
+  "en": "days recorded",
+  "es": "días anotados"
+ },
+ {
+  "fr": "Sur les 3 dernières semaines : {} kcal par jour en moyenne sur {}, et {} sur {}.",
+  "en": "Over the last 3 weeks: {} kcal per day on average over {}, and {} over {}.",
+  "es": "En las últimas 3 semanas: {} kcal al día de media en {}, y {} en {}."
+ },
+ {
+  "fr": "un poids stable",
+  "en": "a stable weight",
+  "es": "un peso estable"
+ },
+ {
+  "fr": "kg par semaine",
+  "en": "kg per week",
+  "es": "kg por semana"
+ },
+ {
+  "fr": "{} kg par semaine",
+  "en": "{} kg per week",
+  "es": "{} kg por semana"
+ },
+ {
+  "fr": "pesée",
+  "en": "weigh-in",
+  "es": "pesaje"
+ },
+ {
+  "fr": "Ce que ça donne : une dépense d'environ",
+  "en": "What that gives: an expenditure of about",
+  "es": "Lo que da: un gasto de unas"
+ },
+ {
+  "fr": "kcal par jour, contre",
+  "en": "kcal per day, against",
+  "es": "kcal al día, frente a"
+ },
+ {
+  "fr": "actuellement utilisées pour tes repères",
+  "en": "currently used for your targets",
+  "es": "usadas actualmente para tus referencias"
+ },
+ {
+  "fr": "estimées au départ",
+  "en": "estimated at the start",
+  "es": "estimadas al principio"
+ },
+ {
+  "fr": "Ce que ça donne : une dépense d'environ {} kcal par jour, contre {}, soit {} % {}.",
+  "en": "What that gives: an expenditure of about {} kcal per day, against {}, that is {} % {}.",
+  "es": "Lo que da: un gasto de unas {} kcal al día, frente a {}, es decir un {} % {}."
+ },
+ {
+  "fr": "Ta dépense correspond à tes repères actuels",
+  "en": "Your expenditure matches your current targets",
+  "es": "Tu gasto coincide con tus referencias actuales"
+ }
+]

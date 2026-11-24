@@ -61,8 +61,12 @@ function cycleState(data, today) {
 function CycleCard({ data, src, coachView }) {
   const toast = useToast();
   const p = data.profile || {};
-  if (p.sex !== "F") return null;
+  /* TOUS les hooks avant les retours anticipes : sinon le jour ou le sexe du profil arrive (ou que la
+     vue coach s'ouvre), React compte moins de hooks qu'au rendu precedent et toute l'application tombe
+     (erreur React #300). Verifie par tools/verif_hooks.mjs. */
   const [busy, setBusy] = useState(false);
+  const [effacer, setEffacer] = useState(false);
+  if (p.sex !== "F") return null;
   if (coachView) {
     if (!cycleShared(p)) return null;
     const st = cycleState(data);
@@ -72,7 +76,6 @@ function CycleCard({ data, src, coachView }) {
     </${Card}>`;
   }
   const on = cycleOn(p);
-  const [effacer, setEffacer] = useState(false);
   const setCycle = async (patch) => {
     setBusy(true);
     try { await src.setProfile({ ...p, cycle: { on: true, share: false, ...(p.cycle || {}), ...patch } }); }

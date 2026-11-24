@@ -111,7 +111,8 @@ async def run():
         ok(len(ak) == 1, "site : activité GPX enregistrée")
         await shot(c, "sante_site")
         await c.locator(".p-top .back").first.click(); await c.wait_for_timeout(300)
-        # séance flash
+        # séance flash — masquée en affichage « L'essentiel » (client qui débute) : on demande tout
+        await c.evaluate("localStorage.setItem('today_tout', '1')"); await c.reload(); await c.wait_for_timeout(1200)
         await btn(c, "Flash", exact=True); await c.locator(".xcard").first.click(); await btn(c, "Commencer la séance"); await btn(c, "Démarrer")
         for _ in range(80):
             if await c.get_by_text("Ton ressenti").count(): break

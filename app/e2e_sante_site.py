@@ -197,7 +197,7 @@ async def run():
         await shot(co, "coach_sante", full=True)
         # ---------- coach : suppression du client, valeurs en attente au relais effacées aussi ----------
         await co.get_by_role("radio", name="Notes", exact=True).click(); await co.wait_for_timeout(400)
-        await co.fill("#del-c", "SUPPRIMER"); await co.get_by_role("button", name="Supprimer définitivement").click(); await co.wait_for_timeout(1500)
+        await co.fill("input[id^='del-c-']", "SUPPRIMER"); await co.get_by_role("button", name="Supprimer définitivement").click(); await co.wait_for_timeout(1500)
         ef = [x for x in calls if x["url"].endswith("/sante/effacer")]
         ok(ef and json.loads(ef[-1]["body"] or "{}").get("uid") == uid and ef[-1]["auth"].startswith("Bearer ey"), "coach : suppression du client → effacement au relais (avec son jeton de coach)")
         await b.close()

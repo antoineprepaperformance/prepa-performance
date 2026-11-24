@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="ae991ddb75">
+<meta name="app-build" content="b686d54a95">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3034,6 +3034,12 @@ function useWide() {
 }
 function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
   const [jours, setJours] = useState(false);     /* fenêtre « Mes jours » : répartition de la semaine */
+  /* TOUS les hooks sont déclarés ici, AVANT les trois retours anticipés plus bas (avant le début du
+     programme, programme terminé, accès verrouillé). Un useState placé après l'un d'eux ne s'exécute pas
+     sur ces branches : React compte alors moins de hooks qu'au rendu précédent et toute l'application
+     tombe sur « Un problème d'affichage est survenu » (erreur React #300). C'est arrivé au moment précis
+     où l'accès d'un client se terminait pendant qu'il avait sa page ouverte. */
+  const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
   const ps = stats.ps;
   const isLite = plan.offer === "lite";
   /* accès daté : Lite, ou formule accompagnée de 6 ou 12 mois (le programme s'enchaîne tant que l'accès court) */
@@ -3193,7 +3199,6 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
      qui ramène tout. « tout voir » reste sur l'appareil, pour ne pas écraser ses réglages de profil. */
   const nLogs = Object.keys(data.logs || {}).length;
   const simpleParDefaut = simpleAuto(profile, nLogs);
-  const [toutVoir, setToutVoir] = useState(() => { try { return localStorage.getItem("today_tout") === "1"; } catch (e) { return false; } });
   const simple = simpleParDefaut && !toutVoir;
   const basculer = () => { const v = !toutVoir; setToutVoir(v); try { localStorage.setItem("today_tout", v ? "1" : "0"); } catch (e) {} };
   const order = blocksOf(prefsOf(profile), simple, profile).filter((b) => b.on).map((b) => b.id);
@@ -10799,14 +10804,22 @@ function TerrainSchema({ sc, title, compact, autoplay, legend }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [tl, play, vis, slow]);
-  if (!sc || !tl) return null;
-  const [x0, y0, x1, y1] = sc.v;
-  const W = x1 - x0, H = y1 - y0;
-  const u = W / 300;
-  const fs = clamp(Math.max(W, H * 0.8) * 0.032, 0.18, 5);
-  const tall = H > W * 0.72;
+  /* geometrie et hooks AVANT le retour anticipe : un schema qui apparait ou disparait (sc/tl) changeait
+     sinon le nombre de hooks entre deux rendus, et l'application entiere tombait (erreur React #300). */
   const cid = useMemo(() => "tsc" + Math.random().toString(36).slice(2, 8), []);
-  const numAt = useMemo(() => { const seen = []; return (sc.p || []).map((p) => { if (!p.n) return null; const q = p.p[0]; const near = seen.some((z) => Math.hypot(z[0] - q[0], z[1] - q[1]) < fs * 1.3); seen.push(q); return near ? tsAt(p.p, tsLen(p.p) * 0.38) : q; }); }, [sc, fs]);
+  const geo = useMemo(() => {
+    if (!sc) return null;
+    const [x0, y0, x1, y1] = sc.v;
+    const W = x1 - x0, H = y1 - y0;
+    return { x0, y0, x1, y1, W, H, u: W / 300, fs: clamp(Math.max(W, H * 0.8) * 0.032, 0.18, 5), tall: H > W * 0.72 };
+  }, [sc]);
+  const numAt = useMemo(() => {
+    if (!sc || !geo) return [];
+    const seen = [], fs = geo.fs;
+    return (sc.p || []).map((p) => { if (!p.n) return null; const q = p.p[0]; const near = seen.some((z) => Math.hypot(z[0] - q[0], z[1] - q[1]) < fs * 1.3); seen.push(q); return near ? tsAt(p.p, tsLen(p.p) * 0.38) : q; });
+  }, [sc, geo]);
+  if (!sc || !tl || !geo) return null;
+  const { x0, y0, x1, y1, W, H, u, fs, tall } = geo;
   const run = tl.runners.map((ru) => ({ ru, at: tsRunnerAt(ru, play || time > 0 ? time : tl.T) }));
   const active = new Set(run.map((r) => (r.at ? r.at.seg : -1)));
   const doneUpTo = (i, r) => { const ru = tl.runners.find((q) => q.r === r); const s = ru && ru.segs.find((q) => q.i === i); return !(play || time > 0) || (s && time >= s.t0); };
@@ -13214,8 +13227,12 @@ function cycleState(data, today) {
 function CycleCard({ data, src, coachView }) {
   const toast = useToast();
   const p = data.profile || {};
-  if (p.sex !== "F") return null;
+  /* TOUS les hooks avant les retours anticipes : sinon le jour ou le sexe du profil arrive (ou que la
+     vue coach s'ouvre), React compte moins de hooks qu'au rendu precedent et toute l'application tombe
+     (erreur React #300). Verifie par tools/verif_hooks.mjs. */
   const [busy, setBusy] = useState(false);
+  const [effacer, setEffacer] = useState(false);
+  if (p.sex !== "F") return null;
   if (coachView) {
     if (!cycleShared(p)) return null;
     const st = cycleState(data);
@@ -13225,7 +13242,6 @@ function CycleCard({ data, src, coachView }) {
     </${Card}>`;
   }
   const on = cycleOn(p);
-  const [effacer, setEffacer] = useState(false);
   const setCycle = async (patch) => {
     setBusy(true);
     try { await src.setProfile({ ...p, cycle: { on: true, share: false, ...(p.cycle || {}), ...patch } }); }

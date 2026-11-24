@@ -46,6 +46,8 @@ FAIL=0
 if python3 tools/verif_cibles.py > "$LOG/cibles.txt" 2>&1; then echo "ok    cibles construites a jour"; else FAIL=1; echo "ÉCHEC cibles en retard :"; cat "$LOG/cibles.txt"; fi
 if command -v node > /dev/null; then
   [ -d tools/node_modules/acorn ] || npm install --prefix tools --silent > "$LOG/npm.txt" 2>&1
+  # un hook declare apres un retour anticipe fait tomber toute l'application (erreur React #300)
+  if node tools/verif_hooks.mjs > "$LOG/hooks.txt" 2>&1; then echo "ok    $(cat "$LOG/hooks.txt")"; else FAIL=1; echo "ÉCHEC hooks apres un retour anticipe :"; head -12 "$LOG/hooks.txt"; fi
   if node tools/i18n_extract.mjs --manque > "$LOG/i18n.txt" 2>&1; then echo "ok    traductions (anglais, espagnol) complètes"; else FAIL=1; echo "ÉCHEC traductions manquantes :"; head -20 "$LOG/i18n.txt"; fi
 else
   SAUTE="$SAUTE

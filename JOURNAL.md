@@ -3,6 +3,15 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 24 novembre 2026 · la règle devient une progression, et redevient lisible
+
+- **« On peut essayer de s'en rapprocher en validant des objectifs, etc. »** (Antoine). L'échelle montrait l'écart qui reste, mais rien de ce qui avait déjà été fait. Chaque **palier atteint porte maintenant la date du test qui l'a fait franchir** — « 190 kg · franchi le 23 nov. ».
+- **Rien à saisir, rien de plus à stocker** : la date sort de l'historique des tests déjà enregistrés. Pas de formulaire d'objectif, pas de champ à remplir, pas de nouvelle donnée à synchroniser — donc rien de plus à comprendre pour le client. C'est le même principe que les paliers eux-mêmes : on n'affiche que ce qu'on sait déjà.
+- **Et rien d'inventé** : si le tout **premier** test atteignait déjà le palier, il n'y a pas eu de franchissement, donc aucune date n'est affichée. Vérifié dans les deux sens.
+- **La règle était illisible, et ce n'était pas la faute des paliers.** `.rlist li` et `.rlist li > span:first-child` visaient **tous** les `li` descendants — or la jauge d'un test contient elle-même des `li` (ses paliers). Chaque palier héritait donc de `flex: 1 1 160px` : une case de 190 px de haut, presque vide, la valeur rejetée tout en bas. Les deux règles sont limitées à l'enfant direct (`.rlist > li`). **Hauteur de la règle : 611 px → 197 px**, les paliers redeviennent des étiquettes compactes. C'était là avant les repères par poste ; le libellé plus long n'a fait que le rendre visible.
+- Tests : `e2e_echelle.py` passe à **29 vérifications** (la date du franchissement, l'absence de date inventée, et la traduction du motif « franchi le {} » en anglais et en espagnol). 1 texte traduit (`tools/i18n_franchi.py`).
+- **Note** : la batterie a été relancée sous `caffeinate` après une première passe faussée — le Mac s'était mis en veille au milieu, et toutes les suites suivantes échouaient sur `ERR_CONNECTION_TIMED_OUT` vers `localhost`. Ce n'était pas le code. À retenir pour les prochaines longues batteries sur ce Mac.
+
 ## 22 novembre 2026 · « vérifie tout et pour chaque sport » : un repère ne va sur la règle que s'il est mesuré comme le test
 
 - **Ce que j'ai trouvé en vérifiant.** Les repères par poste du sprint venaient d'études chronométrées **au portique, départ 0,5 m derrière la cellule**. Le test de l'application, lui, dit : « départ arrêté pied avant sur la ligne ». Et le palier du record est un **temps de passage d'Usain Bolt, réaction retirée**. Trois méthodes différentes sur la même règle. Haugen, Tønnessen et Seiler (2012) chiffrent l'écart entre méthodes de départ : **de 0,17 à 0,69 s** — plus que tout l'écart entre un bon joueur de club et l'homme le plus rapide du monde.

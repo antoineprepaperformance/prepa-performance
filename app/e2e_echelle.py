@@ -46,17 +46,19 @@ async def run():
             await cl.evaluate("""([l]) => { const db = {};
               db['clients/u_p1'] = { name: 'Antoine', sportId: 'rugby', poste: 'trois-quarts', sex: 'H', height: 178, weight: 80, birthYear: 1995 };
               db['plans/u_p1'] = { programId: 'vitesse', offer: 'suivi2', weeks: 12, start: l, equipment: 'salle', status: 'active', niveau: 'perf', extra: [], message: '', cycle: 1, validatedAt: '2026-11-01T00:00:00.000Z', reviewedAt: '2026-11-01T00:00:00.000Z' };
-              db['clients/u_p1/tests/t0'] = { at: l + 'T10:00:00.000Z', values: { sprint10: 1.95, sprint30: 4.3, t5km: 18, e1rm_squat: { kg: 150, reps: 3 }, e1rm_dc: { kg: 90, reps: 3 } } };
+              db['clients/u_p1/tests/t0'] = { at: '2026-10-01T10:00:00.000Z', values: { sprint10: 2.05, sprint30: 4.5, t5km: 19, e1rm_squat: { kg: 150, reps: 3 }, e1rm_dc: { kg: 80, reps: 3 } } };
+              db['clients/u_p1/tests/t1'] = { at: l + 'T10:00:00.000Z', values: { sprint10: 1.95, sprint30: 4.3, t5km: 18, e1rm_squat: { kg: 175, reps: 3 }, e1rm_dc: { kg: 90, reps: 3 } } };
               localStorage.setItem('__mockdb', JSON.stringify(db)); }""", [lundi])
             await cl.reload(); await cl.wait_for_timeout(1600)
 
             # ---------- la logique des paliers ----------
             e = await cl.evaluate("""() => {
-              const f = (tid, val, sport, poste) => { const x = cardEchelle(tid, val, "H", 80, sport, poste); return x && { b: x.barreaux.map((y) => [y.k, Math.round(y.v * 100) / 100, y.n, !!y.src]), suiv: x.suivant && x.suivant.k, att: x.atteints, pct: x.pct }; };
+              const f = (tid, val, sport, poste, hist) => { const x = cardEchelle(tid, val, "H", 80, sport, poste, hist); return x && { b: x.barreaux.map((y) => [y.k, Math.round(y.v * 100) / 100, y.n, !!y.src, y.depuis || null]), suiv: x.suivant && x.suivant.k, att: x.atteints, pct: x.pct }; };
               return { sprintTq: f("sprint10", 1.95, "rugby", "trois-quarts"), squatTq: f("e1rm_squat", 150, "rugby", "trois-quarts"),
                        squatAv: f("e1rm_squat", 150, "rugby", "avant"), dcTq: f("e1rm_dc", 90, "rugby", "trois-quarts"),
                        sansPoste: f("e1rm_squat", 150, "rugby", null), autreSport: f("e1rm_squat", 150, "tennis", "simple"),
-                       fort: f("e1rm_squat", 300, "rugby", "trois-quarts"), fond: f("t5km", 18, "rugby", "trois-quarts") };
+                       fort: f("e1rm_squat", 300, "rugby", "trois-quarts"), fond: f("t5km", 18, "rugby", "trois-quarts"),
+                       date: f("e1rm_squat", 260, "rugby", "trois-quarts", [{ at: "2026-09-01T10:00:00.000Z", v: 170 }, { at: "2026-10-01T10:00:00.000Z", v: 260 }]) };
             }""")
             k = lambda x: [y[0] for y in x["b"]]
             v = lambda x: dict((y[0], y[1]) for y in x["b"])
@@ -79,6 +81,11 @@ async def run():
                "à 300 kg, au-delà du record ramené à son poids : tous les paliers sont atteints et l'échelle le dit", e["fort"])
             ok(e["fond"] and k(e["fond"]) == ["bon", "monde"] and e["fond"]["pct"] > 0,
                "un test d'endurance a son échelle aussi, sans palier de poste inventé", e["fond"])
+            d = dict((y[0], y[4]) for y in e["date"]["b"])
+            ok(d.get("poste") == "2026-10-01",
+               "le palier franchi porte la date du test qui l'a fait franchir : la progression se lit sur la règle", d)
+            ok(d.get("bon") is None and d.get("monde") is None,
+               "aucune date inventée : ni sur un palier déjà atteint au tout premier test, ni sur un palier pas encore atteint", d)
 
             # ---------- a l'ecran ----------
             await cl.locator('button[aria-label="Mon profil"]').first.click(); await cl.wait_for_timeout(1500)
@@ -90,6 +97,8 @@ async def run():
             ok(dans("Bon niveau", t) and dans("Moyenne des internationaux", t) and dans("Record du monde", t),
                "la carte montre les paliers nommés", t[t.find("Squat"):t.find("Squat") + 320])
             ok(dans("Prochain palier", t) and dans("il te reste", t), "elle dit ce qu'il reste pour le palier suivant", t[t.find("Prochain palier"):t.find("Prochain palier") + 160])
+            ok(dans("franchi le", t) and await cl.locator(".jg-d").count() >= 1,
+               "à l'écran : le palier franchi porte sa date", t[t.find("franchi le") - 120:t.find("franchi le") + 40])
             ok(await cl.locator(".jauge").count() >= 2 and await cl.locator(".jg-l li").count() >= 4,
                "une échelle par test, avec ses paliers", {"echelles": await cl.locator(".jauge").count(), "paliers": await cl.locator(".jg-l li").count()})
             # la regle elle-meme : la position du client, les reperes, et sa photo dessus
@@ -136,6 +145,8 @@ async def run():
                 ok(got == att, f"les paliers sont traduits en {lang}", got)
                 # le palier compose (« Moyenne des internationaux · Trois-quarts ») passe par un motif :
                 # c'est la partie fragile du mecanisme, le poste etant traduit a part.
+                fr = await lp.evaluate("() => tr('franchi le 12 oct.')")
+                ok(fr != "franchi le 12 oct." and "12 oct." in fr, f"« franchi le » est traduit en {lang} (motif, la date reste telle quelle)", fr)
                 comp = await lp.evaluate("() => tr('Moyenne des internationaux · Trois-quarts')")
                 ok(comp.startswith(att["Moyenne des internationaux"] + " · ") and comp != "Moyenne des internationaux · Trois-quarts",
                    f"le palier avec le poste est traduit en {lang} (motif)", comp)

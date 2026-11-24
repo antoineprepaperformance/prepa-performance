@@ -56587,5 +56587,12 @@
   "kind": "string",
   "where": "src/i18n-terrain-essentiel",
   "n": 1
+ },
+ {
+  "h": "a6288ca9bd",
+  "k": "franchi le {}",
+  "kind": "pattern",
+  "where": "src/i18n-franchi",
+  "n": 1
  }
 ]

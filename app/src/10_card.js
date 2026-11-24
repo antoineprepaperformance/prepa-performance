@@ -150,7 +150,12 @@ function scoreFromAnchors(dir, val, a) {
    reste jusqu'au suivant. Aucun barreau n'est inventé : « haut niveau au poste » n'apparaît que si une étude
    donne la valeur pour ce sport ET ce poste (CARD_REF[tid].sport), et le record du monde garde sa source
    nommée. On ne met pas de nom d'athlète sur un barreau qui n'en a pas : un niveau, c'est déjà parlant. */
-function cardEchelle(tid, val, sex, bw, sportId, poste) {
+/* « 12 oct. » dans la langue du client */
+function jourMois(iso) {
+  const d = new Date(iso + "T12:00:00"); if (isNaN(d)) return "";
+  return d.toLocaleDateString(LOCALE, { day: "numeric", month: "short" });
+}
+function cardEchelle(tid, val, sex, bw, sportId, poste, hist) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || !(val > 0)) return null;
   const sp = refSport(r, sex, bw, sportId, poste);
@@ -163,6 +168,16 @@ function cardEchelle(tid, val, sex, bw, sportId, poste) {
   ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
   const suivant = barreaux.find((b) => mieux(b.v, val)) || null;  /* le premier qu'il reste à atteindre */
   const atteints = barreaux.filter((b) => !mieux(b.v, val)).map((b) => b.k);
+  /* « en validant des objectifs, on fait une évolution » (Antoine) : un palier atteint porte la date du
+     test qui l'a fait franchir. Rien à saisir et rien de plus à stocker — la date sort de l'historique
+     des tests. Si le tout premier test atteignait déjà le palier, il n'y a pas eu de franchissement :
+     on n'affiche pas de date plutôt que d'en inventer un. */
+  const serie = (hist || []).filter((x) => x && x.at && x.v > 0).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  barreaux.forEach((b) => {
+    if (mieux(b.v, val)) return;                                  /* pas encore atteint */
+    const i = serie.findIndex((x) => !mieux(b.v, x.v));
+    if (i > 0) b.depuis = String(serie[i].at).slice(0, 10);
+  });
   const monde = barreaux[barreaux.length - 1];
   /* place chacun sur une règle commune, de l'ancrage débutant (0 %) au record du monde (100 %) : c'est ce
      qui rend la comparaison lisible d'un coup d'œil, au lieu d'une liste de chiffres à comparer de tête */
@@ -459,12 +474,15 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
       <span className="jg-moi" style=${{ left: e.moi + "%" }}><${Avatar} profile=${profile} photo=${photo} size=${26} /></span>
     </div>
     <ul className="jg-l">${e.barreaux.map((b) => html`<li key=${b.k} className=${e.atteints.includes(b.k) ? "on" : ""}>
-      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}</li>`)}</ul>
+      <span className="jg-n">${b.n}</span><span className="jg-v">${fmt(tid, b.v)}</span>${b.qui || b.quoi ? html`<span className="jg-q">${b.qui || b.quoi}</span>` : null}
+      ${b.depuis ? html`<span className="jg-d">${"franchi le " + jourMois(b.depuis)}</span>` : null}</li>`)}</ul>
     ${e.suivant ? html`<p className="muted small">${"Prochain palier : " + e.suivant.n.toLowerCase() + " — il te reste " + fmt(tid, e.ecart).replace(/^[^0-9-]*/, "") + " (tu en es à " + e.pctSuivant + " %)."}</p>`
       : html`<p className="small ok-t">${"Tous les paliers connus sont atteints : tu es au-delà de " + fin.n.toLowerCase() + "."}</p>`}
   </div>`;
 }
-  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null);
+  /* historique d'un test : ce qui permet de dater les paliers franchis */
+  const histOf = (tid) => Object.values((data && data.tests) || {}).map((t) => ({ at: t && t.at, v: testValue(tid, t && t.values && t.values[tid], data && data.profile && data.profile.side) })).filter((x) => x.at && x.v > 0);
+  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null, histOf(tid));
   const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span>
     <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} profile=${data && data.profile} photo=${data && data.media && data.media.photo && data.media.photo.data} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
   if (deb && abs.scores.length) {

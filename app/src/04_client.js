@@ -178,7 +178,7 @@ function ClientApp({ src, settings, lib, exo, demo, onExit, onSwitch, db, uid, r
       <button type="button" className=${"avbtn" + (tab === "profil" ? " on" : "")} aria-label="Mon profil" onClick=${() => setTab("profil")}><${Avatar} profile=${profile} photo=${data.media && data.media.photo && data.media.photo.data} size=${38} /></button></div></header>
     <main className="c-main">
       ${tab === "today" ? html`<${Today} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} src=${src} profile=${profile} coach=${coach}
-          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} saison=${saison} demo=${!!demo} />` : null}
+          go=${setTab} openSession=${openSession} openTests=${(w) => setTestOpen(w)} openChat=${showAI ? () => setChat(true) : null} wide=${wide} onRenew=${demo ? null : () => setRenew(true)} access=${access} openExtra=${setExtra} openTerrain=${openTerrain} openSante=${() => setSante(true)} db=${db} uid=${uid} saison=${saison} demo=${!!demo} settings=${settings} />` : null}
       ${tab === "programme" ? html`<${ClientProgram} data=${data} plan=${plan} prog=${prog} stats=${stats} lib=${libAll} exo=${exoAll}
           openSession=${openSession} locked=${locked} openExtra=${setExtra} openTerrain=${openTerrain} src=${src} />` : null}
       ${tab === "bilan" ? html`<${Bilans} data=${data} plan=${plan} prog=${prog} stats=${stats} src=${src} lib=${libAll} settings=${settings} ai=${showAI ? ai : null} openChat=${showAI ? () => setChat(true) : null} />` : null}
@@ -216,7 +216,7 @@ function useWide() {
   useEffect(() => { let m; try { m = window.matchMedia(q); const f = () => setW(m.matches); m.addEventListener ? m.addEventListener("change", f) : m.addListener(f); return () => { m.removeEventListener ? m.removeEventListener("change", f) : m.removeListener(f); }; } catch (e) { return undefined; } }, []);
   return w;
 }
-function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo }) {
+function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSession, openTests, openChat, wide, onRenew, access, openExtra, openTerrain, openSante, db, uid, saison, demo, settings }) {
   const [jours, setJours] = useState(false);     /* fenêtre « Mes jours » : répartition de la semaine */
   /* TOUS les hooks sont déclarés ici, AVANT les trois retours anticipés plus bas (avant le début du
      programme, programme terminé, accès verrouillé). Un useState placé après l'un d'eux ne s'exécute pas
@@ -378,7 +378,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const fenJours = html`<${Modal} open=${jours} title="Mes jours d'entraînement" onClose=${() => setJours(false)}>
     ${jours ? html`<${SemaineEditeur} data=${data} src=${src} plan=${plan} lib=${lib} onDone=${() => setJours(false)} />` : null}</${Modal}>`;
   /* blocs de la page du jour : ordre et affichage choisis par le client (Profil › Apparence et affichage) */
-  const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null };
+  const B = { todo: html`<${TodoCard} items=${todo} />`, stats: train ? ring : null, coach: html`${msgs}${ainotes}`, article: html`<${ArticleCard} />`, nutri, habits, terrain: tweek, extras, carte: cardMini, week: train && sessions.length ? week : null, partenaire: html`<${PartenaireBanner} settings=${settings} profile=${profile} />` };
   /* affichage simple par défaut pour un client qui débute et n'a rien réglé : une page courte, et un bouton
      qui ramène tout. « tout voir » reste sur l'appareil, pour ne pas écraser ses réglages de profil. */
   const nLogs = Object.keys(data.logs || {}).length;
@@ -391,7 +391,7 @@ function Today({ data, plan, prog, stats, lib, src, profile, coach, go, openSess
   const bascule = simpleParDefaut ? html`<div className="center">
     <button type="button" className="linkbtn" onClick=${basculer}>${simple ? "Afficher tout ce que l'application sait faire" : "Revenir à l'affichage simple"}</button>
     ${simple ? html`<p className="muted small">Affichage simplifié : l'essentiel d'abord. Tout le reste est là, en un bouton.</p>` : null}</div>` : null;
-  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "coach", "terrain", "week", "extras"])}${bascule}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
+  if (wide) return html`<div className="stack">${fenJours}${hero}<div className="cols2"><div className="stack">${ban}${nextB}${alerts}${vnote}${pick(["todo", "partenaire", "coach", "terrain", "week", "extras"])}${bascule}</div><div className="stack">${pick(["stats", "carte", "nutri", "habits"])}</div></div></div>`;
   return html`<div className="stack today">${hero}${ban}${nextB}${alerts}${vnote}${pick(order)}${bascule}${fenJours}</div>`;
 }
 function CoachMsg({ text, coach, title }) {

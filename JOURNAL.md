@@ -3,6 +3,19 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 25 novembre 2026 · partenariat NutriPure : mis en avant, et annoncé comme la loi l'exige
+
+- **Antoine** : « j'ai un partenariat avec NutriPure, 10 % sur la première commande avec le code LIMOUSI, incorpore-le et mets-le en avant », puis « affiche-le vraiment visible ».
+- **Trois endroits** : le **bandeau de la page du jour**, en **deuxième position juste sous la séance du jour** (l'écran le plus vu), la **carte complète sur l'écran Nutrition**, et une **section sur la page d'accueil publique** — donc visible aussi par les prospects sans compte. Le bandeau fait partie de l'affichage **« L'essentiel »** : un client tout neuf le voit dès le premier jour.
+- **La mention de partenariat est tenue par le code, pas par la bonne volonté.** Un lien rémunéré présenté sans annonce claire est une pratique commerciale trompeuse par omission (code de la consommation, art. L121-1 ; loi du 9 juin 2023 sur l'influence commerciale). La mention « Antoine touche une commission sur les commandes passées avec ce lien. Ton prix ne change pas. » est affichée **au même endroit que l'offre**, aux trois endroits. Et **si elle est vidée dans les réglages, le partenariat ne s'affiche plus du tout** : `partenaire()` renvoie `null`. Vérifié par `e2e_partenaire.py`, qui essaie précisément de contourner la règle.
+- **Aucun mineur ne le voit.** L'application connaît l'âge par l'année de naissance ; `partenaireFor()` se tait avant 18 ans, sur la page du jour comme sur l'écran Nutrition. Mettre en avant des compléments alimentaires auprès d'un client de 15 ans, avec accord parental ou non, n'est pas une chose à faire.
+- **Réserve honnête ajoutée** : « un complément ne remplace pas une alimentation construite, et ton programme nutrition ne repose pas dessus ». Elle protège la crédibilité d'Antoine comme préparateur plus qu'elle ne coûte en clics.
+- **Le lien porte `rel="sponsored"`** (lien rémunéré) en plus de `noopener` : c'est la façon correcte de déclarer un lien d'affiliation.
+- **Antoine garde la main** : Offres & réglages → Partenariat commercial. Afficher ou masquer, changer la marque, le code, la remise, le lien, la mention. Si NutriPure change son code ou que le partenariat s'arrête, il le fait seul. Le client, lui, peut déplacer ou masquer le bandeau comme n'importe quel bloc — c'est ce qui sépare une mise en avant d'une publicité subie.
+- `CONFORMITE.md` gagne sa ligne, avec le rappel qu'il reste à Antoine à vérifier que son contrat autorise cet affichage et à déclarer ces commissions (URSSAF, impôts).
+- Tests : `e2e_partenaire.py` (**17 vérifications**, dont la mention vidée, le partenariat coupé, la marque changée et le mineur), deux vérifications ajoutées à `e2e_site.py` pour la page d'accueil, une à `e2e_simple.py`. 11 textes traduits.
+- **Au passage** : l'attente d'ordre des blocs dans `e2e_perso.py` était écrite sur des positions fixes et a cassé dès que la liste a gagné un bloc. Réécrite sur l'intention (un bloc masqué, un autre remonté de deux rangs).
+
 ## 24 novembre 2026 (nuit) · l'arriéré de traductions soldé : 419 textes en anglais et en espagnol
 
 - **Antoine : « corrige tout et traduis ».** Les **419 textes** que le contrôle signalait sont traduits : `en : 0 texte(s) sans traduction sur 7916`, idem en espagnol. C'étaient des fonctions livrées sans leurs langues — un client anglophone ou hispanophone voyait du français sur ces écrans.

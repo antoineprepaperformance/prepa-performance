@@ -63,6 +63,8 @@ async def run():
             ok(dans("Bienvenue, on commence doucement", t), "le message du coach n'est jamais masqué", t[:300])
             ok(not dans("Ma carte athlète", t) and not dans("Article", t) and not dans("Séances en plus", t),
                "les blocs qui peuvent attendre ne sont pas affichés d'emblée", [x for x in ("Ma carte athlète", "Article", "Séances en plus") if dans(x, t)])
+            ok(await cl.locator(".part-b").count() == 1,
+               "le partenaire d'Antoine fait partie de l'essentiel : c'est un choix commercial assumé, visible dès le premier jour")
             ok(await cl.locator(".tweek").count() == 1,
                "mais sa séance terrain reste : c'est la seule porte vers l'écran terrain, la masquer rendait son sport inatteignable")
             await charge(cl, logs=0, sport=None)

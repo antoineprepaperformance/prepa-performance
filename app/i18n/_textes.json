@@ -56937,5 +56937,82 @@
   "kind": "pattern",
   "where": "i18n/work/arriere_04.json",
   "n": 1
+ },
+ {
+  "h": "fc6e9711d0",
+  "k": "Compléments alimentaires fabriqués en France, analysés lot par lot.",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "a7f89bfa50",
+  "k": "Partenariat commercial : Antoine touche une commission sur les commandes passées avec ce lien. Ton prix ne change pas.",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "114c4d3f3d",
+  "k": "Un complément ne remplace pas une alimentation construite, et ton programme nutrition ne repose pas dessus.",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "ae806ba11a",
+  "k": "Le partenaire d'Antoine :",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "bd1f7c3683",
+  "k": "Le partenaire d'Antoine : {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "363b81ac23",
+  "k": "% sur ta première commande",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "8ac84bbd52",
+  "k": "−{} % sur ta première commande",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "e91b0b6b07",
+  "k": "Ton code :",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "28663eea0a",
+  "k": "Ouvrir {}",
+  "kind": "pattern",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "8517b0e544",
+  "k": "avec le code",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
+ },
+ {
+  "h": "94f61cd28c",
+  "k": "Le partenaire d'Antoine",
+  "kind": "string",
+  "where": "i18n/work/arriere_09_partenaire.json",
+  "n": 1
  }
 ]

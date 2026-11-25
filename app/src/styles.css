@@ -1089,5 +1089,11 @@ small, .stat-s, .ring-t span, .tile span, .kv span, .scale-l, .pill, .field-h, .
 
 /* nom du détenteur du record, sous la valeur du palier */
 .jg-q { font-size: 11px; color: var(--muted); }
+/* bandeau du partenaire sur la page du jour : visible sans crier, et reconnaissable d'un coup */
+.part-b { background: var(--gold-tint); border-color: var(--gold-soft); }
+.part-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.part-h b { font-size: 16px; }
+/* code de réduction du partenaire : lisible et sélectionnable d'un coup */
+.part-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; background: var(--gold-tint); border: 1px solid var(--gold-soft); border-radius: 6px; padding: 1px 7px; user-select: all; }
 /* date du test qui a fait franchir le palier : la progression se lit sur la règle elle-même */
 .jg-d { font-size: 10px; color: var(--gold, #d4ad3f); letter-spacing: .02em; }

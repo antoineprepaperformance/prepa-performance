@@ -901,11 +901,13 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
         <ul className="small"><li>Ton objectif calculé : calories, protéines, glucides, lipides et pas, ajustés à tes séances</li><li>Le journal des repas, avec des plats types et leurs macros</li><li>Le scan des produits par code-barres</li><li>Le livre de recettes, filtré selon ton objectif</li></ul>
         <p className="muted small">Repères issus des recommandations de l'ISSN pour les sportifs (Jäger et al., 2017, protéines 1,4 à 2 g par kg et par jour).</p>
         ${onUpgrade ? html`<div className="btnrow"><${Btn} small onClick=${onUpgrade}>Passer au Lite + Nutrition</${Btn}></div>` : null}</${Card}>
+      <${PartenaireCard} settings=${settings} profile=${data.profile} />
       <${HydraCard} data=${data} src=${src} np=${null} date=${todayISO()} />
     </div>`;
   }
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Nutrition</div><h1>${np ? (eq ? "Des repas équilibrés, sans compter." : nutriGoalText(np).replace(/^./, (c) => c.toUpperCase()).replace(/, départ.*$/, "") + ".") : "Fixe ton objectif en 1 minute."}</h1></div>
+    <${PartenaireCard} settings=${settings} profile=${data.profile} />
     <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}

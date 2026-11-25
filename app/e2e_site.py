@@ -75,6 +75,13 @@ async def run():
         await home.goto(URL); await home.evaluate("window.__fakefs.reset()"); await home.reload()
         ok(await has(home, "Comment ça marche"), "accueil : section « Comment ça marche »")
         ok(await home.locator(".l-sec .pcard").count() == 8, "accueil : 8 programmes")
+        # partenariat commercial : le lien remunere et son annonce sont indissociables (L121-1)
+        pt = home.locator("#partenaire")
+        ptxt = await pt.inner_text() if await pt.count() else ""
+        ok(await pt.count() == 1 and "NutriPure" in ptxt and "LIMOUSI" in ptxt and "Partenariat commercial" in ptxt,
+           "accueil : le partenaire, son code et la mention de partenariat", ptxt[:160])
+        ok(await home.locator('#partenaire a[rel~="sponsored"][href*="s=LIMOUSI"]').count() == 1,
+           "accueil : le lien porte le code d'affiliation et la marque « sponsored »")
         ok(await home.locator(".l-sec:not(#clubs) .l-offers .l-offer").count() == 3 and await home.locator(".l-auto").count() == 1 and await home.locator(".l-offer.lite").count() == 0, "accueil : 3 cartes (Autonomie en deux niveaux, Suivi, Sur mesure), plus de Lite")
         club = (await home.locator("#clubs").inner_text()) if await home.locator("#clubs").count() == 1 else ""
         clubn = club.replace("\u202f", " ").replace("\xa0", " ")

@@ -210,6 +210,22 @@ function pendingCodeFromUrl() {
     return normCode(localStorage.getItem("pending_code") || "");
   } catch (e) { return ""; }
 }
+/* Partenariat commercial sur la page d'accueil. Pas de profil ici (personne n'est connecte) : la
+   carte client, elle, se tait devant un mineur. La mention de partenariat est obligatoire et
+   indissociable du lien — sans elle, partenaire() ne renvoie rien et la section disparait. */
+function PartenaireSection({ settings }) {
+  const p = partenaire(settings);
+  if (!p) return null;
+  const remise = Math.round(Number(p.remise) || 0);
+  return html`<section className="l-sec" id="partenaire">
+    <h2>${"Le partenaire d'Antoine : " + p.nom}</h2>
+    <p>${p.quoi}</p>
+    ${remise || p.code ? html`<p>${remise ? "−" + remise + " % sur ta première commande" : ""}${remise && p.code ? " avec le code " : p.code ? "Code " : ""}${p.code ? html`<b className="part-code">${p.code}</b>` : null}.</p>` : null}
+    <div className="btnrow"><a className="btn" href=${p.url} target="_blank" rel="noopener sponsored">${"Ouvrir " + p.nom}</a></div>
+    <p className="muted small">${p.mention}</p>
+    ${p.note ? html`<p className="muted small">${p.note}</p>` : null}
+  </section>`;
+}
 function Landing() {
   const [auth, setAuth] = useState(null);
   const hashLegal = () => { const h = (location.hash || "").replace("#", ""); return ["cgv", "confidentialite", "mentions"].includes(h) ? h : null; };
@@ -263,6 +279,7 @@ function Landing() {
       ${prices(o)}</div>`)}</div>
       <p className="muted small">${tvaLine(settings)}. Toutes les formules : paiement unique pour 1, 3, 6 ou 12 mois, sans abonnement ni renouvellement automatique. Droit de rétractation de 14 jours (voir les conditions de vente).</p></section>
     <${ClubSection} settings=${settings} onDevis=${() => setClub(true)} />
+    <${PartenaireSection} settings=${settings} />
     <section className="l-sec l-cta"><h2>Prêt à commencer ?</h2><p className="muted">Crée ton compte, choisis ton objectif et ton profil : ton programme démarre dès ton paiement ou avec ton code d'essai.</p><div className="btnrow center"><${Btn} onClick=${() => setAuth("signup")}>Créer mon compte</${Btn}><${Btn} kind="ghost" onClick=${() => setContact(true)}>Une question ? Me contacter</${Btn}></div></section>
     <footer className="l-foot"><${Brand} sub="Bordeaux Métropole" />
       ${coach.instagram ? html`<div className="small muted">Instagram : ${coach.instagram}</div>` : null}

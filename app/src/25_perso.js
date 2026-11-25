@@ -7,8 +7,11 @@ const ACCENTS = [{ id: "or", n: "Or", c: "#d4ad3f" }, { id: "bleu", n: "Bleu", c
 const FONT_SIZES = [{ v: 0, n: "Normal" }, { v: 1, n: "Grand" }, { v: 2, n: "Très grand" }];
 const THEMES = [{ v: "auto", n: "Automatique" }, { v: "sombre", n: "Sombre" }, { v: "clair", n: "Clair" }];
 const LANG_MODES = [{ v: "auto", n: "Selon mon profil" }, { v: "simple", n: "Simple" }, { v: "expert", n: "Détaillé" }];
+/* l'ordre par defaut de la page du jour. « partenaire » est juste sous la seance du jour : Antoine le
+   veut vraiment visible. Le client peut le deplacer ou le masquer (Profil > Apparence et affichage). */
 const TODAY_BLOCKS = [
-  { id: "todo", n: "À faire aujourd'hui" }, { id: "stats", n: "Ma régularité" }, { id: "coach", n: "Messages et conseils" },
+  { id: "todo", n: "À faire aujourd'hui" }, { id: "partenaire", n: "Le partenaire d'Antoine" },
+  { id: "stats", n: "Ma régularité" }, { id: "coach", n: "Messages et conseils" },
   { id: "article", n: "Article de la semaine" },
   { id: "nutri", n: "Nutrition et santé" }, { id: "habits", n: "Mes habitudes" }, { id: "terrain", n: "Séance terrain de la semaine" },
   { id: "extras", n: "Séances en plus" }, { id: "carte", n: "Ma carte athlète" }, { id: "week", n: "Les séances de la semaine" }];
@@ -16,7 +19,7 @@ const TODAY_BLOCKS = [
    perdus — un bouton les ramène tous. Choix d'Antoine (21 novembre) : « l'appli est trop complexe, ça doit
    être plus simple ; si il faut enlever des infos, tu le fais. » Les messages du coach et la nutrition
    restent : l'un est la raison d'être du suivi, l'autre est la moitié du travail. */
-const SIMPLE_ON = ["todo", "week", "coach", "nutri"];
+const SIMPLE_ON = ["todo", "week", "coach", "nutri", "partenaire"];
 const SIMPLE_SEANCES = 4;      /* au-delà, le client n'est plus un débutant : on n'impose plus rien */
 /* l'essentiel : une page courte. Un client qui a choisi un sport garde en plus sa séance terrain —
    c'est la séance la plus spécifique de son programme, et c'est aussi la seule porte vers l'écran terrain

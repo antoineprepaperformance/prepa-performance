@@ -183,7 +183,10 @@ async def run():
             ok(a["theme"] == "light" and a["accent"] == "vert" and a["fs"] == "1", "réouverture : réglages réappliqués tout de suite", a)
             await c2.wait_for_timeout(1200)
             bl = await blocks(c2)
-            ok("stats" not in bl and bl.index("coach") < bl.index("todo") if "coach" in bl and "todo" in bl else "stats" not in bl, "page du jour : bloc masqué et ordre choisi", bl)
+            # l'attente porte sur l'intention — un bloc masque, un autre remonte de deux rangs — et non sur
+            # une position fixe : la liste des blocs grandit (le partenaire d'Antoine y est entre).
+            ok("stats" not in bl and "coach" in bl and "partenaire" in bl and bl.index("coach") < bl.index("partenaire"),
+               "page du jour : bloc masqué, et « Messages et conseils » remonté de deux rangs", bl)
             ok((await attrs(c2))["accent"] == "vert" and (await attrs(c2))["event"] == "noel", "la couleur choisie garde la priorité sur celle de l'événement", await attrs(c2))
             await c2.screenshot(path=f"{OUT}/05_jour_clair_vert.png", full_page=True)
             await c2.close()

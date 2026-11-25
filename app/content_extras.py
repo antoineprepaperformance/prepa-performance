@@ -180,4 +180,23 @@ LITE = {"id": "lite", "n": "Lite", "retired": True, "prix": {"mois": 9.9, "an": 
         "desc": "En autonomie : tous les programmes et les profils, les séances terrain, flash et récup, la santé au quotidien et le suivi de l'eau. Sans nutrition, sans réponse d'Antoine à tes bilans, sans correction vidéo par Antoine et sans coach IA.",
         "descN": "Lite + la nutrition : objectif calculé, journal des repas, plats types, scan des produits et livre de recettes (sans coach IA)."}
 
-EXTRAS_CONTENT = {"LITE": LITE, "XREFS": REFS, "RECUP": RECUP, "FLASH": FLASH, "TIPS": TIPS, "CHECKS": CHECKS, "CHECK_OF": CHECK_OF}
+# Partenariat commercial. Antoine touche une commission sur les commandes passées avec son lien :
+# la loi du 9 juin 2023 sur l'influence commerciale et l'article L121-1 du code de la consommation
+# (pratiques commerciales trompeuses par omission) imposent de l'annoncer CLAIREMENT et au même
+# endroit que l'offre — pas en bas des CGV. C'est pourquoi la mention voyage avec le lien, dans
+# cette même structure : impossible d'afficher l'un sans l'autre.
+# Tout est réglable dans l'espace coach (Offres & réglages) : Antoine coupe ou change le code
+# sans toucher au code de l'application.
+PARTENAIRE = {
+    "on": True,
+    "nom": "NutriPure",
+    "quoi": "Compléments alimentaires fabriqués en France, analysés lot par lot.",
+    "url": "https://www.nutripure.fr/fr/connexion?create_account=1&s=LIMOUSI",
+    "code": "LIMOUSI",
+    "remise": 10,
+    "mention": "Partenariat commercial : Antoine touche une commission sur les commandes passées avec ce lien. Ton prix ne change pas.",
+    "note": "Un complément ne remplace pas une alimentation construite, et ton programme nutrition ne repose pas dessus.",
+}
+
+EXTRAS_CONTENT = {"LITE": LITE, "XREFS": REFS, "RECUP": RECUP, "FLASH": FLASH, "TIPS": TIPS, "CHECKS": CHECKS, "CHECK_OF": CHECK_OF,
+                  "PARTENAIRE": PARTENAIRE}

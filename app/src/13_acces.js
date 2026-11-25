@@ -83,6 +83,51 @@ function clubPrice(settings, k) {
 /* même règle que clubCgvTxt : une seule chaîne, donc une seule clé de traduction. Et aucune adresse
    e-mail dedans : un e-mail qui change casserait la clé (les nombres, eux, sont généralisés par le
    dictionnaire). L'adresse où écrire est déjà donnée plus bas, dans « Tes droits ». */
+/* ---------- partenariat commercial ----------
+   Antoine touche une commission sur les commandes passees avec son lien. La loi du 9 juin 2023 sur
+   l'influence commerciale et l'article L121-1 du code de la consommation imposent de l'annoncer
+   clairement, au meme endroit que l'offre : la mention est donc portee par la carte elle-meme et ne
+   peut pas etre affichee sans elle. Reglable dans Offres & reglages (couper, changer le code). */
+const PARTENAIRE = CONTENT.PARTENAIRE || {};
+function partenaire(settings) {
+  const p = { ...PARTENAIRE, ...((settings && settings.partenaire) || {}) };
+  /* sans la mention de partenariat, on n'affiche rien : un lien remunere presente sans son annonce
+     est une pratique commerciale trompeuse par omission (L121-1). La regle est ici, pas dans un
+     rappel qu'on peut oublier de lire. */
+  return p.on === false || !p.url || !p.nom || !String(p.mention || "").trim() ? null : p;
+}
+/* jamais de complement alimentaire mis en avant a un mineur : l'application connait son age par son
+   annee de naissance, et son inscription est deja encadree par l'accord d'un parent. */
+function partenaireFor(settings, profile) {
+  const p = partenaire(settings); if (!p) return null;
+  const a = ageOf(profile || {});
+  return a !== null && a < 18 ? null : p;
+}
+function PartenaireCard({ settings, profile }) {
+  const p = partenaireFor(settings, profile);
+  if (!p) return null;
+  const remise = Math.round(Number(p.remise) || 0);
+  return html`<${Card} title=${"Le partenaire d'Antoine : " + p.nom} sub=${remise ? "−" + remise + " % sur ta première commande" : null}>
+    <p className="small">${p.quoi}</p>
+    ${p.code ? html`<p className="small">Ton code : <b className="part-code">${p.code}</b></p>` : null}
+    <div className="btnrow"><a className="btn" href=${p.url} target="_blank" rel="noopener sponsored">${"Ouvrir " + p.nom}</a></div>
+    <p className="muted small">${p.mention}</p>
+    ${p.note ? html`<p className="muted small">${p.note}</p>` : null}
+  </${Card}>`;
+}
+/* Bandeau compact sur la page du jour : l'ecran le plus vu de l'application. La mention de
+   partenariat l'accompagne ici aussi — elle ne se detache jamais de l'offre, ou qu'elle apparaisse. */
+function PartenaireBanner({ settings, profile }) {
+  const p = partenaireFor(settings, profile);
+  if (!p) return null;
+  const remise = Math.round(Number(p.remise) || 0);
+  return html`<section className="card part-b">
+    <div className="part-h"><b>${p.nom}</b>${remise ? html`<${Pill} tone="gold">${"−" + remise + " % sur ta première commande"}</${Pill}>` : null}</div>
+    ${p.code ? html`<p className="small">Ton code : <b className="part-code">${p.code}</b></p>` : null}
+    <div className="btnrow"><a className="btn" href=${p.url} target="_blank" rel="noopener sponsored">${"Ouvrir " + p.nom}</a></div>
+    <p className="muted small">${p.mention}</p>
+  </section>`;
+}
 function clubConfidTxt() {
   return "Quand un club remplit le formulaire de l'offre club sur le site, le vendeur reçoit ce que le club a écrit : nom du club, sport, nombre de joueurs, nom et coordonnées de la personne à contacter, et son message. Ces données servent uniquement à répondre à la demande et à établir un devis (base : mesures précontractuelles et intérêt légitime à répondre à une sollicitation). Elles ne concernent pas les joueurs, ne sont pas croisées avec les dossiers des clients, et sont supprimées 3 ans après le dernier contact — tout de suite sur simple demande (voir « Tes droits »). Aucune prospection automatisée n'est faite à partir de ce formulaire.";
 }

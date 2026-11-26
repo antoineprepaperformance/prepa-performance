@@ -57224,5 +57224,61 @@
   "kind": "string",
   "where": "i18n/work/arriere_10_complements.json",
   "n": 1
+ },
+ {
+  "h": "ba78fc85e9",
+  "k": "Un repas sans aliment : supprime-le plutôt.",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "03ad70a8d2",
+  "k": "Repas modifié.",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "b3cf7814a0",
+  "k": "Nom du repas",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "60cde23fab",
+  "k": "Ex. Déjeuner",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "2a94592128",
+  "k": "Enregistrer les modifications",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "1e85b57a0d",
+  "k": "Plus aucun aliment : ajoutes-en un, ou ferme et supprime le repas.",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "ae9f314b9c",
+  "k": "Les valeurs se recalculent toutes seules quand tu changes une quantité.",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
+ },
+ {
+  "h": "532481ad88",
+  "k": "Modifier le repas",
+  "kind": "string",
+  "where": "i18n/work/arriere_11_repas.json",
+  "n": 1
  }
 ]

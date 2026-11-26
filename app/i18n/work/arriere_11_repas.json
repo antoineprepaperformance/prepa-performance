@@ -1,0 +1,42 @@
+[
+ {
+  "fr": "Un repas sans aliment : supprime-le plutôt.",
+  "en": "A meal with no food in it: delete it instead.",
+  "es": "Una comida sin ningún alimento: mejor bórrala."
+ },
+ {
+  "fr": "Repas modifié.",
+  "en": "Meal updated.",
+  "es": "Comida modificada."
+ },
+ {
+  "fr": "Nom du repas",
+  "en": "Meal name",
+  "es": "Nombre de la comida"
+ },
+ {
+  "fr": "Ex. Déjeuner",
+  "en": "E.g. Lunch",
+  "es": "Ej. Almuerzo"
+ },
+ {
+  "fr": "Enregistrer les modifications",
+  "en": "Save changes",
+  "es": "Guardar los cambios"
+ },
+ {
+  "fr": "Plus aucun aliment : ajoutes-en un, ou ferme et supprime le repas.",
+  "en": "No food left: add one, or close and delete the meal.",
+  "es": "Ya no queda ningún alimento: añade uno, o cierra y borra la comida."
+ },
+ {
+  "fr": "Les valeurs se recalculent toutes seules quand tu changes une quantité.",
+  "en": "The values recalculate on their own when you change a quantity.",
+  "es": "Los valores se recalculan solos cuando cambias una cantidad."
+ },
+ {
+  "fr": "Modifier le repas",
+  "en": "Edit the meal",
+  "es": "Modificar la comida"
+ }
+]

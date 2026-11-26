@@ -3,6 +3,17 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 26 novembre 2026 · modifier un repas noté, au lieu de tout ressaisir
+
+- **Antoine** : « dans l'onglet nutrition, j'aimerais qu'on puisse modifier les menus, ou quand j'ai mis des ingrédients, ou rajouter ».
+- **Le défaut** : on pouvait **ajouter** un repas et le **supprimer**, pas le corriger. Une photo qui estime une assiette de riz au lieu de deux, ou l'huile de cuisson oubliée, coûtait tout le repas — il fallait le supprimer et tout ressaisir. C'est le genre de friction qui fait abandonner un journal alimentaire au bout de trois jours.
+- **Ce qui change** : chaque repas noté porte un bouton **« Modifier »** à côté de « Supprimer ». Il ouvre la même fenêtre que la saisie, **déjà remplie** : corriger une quantité (les calories et les macros se recalculent seules), **ajouter** l'aliment oublié par la recherche ou par un plat type, **retirer** ce que l'IA a vu en trop, changer le moment et le nom.
+- **Aucune notion nouvelle** : `MealEdit` réutilise les briques de la saisie — `FoodPicker` pour ajouter, `MealEditor` pour ajuster, changer ou retirer, `PlatPicker` pour un plat type. Un client qui sait ajouter un repas sait déjà le modifier.
+- **Le point technique** : à l'enregistrement, les valeurs par 100 g (`k100`) sont retirées de chaque aliment — sans elles, changer une quantité ne peut rien recalculer. `mkItem()` les **reconstitue** à partir des grammes et des macros enregistrés. L'arrondi au gramme près laisse un écart inférieur au pourcent sur ces valeurs reconstituées : invisible à l'écran, et écrit en commentaire plutôt que tu.
+- **C'est le même repas qui est modifié**, pas un nouveau : identifiant et heure conservés, le total du jour suit immédiatement, et la date de modification est notée.
+- **Un repas vidé de tous ses aliments ne s'enregistre pas** : l'application demande de le supprimer. Sinon le journal garderait une ligne fantôme à 0 kcal.
+- Tests : `e2e_repas.py`, **17 vérifications** — dont le total qui est bien la somme des aliments (pas une valeur restée en arrière), le repas intact si on ferme sans enregistrer, et le refus d'un repas vide. 8 textes traduits.
+
 ## 25 novembre 2026 (suite) · les compléments : une page d'information, jamais une suggestion déclenchée
 
 - **Antoine** : « est-ce qu'on pourrait suggérer des compléments NutriPure dans l'onglet Nutrition pour aider si on s'aperçoit que les personnes ont du mal à dormir ? », puis « fais au mieux mais ça serait intéressant de le mettre en place pour répondre au besoin de mes clients ».

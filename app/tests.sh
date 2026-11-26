@@ -64,7 +64,7 @@ LOCALES="unit_niveau.py unit_instagram.py smoke.py e2e.py e2e_claude_acces.py e2
   e2e_lite_claude.py e2e_terrain.py e2e_messages.py e2e_profil.py e2e_formules.py e2e_grille.py e2e_langues.py
   e2e_hydra.py e2e_plats.py e2e_perso.py e2e_contenu.py e2e_materiel.py e2e_pdf_carte.py e2e_vivacite.py
   e2e_cycle.py e2e_objectifs.py e2e_autoreg.py e2e_demarrage.py e2e_nutriadapt.py e2e_energie.py e2e_equipe.py
-  e2e_club.py e2e_gestion.py e2e_semaine.py e2e_echelle.py e2e_simple.py e2e_partenaire.py"
+  e2e_club.py e2e_gestion.py e2e_semaine.py e2e_echelle.py e2e_simple.py e2e_partenaire.py e2e_repas.py"
 DUSITE="e2e_site.py e2e_site2.py e2e_pay.py e2e_pwa.py e2e_features_site.py e2e_lite.py e2e_terrain_site.py
   e2e_rules_site.py e2e_messages_site.py e2e_sante_site.py e2e_club_site.py e2e_tarifs.py e2e_factures.py"
 suite() {

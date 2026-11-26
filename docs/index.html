@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="5044a984f8">
+<meta name="app-build" content="2f5291969a">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -6154,6 +6154,44 @@ function PortionRow({ x, onChange }) {
     <span className="it-eq">${v.p.raw ? (q0 >= 0.5 && q0 <= 6 ? "≈ " + qFmt(q0) + " × " + d.l + " · " : "") : "= " + fmtN(x.g, 0) + " " + u + " · "}${fmtN(x.kcal, 0)} kcal</span>
   </div>`;
 }
+/* Modifier un repas deja note. Jusqu'ici on ne pouvait que supprimer et tout ressaisir : une photo
+   qui estime 120 g de riz au lieu de 200, ou l'huile de cuisson oubliee, coutait tout le repas.
+   On reutilise les memes briques que la saisie (FoodPicker pour ajouter, MealEditor pour ajuster,
+   changer ou retirer, PlatPicker pour un plat type) : aucune notion nouvelle a comprendre.
+   mkItem() recalcule les valeurs par 100 g a partir des grammes et des macros enregistres, ce qui
+   rend les quantites de nouveau modifiables. L'arrondi au gramme pres de l'enregistrement laisse un
+   ecart inferieur au pourcent sur ces valeurs reconstituees : invisible, et dit ici plutot que taise. */
+function MealEdit({ meal, eq, np, tot, onSave, onClose }) {
+  const toast = useToast();
+  const [items, setItems] = useState(() => (meal.items || []).map((x) => mkItem(x)));
+  const [title, setTitle] = useState(meal.title || "");
+  const [slot, setSlot] = useState(meal.slot || "midi");
+  const [plats, setPlats] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const t = sumItems(items);
+  const save = async () => {
+    if (!items.length) { toast("Un repas sans aliment : supprime-le plutôt.", "warn"); return; }
+    setBusy(true);
+    try {
+      await onSave({ ...meal, slot, title: title.trim() || meal.title || "Repas",
+        items: items.map(({ k100, ...x }) => ({ ...x, kcal: Math.round(x.kcal), p: Math.round(x.p), c: Math.round(x.c), f: Math.round(x.f) })),
+        kcal: Math.round(t.kcal), p: Math.round(t.p), c: Math.round(t.c), f: Math.round(t.f), editedAt: nowISO() });
+      toast("Repas modifié.", "ok");
+      onClose();
+    } catch (e) { toast("Enregistrement impossible.", "bad"); } finally { setBusy(false); }
+  };
+  return html`<div className="form">
+    <${SlotPick} value=${slot} onChange=${setSlot} />
+    <${FoodPicker} eq=${eq} onPick=${(it) => setItems([...items, ...[].concat(it).map((x) => mkItem(x))])} />
+    ${plats ? html`<${PlatPicker} slot=${slot} np=${np} tot=${tot} onPick=${(pl) => { setItems([...items, ...platItems(pl).map((x) => mkItem(x))]); setPlats(false); }} />`
+      : html`<button type="button" className="linkbtn" onClick=${() => setPlats(true)}>+ Ajouter un plat type</button>`}
+    ${items.length ? html`<${Card}><${MealEditor} draft=${{ items, title: title.trim() || meal.title }} setDraft=${(d) => setItems(d.items)} eq=${eq} /></${Card}>` : html`<p className="muted small">Plus aucun aliment : ajoutes-en un, ou ferme et supprime le repas.</p>`}
+    <${Field} label="Nom du repas" id="me-n"><input id="me-n" value=${title} onChange=${(e) => setTitle(e.target.value)} placeholder="Ex. Déjeuner" /></${Field}>
+    ${eq ? null : html`<p className="muted small">Les valeurs se recalculent toutes seules quand tu changes une quantité.</p>`}
+    <div className="actions"><${Btn} onClick=${save} disabled=${busy || !items.length}>Enregistrer les modifications</${Btn}>
+      <${Btn} kind="quiet" onClick=${onClose}>Annuler</${Btn}></div>
+  </div>`;
+}
 function SlotPick({ value, onChange }) { return html`<${Field} label="Moment"><${Seg} options=${SLOTS.map((s) => ({ v: s.id, n: s.n }))} value=${value} onChange=${onChange} /></${Field}>`; }
 function parseMeal(j, src, eq) {
   /* quantités estimées par le coach IA ; valeurs nutritionnelles relues dans la table Ciqual de l'ANSES */
@@ -6634,6 +6672,7 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   const [edit, setEdit] = useState(!np);
   const [date, setDate] = useState(todayISO());
   const [modal, setModal] = useState(null);
+  const [editMeal, setEditMeal] = useState(null);   /* le repas en cours de modification */
   const day = data.food[date] || { meals: [] };
   const tot = dayTotals(day);
   const eq = np && np.mode === "equilibre";
@@ -6647,6 +6686,8 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     const cur = src.get().food[date] || { meals: [] };
     try { await src.saveFood(date, { meals: [...(cur.meals || []), meal], updatedAt: nowISO() }); toast("Repas ajouté.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); }
   };
+  /* remplace un repas par sa version modifiee, a son identifiant : l'historique du jour ne bouge pas */
+  const saveMeal = async (m) => { const cur = src.get().food[date] || { meals: [] }; await src.saveFood(date, { meals: (cur.meals || []).map((x) => (x.id === m.id ? m : x)), updatedAt: nowISO() }); };
   const delMeal = async (id) => { const cur = src.get().food[date] || { meals: [] }; await src.saveFood(date, { meals: (cur.meals || []).filter((m) => m.id !== id), updatedAt: nowISO() }); };
   const saveNp = async (x) => { try { await src.saveNutri(x); setEdit(false); setSub("journal"); toast("Objectif enregistré.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } };
   const last7 = Array.from({ length: 7 }, (_, i) => addDays(todayISO(), i - 6)).map((d) => ({ x: JOURS[parseISO(d).getDay()].slice(0, 3) + ".", y: Math.round(dayTotals(data.food[d]).kcal), muted: d === todayISO() }));
@@ -6690,7 +6731,7 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
       ${!canAI && ai.ready && !window.IS_SITE ? html`<p className="muted small">${conf.on ? "Photo, description et lecture d'étiquette demandent d'ouvrir l'application connecté à ton compte Claude." : "Ton coach a désactivé le coach IA."}</p>` : null}
       ${bySlot.length ? bySlot.map((s) => html`<${Card} key=${s.id} title=${s.n} action=${eq ? null : html`<span className="muted small">${fmtN(sumItems(s.meals).kcal, 0)} kcal</span>`}>
         ${s.meals.map((m) => html`<div key=${m.id} className="meal">
-          <div className="meal-h"><b>${m.title}</b>${VERDICT[m.verdict] ? html`<${Pill} tone=${VERDICT[m.verdict].t}>${VERDICT[m.verdict].n}</${Pill}>` : null}<button type="button" className="linkbtn" onClick=${() => delMeal(m.id)}>Supprimer</button></div>
+          <div className="meal-h"><b>${m.title}</b>${VERDICT[m.verdict] ? html`<${Pill} tone=${VERDICT[m.verdict].t}>${VERDICT[m.verdict].n}</${Pill}>` : null}<button type="button" className="linkbtn" onClick=${() => setEditMeal(m)}>Modifier</button><button type="button" className="linkbtn" onClick=${() => delMeal(m.id)}>Supprimer</button></div>
           <p className="muted small">${(m.items || []).map((x) => x.n + (eq || !x.g ? "" : " " + Math.round(x.g) + " g")).join(" · ")}${eq ? "" : " — " + fmtN(m.kcal, 0) + " kcal · P " + fmtN(m.p, 0) + " g"}</p>
           ${m.comment ? html`<p className="small">${m.comment}</p>` : null}</div>`)}</${Card}>`) : html`<${Empty} title="Aucun repas noté" text=${canAI ? "Prends ton repas en photo, scanne un produit ou décris-le." : "Scanne un produit ou ajoute tes aliments en quelques secondes."} />`}
       <${HydraCard} data=${data} src=${src} np=${np} date=${date} />
@@ -6700,6 +6741,9 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
     <${Modal} open=${!!modal} title=${{ photo: "Photo du repas", scan: "Scanner un produit", texte: "Décrire un repas", manuel: "Saisir un repas" }[modal] || ""} onClose=${() => setModal(null)}>
       ${modal === "scan" ? html`<${ScanProduct} np=${np} tot=${tot} ai=${canAI ? ai : { ...ai, sample: null, images: false }} db=${db} onAdd=${addMeal} onClose=${() => setModal(null)} />` : null}
       ${modal && modal !== "scan" ? html`<${AddMeal} mode=${modal} np=${np} tot=${tot} ai=${ai} onAdd=${addMeal} onClose=${() => setModal(null)} />` : null}
+    </${Modal}>
+    <${Modal} open=${!!editMeal} title="Modifier le repas" onClose=${() => setEditMeal(null)}>
+      ${editMeal ? html`<${MealEdit} meal=${editMeal} eq=${eq} np=${np} tot=${tot} onSave=${saveMeal} onClose=${() => setEditMeal(null)} />` : null}
     </${Modal}>
   </div>`;
 }

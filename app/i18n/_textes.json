@@ -57014,5 +57014,215 @@
   "kind": "string",
   "where": "i18n/work/arriere_09_partenaire.json",
   "n": 1
+ },
+ {
+  "h": "dd250eebf5",
+  "k": "Créatine monohydrate",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "143701d0b9",
+  "k": "3 à 5 g par jour, tous les jours",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "984a643414",
+  "k": "Pour les efforts courts et répétés : sprints, séries lourdes, changements d'appui. L'effet vient de la saturation du muscle, pas d'une prise avant la séance.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "ec2a657be4",
+  "k": "Caféine",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "21b16ce2d8",
+  "k": "3 à 6 mg par kg de poids, 30 à 60 minutes avant",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "93614aef09",
+  "k": "Le plus fiable des aides à la performance, sur l'endurance comme sur la force. Un café fort fait le travail : la poudre n'apporte rien de plus.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "4d4fce187d",
+  "k": "Protéine en poudre",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "cbdeed0f96",
+  "k": "selon ce qui manque dans la journée",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "3bee501c8b",
+  "k": "Un aliment pratique, pas un produit magique : elle sert à atteindre 1,4 à 2 g par kg et par jour quand les repas n'y suffisent pas. Du poulet, des œufs ou des lentilles font la même chose.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "7fe4d1a058",
+  "k": "Bêta-alanine",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "9dc6390079",
+  "k": "4 à 6 g par jour, pendant 2 à 4 semaines",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "d543576e0d",
+  "k": "Pour les efforts qui brûlent, entre 1 et 4 minutes : 400 m, un round, une série longue. Sans intérêt en dehors de cette fenêtre.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "12fce70c9b",
+  "k": "Vitamine D",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "b5a03ac0b9",
+  "k": "seulement si une prise de sang montre une carence",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "2ca3a3cb39",
+  "k": "Se corrige, ne se devine pas. En supplémenter « au cas où » n'apporte rien à qui n'en manque pas.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "c55cf8e568",
+  "k": "Brûleurs de graisse",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "6124db1902",
+  "k": "Aucun ne fait perdre du gras à la place d'un déficit alimentaire. Ce que tu paies, c'est surtout de la caféine.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "9b917c3d1c",
+  "k": "Sans intérêt dès que tes protéines totales sont suffisantes : ils sont déjà dedans. C'est le cas de presque tous les clients suivis.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "4713d7d914",
+  "k": "Multivitamines",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "90181af57d",
+  "k": "Chez quelqu'un qui mange varié, aucun bénéfice démontré sur la performance. Utile seulement sur une carence identifiée.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "9bd5b82bc1",
+  "k": "« Boosters de testostérone »",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "5ac76ca9f1",
+  "k": "Rien de solide chez l'homme sain et jeune. La testostérone se gagne par le sommeil, le poids de corps et l'entraînement.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "41a8b3a301",
+  "k": "Mal dormir vient presque toujours de la charge d'entraînement, de la caféine, des écrans ou du stress — et c'est là que ça se répare : l'application te donne déjà ces leviers dans ta santé du jour quand tes nuits raccourcissent. Côté complément, une seule allégation est autorisée dans l'Union européenne : « la mélatonine contribue à réduire le temps d'endormissement », pour 1 mg pris avant le coucher. Elle aide à s'endormir plus vite, pas à mieux dormir, et elle ne remplace aucun des leviers ci-dessus. Si le problème dure, c'est un médecin qu'il faut voir, pas un rayon.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "e6c49842a5",
+  "k": "Si tu es soumis au contrôle antidopage : un complément peut être contaminé, et c'est TA responsabilité qui est engagée, pas celle de la marque (principe de responsabilité stricte du code mondial antidopage). Choisis des produits analysés lot par lot, et parles-en à Antoine avant d'en prendre un nouveau en période de compétition.",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "52b865acf4",
+  "k": "Ce qui marche",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "c5e3b9478e",
+  "k": "Ce que montrent les données, avec les doses",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "f77c1e0d4c",
+  "k": "Ce qui ne vaut pas son prix",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "512f1d2b7e",
+  "k": "Et pour le sommeil",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "9f9eff6fe7",
+  "k": "Avant d'acheter quoi que ce soit",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
+ },
+ {
+  "h": "31a9dae2ad",
+  "k": "Compléments",
+  "kind": "string",
+  "where": "i18n/work/arriere_10_complements.json",
+  "n": 1
  }
 ]

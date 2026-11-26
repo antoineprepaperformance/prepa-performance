@@ -3,6 +3,22 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 25 novembre 2026 (suite) · les compléments : une page d'information, jamais une suggestion déclenchée
+
+- **Antoine** : « est-ce qu'on pourrait suggérer des compléments NutriPure dans l'onglet Nutrition pour aider si on s'aperçoit que les personnes ont du mal à dormir ? », puis « fais au mieux mais ça serait intéressant de le mettre en place pour répondre au besoin de mes clients ».
+- **Ce qui a été écarté, et pourquoi** : déclencher une suggestion de produit à partir du sommeil, de la VFC ou de la fatigue d'un client. Trois raisons, dans l'ordre :
+  - ces données sont collectées « pour l'exécution du contrat » — c'est écrit dans sa propre politique de confidentialité ; s'en servir pour déclencher une offre commerciale est une **finalité nouvelle**, incompatible (RGPD art. 5.1.b), portant sur des **données de santé** (art. 9) ;
+  - « tu dors mal, prends ça » est une **allégation de santé**, encadrée par le règlement UE 432/2012 : seules les allégations autorisées sont utilisables, aux doses prévues — et pour le sommeil il n'y en a qu'une ;
+  - et c'est le plus coûteux : une application qui *repère* une faiblesse pour *vendre* détruit exactement ce qu'Antoine vend, la rigueur. Son application fait déjà l'inverse ailleurs — devant des apports trop bas, elle dit « remonte tes apports et vois un médecin », elle ne vend rien.
+- **Ce qui a été construit à la place** : un onglet **« Compléments »** dans Nutrition. Une page d'information, lisible par tous, à tout moment, jamais déclenchée par personne.
+  - **Ce qui marche**, avec les doses et les sources : créatine monohydrate (3 à 5 g/j, ISSN Kreider 2017), caféine (3 à 6 mg/kg, ISSN Guest 2021), protéine en poudre présentée pour ce qu'elle est — un aliment pratique (ISSN Jäger 2017, les repères déjà utilisés par l'objectif nutrition), bêta-alanine (4 à 6 g/j, ISSN Trexler 2015), vitamine D **seulement sur carence prouvée**.
+  - **Ce qui ne vaut pas son prix** : brûleurs de graisse, BCAA quand les protéines suffisent, multivitamines chez qui mange varié, « boosters de testostérone ». C'est cette partie-là qui rend la page crédible.
+  - **Le sommeil**, qui était la demande de départ : la page dit que ça se répare par la charge, la caféine, les écrans et le stress — leviers que l'application donne **déjà** quand les nuits raccourcissent (4 conseils dédiés sous 7 h) — cite la seule allégation autorisée (mélatonine, 1 mg avant le coucher, pour **s'endormir plus vite, pas mieux dormir**) et renvoie au **médecin** si ça dure.
+  - **L'antidopage** avant tout achat : un complément peut être contaminé, et c'est la responsabilité du sportif qui est engagée (responsabilité stricte du code mondial).
+- **L'information est accessible aux mineurs, la vente non.** Un client de moins de 18 ans voit toute la page — elle le protège, surtout sur l'antidopage et sur ce qui ne vaut pas son prix — mais la carte du partenaire et le lien rémunéré restent invisibles pour lui. Vérifié par un test.
+- Le lien NutriPure est **au bout** de la page, pas au début : le client comprend *pourquoi* avant de voir *où acheter*. C'est aussi ce qui convertit le mieux.
+- Tests : `e2e_partenaire.py` passe à **23 vérifications**. 30 textes traduits. `CONFORMITE.md` gagne sa ligne sur les allégations de santé.
+
 ## 25 novembre 2026 · partenariat NutriPure : mis en avant, et annoncé comme la loi l'exige
 
 - **Antoine** : « j'ai un partenariat avec NutriPure, 10 % sur la première commande avec le code LIMOUSI, incorpore-le et mets-le en avant », puis « affiche-le vraiment visible ».

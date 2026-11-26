@@ -865,6 +865,28 @@ function HydraCard({ data, src, np, date }) {
   </${Card}>`;
 }
 
+/* ---------- compléments alimentaires : une page d'information ----------
+   Jamais declenchee par les donnees de sante d'un client : elles sont collectees pour le coaching,
+   s'en servir pour declencher une offre serait une finalite nouvelle (RGPD art. 5.1.b et 9). Et
+   « tu dors mal, prends ca » serait une allegation de sante non autorisee (reglement UE 432/2012).
+   Lisible par tous, tout le temps, y compris par un mineur : l'information le protege. Seule la
+   carte du partenaire se tait devant lui. */
+function ComplementsTab({ settings, profile }) {
+  const C = CONTENT.COMPLEMENTS || {};
+  return html`<div className="stack-s">
+    <${Card} title="Ce qui marche" sub="Ce que montrent les données, avec les doses">
+      <ul className="rlist">${(C.marche || []).map((x) => html`<li key=${x.n}><span><b>${x.n}</b> <span className="muted small">${x.dose}</span>
+        <p className="small">${x.quoi}</p><p className="muted small">${x.src}</p></span></li>`)}</ul></${Card}>
+    <${Card} title="Ce qui ne vaut pas son prix">
+      <ul className="rlist">${(C.non || []).map((x) => html`<li key=${x.n}><span><b>${x.n}</b><p className="small">${x.d}</p></span></li>`)}</ul></${Card}>
+    <${Card} title="Et pour le sommeil"><p className="small">${C.sommeil}</p></${Card}>
+    ${C.dopage ? html`<div className="alert warn"><div><b>Avant d'acheter quoi que ce soit</b><p>${C.dopage}</p></div></div>` : null}
+    <${PartenaireCard} settings=${settings} profile=${profile} />
+    <details><summary className="small">Les sources</summary>
+      <ul className="small">${(C.refs || []).map((r, i) => html`<li key=${i}>${r}</li>`)}</ul></details>
+  </div>`;
+}
+
 /* ---------- onglet Nutrition du client ---------- */
 function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   const ai = useAI();
@@ -908,8 +930,9 @@ function NutritionTab({ data, src, plan, prog, settings, db, onUpgrade }) {
   return html`<div className="stack">
     <div className="hero"><div className="eyebrow">Nutrition</div><h1>${np ? (eq ? "Des repas équilibrés, sans compter." : nutriGoalText(np).replace(/^./, (c) => c.toUpperCase()).replace(/, départ.*$/, "") + ".") : "Fixe ton objectif en 1 minute."}</h1></div>
     <${PartenaireCard} settings=${settings} profile=${data.profile} />
-    <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
+    <div className="tabs-scroll"><${Seg} options=${np ? [{ v: "journal", n: "Mon journal" }, { v: "recettes", n: "Recettes" }, { v: "objectif", n: "Mon objectif" }, { v: "complements", n: "Compléments" }] : [{ v: "objectif", n: "Mon objectif" }, { v: "recettes", n: "Recettes" }, { v: "complements", n: "Compléments" }]} value=${sub} onChange=${(x) => { setSub(x); setEdit(false); }} /></div>
     ${sub === "recettes" ? html`<${RecipesTab} data=${data} src=${src} np=${np} ai=${canAI ? ai : null} cid=${src.cid} settings=${settings} onAddMeal=${async (m) => { const d = todayISO(); const cur = src.get().food[d] || { meals: [] }; try { await src.saveFood(d, { meals: [...(cur.meals || []), m], updatedAt: nowISO() }); toast("Ajouté à ton journal d'aujourd'hui.", "ok"); } catch (e) { toast("Enregistrement impossible.", "bad"); } }} />` : null}
+    ${sub === "complements" ? html`<${ComplementsTab} settings=${settings} profile=${data.profile} />` : null}
     ${sub === "objectif" && (edit || !np) ? html`<${NutriSetup} data=${data} plan=${plan} prog=${prog} onSave=${saveNp} onCancel=${np ? () => setEdit(false) : null} />` : null}
     ${sub === "objectif" && np && !edit ? html`<${EnergieCard} data=${data} plan=${plan} />
       <${NutriPlanView} np=${np} data=${data} onEdit=${() => setEdit(true)} />

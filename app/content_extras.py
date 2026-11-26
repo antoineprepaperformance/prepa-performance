@@ -180,6 +180,55 @@ LITE = {"id": "lite", "n": "Lite", "retired": True, "prix": {"mois": 9.9, "an": 
         "desc": "En autonomie : tous les programmes et les profils, les séances terrain, flash et récup, la santé au quotidien et le suivi de l'eau. Sans nutrition, sans réponse d'Antoine à tes bilans, sans correction vidéo par Antoine et sans coach IA.",
         "descN": "Lite + la nutrition : objectif calculé, journal des repas, plats types, scan des produits et livre de recettes (sans coach IA)."}
 
+# Les compléments alimentaires : une page d'information, lisible par tous, à tout moment.
+# Elle n'est JAMAIS déclenchée par les données de santé d'un client. Deux raisons :
+#  - ces données sont collectées « pour l'exécution du contrat » (le coaching) ; s'en servir pour
+#    déclencher une offre commerciale serait une finalité nouvelle, incompatible (RGPD art. 5.1.b)
+#    et portant sur des données de santé (art. 9) ;
+#  - « tu dors mal, prends ça » est une allégation de santé, encadrée par le règlement UE 432/2012 :
+#    seules les allégations autorisées sont utilisables, aux doses prévues.
+# Les deux seules allégations autorisées citées ici le sont mot pour mot, avec leur dose.
+COMP_MARCHE = [
+    {"n": "Créatine monohydrate", "dose": "3 à 5 g par jour, tous les jours",
+     "quoi": "Pour les efforts courts et répétés : sprints, séries lourdes, changements d'appui. L'effet vient de la saturation du muscle, pas d'une prise avant la séance.",
+     "src": "ISSN, Kreider et coll., 2017. Allégation autorisée dans l'Union européenne à partir de 3 g par jour : « la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée »."},
+    {"n": "Caféine", "dose": "3 à 6 mg par kg de poids, 30 à 60 minutes avant",
+     "quoi": "Le plus fiable des aides à la performance, sur l'endurance comme sur la force. Un café fort fait le travail : la poudre n'apporte rien de plus.",
+     "src": "ISSN, Guest et coll., 2021. À retenir dans l'autre sens : prise jusqu'à 6 heures avant le coucher, elle coûte encore environ une heure de sommeil."},
+    {"n": "Protéine en poudre", "dose": "selon ce qui manque dans la journée",
+     "quoi": "Un aliment pratique, pas un produit magique : elle sert à atteindre 1,4 à 2 g par kg et par jour quand les repas n'y suffisent pas. Du poulet, des œufs ou des lentilles font la même chose.",
+     "src": "ISSN, Jäger et coll., 2017 — les mêmes repères que ceux utilisés par ton objectif nutrition."},
+    {"n": "Bêta-alanine", "dose": "4 à 6 g par jour, pendant 2 à 4 semaines",
+     "quoi": "Pour les efforts qui brûlent, entre 1 et 4 minutes : 400 m, un round, une série longue. Sans intérêt en dehors de cette fenêtre.",
+     "src": "ISSN, Trexler et coll., 2015. Picotements sur la peau fréquents et sans gravité ; des doses fractionnées les réduisent."},
+    {"n": "Vitamine D", "dose": "seulement si une prise de sang montre une carence",
+     "quoi": "Se corrige, ne se devine pas. En supplémenter « au cas où » n'apporte rien à qui n'en manque pas.",
+     "src": "À voir avec ton médecin : c'est un dosage sanguin, pas une estimation."},
+]
+COMP_NON = [
+    {"n": "Brûleurs de graisse", "d": "Aucun ne fait perdre du gras à la place d'un déficit alimentaire. Ce que tu paies, c'est surtout de la caféine."},
+    {"n": "BCAA", "d": "Sans intérêt dès que tes protéines totales sont suffisantes : ils sont déjà dedans. C'est le cas de presque tous les clients suivis."},
+    {"n": "Multivitamines", "d": "Chez quelqu'un qui mange varié, aucun bénéfice démontré sur la performance. Utile seulement sur une carence identifiée."},
+    {"n": "« Boosters de testostérone »", "d": "Rien de solide chez l'homme sain et jeune. La testostérone se gagne par le sommeil, le poids de corps et l'entraînement."},
+]
+COMP_SOMMEIL = ("Mal dormir vient presque toujours de la charge d'entraînement, de la caféine, des écrans ou du stress — et c'est là "
+                "que ça se répare : l'application te donne déjà ces leviers dans ta santé du jour quand tes nuits raccourcissent. "
+                "Côté complément, une seule allégation est autorisée dans l'Union européenne : « la mélatonine contribue à réduire "
+                "le temps d'endormissement », pour 1 mg pris avant le coucher. Elle aide à s'endormir plus vite, pas à mieux dormir, "
+                "et elle ne remplace aucun des leviers ci-dessus. Si le problème dure, c'est un médecin qu'il faut voir, pas un rayon.")
+COMP_DOPAGE = ("Si tu es soumis au contrôle antidopage : un complément peut être contaminé, et c'est TA responsabilité qui est engagée, "
+               "pas celle de la marque (principe de responsabilité stricte du code mondial antidopage). Choisis des produits analysés "
+               "lot par lot, et parles-en à Antoine avant d'en prendre un nouveau en période de compétition.")
+COMP_REFS = [
+    "Kreider RB et al. International Society of Sports Nutrition position stand: safety and efficacy of creatine supplementation. J Int Soc Sports Nutr. 2017;14:18.",
+    "Guest NS et al. International society of sports nutrition position stand: caffeine and exercise performance. J Int Soc Sports Nutr. 2021;18:1.",
+    "Jäger R et al. International Society of Sports Nutrition position stand: protein and exercise. J Int Soc Sports Nutr. 2017;14:20.",
+    "Trexler ET et al. International society of sports nutrition position stand: Beta-Alanine. J Int Soc Sports Nutr. 2015;12:30.",
+    "Règlement (UE) n° 432/2012 de la Commission du 16 mai 2012 : liste des allégations de santé autorisées (créatine, mélatonine).",
+    "Code mondial antidopage, principe de responsabilité stricte du sportif.",
+]
+COMPLEMENTS = {"marche": COMP_MARCHE, "non": COMP_NON, "sommeil": COMP_SOMMEIL, "dopage": COMP_DOPAGE, "refs": COMP_REFS}
+
 # Partenariat commercial. Antoine touche une commission sur les commandes passées avec son lien :
 # la loi du 9 juin 2023 sur l'influence commerciale et l'article L121-1 du code de la consommation
 # (pratiques commerciales trompeuses par omission) imposent de l'annoncer CLAIREMENT et au même
@@ -199,4 +248,4 @@ PARTENAIRE = {
 }
 
 EXTRAS_CONTENT = {"LITE": LITE, "XREFS": REFS, "RECUP": RECUP, "FLASH": FLASH, "TIPS": TIPS, "CHECKS": CHECKS, "CHECK_OF": CHECK_OF,
-                  "PARTENAIRE": PARTENAIRE}
+                  "PARTENAIRE": PARTENAIRE, "COMPLEMENTS": COMPLEMENTS}

@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-11-30",
+ "publications": [
+  {
+   "id": "2026-11-30-a",
+   "quand": "2026-11-30T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-11-30-b",
+   "quand": "2026-12-01T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_freinage.jpg"
+   ],
+   "auto": true,
+   "legende": "Tu veux changer de direction plus vite ? Commence par apprendre à t'arrêter. 🛑\nPlus tu arrives vite sur un appui, plus le changement de direction est difficile à exécuter : c'est le compromis angle-vitesse. Et ce sont les derniers appuis, surtout l'avant-dernier, qui font l'essentiel du freinage. Un freinage réparti sur plusieurs appuis soulage aussi le genou au moment de la coupe.\n\nL'exercice, pour le rugby, le foot, le hand, le basket, le tennis :\n1. Sprint de 10 m, puis arrêt complet dans une zone de 2 m, en 3 appuis au plus.\n2. Reste 1 s immobile : genoux fléchis, buste droit, genou au-dessus des orteils, jamais vers l'intérieur.\n3. Quand c'est propre : zone de 1,5 m, puis élan de 15 m. Si tu dépasses la zone, recule le plot.\n\nDose de départ : 3 séries de 5 freinages, 2 min de récupération.\n👉 Enregistre ce post. L'exercice « Freiner avant de tourner » est dans l'application, avec son schéma animé et la suite : la coupe à 45°.\n\nSource : Dos'Santos T, Thomas C, Comfort P, Jones PA. The effect of angle and velocity on change of direction biomechanics: an angle-velocity trade-off. Sports Med. 2018;48(10):2235-2253.\n\n#preparationphysique #vivacite #changementdedirection #appuis #rugby #football #handball #basket #preventionblessure"
+  },
+  {
+   "id": "2026-11-30-c",
+   "quand": "2026-12-02T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-11-30-d",
+   "quand": "2026-12-03T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_passesol_1.jpg",
+    "05_post_jeudi_passesol_2.jpg",
+    "06_post_jeudi_passesol_3.jpg",
+    "07_post_jeudi_passesol_4.jpg",
+    "08_post_jeudi_passesol_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Une attaque rapide commence au sol. 🏉\nLa passe du sol se joue sans pas d'armé : le ballon part directement, les jambes donnent la force, les bras orientent. Et elle se travaille des deux côtés, parce que le côté faible ne s'améliore pas tout seul.\n\nLa fiche, en 4 étapes :\n1. Deux plots à 8 m, un ballon posé à chacun ; un receveur de chaque côté, déjà en mouvement.\n2. Pied d'appui près du ballon, hanches basses : ne te relève pas.\n3. Passe balayée : mains sous le ballon, le poids passe d'un pied à l'autre, les mains finissent vers la poitrine du receveur.\n4. Pas chassés jusqu'à l'autre ballon, et passe de l'autre côté.\n\nDose : 3 séries de 6 passes à 8 m, côtés alternés. Plus dur : le receveur annonce son côté au dernier moment.\n👉 Enregistre le carrousel et envoie-le à ton demi de mêlée. La fiche complète, avec son schéma animé, est dans l'application (onglet Technique du rugby).\n\nSource : Pavely S, Adams RD, Di Francesco T, Larkham S, Maher CG. Execution and outcome differences between passes to the left and right made by first-grade rugby union players. Phys Ther Sport. 2009;10(4):136-141 (20 joueurs de première division, passes en course : du côté non préféré, 57 % de passes en avant contre 15 %, et 13,5 m contre 15,4 m). Exercices proches du jeu : Gabbett T, Jenkins D, Abernethy B. Int J Sports Sci Coach. 2009;4(2):273-283.\n\n#rugby #rugbyamateur #demidemelee #passe #techniquerugby #entrainement #preparationphysique #rugbyfeminin"
+  },
+  {
+   "id": "2026-11-30-e",
+   "quand": "2026-12-05T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_closeout.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et une question : à publier toi-même"
+  },
+  {
+   "id": "2026-11-30-f",
+   "quand": "2026-12-06T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Trois façons d'être accompagné, une seule question : de combien d'aide as-tu besoin ? 🤝\n1. Autonomie : ton programme et ta nutrition, construits pour ton sport. Avec ou sans coach IA, selon ce que tu veux.\n2. Suivi : Antoine te répond sous 48 h par messagerie, et ses consignes sont appliquées à ton programme.\n3. Sur mesure : ton plan ajusté par Antoine, avec des vidéos chaque semaine. Places limitées.\n\nPour 1, 3, 6 ou 12 mois, en paiement unique : pas d'abonnement qui se renouvelle sans toi. Droit de rétractation de 14 jours.\nCe qu'on ne te promet pas : un résultat garanti. Juste un entraînement pensé pour ton sport, et quelqu'un qui le connaît.\n👉 Lien en bio pour les formules, dès 12,90 €.\n\n#preparationphysique #coachingenligne #coachsportif #rugby #football #handball #basket #bordeaux"
+  }
+ ]
+}

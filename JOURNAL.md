@@ -3,6 +3,18 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 26 novembre 2026 (suite) · la carte compare aux sportifs du même sport, français et internationaux
+
+- **Antoine** : « pour la carte athlète, garde par rapport aux sportifs d'un même sport, français et internationaux. »
+- **Trouvé, et c'est la bonne source** : **Peeters, Leduc, Piscione, Lacome, Carling et Babault, PLOS ONE 2023;18(12):e0295623** — **1 423 joueurs des académies de la Fédération française de rugby** (U16, U18, U20), développé couché mesuré **en 3 répétitions** et, surtout, **internationaux séparés des non-internationaux**. Le 3RM se convertit en maximum estimé par la formule d'Epley : celle qu'utilise déjà le test de l'appli. Méthode identique, donc palier recevable.
+- **Deux paliers français par poste et par catégorie d'âge** : « Académie française U20 » et « Internationaux français U20 ». Pour un trois-quarts de 80 kg : 114 kg puis 123 kg. Résultat parlant : **l'académie passe sous le « bon niveau » général et les internationaux au-dessus** — l'échelle les range dans cet ordre au lieu de lisser.
+- **La catégorie suit l'âge du client** : 16 ans → U16, 17-18 → U18, 19 et plus → U20. Et **si l'année de naissance est inconnue, aucune catégorie n'est devinée** : on n'affiche rien plutôt que de comparer au hasard. Piège JavaScript au passage : `null >= 0` vaut **vrai**, donc un âge inconnu passait le filtre des U16 — corrigé par un `typeof age === "number"`, et testé.
+- **Le squat garde les internationaux portugais** (Vaz 2014) : c'est le seul squat **dynamique** mesuré comme le test. L'étude française n'a qu'un squat **isométrique**, qui n'est pas comparable — la règle du 22 novembre s'applique telle quelle.
+- **Structure revue** : chaque sexe porte désormais une **liste** de paliers, chacun avec son nom, sa source, sa tranche d'âge facultative et, pour les charges, le couple barre + poids de corps de l'étude et le nombre de répétitions. `refSport()` renvoie une liste, `refScore()` prend le meilleur (un repère de sport ne peut toujours que monter la note, jamais la baisser).
+- **Anti-superposition** : deux paliers que moins de 2 % séparent sont illisibles sur la règle, le code ne garde que le plus exigeant. C'est le cas en **U16**, où internationaux et non-internationaux ont la **même force à poids égal** — la sélection s'y fait sur le gabarit. Dit en commentaire, pas caché.
+- **Ce qui reste impossible** : le **rugby féminin français**. L'étude existe (Imbert, Piscione, Couderc, Joncheray et Daussin, *Front Sports Act Living* 2023;5:1120162 — 631 joueuses des équipes de France, développé couché en 1RM), mais elle ne publie **que des courbes**, sans tableau chiffré. Lire des valeurs sur un graphique serait inventer une précision absente : rien n'est posé.
+- Tests : `e2e_echelle.py` passe à **33 vérifications** (dont la catégorie d'âge appliquée, et l'âge inconnu qui n'en devine aucune), `e2e_pdf_carte.py` à **43**. 7 textes traduits.
+
 ## 26 novembre 2026 · modifier un repas noté, au lieu de tout ressaisir
 
 - **Antoine** : « dans l'onglet nutrition, j'aimerais qu'on puisse modifier les menus, ou quand j'ai mis des ingrédients, ou rajouter ».

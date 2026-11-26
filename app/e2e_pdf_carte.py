@@ -43,12 +43,13 @@ async def run():
                 nobw: refScore("e1rm_squat", 150, "H", null), t5: refScore("t5km", 12.589, "H").v, cmj: refScore("cmj", 50, "H"),
                 abs: cardAbs({ profile: { weight: 90 }, tests: { a: { at: "2026-10-01", values: { sprint30: 4.4, e1rm_squat: { kg: 140, reps: 3 } } }, b: { at: "2026-10-29", values: { sprint30: 4.2 } } } }),
                 squatGen: refScore("e1rm_squat", 200, "H", 80).v, squatSp: refScore("e1rm_squat", 200, "H", 80, "rugby", "avant").v,
-                dcGen: refScore("e1rm_dc", 100, "H", 80).v, dcSp: refScore("e1rm_dc", 100, "H", 80, "rugby", "avant").v,
-                dcTqSp: refScore("e1rm_dc", 100, "H", 80, "rugby", "trois-quarts").v,
+                dcGen: refScore("e1rm_dc", 112, "H", 80).v, dcSp: refScore("e1rm_dc", 112, "H", 80, "rugby", "avant", 31).v,
+                dcSansAge: refScore("e1rm_dc", 112, "H", 80, "rugby", "avant").v,
+                dcJeune: refScore("e1rm_dc", 112, "H", 80, "rugby", "avant", 16).spSrc,
                 sprintGen: refScore("sprint10", 1.85, "H").v, sprintSp: refScore("sprint10", 1.85, "H", null, "rugby", "avant").v,
                 noPoste: refScore("e1rm_squat", 200, "H", 80, "rugby", null).v, autreSport: refScore("e1rm_squat", 200, "H", 80, "foot", "attaquant").v,
                 nobwSp: refScore("e1rm_squat", 200, "H", null, "rugby", "avant"),
-                rugbyCarte: cardAbs({ profile: { sportId: "rugby", poste: "avant", weight: 80 }, tests: { a: { at: "2026-10-01", values: { e1rm_dc: { kg: 90, reps: 3 } } } } }),
+                rugbyCarte: cardAbs({ profile: { sportId: "rugby", poste: "avant", weight: 80, birthYear: 1995 }, tests: { a: { at: "2026-10-01", values: { e1rm_dc: { kg: 102, reps: 3 } } } } }),
               };
               // note générale : un test déjà noté face au record du monde ne doit pas être plombé par régularité/engagement
               // sans historique (profil tout juste inscrit, plan pas encore commencé : pl = 0, aucun bilan).
@@ -70,8 +71,9 @@ async def run():
             sc = {x["tid"]: x for x in r["abs"]["scores"]}
             ok(sc.get("sprint30", {}).get("val") == 4.2 and "e1rm_squat" in sc and r["abs"]["byAttr"].get("vit") and r["abs"]["sex"] == "H" and not r["abs"]["sexKnown"],
                "dernier résultat de chaque test, attributs vitesse et force", r["abs"])
-            ok(r["dcSp"] == 90 and r["dcSp"] > r["dcGen"], "développé couché : atteindre la moyenne des internationaux à son poste (94 kg pour 80 kg) vaut 90", r)
-            ok(r["dcTqSp"] >= r["dcSp"], "trois-quarts : repère un peu plus accessible que celui des avants, donc note au moins égale à charge égale", r)
+            ok(r["dcSp"] == 90 and r["dcSp"] > r["dcGen"], "développé couché : atteindre le niveau des académies françaises à son poste (111 kg pour 80 kg) vaut 90", r)
+            ok(r["dcSansAge"] == r["dcGen"], "sans âge connu, aucun palier de catégorie n'est appliqué : c'est le repère générique", r)
+            ok(r["dcJeune"] and "U16" in r["dcJeune"], "à 16 ans, c'est le repère U16 qui est appliqué, pas celui des U20", r["dcJeune"])
             ok(r["squatSp"] == r["squatGen"], "squat : repère du poste plus exigeant que le repère générique ici, donc sans effet — jamais de note plus basse", r)
             ok(r["sprintSp"] == r["sprintGen"], "sprint : plus aucun repère de poste (les études chronomètrent au portique, pas comme le test du client)", r)
             ok(r["noPoste"] == r["squatGen"] and r["autreSport"] == r["squatGen"], "sans poste connu, ou sport sans repère dédié : repère générique", r)
@@ -81,8 +83,8 @@ async def run():
             ok(r.get("noteSansRien") == 65 and r.get("tierSansRien") == "argent", "sans aucune donnée, note neutre (profil Confirmé) et palier Argent", r)
             ok(r.get("noteAvecVitElite") == 78 and r.get("tierAvecVitElite") == "or",
                "un seul test déjà au niveau du record du monde (65 → 78) fait passer directement au palier Or, sans attendre un historique de régularité/engagement", r)
-            ok(r["rugbyCarte"]["scores"][0]["spSrc"] is not None and "Vaz" in r["rugbyCarte"]["scores"][0]["spSrc"],
-               "carte d'un avant de rugby : la source du repère de son poste est bien remontée", r["rugbyCarte"])
+            ok(r["rugbyCarte"]["scores"][0]["spSrc"] is not None and "Peeters" in r["rugbyCarte"]["scores"][0]["spSrc"],
+               "carte d'un avant de rugby : la source du repère de son poste et de sa catégorie est bien remontée", r["rugbyCarte"])
 
             # ---------- client Sur mesure ----------
             await btn(co, "Codes & essais", exact=True)

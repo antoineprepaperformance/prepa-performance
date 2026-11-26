@@ -126,14 +126,32 @@ function refAnchors(tid, sex, bw) {
    au poids du client par la même échelle allométrique que les autres repères (Jaric 2002), sinon un repère
    pris sur des avants de 100 kg n'aurait aucun sens pour un client de 70 kg. Le nom du palier vient de
    l'étude (« Moyenne des internationaux »…) : il dit ce que le chiffre est vraiment. */
-function refSport(r, sex, bw, sportId, poste) {
-  const t = r.sport && sportId && r.sport[sportId]; if (!t) return null;
-  const parPoste = poste && t[poste] && t[poste][sex], e = parPoste || (t["*"] && t["*"][sex]);
-  if (!e) return null;
-  const v = r.lift ? (bw ? e[0][0] * Math.pow(bw / e[0][1], 0.67) : 0) : e[0];
-  if (!(v > 0)) return null;
+function refSport(r, sex, bw, sportId, poste, age) {
+  const t = r.sport && sportId && r.sport[sportId]; if (!t) return [];
+  const parPoste = poste && t[poste] && t[poste][sex], lst = parPoste || (t["*"] && t["*"][sex]);
+  if (!lst || !lst.length) return [];
   const pn = parPoste ? (posteLabel(sportId, poste) || poste) : "";
-  return { v, src: e[1], n: (e[2] || "Haut niveau") + (pn ? " · " + pn : "") };
+  const out = [];
+  lst.forEach((e) => {
+    /* un palier par categorie d'age exige un age connu : sans lui on ne devine pas la categorie,
+       et afficher les six d'un coup rendrait la regle illisible. Le questionnaire le demande. */
+    if (e.age && !(typeof age === "number" && age >= e.age[0] && age <= e.age[1])) return;   /* null >= 0 vaut vrai en JS */
+    let v;
+    if (r.lift) {
+      if (!bw) return;
+      /* n-RM de l'étude ramené au maximum estimé par la formule d'Epley — celle-là même qu'utilise le
+         test de l'appli — puis au poids du client par l'échelle allométrique (Jaric 2002). */
+      v = e.kg * (1 + (Number(e.reps) || 0) / 30) * Math.pow(bw / e.bw, 0.67);
+    } else v = e.v;
+    if (!(v > 0)) return;
+    out.push({ v, src: e.src, n: e.n + (pn ? " · " + pn : "") });
+  });
+  const dur = (a, b) => (r.dir === "low" ? a < b : a > b);        /* a est-il plus dur que b ? */
+  out.sort((a, b) => (dur(a.v, b.v) ? 1 : -1));
+  /* deux paliers que moins de 2 % séparent se superposent sur la règle et la rendent illisible : on garde
+     le plus exigeant. C'est le cas en U16, où la sélection se fait sur le gabarit et non sur la force
+     relative — les internationaux y sont plus lourds sans être plus forts à poids égal. */
+  return out.filter((x, i, l) => i === l.length - 1 || Math.abs(x.v - l[i + 1].v) / Math.max(x.v, l[i + 1].v) > 0.02);
 }
 /* nom lisible du poste (« Trois-quarts »), jamais son identifiant (« trois-quarts ») */
 function posteLabel(sportId, poste) {
@@ -155,14 +173,14 @@ function jourMois(iso) {
   const d = new Date(iso + "T12:00:00"); if (isNaN(d)) return "";
   return d.toLocaleDateString(LOCALE, { day: "numeric", month: "short" });
 }
-function cardEchelle(tid, val, sex, bw, sportId, poste, hist) {
+function cardEchelle(tid, val, sex, bw, sportId, poste, hist, age) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || !(val > 0)) return null;
-  const sp = refSport(r, sex, bw, sportId, poste);
+  const sps = refSport(r, sex, bw, sportId, poste, age);
   const mieux = (x, y) => (r.dir === "low" ? x < y : x > y);     /* x est-il meilleur que y ? */
   const barreaux = [
     { k: "bon", n: "Bon niveau", v: a[1] },
-    ...(sp ? [{ k: "poste", n: sp.n, v: sp.v, src: sp.src }] : []),
+    ...sps.map((sp, i) => ({ k: "poste" + (i || ""), n: sp.n, v: sp.v, src: sp.src })),
     { k: "monde", n: "Record du monde", v: a[2], src: r.wr && r.wr[sex],
       qui: (r.nom && r.nom[sex] && r.nom[sex][0]) || "", quoi: (r.nom && r.nom[sex] && r.nom[sex][1]) || "" },
   ].sort((x, y) => (mieux(x.v, y.v) ? 1 : -1));                   /* du plus accessible au plus dur */
@@ -190,23 +208,23 @@ function cardEchelle(tid, val, sex, bw, sportId, poste, hist) {
     pct: Math.round((r.dir === "low" ? monde.v / val : val / monde.v) * 100),
     pctSuivant: suivant ? Math.round((r.dir === "low" ? suivant.v / val : val / suivant.v) * 100) : 100 };
 }
-function refScore(tid, val, sex, bw, sportId, poste) {
+function refScore(tid, val, sex, bw, sportId, poste, age) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a || val === null || val === undefined || !(val > 0)) return null;
   let v = scoreFromAnchors(r.dir, val, a);
-  const sp = refSport(r, sex, bw, sportId, poste);
-  if (sp) { const aSp = a.slice(); aSp[1] = sp.v; v = Math.max(v, scoreFromAnchors(r.dir, val, aSp)); }
+  const sps = refSport(r, sex, bw, sportId, poste, age);
+  sps.forEach((sp) => { const aSp = a.slice(); aSp[1] = sp.v; v = Math.max(v, scoreFromAnchors(r.dir, val, aSp)); });
   const wr = a[2];
-  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sp ? sp.src : null };
+  return { tid, a: r.a, v: Math.round(v), val, ref: wr, pct: Math.round((r.dir === "low" ? wr / val : val / wr) * 100), spSrc: sps.length ? sps[sps.length - 1].src : null };
 }
 /* dernier résultat de chaque test (jusqu'à la date « cut »), noté face au record du monde */
 function cardAbs(data, cut) {
   const sex = cardSex(data) || "H", bw = cardBw(data, cut), p = (data && data.profile) || {};
-  const sportId = p.sportId || null, poste = p.poste || null;
+  const sportId = p.sportId || null, poste = p.poste || null, age = ageOf(p);
   const pts = Object.values((data && data.tests) || {}).filter((t) => t && t.values && String(t.at).slice(0, 10) <= (cut || "9999")).sort((a, b) => String(a.at).localeCompare(String(b.at)));
   const last = {};
   pts.forEach((t) => Object.keys(CARD_REF).forEach((tid) => { const v = testValue(tid, t.values[tid], p.side); if (typeof v === "number" && v > 0) last[tid] = v; }));
-  const scores = Object.entries(last).map(([tid, v]) => refScore(tid, v, sex, bw, sportId, poste)).filter(Boolean);
+  const scores = Object.entries(last).map(([tid, v]) => refScore(tid, v, sex, bw, sportId, poste, age)).filter(Boolean);
   const byAttr = {}; scores.forEach((x) => { (byAttr[x.a] = byAttr[x.a] || []).push(x.v); });
   return { sex, sexKnown: !!cardSex(data), bw, scores, byAttr };
 }
@@ -453,10 +471,10 @@ function CardRecords({ abs, data, plan, prog }) {
 /* Avant le premier test, il n'y a rien à comparer — mais il y a déjà quelque chose à viser. On montre les
    paliers de son sport et de son poste, sans marqueur « toi », avec le test qui les mesure. C'est ce qui
    donne envie de faire le test, et c'est honnête : aucune valeur n'est prêtée au client. */
-function EchelleVide({ tid, sex, bw, sportId, poste, fmt, onTests }) {
+function EchelleVide({ tid, sex, bw, sportId, poste, fmt, onTests, age }) {
   const r = CARD_REF[tid], a = refAnchors(tid, sex, bw);
   if (!r || !a) return null;
-  const e = cardEchelle(tid, r.dir === "low" ? a[0] * 2 : a[0] / 2, sex, bw, sportId, poste);  /* loin derrière : aucun palier atteint */
+  const e = cardEchelle(tid, r.dir === "low" ? a[0] * 2 : a[0] / 2, sex, bw, sportId, poste, null, age);  /* loin derrière : aucun palier atteint */
   if (!e) return null;
   return html`<li>
     <span><b>${(TESTS[tid] || {}).n || tid}</b> <span className="muted small">pas encore mesuré</span>
@@ -482,7 +500,7 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
 }
   /* historique d'un test : ce qui permet de dater les paliers franchis */
   const histOf = (tid) => Object.values((data && data.tests) || {}).map((t) => ({ at: t && t.at, v: testValue(tid, t && t.values && t.values[tid], data && data.profile && data.profile.side) })).filter((x) => x.at && x.v > 0);
-  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null, histOf(tid));
+  const ech = (tid, val) => cardEchelle(tid, val, abs.sex, abs.bw, (data && data.profile && data.profile.sportId) || null, (data && data.profile && data.profile.poste) || null, histOf(tid), ageOf((data && data.profile) || {}));
   const recordsList = html`<ul className="rlist">${abs.scores.map((x) => html`<li key=${x.tid}><span><b>${(TESTS[x.tid] || {}).n || x.tid}</b> <span className="muted small">${fmt(x.tid, x.val)} · ${x.pct} % du record</span>
     <${EchelleTest} e=${ech(x.tid, x.val)} tid=${x.tid} fmt=${fmt} profile=${data && data.profile} photo=${data && data.media && data.media.photo && data.media.photo.data} /></span><${Pill} tone="gold">${attrN[x.a]} ${x.v}</${Pill}></li>`)}</ul>`;
   if (deb && abs.scores.length) {
@@ -507,7 +525,7 @@ function EchelleTest({ e, tid, fmt, profile, photo }) {
     ${abs.scores.length ? recordsList : html`<div className="stack-s">
       <p className="small muted">Pas encore de test : voilà ce qu'il y a à viser dans ton sport, et à ton poste. Fais-en un et tu te situeras tout de suite.</p>
       <ul className="rlist">${((prog && prog.tests) || []).filter((tid) => CARD_REF[tid]).slice(0, 3).map((tid) => html`<${EchelleVide} key=${tid} tid=${tid} sex=${abs.sex} bw=${abs.bw}
-        sportId=${(data && data.profile && data.profile.sportId) || null} poste=${(data && data.profile && data.profile.poste) || null} fmt=${fmt} />`)}</ul></div>`}
+        sportId=${(data && data.profile && data.profile.sportId) || null} poste=${(data && data.profile && data.profile.poste) || null} age=${ageOf((data && data.profile) || {})} fmt=${fmt} />`)}</ul></div>`}
     ${abs.sexKnown ? null : html`<p className="small muted">Comparaison avec les records masculins par défaut : indique ton sexe dans ton profil sportif (bouton Modifier) pour la comparaison avec les records féminins.</p>`}
     ${abs.scores.some((x) => x.spSrc) ? html`<p className="small muted">Sur certains tests, un palier est calé sur ton sport et ton poste, pas seulement sur une moyenne générale.</p>` : null}
     ${abs.scores.length ? html`<details><summary>Les records de référence</summary><ul className="small">${abs.scores.map((x) => html`<li key=${x.tid}><b>${(TESTS[x.tid] || {}).n || x.tid}</b> : ${CARD_REF[x.tid].wr[abs.sex]}${CARD_REF[x.tid].lift ? " ; ramené à ton poids : " + fmtN(x.ref, 0) + " kg" : ""}${x.spSrc ? " · repère de ton poste : " + x.spSrc : ""}.</li>`)}</ul>

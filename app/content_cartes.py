@@ -6,10 +6,15 @@ Les charges sont ramenées au poids de corps de l'athlète par une échelle allo
 référence = barre du record × (poids de l'athlète / poids de la catégorie du record) ** 0,67.
 Les repères débutant et haut niveau sont des estimations du préparateur (réglables ici) ; le record est sourcé.
 
-« sport » : repère propre à un sport, au poste du client (profil.sportId / profil.poste) ou à tout le sport
-(clé « * »), quand une étude le permet. Valeur : un nombre, ou pour un test de charge le couple
-[barre de l'étude, poids de corps moyen de l'étude], ramené au poids du client par la même échelle
-allométrique. Troisième élément facultatif : le nom du palier (sinon « Haut niveau »).
+« sport » : repères propres à un sport, au poste du client (profil.sportId / profil.poste) ou à tout le
+sport (clé « * »), quand une étude le permet. Chaque sexe porte une LISTE de paliers, du plus accessible
+au plus dur, pour comparer le client à des sportifs de son sport — au niveau national comme international,
+ce qu'Antoine a demandé. Un palier : {"n": nom affiché, "src": source, et selon le test
+  - test de charge : "kg" (barre de l'étude) + "bw" (poids de corps moyen de l'étude), ramenés au poids
+    du client par la même échelle allométrique ; "reps" si l'étude mesure un n-RM et non un 1RM (converti
+    par la formule d'Epley, celle-là même qu'utilise le test de l'appli) ;
+  - autre test : "v" (la valeur).
+  "age": [min, max] limite le palier à une tranche d'âge (les données des académies sont par catégorie).}
 Sans repère de sport, le repère générique s'applique. Le record du monde (99) ne change jamais.
 
 RÈGLE : un repère ne se met sur l'échelle que s'il est mesuré DE LA MÊME FAÇON que le test du client.
@@ -39,13 +44,25 @@ CARD_REFS = {
     "e1rm_squat": {"a": "for", "dir": "high", "u": "kg", "lift": {"H": [302.5, 83], "F": [197.5, 63]}, "frac": [0.22, 0.55, 1],
                    "nom": {"H": ["Joseph Borenstein", ""], "F": ["Alba Boström", ""]}, "wr": {"H": "302,5 kg : squat de Joseph Borenstein lors du record du monde du total en 83 kg (890 kg, championnats du monde IPF classique 2025)",
                           "F": "197,5 kg : squat d'Alba Boström lors du record du monde du total en 63 kg (565 kg, championnats du monde IPF classique 2025)"},
-                   "sport": {"rugby": {"avant": {"H": [[233.33, 100.7], "233 kg pour 101 kg de poids de corps : moyenne des avants de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids", "Moyenne des internationaux"]},
-                                       "trois-quarts": {"H": [[202.36, 88.0], "202 kg pour 88 kg de poids de corps : moyenne des trois-quarts de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids", "Moyenne des internationaux"]}}}},
+                   "sport": {"rugby": {"avant": {"H": [{"kg": 233.33, "bw": 100.7, "n": "Internationaux (Portugal)",
+                                                       "src": "233 kg pour 101 kg de poids de corps : moyenne des avants de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids"}]},
+                                       "trois-quarts": {"H": [{"kg": 202.36, "bw": 88.0, "n": "Internationaux (Portugal)",
+                                                               "src": "202 kg pour 88 kg de poids de corps : moyenne des trois-quarts de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test (3 à 5 répétitions, maximum estimé) et ramenée à ton poids"}]}}}},
     "e1rm_dc": {"a": "for", "dir": "high", "u": "kg", "lift": {"H": [215, 83], "F": [140, 63]}, "frac": [0.22, 0.55, 1],
                 "nom": {"H": ["Joseph Borenstein", ""], "F": ["Alba Boström", ""]}, "wr": {"H": "215 kg : record du monde du développé couché en 83 kg (Joseph Borenstein, IPF classique 2025)",
                        "F": "140 kg : développé couché d'Alba Boström lors du record du monde du total en 63 kg (IPF classique 2025)"},
-                "sport": {"rugby": {"avant": {"H": [[109.45, 100.7], "109 kg pour 101 kg de poids de corps : moyenne des avants de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test et ramenée à ton poids", "Moyenne des internationaux"]},
-                                    "trois-quarts": {"H": [[98.33, 88.0], "98 kg pour 88 kg de poids de corps : moyenne des trois-quarts de l'équipe nationale du Portugal (Vaz et coll., 2014), mesurée comme ce test et ramenée à ton poids", "Moyenne des internationaux"]}}}},
+                "sport": {"rugby": {"avant": {"H": [{"age": [0, 16], "reps": 3, "kg": 78.3, "bw": 92.9, "n": "Académie française U16", "src": "78.3 kg à 92.9 kg de poids de corps, en 3 répétitions : moyenne des avants U16 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                            {"age": [0, 16], "reps": 3, "kg": 79.1, "bw": 94.8, "n": "Internationaux français U16", "src": "79.1 kg à 94.8 kg de poids de corps, en 3 répétitions : moyenne des avants U16 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."},
+                                            {"age": [17, 18], "reps": 3, "kg": 100.2, "bw": 98.9, "n": "Académie française U18", "src": "100.2 kg à 98.9 kg de poids de corps, en 3 répétitions : moyenne des avants U18 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                            {"age": [17, 18], "reps": 3, "kg": 110.0, "bw": 103.8, "n": "Internationaux français U18", "src": "110.0 kg à 103.8 kg de poids de corps, en 3 répétitions : moyenne des avants U18 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."},
+                                            {"age": [19, 99], "reps": 3, "kg": 118.2, "bw": 101.9, "n": "Académie française U20", "src": "118.2 kg à 101.9 kg de poids de corps, en 3 répétitions : moyenne des avants U20 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                            {"age": [19, 99], "reps": 3, "kg": 124.4, "bw": 106.1, "n": "Internationaux français U20", "src": "124.4 kg à 106.1 kg de poids de corps, en 3 répétitions : moyenne des avants U20 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."}]},
+                                    "trois-quarts": {"H": [{"age": [0, 16], "reps": 3, "kg": 72.4, "bw": 72.3, "n": "Académie française U16", "src": "72.4 kg à 72.3 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U16 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                                    {"age": [0, 16], "reps": 3, "kg": 75.6, "bw": 73.1, "n": "Internationaux français U16", "src": "75.6 kg à 73.1 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U16 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."},
+                                                    {"age": [17, 18], "reps": 3, "kg": 91.0, "bw": 77.8, "n": "Académie française U18", "src": "91.0 kg à 77.8 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U18 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                                    {"age": [17, 18], "reps": 3, "kg": 101.0, "bw": 81.4, "n": "Internationaux français U18", "src": "101.0 kg à 81.4 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U18 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."},
+                                                    {"age": [19, 99], "reps": 3, "kg": 108.4, "bw": 85.9, "n": "Académie française U20", "src": "108.4 kg à 85.9 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U20 des académies de la Fédération française de rugby, non internationaux (Peeters et coll., 2023, 1 423 joueurs). Converti en maximum estimé par la formule d'Epley, celle du test, puis ramené à ton poids."},
+                                                    {"age": [19, 99], "reps": 3, "kg": 116.7, "bw": 85.5, "n": "Internationaux français U20", "src": "116.7 kg à 85.5 kg de poids de corps, en 3 répétitions : moyenne des trois-quarts U20 sélectionnés en équipe de France (Peeters et coll., 2023). Converti en maximum estimé par la formule d'Epley, puis ramené à ton poids."}]}}}},
     "e1rm_sdt": {"a": "for", "dir": "high", "u": "kg", "lift": {"H": [372.5, 83], "F": [227.5, 63]}, "frac": [0.22, 0.55, 1],
                  "nom": {"H": ["Joseph Borenstein", ""], "F": ["Alba Boström", ""]}, "wr": {"H": "372,5 kg : soulevé de terre de Joseph Borenstein lors du record du monde du total en 83 kg (IPF classique 2025)",
                         "F": "227,5 kg : soulevé de terre d'Alba Boström lors du record du monde du total en 63 kg (IPF classique 2025)"}},
@@ -69,16 +86,22 @@ for _k, _r in CARD_REFS.items():
         assert (a[0] > a[1] > a[2]) if _r["dir"] == "low" else (a[0] < a[1] < a[2]), (_k, _s)
     for _sport, _postes in _r.get("sport", {}).items():
         for _poste, _sexvals in _postes.items():
-            for _s, _e in _sexvals.items():
-                _v = _e[0]
-                assert len(_e) >= 2 and _e[1], (_k, _sport, _poste, _s, "source manquante")
-                if _r.get("lift"):
-                    _kg, _bm = _v                       # barre de l'étude, poids de corps moyen de l'étude
-                    _wr, _cls = _r["lift"][_s]
-                    _f = _kg / (_wr * (_bm / _cls) ** 0.67)   # le repère, en fraction du record ramené à ce poids
-                    assert _r["frac"][0] < _f < 1, (_k, _sport, _poste, _s, round(_f, 3))
-                else:
-                    a0, _a1, a2 = _r[_s]
-                    ok = (a0 > _v > a2) if _r["dir"] == "low" else (a0 < _v < a2)
-                    assert ok, (_k, _sport, _poste, _s, _v)
+            for _s, _rungs in _sexvals.items():
+                assert isinstance(_rungs, list) and _rungs, (_k, _sport, _poste, _s, "liste de paliers attendue")
+                for _e in _rungs:
+                    assert _e.get("n") and _e.get("src"), (_k, _sport, _poste, _s, "nom ou source manquante")
+                    if _e.get("age"):
+                        assert len(_e["age"]) == 2 and _e["age"][0] <= _e["age"][1], (_k, _sport, _poste, "tranche d'âge")
+                    if _r.get("lift"):
+                        _kg, _bm = _e["kg"], _e["bw"]              # barre de l'étude, poids de corps moyen de l'étude
+                        if _e.get("reps"):                         # n-RM converti en maximum estimé (Epley), comme le test
+                            _kg = _kg * (1 + _e["reps"] / 30)
+                        _wr, _cls = _r["lift"][_s]
+                        _f = _kg / (_wr * (_bm / _cls) ** 0.67)    # le repère, en fraction du record ramené à ce poids
+                        assert _r["frac"][0] < _f < 1, (_k, _sport, _poste, _s, _e["n"], round(_f, 3))
+                    else:
+                        a0, _a1, a2 = _r[_s]
+                        _v = _e["v"]
+                        ok = (a0 > _v > a2) if _r["dir"] == "low" else (a0 < _v < a2)
+                        assert ok, (_k, _sport, _poste, _s, _e["n"], _v)
 CARTES_CONTENT = {"CARDREF": CARD_REFS, "CARDREFSCI": {"text": CARD_REFS_SCI, "refs": CARD_REFS_REFS}}

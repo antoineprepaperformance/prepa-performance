@@ -53,7 +53,7 @@ async def run():
 
             # ---------- la logique des paliers ----------
             e = await cl.evaluate("""() => {
-              const f = (tid, val, sport, poste, hist) => { const x = cardEchelle(tid, val, "H", 80, sport, poste, hist); return x && { b: x.barreaux.map((y) => [y.k, Math.round(y.v * 100) / 100, y.n, !!y.src, y.depuis || null]), suiv: x.suivant && x.suivant.k, att: x.atteints, pct: x.pct }; };
+              const f = (tid, val, sport, poste, hist, age) => { const x = cardEchelle(tid, val, "H", 80, sport, poste, hist, age === undefined ? 31 : age); return x && { b: x.barreaux.map((y) => [y.k, Math.round(y.v * 100) / 100, y.n, !!y.src, y.depuis || null]), suiv: x.suivant && x.suivant.k, att: x.atteints, pct: x.pct }; };
               return { sprintTq: f("sprint10", 1.95, "rugby", "trois-quarts"), squatTq: f("e1rm_squat", 150, "rugby", "trois-quarts"),
                        squatAv: f("e1rm_squat", 150, "rugby", "avant"), dcTq: f("e1rm_dc", 90, "rugby", "trois-quarts"),
                        sansPoste: f("e1rm_squat", 150, "rugby", null), autreSport: f("e1rm_squat", 150, "tennis", "simple"),
@@ -67,12 +67,23 @@ async def run():
                "sprint 10 m : aucun palier de poste, les études chronomètrent au portique et pas comme le test du client (Haugen 2012)", e["sprintTq"]["b"])
             ok(k(e["squatTq"]) == ["bon", "poste", "monde"] and abs(v(e["squatTq"])["poste"] - 189.84) < 0.5 and v(e["squatTq"])["monde"] > 290,
                "squat : le repère du poste est ramené au poids du client (202 kg pour 88 kg → 190 kg pour 80 kg)", e["squatTq"]["b"])
-            ok(n(e["squatTq"])["poste"] == "Moyenne des internationaux · Trois-quarts",
-               "le palier dit ce qu'est le chiffre, et porte le nom lisible du poste (pas son identifiant)", n(e["squatTq"]))
+            ok(n(e["squatTq"])["poste"] == "Internationaux (Portugal) · Trois-quarts",
+               "le palier dit qui est comparé, et porte le nom lisible du poste (pas son identifiant)", n(e["squatTq"]))
             ok(abs(v(e["squatAv"])["poste"] - 199.99) < 0.5 and v(e["squatAv"])["poste"] > v(e["squatTq"])["poste"],
                "un avant a son propre repère, plus haut que celui d'un trois-quarts", {"avant": v(e["squatAv"]), "tq": v(e["squatTq"])})
-            ok(k(e["dcTq"]) == ["poste", "bon", "monde"] and abs(v(e["dcTq"])["poste"] - 92.25) < 0.5,
-               "développé couché : la moyenne des internationaux passe sous le bon niveau général, l'échelle le montre au lieu de le cacher", e["dcTq"]["b"])
+            dck = k(e["dcTq"])
+            ok(dck == ["poste", "bon", "poste1", "monde"],
+               "développé couché : l'académie française passe sous le bon niveau général et les internationaux au-dessus — l'échelle les range dans cet ordre au lieu de le cacher", e["dcTq"]["b"])
+            ok(abs(v(e["dcTq"])["poste"] - 113.69) < 1 and abs(v(e["dcTq"])["poste1"] - 122.78) < 1,
+               "et leurs valeurs viennent des académies de la Fédération française, converties en maximum estimé puis ramenées à son poids", v(e["dcTq"]))
+            ok(n(e["dcTq"])["poste1"].startswith("Internationaux français U20"),
+               "le palier le plus dur est celui des internationaux français de sa catégorie", n(e["dcTq"]))
+            jeune = await cl.evaluate("""() => { const x = cardEchelle("e1rm_dc", 90, "H", 80, "rugby", "trois-quarts", null, 16); return x && x.barreaux.map((y) => y.n); }""")
+            ok(jeune and any("U16" in y for y in jeune) and not any("U20" in y for y in jeune),
+               "un client de 16 ans est comparé aux U16, pas aux U20", jeune)
+            sansAge = await cl.evaluate("""() => { const x = cardEchelle("e1rm_dc", 90, "H", 80, "rugby", "trois-quarts", null, null); return x && x.barreaux.map((y) => y.k); }""")
+            ok(sansAge == ["bon", "monde"],
+               "âge inconnu : aucun palier de catégorie n'est deviné", sansAge)
             ok(k(e["sansPoste"]) == ["bon", "monde"] and k(e["autreSport"]) == ["bon", "monde"],
                "aucun palier inventé : sans poste connu, ou pour un sport sans étude, il n'y a que bon niveau et record du monde",
                {"sansPoste": e["sansPoste"]["b"], "autreSport": e["autreSport"]["b"]})
@@ -94,7 +105,7 @@ async def run():
             if await det.count():
                 await det.first.click(); await cl.wait_for_timeout(500)
             t = await cl.inner_text("body")
-            ok(dans("Bon niveau", t) and dans("Moyenne des internationaux", t) and dans("Record du monde", t),
+            ok(dans("Bon niveau", t) and dans("Internationaux", t) and dans("Record du monde", t),
                "la carte montre les paliers nommés", t[t.find("Squat"):t.find("Squat") + 320])
             ok(dans("Prochain palier", t) and dans("il te reste", t), "elle dit ce qu'il reste pour le palier suivant", t[t.find("Prochain palier"):t.find("Prochain palier") + 160])
             ok(dans("franchi le", t) and await cl.locator(".jg-d").count() >= 1,
@@ -129,7 +140,7 @@ async def run():
             ok(dans("Pas encore de test", tv) and dans("à viser dans ton sport", tv),
                "sans aucun test : la carte dit ce qu'il y a à viser au lieu de rester vide", tv[:200])
             ok(dans("Usain Bolt", tv), "le palier du record porte le nom de son détenteur, pris dans la source déjà vérifiée", tv[tv.find("Record du monde"):][:120])
-            ok(dans("pas encore mesuré", tv) and dans("Moyenne des internationaux · Trois-quarts", tv) and dans("190 kg", tv),
+            ok(dans("pas encore mesuré", tv) and dans("Internationaux (Portugal) · Trois-quarts", tv) and dans("190 kg", tv),
                "le repère de son poste est montré avant le premier test, déjà ramené à son poids", tv[tv.find("Pas encore de test"):][:300])
             ok(await vide.locator(".jg-moi").count() == 0,
                "aucun marqueur « toi » tant qu'il n'y a pas de mesure : on ne prête aucune valeur au client")
@@ -137,8 +148,8 @@ async def run():
             await vide.close()
 
             # ---------- les traductions ----------
-            for lang, att in (("en", {"Bon niveau": "Good level", "Record du monde": "World record", "Moyenne des internationaux": "International average"}),
-                              ("es", {"Bon niveau": "Buen nivel", "Record du monde": "Récord del mundo", "Moyenne des internationaux": "Media de los internacionales"})):
+            for lang, att in (("en", {"Bon niveau": "Good level", "Record du monde": "World record", "Internationaux français U20": "French internationals U20"}),
+                              ("es", {"Bon niveau": "Buen nivel", "Record du monde": "Récord del mundo", "Internationaux français U20": "Internacionales franceses U20"})):
                 lp = await A.new_page(); hook(lp, "langue-" + lang)
                 await lp.goto(URL + f"?as=p1&lang={lang}"); await lp.wait_for_timeout(1500)
                 got = await lp.evaluate("(ks) => { const o = {}; ks.forEach((k) => { o[k] = tr(k); }); return o; }", list(att))
@@ -147,8 +158,8 @@ async def run():
                 # c'est la partie fragile du mecanisme, le poste etant traduit a part.
                 fr = await lp.evaluate("() => tr('franchi le 12 oct.')")
                 ok(fr != "franchi le 12 oct." and "12 oct." in fr, f"« franchi le » est traduit en {lang} (motif, la date reste telle quelle)", fr)
-                comp = await lp.evaluate("() => tr('Moyenne des internationaux · Trois-quarts')")
-                ok(comp.startswith(att["Moyenne des internationaux"] + " · ") and comp != "Moyenne des internationaux · Trois-quarts",
+                comp = await lp.evaluate("() => tr('Internationaux français U20 · Trois-quarts')")
+                ok(comp.startswith(att["Internationaux français U20"] + " · ") and comp != "Internationaux français U20 · Trois-quarts",
                    f"le palier avec le poste est traduit en {lang} (motif)", comp)
                 await lp.close()
 

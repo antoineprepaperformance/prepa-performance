@@ -71,6 +71,19 @@ async def run():
                "le lien est marqué « sponsored » (lien rémunéré) et « noopener »", rel)
             await c.locator(".card", has_text="NutriPure").first.screenshot(path=f"{OUT}/01_carte.png")
 
+            # ---------- la page d'information sur les complements ----------
+            await c.get_by_role("radio", name="Compléments").click(); await c.wait_for_timeout(900)
+            tc = await c.inner_text("body")
+            ok(dans("Créatine monohydrate", tc) and dans("3 à 5 g par jour", tc) and dans("Kreider", tc),
+               "la page dit ce qui marche, avec la dose et la source", tc[tc.find("Ce qui marche"):][:180])
+            ok(dans("Ce qui ne vaut pas son prix", tc) and dans("Brûleurs de graisse", tc) and dans("Multivitamines", tc),
+               "et ce qui ne vaut pas son prix : c'est ce qui rend la page credible")
+            ok(dans("mélatonine contribue à réduire le temps d'endormissement", tc) and dans("1 mg", tc) and dans("médecin", tc),
+               "sommeil : l'allégation autorisée est citée telle quelle, avec sa dose, et renvoie au médecin si ça dure")
+            ok(dans("responsabilité stricte", tc) and dans("lot par lot", tc),
+               "antidopage : la responsabilité du sportif est rappelée avant tout achat")
+            await c.screenshot(path=f"{OUT}/03_complements.png", full_page=True)
+
             # ---------- la page du jour : la ou ca doit se voir ----------
             await c.locator("nav.tabbar button", has_text="Aujourd").click(); await c.wait_for_timeout(900)
             tj = await c.inner_text("body")
@@ -90,6 +103,13 @@ async def run():
             await c.locator("nav.tabbar button", has_text="Aujourd").click(); await c.wait_for_timeout(900)
             ok(await c.locator(".part-b").count() == 0,
                "ni sur sa page du jour : le bandeau ne s'affiche pas non plus")
+            await c.locator("nav.tabbar button", has_text="Nutrition").click(); await c.wait_for_timeout(900)
+            await c.get_by_role("radio", name="Compléments").click(); await c.wait_for_timeout(800)
+            tmc = await c.inner_text("body")
+            ok(dans("Créatine monohydrate", tmc) and dans("Brûleurs de graisse", tmc) and dans("responsabilité stricte", tmc),
+               "en revanche il garde l'information : elle le protège, surtout sur l'antidopage")
+            ok(not dans("NutriPure", tmc) and await c.locator('a[href*="nutripure"]').count() == 0,
+               "l'information oui, le lien rémunéré non : c'est toute la différence")
 
             # ---------- sans mention, rien ne s'affiche ----------
             sans = await nutri(c, part={"on": True, "nom": "NutriPure", "url": "https://exemple.fr/?s=X", "code": "X", "remise": 10, "mention": "", "quoi": "x"})

@@ -3,6 +3,16 @@
 Une entrée par mise à jour : la date, ce qui change, pourquoi, et les sources. C'est la mémoire d'un passage de Claude à l'autre :
 on y lit ce qui a déjà été fait et ce qui a été écarté.
 
+## 26 novembre 2026 (soir) · audit de sécurité, et App Check câblé sans rien casser
+
+- **Antoine** : « est-ce que l'application est bien sécurisée pour les cyberattaques ? Je ne veux pas qu'il y ait de fuite de données », puis « fais App Check ».
+- **Audit complet** déposé dans le QG privé (`agence/securite/audits/2026-11-26.md`), avec **création du poste sécurité**. Ce qui tient, vérifié point par point : isolation des dossiers clients, formulaires publics en création seule et bornés, signature Stripe en HMAC-SHA256 **avec protection contre le rejeu et comparaison à temps constant**, jeton Firebase vérifié auprès de Google pour l'IA du relais, aucun secret dans le dépôt, aucune donnée de client dans le dépôt public, **aucun `innerHTML` dans les 41 fichiers source**, aucune bibliothèque chargée depuis un CDN.
+- **Le piège évité, et c'est le point important.** App Check a deux modes. En mode **forcé**, Firebase refuse toute demande sans jeton — or **le relais lit `settings/app` trois fois sans jeton** (c'est un serveur, pas un navigateur). Passer directement en forcé aurait **arrêté la confirmation automatique des paiements**, sans message clair. La consigne écrite partout est donc : **rester en surveillance**, et ne passer en forcé qu'après avoir donné au relais un compte de service. Chantier noté dans le poste sécurité.
+- **Ce qui est fait côté site** : la bibliothèque `firebase-app-check-compat.js` (Firebase 12.19.0, la version déjà épinglée, récupérée depuis npm selon la procédure de `app/vendor/LISEZMOI.md`) est servie par le site, et l'activation est câblée juste après `initializeApp`. Elle accepte reCAPTCHA **Enterprise** (par défaut) ou **v3** (`appCheckType`).
+- **Inerte tant que la clé n'est pas collée** : `SITE_CONFIG.appCheck` vide ⇒ aucune activation, aucun changement de comportement. Vérifié en chargeant le **vrai** site construit : page affichée, bibliothèque présente, clé vide, **aucune erreur de console**. La version de test n'embarque pas App Check (elle n'a pas Firebase).
+- **Mode d'emploi** : étape 7 bis de `MISE_EN_LIGNE.md`, avec l'avertissement sur le mode forcé en évidence.
+- **Écarté volontairement, et dit** : une CSP. Le code est un bloc inline de 1,3 Mo, elle exigerait `'unsafe-inline'` et ne protégerait donc de rien, alors qu'aucun point d'injection n'existe. Poser une CSP ici serait de la façade.
+
 ## 26 novembre 2026 (suite) · la carte compare aux sportifs du même sport, français et internationaux
 
 - **Antoine** : « pour la carte athlète, garde par rapport aux sportifs d'un même sport, français et internationaux. »

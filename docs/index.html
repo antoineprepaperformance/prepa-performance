@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Antoine Prépa Performance">
 <meta property="og:description" content="Programmes de préparation physique en ligne par Antoine Limousi, préparateur physique à Bordeaux : perte de poids, muscle, force, vitesse, sports collectifs, course, retour de blessure. Séances guidées, bilans et suivi chaque semaine.">
-<meta name="app-build" content="71aa371121">
+<meta name="app-build" content="51846b424e">
 <link rel="preload" href="fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -1418,6 +1418,7 @@ service cloud.firestore {
 <script src="vendor/htm.umd.js"></script>
 <script src="vendor/firebase-app-compat.js"></script>
 <script src="vendor/firebase-auth-compat.js"></script>
+<script src="vendor/firebase-app-check-compat.js"></script>
 <script src="vendor/firebase-firestore-compat.js"></script>
 <script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -1621,6 +1622,17 @@ const I18N_READY = (async () => {
   if (configured && window.firebase) {
     try {
       firebase.initializeApp(fb);
+      /* App Check : prouve a Firebase que la demande vient bien du site, et pas d'un script lance
+         ailleurs. C'est ce qui empeche de creer en masse de fausses resiliations ou demandes de devis,
+         les deux seuls envois ouverts sans connexion. Inerte tant que SITE_CONFIG.appCheck est vide :
+         un site deja en ligne ne change pas de comportement tant qu'Antoine n'a pas colle sa cle. */
+      if (C.appCheck && firebase.appCheck) {
+        try {
+          var Prov = (C.appCheckType === "v3" && firebase.appCheck.ReCaptchaV3Provider)
+            ? firebase.appCheck.ReCaptchaV3Provider : firebase.appCheck.ReCaptchaEnterpriseProvider;
+          firebase.appCheck().activate(new Prov(C.appCheck), true);
+        } catch (e) {}
+      }
       auth = firebase.auth();
       try { auth.languageCode = typeof LANG === "string" ? LANG : "fr"; } catch (e) {}
       if (C.emulators && C.emulators.auth) auth.useEmulator(C.emulators.auth, { disableWarnings: true });

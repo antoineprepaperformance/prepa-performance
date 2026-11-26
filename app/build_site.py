@@ -45,6 +45,7 @@ VENDOR = {
     "htm.umd.js": V / "htm-3.1.1/package/dist/htm.umd.js",
     "firebase-app-compat.js": V / "firebase-12.19.0/package/firebase-app-compat.js",
     "firebase-auth-compat.js": V / "firebase-12.19.0/package/firebase-auth-compat.js",
+    "firebase-app-check-compat.js": V / "firebase-12.19.0/package/firebase-app-check-compat.js",
     "firebase-firestore-compat.js": V / "firebase-12.19.0/package/firebase-firestore-compat.js",
     "zxing.min.js": V / "zxing-0.21.3/package/umd/index.min.js",
 }
@@ -433,7 +434,9 @@ service cloud.firestore {
 # ---------- page ----------
 libs = ["vendor/react.production.min.js", "vendor/react-dom.production.min.js", "vendor/htm.umd.js",
         "vendor/firebase-app-compat.js", "vendor/firebase-auth-compat.js"]
-libs += ["fakefs.js"] if TEST else ["vendor/firebase-firestore-compat.js"]
+# App Check : prouve a Firebase que l'appel vient du site et pas d'un script. Charge seulement sur le
+# vrai site (la version de test n'a pas de Firebase), et inerte tant que la cle n'est pas renseignee.
+libs += ["fakefs.js"] if TEST else ["vendor/firebase-app-check-compat.js", "vendor/firebase-firestore-compat.js"]
 libs += ["config.js"]
 # lecture du texte d'un PDF (import de programme, 31_pdfimport.js) : seule cette fonction a besoin du réseau,
 # le reste de l'application marche hors ligne ; volontairement non vendue ni mise en cache par le service worker

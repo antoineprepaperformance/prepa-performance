@@ -188,6 +188,35 @@ Sans les règles Firestore du 17 novembre 2026 (étape 1), l'onglet Équipe ne p
 
 ---
 
+## Étape 7 bis · App Check : empêcher les envois en masse (facultatif, gratuit, 10 min)
+
+Deux envois de ton site se font **sans connexion** : la résiliation en 3 clics (la loi l'impose) et la
+demande de devis d'un club. Personne ne peut rien **lire** — les règles l'interdisent — mais n'importe
+qui pourrait en **créer des milliers** avec un script : ta boîte se remplit et ton quota gratuit se
+consomme. App Check vérifie que la demande vient bien de ton site.
+
+1. Console Firebase › **App Check** › onglet **Applications** › ton application Web › **Enregistrer**.
+2. Choisis **reCAPTCHA Enterprise** (recommandé) et suis l'assistant : il crée la clé pour toi.
+3. Copie la **clé de site** (elle commence par `6L…`).
+4. Dans `docs/config.js`, colle-la : `appCheck: "6L…"`. Si tu as choisi reCAPTCHA **v3** au lieu
+   d'Enterprise, mets aussi `appCheckType: "v3"`. Enregistre, publie : c'est tout côté site.
+
+Tant que `appCheck` reste vide, **rien ne change** : le site fonctionne exactement comme avant.
+
+### ⚠️ Ne passe PAS tout de suite en « application forcée »
+
+Dans la console, App Check a deux modes. Laisse-le en **surveillance** (le mode par défaut) : Firebase
+te montre alors, dans ses statistiques, quelle part des demandes porte un jeton valide.
+
+**Le mode « forcé » couperait ton relais de paiement.** Le relais lit tes prix dans la base sans jeton
+App Check (c'est un serveur, pas un navigateur) : en mode forcé, Firebase refuserait ses demandes et
+**les paiements ne seraient plus confirmés automatiquement**. Pour passer en forcé un jour, il faudra
+d'abord donner au relais un compte de service Firebase — c'est noté comme chantier dans
+`agence/securite/` de ton QG privé.
+
+En surveillance, tu as déjà le bénéfice principal : tu vois le trafic anormal, et tu peux décider
+ensuite en connaissance de cause.
+
 ## Étape 8 · L'installer comme une application
 
 - **iPhone** : ouvre le site dans Safari › bouton **Partager** › **Sur l'écran d'accueil**.

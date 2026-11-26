@@ -1,0 +1,69 @@
+{
+ "semaine": "2026-12-07",
+ "publications": [
+  {
+   "id": "2026-12-07-a",
+   "quand": "2026-12-07T12:30",
+   "type": "story",
+   "images": [
+    "01_story_lundi_chiffre.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un sondage : à publier toi-même"
+  },
+  {
+   "id": "2026-12-07-b",
+   "quand": "2026-12-08T18:30",
+   "type": "post",
+   "images": [
+    "02_post_mardi_epaule.jpg"
+   ],
+   "auto": true,
+   "legende": "Tu veux sauter plus haut ? Apprends à épauler. 🏋️\nUne méta-analyse a comparé l'haltérophilie (épaulé, arraché et leurs dérivés), la musculation classique et la pliométrie. Face à la musculation classique, l'haltérophilie a fait nettement plus progresser le saut en contre-mouvement, pour des gains de force comparables. Face à la pliométrie, l'écart est petit : les deux marchent.\n\nL'épaulé en suspension, en 3 points :\n1. Barre au-dessus des genoux, dos neutre, bras longs et relâchés.\n2. Extension explosive des hanches, des genoux et des chevilles : c'est elle qui fait monter la barre, pas les bras.\n3. Passe sous la barre et reçois-la sur les épaules, coudes hauts.\n\nDose de départ : 4 séries de 3, avec une charge que tu peux lancer vite, 2 à 3 min de récupération. Si la barre ralentit, la série est finie.\nPas de barre ? L'épaulé à un bras avec un haltère garde le même geste.\n👉 Enregistre ce post. L'épaulé en suspension est dans l'application, avec ses remplaçants selon ton matériel.\n\nSource : Morris SJ, Oliver JL, Pedley JS, Haff GG, Lloyd RS. Comparison of weightlifting, traditional resistance training and plyometrics on strength, power and speed: a systematic review with meta-analysis. Sports Med. 2022;52:1533-1554 (16 études, 427 participants).\n\n#halterophilie #epaule #preparationphysique #explosivite #detente #force #rugby #handball #basket"
+  },
+  {
+   "id": "2026-12-07-c",
+   "quand": "2026-12-09T11:00",
+   "type": "story",
+   "images": [
+    "03_story_mercredi_recette.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et un quiz : à publier toi-même"
+  },
+  {
+   "id": "2026-12-07-d",
+   "quand": "2026-12-10T18:30",
+   "type": "carrousel",
+   "images": [
+    "04_post_jeudi_tirhand_1.jpg",
+    "05_post_jeudi_tirhand_2.jpg",
+    "06_post_jeudi_tirhand_3.jpg",
+    "07_post_jeudi_tirhand_4.jpg",
+    "08_post_jeudi_tirhand_5.jpg"
+   ],
+   "auto": true,
+   "legende": "Le tir qui passe au-dessus de la défense. 🤾\nLe tir en suspension est presque aussi rapide qu'un tir en appui, mais il part plus haut. Sa vitesse vient de l'enchaînement : le bassin tourne, puis le tronc, puis l'épaule, et le bras fouette en dernier.\n\nLa fiche, en 4 étapes :\n1. Départ à 13 m du but, ballon en main.\n2. Trois appuis d'élan (gauche, droite, gauche pour un droitier) ; le dernier pousse vers le haut, avant la ligne des 6 m.\n3. En l'air : bras armé haut, le bassin tourne d'abord, le coude passe au-dessus de l'épaule.\n4. Réception sur les deux pieds, genoux fléchis et dans l'axe.\n\nDose : 3 séries de 6 tirs, angles variés, 2 min de récupération. Échauffe ton épaule avant (rotations externes à l'élastique).\n👉 Enregistre le carrousel et envoie-le à ton arrière. La fiche complète, avec son schéma animé, est dans l'application (onglet Technique du handball).\n\nSource : Wagner H, Pfusterschmied J, von Duvillard SP, Müller E. Performance and kinematics of various throwing techniques in team-handball. J Sports Sci Med. 2011;10(1):73-80 (14 handballeurs d'élite : tir en suspension 21,9 m/s, tir en appui sans élan 22,3 m/s). Échauffement de l'épaule : Andersson SH, Bahr R, Clarsen B, Myklebust G. Br J Sports Med. 2017;51(14):1073-1080.\n\n#handball #handballeur #tir #techniquehandball #detente #preparationphysique #entrainement #handfeminin"
+  },
+  {
+   "id": "2026-12-07-e",
+   "quand": "2026-12-12T10:00",
+   "type": "story",
+   "images": [
+    "09_story_samedi_evitement.jpg"
+   ],
+   "auto": false,
+   "note": "Story avec ta musique et une question : à publier toi-même"
+  },
+  {
+   "id": "2026-12-07-f",
+   "quand": "2026-12-13T19:00",
+   "type": "post",
+   "images": [
+    "10_post_dimanche_appli.jpg"
+   ],
+   "auto": true,
+   "legende": "Ton planning bouge ? Ton programme aussi. 📅\nDans l'application, tu choisis combien de séances tu fais par semaine, et quel jour porte quelle séance : lundi muscu, mercredi course, samedi repos. Tu changes d'avis ? Tu déplaces, rien de ce que tu as déjà coché ne se perd.\n\nEt si une séance saute :\n1. Elle reste dans ta semaine, marquée « à rattraper ».\n2. Un jour de repos reste un jour de repos : l'application te dit ce qui reste, sans te pousser une séance de plus.\n3. Tout le reste suit ton sport et ton matériel, comme avant.\n\nPour 1, 3, 6 ou 12 mois, en paiement unique : pas d'abonnement qui se renouvelle sans toi. Droit de rétractation de 14 jours.\n👉 Lien en bio pour les formules, dès 12,90 €.\n\n#preparationphysique #coachingenligne #coachsportif #programmeentrainement #rugby #football #handball #bordeaux"
+  }
+ ]
+}

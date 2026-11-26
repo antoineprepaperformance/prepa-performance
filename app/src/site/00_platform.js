@@ -7,6 +7,17 @@
   if (configured && window.firebase) {
     try {
       firebase.initializeApp(fb);
+      /* App Check : prouve a Firebase que la demande vient bien du site, et pas d'un script lance
+         ailleurs. C'est ce qui empeche de creer en masse de fausses resiliations ou demandes de devis,
+         les deux seuls envois ouverts sans connexion. Inerte tant que SITE_CONFIG.appCheck est vide :
+         un site deja en ligne ne change pas de comportement tant qu'Antoine n'a pas colle sa cle. */
+      if (C.appCheck && firebase.appCheck) {
+        try {
+          var Prov = (C.appCheckType === "v3" && firebase.appCheck.ReCaptchaV3Provider)
+            ? firebase.appCheck.ReCaptchaV3Provider : firebase.appCheck.ReCaptchaEnterpriseProvider;
+          firebase.appCheck().activate(new Prov(C.appCheck), true);
+        } catch (e) {}
+      }
       auth = firebase.auth();
       try { auth.languageCode = typeof LANG === "string" ? LANG : "fr"; } catch (e) {}
       if (C.emulators && C.emulators.auth) auth.useEmulator(C.emulators.auth, { disableWarnings: true });

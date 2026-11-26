@@ -9,6 +9,11 @@ window.SITE_CONFIG = {
     messagingSenderId: "182693003527",
     appId: "1:182693003527:web:0bc9df5cbaf3a7bc5105a2"
   },
+  /* App Check : colle ici la clé de site reCAPTCHA donnée par la console Firebase (App Check).
+     Tant que cette ligne reste vide ou absente, rien ne change : le site fonctionne comme avant.
+     Mets "v3" dans appCheckType seulement si tu as choisi reCAPTCHA v3 au lieu d'Enterprise. */
+  appCheck: "",
+  appCheckType: "enterprise",
   /* adresse(s) e-mail qui ouvrent l'espace coach : la même que dans les règles Firestore */
   coachEmails: ["antoine.limousi@gmail.com"],
   /* mentions légales affichées en bas de la page d'accueil */
